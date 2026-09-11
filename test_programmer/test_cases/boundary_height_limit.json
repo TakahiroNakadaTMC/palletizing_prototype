@@ -1,0 +1,30 @@
+{
+  "name": "boundary_height_limit",
+  "description": "深型（H=288mm）のみで4段積載（総高1122mm）を行う高さ制約境界値テスト",
+  "pallet": {
+    "width": 1200.0,
+    "length": 1000.0,
+    "max_height": 1200.0,
+    "max_x_span": 1360.0,
+    "min_y_span": 800.0,
+    "max_y_span": 1100.0
+  },
+  "box_list": [
+    {
+      "box_id": "TP-333",
+      "count": 12
+    },
+    {
+      "box_id": "TP-343",
+      "count": 12
+    },
+    {
+      "box_id": "TP-363",
+      "count": 12
+    },
+    {
+      "box_id": "TP-463",
+      "count": 12
+    }
+  ]
+}

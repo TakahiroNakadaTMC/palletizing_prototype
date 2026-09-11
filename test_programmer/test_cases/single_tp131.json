@@ -1,0 +1,18 @@
+{
+  "name": "single_tp131",
+  "description": "TP-131 (335x168x103) ハーフモジュール浅型の単載テスト",
+  "pallet": {
+    "width": 1200.0,
+    "length": 1000.0,
+    "max_height": 1200.0,
+    "max_x_span": 1360.0,
+    "min_y_span": 800.0,
+    "max_y_span": 1100.0
+  },
+  "box_list": [
+    {
+      "box_id": "TP-131",
+      "count": 120
+    }
+  ]
+}

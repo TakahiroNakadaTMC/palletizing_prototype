@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>テストパターン（荷山箱リスト）承認・編集ビューア</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .badge-single { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+    .badge-mixed { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .badge-boundary { background-color: #fce7f3; color: #9d174d; border: 1px solid #fbcfe8; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="p-2 bg-indigo-600 text-white rounded-lg shadow-sm">
+            <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+          </span>
+          <h1 class="text-xl font-bold text-slate-900">テストパターン（荷山箱リスト）承認・編集ビューア</h1>
+          <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-medium border border-indigo-200">test_cases/</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">パレタイズ評価用テストケースの投入箱リスト（箱種・個数）を確認、個数変更・新規追加・個別承認できます。</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center flex-wrap gap-2">
+        <button id="btn-open-create-modal" class="px-3.5 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> 新しいテストパターン作成
+        </button>
+        <button id="btn-select-all" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-md transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+          <i data-lucide="check-square" class="w-3.5 h-3.5 text-slate-500"></i> 全て採用
+        </button>
+        <button id="btn-deselect-all" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-md transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+          <i data-lucide="square" class="w-3.5 h-3.5 text-slate-500"></i> 全て解除
+        </button>
+        <button id="btn-direct-save" class="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md transition shadow flex items-center gap-1.5 cursor-pointer">
+          <i data-lucide="save" class="w-3.5 h-3.5"></i> テストケース一括保存
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Status Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <!-- Total Card -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">総テストパターン数</p>
+          <p id="stat-total" class="text-2xl font-black text-slate-900 mt-1">13</p>
+        </div>
+        <div class="p-3 bg-slate-100 text-slate-600 rounded-lg">
+          <i data-lucide="list-checks" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <!-- Approved Card -->
+      <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm flex items-center justify-between bg-emerald-50/30">
+        <div>
+          <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">採用（承認済）</p>
+          <div class="flex items-baseline gap-1 mt-1">
+            <p id="stat-approved" class="text-2xl font-black text-emerald-600">13</p>
+            <span id="stat-approved-total-sub" class="text-xs text-slate-500">/ 13 ケース</span>
+          </div>
+        </div>
+        <div class="p-3 bg-emerald-100 text-emerald-700 rounded-lg">
+          <i data-lucide="check-circle" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <!-- Single / Mixed Breakdown -->
+      <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm flex items-center justify-between bg-blue-50/30">
+        <div>
+          <p class="text-xs font-semibold text-blue-700 uppercase tracking-wider">採用中 単載パターン</p>
+          <p id="stat-approved-single" class="text-2xl font-black text-blue-600 mt-1">6</p>
+        </div>
+        <div class="p-3 bg-blue-100 text-blue-700 rounded-lg">
+          <i data-lucide="package" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <!-- Mixed / Boundary Breakdown -->
+      <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-sm flex items-center justify-between bg-amber-50/30">
+        <div>
+          <p class="text-xs font-semibold text-amber-700 uppercase tracking-wider">採用中 混載・境界値</p>
+          <p id="stat-approved-mixed" class="text-2xl font-black text-amber-600 mt-1">7</p>
+        </div>
+        <div class="p-3 bg-amber-100 text-amber-700 rounded-lg">
+          <i data-lucide="boxes" class="w-5 h-5"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="relative flex-1">
+        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+        <input type="text" id="search-input" placeholder="テスト名、説明、箱型番で検索..." class="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50/50">
+      </div>
+
+      <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-medium text-slate-600 flex-wrap">
+        <button class="filter-tab px-3 py-1.5 rounded-md transition active-tab bg-white text-slate-900 shadow-sm cursor-pointer" data-filter="all">すべて</button>
+        <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900 cursor-pointer" data-filter="single">単載のみ</button>
+        <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900 cursor-pointer" data-filter="mixed">混載のみ</button>
+        <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900 cursor-pointer" data-filter="boundary">境界値のみ</button>
+        <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900 cursor-pointer" data-filter="approved">採用中のみ</button>
+      </div>
+    </div>
+
+    <!-- Test Cases Cards Grid -->
+    <div id="testcase-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- Cards rendered dynamically by JavaScript -->
+    </div>
+
+    <div id="no-results" class="hidden bg-white rounded-xl border border-slate-200 p-12 text-center text-slate-400">
+      <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+      <p>該当するテストパターンが見つかりませんでした。</p>
+    </div>
+
+  </main>
+
+  <!-- Create / Edit Test Case Modal -->
+  <div id="modal-testcase" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full p-6 space-y-5 transform transition-transform duration-200 scale-95 max-h-[90vh] flex flex-col" id="modal-container">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 flex-shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="p-2 bg-indigo-100 text-indigo-700 rounded-lg" id="modal-icon-bg">
+            <i data-lucide="clipboard-edit" class="w-5 h-5" id="modal-icon"></i>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900" id="modal-title">テストパターンの編集</h2>
+            <p class="text-xs text-slate-500" id="modal-subtitle">投入する箱の種類と個数を設定します</p>
+          </div>
+        </div>
+        <button id="btn-close-modal" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Form (Scrollable) -->
+      <form id="form-testcase" class="space-y-4 overflow-y-auto flex-1 pr-1 custom-scrollbar">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">テスト名 (識別キー) <span class="text-rose-500">*</span></label>
+            <input type="text" id="input-tc-name" required placeholder="例: custom_mixed_01" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-slate-100">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">テスト説明 / 検証目的 <span class="text-rose-500">*</span></label>
+            <input type="text" id="input-tc-desc" required placeholder="例: TP-332とTP-342の混載テスト" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <!-- Box Input List Table -->
+        <div class="border border-slate-200 rounded-xl overflow-hidden">
+          <div class="bg-slate-50 px-4 py-2.5 border-b border-slate-200 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700">投入箱リスト（荷山構成）</span>
+            <button type="button" id="btn-add-box-row" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 cursor-pointer">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> 箱を追加
+            </button>
+          </div>
+          <div class="p-2 space-y-2 max-h-60 overflow-y-auto" id="box-rows-container">
+            <!-- Dynamic rows -->
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 flex-shrink-0">
+          <button type="button" id="btn-cancel-modal" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition cursor-pointer">キャンセル</button>
+          <button type="submit" id="modal-submit-btn" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow flex items-center gap-1.5 cursor-pointer">
+            <i data-lucide="check" class="w-4 h-4"></i> 保存する
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-medium transform transition-all duration-300 opacity-0 translate-y-4 pointer-events-none flex items-center gap-2 z-50">
+    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toast-msg">通知メッセージ</span>
+  </div>
+
+  <script>
+    // Master Box DB (for lookup & selection)
+    let masterBoxDB = {};
+    let testCasesData = {};
+    let approvalState = {};
+    let editTargetTcName = null;
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    const STORAGE_KEY_TC_APPROVAL = 'palletize_tc_approval_v1';
+    const STORAGE_KEY_TC_CUSTOM = 'palletize_tc_custom_v1';
+
+    // Pallet Default Specification
+    const PALLET_SPEC = {
+      width: 1200.0,
+      length: 1000.0,
+      max_height: 1200.0,
+      max_x_span: 1360.0,
+      min_y_span: 800.0,
+      max_y_span: 1100.0
+    };
+
+    // Load Data
+    async function init() {
+      // 1. Load Box DB
+      try {
+        const resBox = await fetch('/api/boxes');
+        if (resBox.ok) {
+          masterBoxDB = await resBox.json();
+        }
+      } catch (e) {
+        console.warn("Using fallback boxDB", e);
+      }
+
+      // 2. Load Test Cases
+      try {
+        const resTc = await fetch('/api/testcases');
+        if (resTc.ok) {
+          testCasesData = await resTc.json();
+        }
+      } catch (e) {
+        console.warn("Failed to fetch testcases", e);
+      }
+
+      // 3. LocalStorage Approval State
+      const savedApproval = localStorage.getItem(STORAGE_KEY_TC_APPROVAL);
+      if (savedApproval) {
+        try {
+          approvalState = JSON.parse(savedApproval);
+        } catch (e) {}
+      }
+
+      Object.keys(testCasesData).forEach(name => {
+        if (approvalState[name] === undefined) {
+          approvalState[name] = true; // default approved
+        }
+      });
+
+      updateStats();
+      renderGrid();
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY_TC_APPROVAL, JSON.stringify(approvalState));
+      updateStats();
+    }
+
+    function getCategory(name) {
+      if (name.startsWith('single_')) return 'single';
+      if (name.startsWith('boundary_')) return 'boundary';
+      return 'mixed';
+    }
+
+    function getCategoryBadge(cat) {
+      if (cat === 'single') return '<span class="text-[10px] px-2 py-0.5 rounded-full font-bold badge-single">単載</span>';
+      if (cat === 'boundary') return '<span class="text-[10px] px-2 py-0.5 rounded-full font-bold badge-boundary">境界値</span>';
+      return '<span class="text-[10px] px-2 py-0.5 rounded-full font-bold badge-mixed">混載</span>';
+    }
+
+    // Render Grid Cards
+    function renderGrid() {
+      const grid = document.getElementById('testcase-grid');
+      grid.innerHTML = '';
+
+      const tcNames = Object.keys(testCasesData);
+      let matchCount = 0;
+
+      tcNames.forEach(name => {
+        const tc = testCasesData[name];
+        const isApproved = approvalState[name] !== false;
+        const cat = getCategory(name);
+
+        // Filter condition
+        if (currentFilter === 'single' && cat !== 'single') return;
+        if (currentFilter === 'mixed' && cat !== 'mixed') return;
+        if (currentFilter === 'boundary' && cat !== 'boundary') return;
+        if (currentFilter === 'approved' && !isApproved) return;
+
+        // Search condition
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const boxIds = (tc.box_list || []).map(b => b.box_id).join(' ');
+          const target = `${name} ${tc.description || ''} ${boxIds}`.toLowerCase();
+          if (!target.includes(q)) return;
+        }
+
+        matchCount++;
+
+        const totalBoxes = (tc.box_list || []).reduce((sum, b) => sum + (b.count || 0), 0);
+        const uniqueBoxKinds = (tc.box_list || []).length;
+
+        const card = document.createElement('div');
+        card.className = `bg-white rounded-xl border transition shadow-sm p-5 flex flex-col justify-between ${isApproved ? 'border-slate-200 hover:border-indigo-300' : 'border-slate-200 bg-slate-50/60 opacity-60'}`;
+
+        card.innerHTML = `
+          <div class="space-y-3">
+            <!-- Header -->
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="text-sm font-mono font-bold text-slate-900">${name}</h3>
+                  ${getCategoryBadge(cat)}
+                </div>
+                <p class="text-xs text-slate-500 mt-1 leading-relaxed">${tc.description || '説明なし'}</p>
+              </div>
+              <button type="button" data-name="${name}" class="toggle-status-btn px-2.5 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 cursor-pointer flex-shrink-0 ${isApproved ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-rose-100 text-rose-800 hover:bg-rose-200'}">
+                <i data-lucide="${isApproved ? 'check' : 'x'}" class="w-3.5 h-3.5"></i>
+                <span>${isApproved ? '採用' : '不採用'}</span>
+              </button>
+            </div>
+
+            <!-- Stats Mini Bar -->
+            <div class="flex items-center gap-3 text-xs bg-slate-50 p-2 rounded-lg border border-slate-100 text-slate-600">
+              <div><span class="text-slate-400">総投入箱数:</span> <strong class="text-slate-900 font-mono">${totalBoxes}</strong> 箱</div>
+              <div class="w-px h-3 bg-slate-200"></div>
+              <div><span class="text-slate-400">箱種数:</span> <strong class="text-slate-900 font-mono">${uniqueBoxKinds}</strong> 種</div>
+            </div>
+
+            <!-- Box List Badges -->
+            <div class="space-y-1.5">
+              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">投入箱内訳</span>
+              <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
+                ${(tc.box_list || []).map(b => {
+                  const bspec = masterBoxDB[b.box_id] || {};
+                  const dimStr = bspec.width ? `${bspec.width}x${bspec.length}x${bspec.height}` : '';
+                  return `
+                    <span class="inline-flex items-center gap-1.5 px-2 py-1 bg-indigo-50/80 border border-indigo-100 text-indigo-900 rounded-md text-xs font-mono" title="${dimStr}">
+                      <strong>${b.box_id}</strong>
+                      <span class="bg-indigo-200/70 text-indigo-800 text-[10px] px-1.5 py-0.2 rounded font-bold">×${b.count}</span>
+                    </span>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Footer Actions -->
+          <div class="flex items-center justify-between border-t border-slate-100 pt-3 mt-4 text-xs">
+            <span class="text-slate-400 text-[11px]">パレット: 1200x1000 (高1200)</span>
+            <div class="flex items-center gap-1">
+              <button type="button" data-name="${name}" class="edit-tc-btn p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition cursor-pointer" title="このテストケースの構成を変更">
+                <i data-lucide="edit-3" class="w-4 h-4"></i>
+              </button>
+              <button type="button" data-name="${name}" class="delete-tc-btn p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition cursor-pointer" title="このテストケースを削除">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+
+      document.getElementById('no-results').classList.toggle('hidden', matchCount > 0);
+      lucide.createIcons();
+      attachEvents();
+    }
+
+    function attachEvents() {
+      document.querySelectorAll('.toggle-status-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const name = btn.getAttribute('data-name');
+          approvalState[name] = !approvalState[name];
+          saveState();
+          renderGrid();
+        });
+      });
+
+      document.querySelectorAll('.edit-tc-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const name = btn.getAttribute('data-name');
+          openModal(name);
+        });
+      });
+
+      document.querySelectorAll('.delete-tc-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const name = btn.getAttribute('data-name');
+          if (confirm(`テストケース "${name}" を削除しますか？`)) {
+            delete testCasesData[name];
+            delete approvalState[name];
+            saveState();
+            renderGrid();
+            showToast(`テストケース "${name}" を削除しました`);
+          }
+        });
+      });
+    }
+
+    function updateStats() {
+      const allNames = Object.keys(testCasesData);
+      const total = allNames.length;
+      let approvedCount = 0;
+      let approvedSingle = 0;
+      let approvedMixed = 0;
+
+      allNames.forEach(name => {
+        if (approvalState[name]) {
+          approvedCount++;
+          if (getCategory(name) === 'single') approvedSingle++;
+          else approvedMixed++;
+        }
+      });
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-approved').textContent = approvedCount;
+      document.getElementById('stat-approved-total-sub').textContent = `/ ${total} ケース`;
+      document.getElementById('stat-approved-single').textContent = approvedSingle;
+      document.getElementById('stat-approved-mixed').textContent = approvedMixed;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4');
+      }, 2500);
+    }
+
+    // Modal Control
+    const modal = document.getElementById('modal-testcase');
+    const modalContainer = document.getElementById('modal-container');
+
+    function openModal(tcName = null) {
+      editTargetTcName = tcName;
+      const modalTitle = document.getElementById('modal-title');
+      const modalSub = document.getElementById('modal-subtitle');
+      const inputName = document.getElementById('input-tc-name');
+      const inputDesc = document.getElementById('input-tc-desc');
+      const rowsContainer = document.getElementById('box-rows-container');
+      rowsContainer.innerHTML = '';
+
+      if (tcName && testCasesData[tcName]) {
+        const tc = testCasesData[tcName];
+        modalTitle.textContent = `テストパターンの編集 (${name})`;
+        modalSub.textContent = `投入箱の種類と数量を変更します`;
+        inputName.value = tc.name || tcName;
+        inputName.disabled = true;
+        inputDesc.value = tc.description || '';
+
+        (tc.box_list || []).forEach(b => {
+          addBoxRow(b.box_id, b.count);
+        });
+      } else {
+        modalTitle.textContent = `新しいテストパターンの作成`;
+        modalSub.textContent = `検証したい箱の組み合わせを設定します`;
+        document.getElementById('form-testcase').reset();
+        inputName.disabled = false;
+        // Default rows
+        const available = Object.keys(masterBoxDB);
+        addBoxRow(available[0] || 'TP-332', 20);
+      }
+
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modalContainer.classList.remove('scale-95');
+        modalContainer.classList.add('scale-100');
+        lucide.createIcons();
+      }, 10);
+    }
+
+    function closeModal() {
+      modal.classList.add('opacity-0');
+      modalContainer.classList.remove('scale-100');
+      modalContainer.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        document.getElementById('form-testcase').reset();
+        editTargetTcName = null;
+      }, 200);
+    }
+
+    function addBoxRow(selectedId = '', count = 10) {
+      const container = document.getElementById('box-rows-container');
+      const row = document.createElement('div');
+      row.className = 'box-input-row flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200';
+
+      const boxOptions = Object.keys(masterBoxDB).map(id => {
+        const b = masterBoxDB[id];
+        return `<option value="${id}" ${id === selectedId ? 'selected' : ''}>${id} (${b.width}x${b.length}x${b.height}) - ${b.name}</option>`;
+      }).join('');
+
+      row.innerHTML = `
+        <div class="flex-1">
+          <select class="box-id-select w-full px-2.5 py-1.5 text-xs font-mono border border-slate-300 rounded-md focus:ring-1 focus:ring-indigo-500 bg-white">
+            ${boxOptions}
+          </select>
+        </div>
+        <div class="w-24">
+          <div class="flex items-center gap-1">
+            <span class="text-[11px] text-slate-500">個数:</span>
+            <input type="number" min="1" max="500" value="${count}" class="box-count-input w-full px-2 py-1 text-xs font-mono font-bold text-indigo-700 border border-slate-300 rounded-md text-right">
+          </div>
+        </div>
+        <button type="button" class="btn-remove-row p-1 text-slate-400 hover:text-rose-600 rounded transition cursor-pointer">
+          <i data-lucide="trash" class="w-4 h-4"></i>
+        </button>
+      `;
+
+      row.querySelector('.btn-remove-row').addEventListener('click', () => {
+        row.remove();
+      });
+
+      container.appendChild(row);
+      lucide.createIcons();
+    }
+
+    document.getElementById('btn-add-box-row').addEventListener('click', () => {
+      const available = Object.keys(masterBoxDB);
+      addBoxRow(available[0] || 'TP-332', 10);
+    });
+
+    document.getElementById('btn-open-create-modal').addEventListener('click', () => openModal(null));
+    document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+    document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
+
+    // Submit Form
+    document.getElementById('form-testcase').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('input-tc-name').value.trim();
+      const desc = document.getElementById('input-tc-desc').value.trim();
+
+      const boxRows = document.querySelectorAll('.box-input-row');
+      const boxList = [];
+
+      boxRows.forEach(r => {
+        const bid = r.querySelector('.box-id-select').value;
+        const cnt = parseInt(r.querySelector('.box-count-input').value) || 1;
+        if (bid && cnt > 0) {
+          boxList.push({ box_id: bid, count: cnt });
+        }
+      });
+
+      if (!name || boxList.length === 0) {
+        alert("テスト名と少なくとも1つの箱を入力してください。");
+        return;
+      }
+
+      const tcObj = {
+        name: name,
+        description: desc,
+        pallet: PALLET_SPEC,
+        box_list: boxList
+      };
+
+      testCasesData[name] = tcObj;
+      if (!editTargetTcName) {
+        approvalState[name] = true;
+      }
+
+      saveState();
+      renderGrid();
+      closeModal();
+      showToast(`テストケース "${name}" を保存しました`);
+    });
+
+    // Header Action Buttons
+    document.getElementById('btn-select-all').addEventListener('click', () => {
+      Object.keys(testCasesData).forEach(n => approvalState[n] = true);
+      saveState();
+      renderGrid();
+      showToast("全てのテストパターンを採用に設定しました");
+    });
+
+    document.getElementById('btn-deselect-all').addEventListener('click', () => {
+      Object.keys(testCasesData).forEach(n => approvalState[n] = false);
+      saveState();
+      renderGrid();
+      showToast("全てのテストパターンの選択を解除しました");
+    });
+
+    // Direct Save to Backend API
+    document.getElementById('btn-direct-save').addEventListener('click', async () => {
+      const approvedTCs = {};
+      Object.keys(testCasesData).forEach(name => {
+        if (approvalState[name]) {
+          approvedTCs[name] = testCasesData[name];
+        }
+      });
+
+      try {
+        const res = await fetch('/api/testcase/save_all', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(approvedTCs, null, 2)
+        });
+        if (res.ok) {
+          showToast(`承認済みテストケース (${Object.keys(approvedTCs).length} 件) を test_cases/ に保存しました`);
+          return;
+        }
+      } catch (e) {
+        console.warn("API not available", e);
+      }
+
+      showToast(`承認状態を保存しました (${Object.keys(approvedTCs).length} 件採用)`);
+    });
+
+    // Search & Filter Tabs
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderGrid();
+    });
+
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.filter-tab').forEach(t => {
+          t.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+          t.classList.add('text-slate-600');
+        });
+        tab.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+        tab.classList.remove('text-slate-600');
+        currentFilter = tab.getAttribute('data-filter');
+        renderGrid();
+      });
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>箱データベース 採用・編集 承認ビューア</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .badge-tp { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+    .badge-nontp { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="p-2 bg-indigo-600 text-white rounded-lg shadow-sm">
+            <i data-lucide="package-check" class="w-5 h-5"></i>
+          </span>
+          <h1 class="text-xl font-bold text-slate-900">箱仕様 採用・編集 承認ビューア</h1>
+          <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-medium border border-indigo-200">box_db.json</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">パレタイズ対象箱の個別承認・数値編集・新規追加を行い、承認済みデータベースを出力・保存できます。</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center flex-wrap gap-2">
+        <button id="btn-open-modal" class="px-3.5 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition shadow-sm flex items-center gap-1.5">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> 新しい箱を追加
+        </button>
+        <button id="btn-select-all" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-md transition shadow-sm flex items-center gap-1.5">
+          <i data-lucide="check-square" class="w-3.5 h-3.5 text-slate-500"></i> 全て採用
+        </button>
+        <button id="btn-deselect-all" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-md transition shadow-sm flex items-center gap-1.5">
+          <i data-lucide="square" class="w-3.5 h-3.5 text-slate-500"></i> 全て解除
+        </button>
+        <button id="btn-select-tp-only" class="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-md transition shadow-sm flex items-center gap-1.5">
+          <i data-lucide="layers" class="w-3.5 h-3.5 text-blue-600"></i> TP規格のみ
+        </button>
+        <button id="btn-copy-json" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-md transition shadow-sm flex items-center gap-1.5">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i> JSONコピー
+        </button>
+        <button id="btn-download-json" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-md transition shadow-sm flex items-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5 text-slate-500"></i> ダウンロード
+        </button>
+        <button id="btn-direct-save" class="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md transition shadow flex items-center gap-1.5">
+          <i data-lucide="save" class="w-3.5 h-3.5"></i> box_db.json に保存
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Status Cards & Filters -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <!-- Total Card -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">総登録箱数</p>
+          <p id="stat-total" class="text-2xl font-black text-slate-900 mt-1">29</p>
+        </div>
+        <div class="p-3 bg-slate-100 text-slate-600 rounded-lg">
+          <i data-lucide="boxes" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <!-- Approved Card -->
+      <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm flex items-center justify-between bg-emerald-50/30">
+        <div>
+          <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">採用（承認済）</p>
+          <div class="flex items-baseline gap-1 mt-1">
+            <p id="stat-approved" class="text-2xl font-black text-emerald-600">29</p>
+            <span id="stat-approved-total-sub" class="text-xs text-slate-500">/ 29 箱</span>
+          </div>
+        </div>
+        <div class="p-3 bg-emerald-100 text-emerald-700 rounded-lg">
+          <i data-lucide="check-circle" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <!-- TP Count Card -->
+      <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm flex items-center justify-between bg-blue-50/30">
+        <div>
+          <p class="text-xs font-semibold text-blue-700 uppercase tracking-wider">採用中 TP規格箱</p>
+          <p id="stat-approved-tp" class="text-2xl font-black text-blue-600 mt-1">19</p>
+        </div>
+        <div class="p-3 bg-blue-100 text-blue-700 rounded-lg">
+          <i data-lucide="layout-grid" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <!-- Non-TP Count Card -->
+      <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-sm flex items-center justify-between bg-amber-50/30">
+        <div>
+          <p class="text-xs font-semibold text-amber-700 uppercase tracking-wider">採用中 非TP規格箱</p>
+          <p id="stat-approved-nontp" class="text-2xl font-black text-amber-600 mt-1">10</p>
+        </div>
+        <div class="p-3 bg-amber-100 text-amber-700 rounded-lg">
+          <i data-lucide="archive" class="w-5 h-5"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <!-- Search Input -->
+      <div class="relative flex-1">
+        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+        <input type="text" id="search-input" placeholder="型番、箱名称、説明で検索..." class="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50/50">
+      </div>
+
+      <!-- Filter Radio Tabs -->
+      <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-medium text-slate-600 flex-wrap">
+        <button class="filter-tab px-3 py-1.5 rounded-md transition active-tab bg-white text-slate-900 shadow-sm" data-filter="all">すべて</button>
+        <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900" data-filter="TP">TP規格のみ</button>
+        <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900" data-filter="NON_TP">非TPのみ</button>
+        <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900" data-filter="approved">採用中のみ</button>
+        <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900" data-filter="rejected">不採用のみ</button>
+      </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider">
+              <th class="py-3.5 px-4 w-12 text-center">
+                <span class="sr-only">選択</span>
+              </th>
+              <th class="py-3.5 px-4">状態</th>
+              <th class="py-3.5 px-4">型番 (ID)</th>
+              <th class="py-3.5 px-4">名称 / シリーズ</th>
+              <th class="py-3.5 px-3">種別</th>
+              <th class="py-3.5 px-3 text-right">幅 W (mm)</th>
+              <th class="py-3.5 px-3 text-right">奥行 L (mm)</th>
+              <th class="py-3.5 px-3 text-right">高さ H (mm)</th>
+              <th class="py-3.5 px-3 text-right">勘合深さ (mm)</th>
+              <th class="py-3.5 px-3 text-right">側面リブ厚 (mm)</th>
+              <th class="py-3.5 px-3 text-center">モジュール比</th>
+              <th class="py-3.5 px-4">説明 / 寸法・段積みメモ</th>
+              <th class="py-3.5 px-3 text-center w-20">操作</th>
+            </tr>
+          </thead>
+          <tbody id="box-table-body" class="divide-y divide-slate-100 font-normal text-slate-700">
+            <!-- Table rows generated dynamically by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+      <div id="no-results" class="hidden py-12 text-center text-slate-400">
+        <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+        <p>該当する箱が見つかりませんでした。</p>
+      </div>
+    </div>
+
+    <!-- Help & Constraints Note & Reset -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-100/70 border border-slate-200 rounded-xl p-4 text-xs text-slate-600">
+      <div class="space-y-1">
+        <div class="flex items-center gap-1.5 font-bold text-slate-800">
+          <i data-lucide="info" class="w-4 h-4 text-indigo-600"></i>
+          <span>パレタイズ制約に関する注意事項（constraints/constraints.md より）</span>
+        </div>
+        <p class="text-slate-500">
+          ・<strong>TP規格箱:</strong> 基準寸法(335x335)の倍数・分数比率により相互段積み（嵌合沈み込み: <code>fitting_depth</code>）可能。<br>
+          ・<strong>非TP箱:</strong> 同一型番（同一フットプリント）のコラム積みに限定されます。<br>
+          ・<strong>側面リブ厚:</strong> 外寸と有効内寸の差から求めた側壁総厚み（$(W_{外寸} - W_{有効内寸}) / 2$）です。
+        </p>
+      </div>
+      <div>
+        <button id="btn-reset-db" class="text-xs text-slate-500 hover:text-rose-600 hover:underline flex items-center gap-1 whitespace-nowrap">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 初期マスターデータにリセット
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Add / Edit Box Modal -->
+  <div id="modal-box" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-xl w-full p-6 space-y-5 transform transition-transform duration-200 scale-95" id="modal-container">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="p-2 bg-indigo-100 text-indigo-700 rounded-lg" id="modal-icon-bg">
+            <i data-lucide="edit-3" class="w-5 h-5" id="modal-icon"></i>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900" id="modal-title">箱仕様の編集</h2>
+            <p class="text-xs text-slate-500" id="modal-subtitle">各寸法パラメータを変更します</p>
+          </div>
+        </div>
+        <button id="btn-close-modal" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Form -->
+      <form id="form-box" class="space-y-4">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Box ID -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">型番 (ID) <span class="text-rose-500">*</span></label>
+            <input type="text" id="input-id" required placeholder="例: TP-334, BOX-CUSTOM-01" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-slate-100 disabled:text-slate-500">
+          </div>
+
+          <!-- Box Name -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">箱名称 / シリーズ <span class="text-rose-500">*</span></label>
+            <input type="text" id="input-name" required placeholder="例: TP規格コンテナ TP-334" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Type -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">規格種別 <span class="text-rose-500">*</span></label>
+            <select id="input-type" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+              <option value="TP">TP規格 (相互嵌合可能)</option>
+              <option value="NON_TP">非TP規格 (同箱コラム積み)</option>
+            </select>
+          </div>
+
+          <!-- Module Ratio -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">モジュール比 (TP時)</label>
+            <input type="text" id="input-module" placeholder="例: 1x1, 1.5x1, 2x1" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+
+          <!-- Fitting Depth -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">勘合深さ (mm) <span class="text-rose-500">*</span></label>
+            <input type="number" step="0.1" id="input-fitting" required value="10.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-indigo-600 font-bold">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Width -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">外寸幅 W (mm) <span class="text-rose-500">*</span></label>
+            <input type="number" step="0.1" id="input-width" required placeholder="例: 335.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+
+          <!-- Length -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">外寸奥行 L (mm) <span class="text-rose-500">*</span></label>
+            <input type="number" step="0.1" id="input-length" required placeholder="例: 335.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+
+          <!-- Height -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">外寸高さ H (mm) <span class="text-rose-500">*</span></label>
+            <input type="number" step="0.1" id="input-height" required placeholder="例: 195.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Rib Thickness -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">側面リブ厚み (mm)</label>
+            <input type="number" step="0.1" id="input-rib" value="22.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+
+          <!-- Description -->
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">説明 / 特徴・内寸メモ</label>
+            <input type="text" id="input-desc" placeholder="例: 内寸300x300, 側面厚22.0mm" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" id="btn-cancel-modal" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition">キャンセル</button>
+          <button type="submit" id="modal-submit-btn" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow flex items-center gap-1.5">
+            <i data-lucide="check" class="w-4 h-4"></i> 保存する
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-medium transform transition-all duration-300 opacity-0 translate-y-4 pointer-events-none flex items-center gap-2 z-50">
+    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toast-msg">通知メッセージ</span>
+  </div>
+
+  <script>
+    // Initial Master Data
+    const defaultBoxDB = {
+  "TP-111": {
+    "id": "TP-111",
+    "name": "TP規格コンテナ TP-111",
+    "type": "TP",
+    "width": 168.0,
+    "length": 168.0,
+    "height": 103.0,
+    "fitting_depth": 8.0,
+    "rib_thickness": 22.5,
+    "module_ratio": "0.5x0.5",
+    "description": "TP-110系 1型 極小モジュール (内寸133x133/有効内寸123x123, 側面厚22.5mm)"
+  },
+  "TP-131": {
+    "id": "TP-131",
+    "name": "TP規格コンテナ TP-131",
+    "type": "TP",
+    "width": 335.0,
+    "length": 168.0,
+    "height": 103.0,
+    "fitting_depth": 8.0,
+    "rib_thickness": 22.0,
+    "module_ratio": "1x0.5",
+    "description": "TP-130系 1型 ハーフモジュール (有効内寸291x123, 側面厚22.0mm)"
+  },
+  "TP-132": {
+    "id": "TP-132",
+    "name": "TP規格コンテナ TP-132",
+    "type": "TP",
+    "width": 335.0,
+    "length": 168.0,
+    "height": 195.0,
+    "fitting_depth": 8.0,
+    "rib_thickness": 22.0,
+    "module_ratio": "1x0.5",
+    "description": "TP-130系 2型 ハーフモジュール深型 (有効内寸291x123, 側面厚22.0mm)"
+  },
+  "TP-331": {
+    "id": "TP-331",
+    "name": "TP規格コンテナ TP-331",
+    "type": "TP",
+    "width": 335.0,
+    "length": 335.0,
+    "height": 103.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.0,
+    "module_ratio": "1x1",
+    "description": "TP-330系 1型 基準モジュール浅型 (内寸300x300/有効内寸291x291, 側面厚22.0mm)"
+  },
+  "TP-331.5": {
+    "id": "TP-331.5",
+    "name": "TP規格コンテナ TP-331.5",
+    "type": "TP",
+    "width": 335.0,
+    "length": 335.0,
+    "height": 149.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.0,
+    "module_ratio": "1x1",
+    "description": "TP-330系 1.5型 基準モジュール中浅型 (有効内寸291x291, 側面厚22.0mm)"
+  },
+  "TP-332": {
+    "id": "TP-332",
+    "name": "TP規格コンテナ TP-332",
+    "type": "TP",
+    "width": 335.0,
+    "length": 335.0,
+    "height": 195.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.0,
+    "module_ratio": "1x1",
+    "description": "TP-330系 2型 基準モジュール標準型 (内寸300x300/有効内寸291x291, 側面厚22.0mm)"
+  },
+  "TP-333": {
+    "id": "TP-333",
+    "name": "TP規格コンテナ TP-333",
+    "type": "TP",
+    "width": 335.0,
+    "length": 335.0,
+    "height": 288.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.0,
+    "module_ratio": "1x1",
+    "description": "TP-330系 3型 基準モジュール深型 (有効内寸291x291, 側面厚22.0mm)"
+  },
+  "TP-341": {
+    "id": "TP-341",
+    "name": "TP規格コンテナ TP-341",
+    "type": "TP",
+    "width": 503.0,
+    "length": 335.0,
+    "height": 103.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.5,
+    "module_ratio": "1.5x1",
+    "description": "TP-340系 1型 1.5モジュール浅型 (内寸468x300/有効内寸458x290, 側面厚22.5mm)"
+  },
+  "TP-341.5": {
+    "id": "TP-341.5",
+    "name": "TP規格コンテナ TP-341.5",
+    "type": "TP",
+    "width": 503.0,
+    "length": 335.0,
+    "height": 149.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.5,
+    "module_ratio": "1.5x1",
+    "description": "TP-340系 1.5型 1.5モジュール中浅型 (有効内寸458x290, 側面厚22.5mm)"
+  },
+  "TP-342": {
+    "id": "TP-342",
+    "name": "TP規格コンテナ TP-342",
+    "type": "TP",
+    "width": 503.0,
+    "length": 335.0,
+    "height": 195.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.5,
+    "module_ratio": "1.5x1",
+    "description": "TP-340系 2型 1.5モジュール標準型 (内寸468x300/有効内寸458x290, 側面厚22.5mm)"
+  },
+  "TP-343": {
+    "id": "TP-343",
+    "name": "TP規格コンテナ TP-343",
+    "type": "TP",
+    "width": 503.0,
+    "length": 335.0,
+    "height": 288.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.5,
+    "module_ratio": "1.5x1",
+    "description": "TP-340系 3型 1.5モジュール深型 (有効内寸458x290, 側面厚22.5mm)"
+  },
+  "TP-361": {
+    "id": "TP-361",
+    "name": "TP規格コンテナ TP-361",
+    "type": "TP",
+    "width": 670.0,
+    "length": 335.0,
+    "height": 103.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.5,
+    "module_ratio": "2x1",
+    "description": "TP-360系 1型 2倍モジュール浅型 (内寸635x300/有効内寸625x290, 側面厚22.5mm)"
+  },
+  "TP-362": {
+    "id": "TP-362",
+    "name": "TP規格コンテナ TP-362",
+    "type": "TP",
+    "width": 670.0,
+    "length": 335.0,
+    "height": 195.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.5,
+    "module_ratio": "2x1",
+    "description": "TP-360系 2型 2倍モジュール標準型 (内寸635x300/有効内寸625x290, 側面厚22.5mm)"
+  },
+  "TP-363": {
+    "id": "TP-363",
+    "name": "TP規格コンテナ TP-363",
+    "type": "TP",
+    "width": 670.0,
+    "length": 335.0,
+    "height": 288.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.5,
+    "module_ratio": "2x1",
+    "description": "TP-360系 3型 2倍モジュール深型 (有効内寸625x290, 側面厚22.5mm)"
+  },
+  "TP-461": {
+    "id": "TP-461",
+    "name": "TP規格コンテナ TP-461",
+    "type": "TP",
+    "width": 670.0,
+    "length": 503.0,
+    "height": 103.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.0,
+    "module_ratio": "2x1.5",
+    "description": "TP-460系 1型 大型モジュール浅型 (内寸635x468/有効内寸626x458, 側面厚22.0mm)"
+  },
+  "TP-462": {
+    "id": "TP-462",
+    "name": "TP規格コンテナ TP-462",
+    "type": "TP",
+    "width": 670.0,
+    "length": 503.0,
+    "height": 195.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.0,
+    "module_ratio": "2x1.5",
+    "description": "TP-460系 2型 大型モジュール標準型 (内寸635x468/有効内寸626x458, 側面厚22.0mm)"
+  },
+  "TP-463": {
+    "id": "TP-463",
+    "name": "TP規格コンテナ TP-463",
+    "type": "TP",
+    "width": 670.0,
+    "length": 503.0,
+    "height": 288.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.0,
+    "module_ratio": "2x1.5",
+    "description": "TP-460系 3型 大型モジュール深型 (有効内寸626x458, 側面厚22.0mm)"
+  },
+  "TP-482": {
+    "id": "TP-482",
+    "name": "TP規格コンテナ TP-482",
+    "type": "TP",
+    "width": 838.0,
+    "length": 503.0,
+    "height": 195.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.0,
+    "module_ratio": "2.5x1.5",
+    "description": "TP-480系 特大モジュール (内寸803x468/有効内寸794x459, 側面厚22.0mm)"
+  },
+  "TP-492": {
+    "id": "TP-492",
+    "name": "TP規格コンテナ TP-492",
+    "type": "TP",
+    "width": 1005.0,
+    "length": 503.0,
+    "height": 195.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 22.0,
+    "module_ratio": "3x1.5",
+    "description": "TP-490系 超特大モジュール (内寸970x468/有効内寸961x459, 側面厚22.0mm)"
+  },
+  "OC-50L": {
+    "id": "OC-50L",
+    "name": "折りたたみコンテナ 50L (CB-S51NR/オリコン50B)",
+    "type": "NON_TP",
+    "width": 530.0,
+    "length": 366.0,
+    "height": 325.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 18.5,
+    "module_ratio": null,
+    "description": "標準折りたたみコンテナ 50L (内寸493x335/有効内寸493x335, 側面厚18.5mm)"
+  },
+  "OC-40L": {
+    "id": "OC-40L",
+    "name": "折りたたみコンテナ 40L",
+    "type": "NON_TP",
+    "width": 530.0,
+    "length": 366.0,
+    "height": 272.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 18.5,
+    "module_ratio": null,
+    "description": "標準折りたたみコンテナ 40L 中型 (側面厚18.5mm)"
+  },
+  "OC-75L": {
+    "id": "OC-75L",
+    "name": "折りたたみコンテナ 75L",
+    "type": "NON_TP",
+    "width": 650.0,
+    "length": 440.0,
+    "height": 327.0,
+    "fitting_depth": 12.0,
+    "rib_thickness": 20.0,
+    "module_ratio": null,
+    "description": "大型折りたたみコンテナ 75L (内寸600x405, 側面厚20.0mm)"
+  },
+  "OC-20L": {
+    "id": "OC-20L",
+    "name": "折りたたみコンテナ 20L",
+    "type": "NON_TP",
+    "width": 380.0,
+    "length": 305.0,
+    "height": 237.0,
+    "fitting_depth": 8.0,
+    "rib_thickness": 16.5,
+    "module_ratio": null,
+    "description": "小型折りたたみコンテナ 20L (内寸346x274, 側面厚16.5mm)"
+  },
+  "BOX-STD-24B": {
+    "id": "BOX-STD-24B",
+    "name": "サンボックス 24B",
+    "type": "NON_TP",
+    "width": 438.0,
+    "length": 328.0,
+    "height": 260.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 18.0,
+    "module_ratio": null,
+    "description": "一般汎用ベタ目コンテナ 24B型 (内寸402x292, 側面厚18.0mm)"
+  },
+  "BOX-STD-36-2": {
+    "id": "BOX-STD-36-2",
+    "name": "サンボックス 36-2",
+    "type": "NON_TP",
+    "width": 593.0,
+    "length": 393.0,
+    "height": 206.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 25.0,
+    "module_ratio": null,
+    "description": "一般汎用ベタ目コンテナ 36-2型 (内寸543x343, 側面厚25.0mm)"
+  },
+  "BOX-BANJU-A": {
+    "id": "BOX-BANJU-A",
+    "name": "サンコー 番重A型",
+    "type": "NON_TP",
+    "width": 574.0,
+    "length": 388.0,
+    "height": 105.0,
+    "fitting_depth": 8.0,
+    "rib_thickness": 20.0,
+    "module_ratio": null,
+    "description": "食品・部品搬送用 標準番重 A型浅型 (内寸534x348, 側面厚20.0mm)"
+  },
+  "BOX-CUSTOM-S": {
+    "id": "BOX-CUSTOM-S",
+    "name": "独自通い箱 Sサイズ",
+    "type": "NON_TP",
+    "width": 400.0,
+    "length": 300.0,
+    "height": 200.0,
+    "fitting_depth": 8.0,
+    "rib_thickness": 20.0,
+    "module_ratio": null,
+    "description": "独自フットプリント通い箱 S型 (内寸360x260想定, 側面厚20.0mm)"
+  },
+  "BOX-CUSTOM-M": {
+    "id": "BOX-CUSTOM-M",
+    "name": "独自通い箱 Mサイズ",
+    "type": "NON_TP",
+    "width": 500.0,
+    "length": 400.0,
+    "height": 250.0,
+    "fitting_depth": 10.0,
+    "rib_thickness": 20.0,
+    "module_ratio": null,
+    "description": "独自フットプリント通い箱 M型 (内寸460x360想定, 側面厚20.0mm)"
+  },
+  "BOX-CUSTOM-L": {
+    "id": "BOX-CUSTOM-L",
+    "name": "独自通い箱 Lサイズ",
+    "type": "NON_TP",
+    "width": 600.0,
+    "length": 400.0,
+    "height": 300.0,
+    "fitting_depth": 12.0,
+    "rib_thickness": 25.0,
+    "module_ratio": null,
+    "description": "独自フットプリント通い箱 L型 (内寸550x350想定, 側面厚25.0mm)"
+  }
+};
+
+    // Current Working DB
+    let currentBoxDB = JSON.parse(JSON.stringify(defaultBoxDB));
+
+    // State: box approval status mapping (id -> boolean)
+    const STORAGE_KEY_APPROVAL = 'palletize_box_approval_v3';
+    const STORAGE_KEY_CUSTOM_DB = 'palletize_box_db_v3';
+    let approvalState = {};
+    let editTargetId = null; // null: 新規追加モード, string: 編集モード
+
+    // Load data from LocalStorage
+    function loadState() {
+      const savedDB = localStorage.getItem(STORAGE_KEY_CUSTOM_DB);
+      if (savedDB) {
+        try {
+          currentBoxDB = JSON.parse(savedDB);
+        } catch (e) {
+          console.error("Failed to parse custom DB", e);
+        }
+      }
+
+      const savedApproval = localStorage.getItem(STORAGE_KEY_APPROVAL);
+      if (savedApproval) {
+        try {
+          approvalState = JSON.parse(savedApproval);
+        } catch (e) {
+          console.error("Failed to parse approval state", e);
+        }
+      }
+
+      // Default approved for all boxes
+      Object.keys(currentBoxDB).forEach(id => {
+        if (approvalState[id] === undefined) {
+          approvalState[id] = true;
+        }
+      });
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY_CUSTOM_DB, JSON.stringify(currentBoxDB));
+      localStorage.setItem(STORAGE_KEY_APPROVAL, JSON.stringify(approvalState));
+      updateStats();
+    }
+
+    // Filter & Search State
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    // Render Table
+    function renderTable() {
+      const tbody = document.getElementById('box-table-body');
+      tbody.innerHTML = '';
+
+      const boxes = Object.values(currentBoxDB);
+      let matchCount = 0;
+
+      boxes.forEach(box => {
+        const isApproved = approvalState[box.id] !== false;
+
+        // Filter condition
+        if (currentFilter === 'TP' && box.type !== 'TP') return;
+        if (currentFilter === 'NON_TP' && box.type !== 'NON_TP') return;
+        if (currentFilter === 'approved' && !isApproved) return;
+        if (currentFilter === 'rejected' && isApproved) return;
+
+        // Search condition
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const target = `${box.id} ${box.name} ${box.description || ''} ${box.module_ratio || ''}`.toLowerCase();
+          if (!target.includes(q)) return;
+        }
+
+        matchCount++;
+
+        const tr = document.createElement('tr');
+        tr.className = `hover:bg-slate-50 transition border-b border-slate-100 ${isApproved ? '' : 'bg-slate-50/60 opacity-60'}`;
+
+        const isTp = box.type === 'TP';
+
+        tr.innerHTML = `
+          <td class="py-3 px-4 text-center">
+            <input type="checkbox" data-id="${box.id}" class="box-checkbox w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer" ${isApproved ? 'checked' : ''}>
+          </td>
+          <td class="py-3 px-4">
+            <button type="button" data-id="${box.id}" class="toggle-status-btn inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold cursor-pointer transition ${isApproved ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-rose-100 text-rose-800 hover:bg-rose-200'}">
+              <i data-lucide="${isApproved ? 'check' : 'x'}" class="w-3 h-3"></i>
+              <span>${isApproved ? '採用' : '不採用'}</span>
+            </button>
+          </td>
+          <td class="py-3 px-4 font-mono font-bold text-slate-900">${box.id}</td>
+          <td class="py-3 px-4 font-medium text-slate-800">${box.name}</td>
+          <td class="py-3 px-3">
+            <span class="inline-block px-2 py-0.5 rounded text-[11px] font-bold ${isTp ? 'badge-tp' : 'badge-nontp'}">
+              ${isTp ? 'TP規格' : '非TP'}
+            </span>
+          </td>
+          <td class="py-3 px-3 text-right font-mono font-semibold">${box.width}</td>
+          <td class="py-3 px-3 text-right font-mono font-semibold">${box.length}</td>
+          <td class="py-3 px-3 text-right font-mono font-semibold">${box.height}</td>
+          <td class="py-3 px-3 text-right font-mono text-indigo-600 font-bold">${box.fitting_depth}</td>
+          <td class="py-3 px-3 text-right font-mono text-slate-600 font-bold">${box.rib_thickness}</td>
+          <td class="py-3 px-3 text-center font-mono text-slate-600">
+            ${box.module_ratio ? `<span class="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">${box.module_ratio}</span>` : '<span class="text-slate-300">-</span>'}
+          </td>
+          <td class="py-3 px-4 text-slate-500 max-w-xs truncate" title="${box.description || ''}">${box.description || '-'}</td>
+          <td class="py-3 px-3 text-center">
+            <div class="inline-flex items-center gap-1">
+              <button type="button" data-id="${box.id}" class="edit-box-btn p-1 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded transition" title="この箱の寸法・仕様を変更">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              </button>
+              <button type="button" data-id="${box.id}" class="delete-box-btn p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition" title="この箱を削除">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('no-results').classList.toggle('hidden', matchCount > 0);
+      lucide.createIcons();
+      attachRowEvents();
+    }
+
+    // Attach row events
+    function attachRowEvents() {
+      document.querySelectorAll('.box-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const id = e.target.getAttribute('data-id');
+          approvalState[id] = e.target.checked;
+          saveState();
+          renderTable();
+        });
+      });
+
+      document.querySelectorAll('.toggle-status-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = btn.getAttribute('data-id');
+          approvalState[id] = !approvalState[id];
+          saveState();
+          renderTable();
+        });
+      });
+
+      document.querySelectorAll('.edit-box-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = btn.getAttribute('data-id');
+          openModal(id);
+        });
+      });
+
+      document.querySelectorAll('.delete-box-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = btn.getAttribute('data-id');
+          if (confirm(`型番 "${id}" をデータベースから削除しますか？`)) {
+            delete currentBoxDB[id];
+            delete approvalState[id];
+            saveState();
+            renderTable();
+            showToast(`型番 "${id}" を削除しました`);
+          }
+        });
+      });
+    }
+
+    // Update Statistics
+    function updateStats() {
+      const allIds = Object.keys(currentBoxDB);
+      const total = allIds.length;
+      let approvedCount = 0;
+      let approvedTp = 0;
+      let approvedNonTp = 0;
+
+      allIds.forEach(id => {
+        if (approvalState[id]) {
+          approvedCount++;
+          if (currentBoxDB[id].type === 'TP') approvedTp++;
+          else approvedNonTp++;
+        }
+      });
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-approved').textContent = approvedCount;
+      document.getElementById('stat-approved-total-sub').textContent = `/ ${total} 箱`;
+      document.getElementById('stat-approved-tp').textContent = approvedTp;
+      document.getElementById('stat-approved-nontp').textContent = approvedNonTp;
+    }
+
+    // Build Approved JSON
+    function getApprovedJSON(pretty = true) {
+      const approvedDB = {};
+      Object.keys(currentBoxDB).forEach(id => {
+        if (approvalState[id]) {
+          approvedDB[id] = currentBoxDB[id];
+        }
+      });
+      return pretty ? JSON.stringify(approvedDB, null, 2) : JSON.stringify(approvedDB);
+    }
+
+    // Toast Utility
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4');
+      }, 2500);
+    }
+
+    // Modal Control (for Add & Edit)
+    const modal = document.getElementById('modal-box');
+    const modalContainer = document.getElementById('modal-container');
+
+    function openModal(boxId = null) {
+      editTargetId = boxId;
+      const modalTitle = document.getElementById('modal-title');
+      const modalSub = document.getElementById('modal-subtitle');
+      const modalBtn = document.getElementById('modal-submit-btn');
+      const modalIconBg = document.getElementById('modal-icon-bg');
+      const inputId = document.getElementById('input-id');
+
+      if (boxId && currentBoxDB[boxId]) {
+        const box = currentBoxDB[boxId];
+        modalTitle.textContent = `箱仕様の編集 (${box.id})`;
+        modalSub.textContent = `寸法、勘合深さ、リブ厚み等のパラメータを変更します`;
+        modalBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> 更新して保存`;
+        modalBtn.className = "px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow flex items-center gap-1.5";
+        modalIconBg.className = "p-2 bg-indigo-100 text-indigo-700 rounded-lg";
+        
+        inputId.value = box.id;
+        inputId.disabled = true; // IDはキーのため固定
+        document.getElementById('input-name').value = box.name || '';
+        document.getElementById('input-type').value = box.type || 'TP';
+        document.getElementById('input-module').value = box.module_ratio || '';
+        document.getElementById('input-fitting').value = box.fitting_depth;
+        document.getElementById('input-width').value = box.width;
+        document.getElementById('input-length').value = box.length;
+        document.getElementById('input-height').value = box.height;
+        document.getElementById('input-rib').value = box.rib_thickness;
+        document.getElementById('input-desc').value = box.description || '';
+      } else {
+        modalTitle.textContent = `新しい箱の仕様を登録`;
+        modalSub.textContent = `パレタイズ対象として箱データベースに追加します`;
+        modalBtn.innerHTML = `<i data-lucide="plus" class="w-4 h-4"></i> 登録して採用`;
+        modalBtn.className = "px-5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition shadow flex items-center gap-1.5";
+        modalIconBg.className = "p-2 bg-emerald-100 text-emerald-700 rounded-lg";
+        
+        document.getElementById('form-box').reset();
+        inputId.disabled = false;
+        document.getElementById('input-fitting').value = "10.0";
+        document.getElementById('input-rib').value = "22.0";
+      }
+
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modalContainer.classList.remove('scale-95');
+        modalContainer.classList.add('scale-100');
+        if (!boxId) inputId.focus();
+        else document.getElementById('input-name').focus();
+        lucide.createIcons();
+      }, 10);
+    }
+
+    function closeModal() {
+      modal.classList.add('opacity-0');
+      modalContainer.classList.remove('scale-100');
+      modalContainer.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        document.getElementById('form-box').reset();
+        editTargetId = null;
+      }, 200);
+    }
+
+    document.getElementById('btn-open-modal').addEventListener('click', () => openModal(null));
+    document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+    document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Form Submit: Add or Edit Box
+    document.getElementById('form-box').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const id = document.getElementById('input-id').value.trim();
+      const name = document.getElementById('input-name').value.trim();
+      const type = document.getElementById('input-type').value;
+      const width = parseFloat(document.getElementById('input-width').value);
+      const length = parseFloat(document.getElementById('input-length').value);
+      const height = parseFloat(document.getElementById('input-height').value);
+      const fittingDepth = parseFloat(document.getElementById('input-fitting').value);
+      const ribThickness = parseFloat(document.getElementById('input-rib').value) || 22.0;
+      const moduleRatio = document.getElementById('input-module').value.trim() || null;
+      const description = document.getElementById('input-desc').value.trim() || "";
+
+      if (!id || !name || isNaN(width) || isNaN(length) || isNaN(height) || isNaN(fittingDepth)) {
+        alert("必須項目を正しく入力してください。");
+        return;
+      }
+
+      const boxObj = {
+        id: id,
+        name: name,
+        type: type,
+        width: width,
+        length: length,
+        height: height,
+        fitting_depth: fittingDepth,
+        rib_thickness: ribThickness,
+        module_ratio: type === 'TP' ? moduleRatio : null,
+        description: description
+      };
+
+      if (editTargetId) {
+        // Update existing box
+        currentBoxDB[editTargetId] = boxObj;
+        saveState();
+        renderTable();
+        closeModal();
+        showToast(`型番 "${editTargetId}" の仕様を変更しました`);
+      } else {
+        // Add new box
+        if (currentBoxDB[id]) {
+          if (!confirm(`型番 "${id}" は既に存在します。上書きしますか？`)) {
+            return;
+          }
+        }
+        currentBoxDB[id] = boxObj;
+        approvalState[id] = true; // Automatically approved
+        saveState();
+        renderTable();
+        closeModal();
+        showToast(`新しい箱 "${id}" を登録し、採用に設定しました`);
+      }
+    });
+
+    // Reset Master Data
+    document.getElementById('btn-reset-db').addEventListener('click', () => {
+      if (confirm("全ての箱データを初期マスター値に戻しますか？（追加・編集した内容はリセットされます）")) {
+        currentBoxDB = JSON.parse(JSON.stringify(defaultBoxDB));
+        approvalState = {};
+        Object.keys(currentBoxDB).forEach(id => approvalState[id] = true);
+        saveState();
+        renderTable();
+        showToast("初期マスターデータにリセットしました");
+      }
+    });
+
+    // Header Button Event Handlers
+    document.getElementById('btn-select-all').addEventListener('click', () => {
+      Object.keys(currentBoxDB).forEach(id => approvalState[id] = true);
+      saveState();
+      renderTable();
+      showToast("全ての箱を採用に設定しました");
+    });
+
+    document.getElementById('btn-deselect-all').addEventListener('click', () => {
+      Object.keys(currentBoxDB).forEach(id => approvalState[id] = false);
+      saveState();
+      renderTable();
+      showToast("全ての箱の選択を解除しました");
+    });
+
+    document.getElementById('btn-select-tp-only').addEventListener('click', () => {
+      Object.keys(currentBoxDB).forEach(id => {
+        approvalState[id] = (currentBoxDB[id].type === 'TP');
+      });
+      saveState();
+      renderTable();
+      showToast("TP規格箱のみを採用に設定しました");
+    });
+
+    document.getElementById('btn-copy-json').addEventListener('click', () => {
+      const jsonStr = getApprovedJSON();
+      navigator.clipboard.writeText(jsonStr).then(() => {
+        showToast("承認済みJSONをクリップボードにコピーしました");
+      }).catch(err => {
+        alert("クリップボードへのコピーに失敗しました: " + err);
+      });
+    });
+
+    document.getElementById('btn-download-json').addEventListener('click', () => {
+      const jsonStr = getApprovedJSON();
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'box_db.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("承認済み box_db.json をダウンロードしました");
+    });
+
+    // Direct Save to box_db.json (via local API) with fallback to Download
+    document.getElementById('btn-direct-save').addEventListener('click', async () => {
+      const approvedDB = {};
+      Object.keys(currentBoxDB).forEach(id => {
+        if (approvalState[id]) {
+          approvedDB[id] = currentBoxDB[id];
+        }
+      });
+
+      try {
+        const res = await fetch('/api/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(approvedDB, null, 2)
+        });
+        if (res.ok) {
+          const data = await res.json();
+          showToast(`box_db.json に直接保存しました (${Object.keys(approvedDB).length} 箱)`);
+          return;
+        }
+      } catch (err) {
+        console.warn("Local API not reachable, falling back to download", err);
+      }
+
+      // Fallback: download file
+      const jsonStr = JSON.stringify(approvedDB, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'box_db.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`box_db.json をダウンロードしました (${Object.keys(approvedDB).length} 箱)`);
+    });
+
+    // Search Input
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderTable();
+    });
+
+    // Filter Tabs
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-tab').forEach(t => {
+          t.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+          t.classList.add('text-slate-600');
+        });
+        tab.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+        tab.classList.remove('text-slate-600');
+        currentFilter = tab.getAttribute('data-filter');
+        renderTable();
+      });
+    });
+
+    // Initialize & Fetch from API if available
+    async function init() {
+      loadState();
+      updateStats();
+      renderTable();
+
+      try {
+        const res = await fetch('/api/boxes');
+        if (res.ok) {
+          const remoteDB = await res.json();
+          currentBoxDB = remoteDB;
+          loadState();
+          updateStats();
+          renderTable();
+        }
+      } catch (e) {
+        // standalone mode without backend server
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

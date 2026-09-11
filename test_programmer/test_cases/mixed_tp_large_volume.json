@@ -1,0 +1,66 @@
+{
+  "name": "mixed_tp_large_volume",
+  "description": "全承認箱種（各10箱）を大量投入し、最大積載高1200mmまで充填する混載テスト",
+  "pallet": {
+    "width": 1200.0,
+    "length": 1000.0,
+    "max_height": 1200.0,
+    "max_x_span": 1360.0,
+    "min_y_span": 800.0,
+    "max_y_span": 1100.0
+  },
+  "box_list": [
+    {
+      "box_id": "TP-131",
+      "count": 10
+    },
+    {
+      "box_id": "TP-331",
+      "count": 10
+    },
+    {
+      "box_id": "TP-331.5",
+      "count": 10
+    },
+    {
+      "box_id": "TP-332",
+      "count": 10
+    },
+    {
+      "box_id": "TP-333",
+      "count": 10
+    },
+    {
+      "box_id": "TP-341",
+      "count": 10
+    },
+    {
+      "box_id": "TP-341.5",
+      "count": 10
+    },
+    {
+      "box_id": "TP-342",
+      "count": 10
+    },
+    {
+      "box_id": "TP-343",
+      "count": 10
+    },
+    {
+      "box_id": "TP-362",
+      "count": 10
+    },
+    {
+      "box_id": "TP-363",
+      "count": 10
+    },
+    {
+      "box_id": "TP-462",
+      "count": 10
+    },
+    {
+      "box_id": "TP-463",
+      "count": 10
+    }
+  ]
+}
