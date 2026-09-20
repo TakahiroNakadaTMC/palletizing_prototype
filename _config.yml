@@ -7,7 +7,7 @@ baseurl: "/palletizing_prototype"
 
 # Jekyll settings
 markdown: kramdown
-theme: jekyll-theme-minimal
+theme: jekyll-theme-cayman
 
 # Build settings
 plugins:
