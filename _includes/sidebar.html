@@ -1,0 +1,44 @@
+<nav class="sidebar-nav">
+    <div class="sidebar-header">
+        <a href="{{ '/' | relative_url }}" class="sidebar-title">
+            <strong>{{ site.title }}</strong>
+        </a>
+    </div>
+
+    <ul class="nav-list">
+        <li class="nav-item">
+            <a href="{{ '/' | relative_url }}" class="nav-link {% if page.url == '/' %}active{% endif %}">
+                🏠 ホーム
+            </a>
+        </li>
+        <li class="nav-section-title">ドキュメント</li>
+        <li class="nav-item">
+            <a href="{{ '/wiki/setup-installation.html' | relative_url }}" class="nav-link {% if page.url contains 'setup-installation' %}active{% endif %}">
+                ⚙️ セットアップ&インストール
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ '/wiki/user-guide.html' | relative_url }}" class="nav-link {% if page.url contains 'user-guide' %}active{% endif %}">
+                📖 使用ガイド
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ '/wiki/algorithm-explanation.html' | relative_url }}" class="nav-link {% if page.url contains 'algorithm-explanation' %}active{% endif %}">
+                🧮 アルゴリズム説明
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ '/wiki/documentation.html' | relative_url }}" class="nav-link {% if page.url contains 'documentation' %}active{% endif %}">
+                📚 ドキュメント
+            </a>
+        </li>
+    </ul>
+
+    <div class="sidebar-footer">
+        <p class="sidebar-text">
+            <a href="https://github.com/TakahiroNakadaTMC/palletizing_prototype" target="_blank">
+                View on GitHub
+            </a>
+        </p>
+    </div>
+</nav>

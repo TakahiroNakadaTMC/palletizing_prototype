@@ -1,0 +1,27 @@
+# Site configuration
+site_name: Palletizing Prototype
+title: Palletizing Prototype Wiki
+description: "AI マルチエージェントを活用した箱パレタイズアルゴリズム開発"
+url: "https://TakahiroNakadaTMC.github.io/palletizing_prototype"
+baseurl: "/palletizing_prototype"
+
+# Jekyll settings
+markdown: kramdown
+theme: jekyll-theme-minimal
+
+# Build settings
+plugins:
+  - jekyll-seo-tag
+
+exclude:
+  - GEMINI.md
+  - constraints
+  - box_research
+  - algorithm_research
+  - algorithm_programmer
+  - test_programmer
+  - tester
+  - visualizer
+  - supervisor
+  - .agent
+  - .git
