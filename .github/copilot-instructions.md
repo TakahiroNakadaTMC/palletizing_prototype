@@ -2,7 +2,7 @@
 
 このドキュメントは、パレタイズアルゴリズム試作プロジェクト全体に対して GitHub Copilot が常時適用すべき開発規約、制約、ループエンジニアリング手順、およびコーディング規約を定義する。
 
-詳細な仕様・制約については [`GEMINI.md`](../GEMINI.md) を参照。
+詳細な仕様・制約については [`README.md`](../README.md) を参照。
 
 ---
 
@@ -110,7 +110,7 @@ tester/results/result_*.json
 
 #### **validate.py** (制約バリデータ)
 
-9つの厳格なチェック項目 (詳細は [section 5 of GEMINI.md](../GEMINI.md)):
+9つの厳格なチェック項目 (詳細は [section 5 of README.md](../README.md)):
 1. 積載全高 ≤ 1200mm
 2. 長辺荷姿 < 1360mm
 3. 短辺荷姿 800～1100mm
@@ -241,7 +241,7 @@ tester/results/result_*.json
 
 ## Repository References
 
-- **[GEMINI.md](../GEMINI.md)** — 詳細な仕様・ルール・エージェント役割定義
+- **[README.md](../README.md)** — GitHub Copilot 版プロジェクト構成・ルール・エージェント役割定義
 - **[constraints/constraints.md](../constraints/constraints.md)** — 荷姿制約仕様書
 - **[.agent/README.md](../.agent/README.md)** — エージェント設定ファイル
 - **[.github/prompts/](../github/prompts/)** — 各ロール別プロンプト群

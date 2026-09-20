@@ -148,7 +148,7 @@ box_research/
 ## 6. 参考資料
 
 - `.github/copilot-instructions.md` の **2. パレット・積載領域仕様** および **3. 共通データ仕様**
-- **GEMINI.md** の全内容
+- **README.md** の全内容
 
 ---
 
