@@ -1,6 +1,7 @@
 ---
 layout: page
 title: セットアップ&インストール
+permalink: /wiki/setup-installation/
 ---
 
 # セットアップ&インストール

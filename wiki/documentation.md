@@ -1,6 +1,7 @@
 ---
 layout: page
 title: ドキュメント
+permalink: /wiki/documentation/
 ---
 
 # ドキュメント
@@ -11,7 +12,7 @@ title: ドキュメント
 
 ### 1. **AI開発手法ガイド** ⭐ 最初にお読みください
 
-[GitHub Copilot実践ガイド：AI開発手法の体系化](/palletizing_prototype/wiki/documentation/ai-develop-guide.html)
+[GitHub Copilot実践ガイド：AI開発手法の体系化](/palletizing_prototype/wiki/documentation/ai-develop-guide/)
 
 プロンプト・ハーネス・ループ・グラフエンジニアリングの4段階進化モデル、GitHub Copilotの実践的な使用方法、およびパレタイズプロジェクトへの適用指針をまとめた包括的なガイドです。
 
@@ -31,13 +32,13 @@ title: ドキュメント
 ## 🔗 関連ページ
 
 **セットアップとインストール**
-- [セットアップ&インストール](/palletizing_prototype/wiki/setup-installation.html)
+- [セットアップ&インストール](/palletizing_prototype/wiki/setup-installation/)
 
 **使用方法**
-- [使用ガイド](/palletizing_prototype/wiki/user-guide.html)
+- [使用ガイド](/palletizing_prototype/wiki/user-guide/)
 
 **技術仕様**
-- [アルゴリズム説明](/palletizing_prototype/wiki/algorithm-explanation.html)
+- [アルゴリズム説明](/palletizing_prototype/wiki/algorithm-explanation/)
 
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: page
 title: 使用ガイド
+permalink: /wiki/user-guide/
 ---
 
 # 使用ガイド

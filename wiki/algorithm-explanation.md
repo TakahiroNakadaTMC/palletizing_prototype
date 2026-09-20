@@ -1,6 +1,7 @@
 ---
 layout: page
 title: アルゴリズム説明
+permalink: /wiki/algorithm-explanation/
 ---
 
 # アルゴリズム説明

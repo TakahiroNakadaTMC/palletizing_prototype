@@ -1,3 +1,9 @@
+---
+layout: page
+title: AI開発手法ガイド
+permalink: /wiki/documentation/ai-develop-guide/
+---
+
 # **AI開発手法の体系化とGitHub Copilot実践ガイド**
 
 ### ---
