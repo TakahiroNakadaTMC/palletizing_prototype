@@ -40,7 +40,7 @@ def run_all_tests():
             out_path
         ]
 
-        res = subprocess.run(cmd, capture_output=True, text=True)
+        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
         if res.returncode != 0:
             print(f"❌ エラー ({tc_name}): {res.stderr}")
             continue
