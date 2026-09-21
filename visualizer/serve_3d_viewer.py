@@ -14,6 +14,9 @@ import socketserver
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import urllib.parse
 
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stderr.reconfigure(encoding="utf-8")
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 RESULTS_DIR = os.path.join(PROJECT_ROOT, "tester", "results")

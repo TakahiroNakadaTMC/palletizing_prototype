@@ -7,6 +7,10 @@ box_research/box_db.json に登録・承認された箱データに基づき、
 
 import json
 import os
+import sys
+
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stderr.reconfigure(encoding="utf-8")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
