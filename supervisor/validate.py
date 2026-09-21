@@ -11,6 +11,9 @@ import glob
 import json
 from typing import List, Dict, Tuple, Any
 
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stderr.reconfigure(encoding="utf-8")
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 BOX_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "box_db.json")
