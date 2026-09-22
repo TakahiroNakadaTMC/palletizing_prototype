@@ -259,4 +259,4 @@ tester/results/result_*.json
 - ✅ Key algorithms（単載/混載エンジン、制約検証）の説明を簡潔にまとめた
 - ✅ Data schema, naming conventions, Python style を実装ベースで具体化
 - ✅ Critical constraints（絶対制約）と boundary rules を可視化
-- ✅ GEMINI.md への参照を明確化
+- ✅ README.md への参照を明確化
