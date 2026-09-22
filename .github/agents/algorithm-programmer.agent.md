@@ -1,6 +1,8 @@
 ---
 name: algorithm-programmer
 description: パレタイズアルゴリズムの実装・改善と制約充足の検証
+tools: [read, edit, search, execute]
+model: gpt-5.3-codex
 ---
 
 # Copilot Prompt: Algorithm Programmer（パレタイズアルゴリズム実装担当）

@@ -1,6 +1,8 @@
 ---
 name: tester
 description: テストケース実行・シミュレーション・結果収集・エラー報告
+tools: [read, edit, search, execute]
+model: gemini-3.5-flash
 ---
 
 # Copilot Prompt: Tester（テスト実行担当）

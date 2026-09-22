@@ -1,6 +1,8 @@
 ---
 name: orchestrator
 description: ループエンジニアリング全体の進行管理・次工程判定・自律サイクルの統括
+tools: [read, edit, search, execute, agent, todo]
+model: claude-sonnet-5
 ---
 
 # Copilot Prompt: Orchestrator（統括管理者）

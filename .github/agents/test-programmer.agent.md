@@ -1,6 +1,8 @@
 ---
 name: test-programmer
 description: テストケース設計・テストデータ生成・投入パターン作成
+tools: [read, edit, search, execute]
+model: gpt-5.4-mini
 ---
 
 # Copilot Prompt: Test Programmer（テストデータ生成担当）

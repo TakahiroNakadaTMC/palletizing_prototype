@@ -1,6 +1,8 @@
 ---
 name: supervisor
 description: パレタイズ結果の制約違反検証・品質監視・改善指示
+tools: [read, edit, search, execute]
+model: claude-sonnet-5
 ---
 
 # Copilot Prompt: Supervisor（制約検証・品質監視担当）

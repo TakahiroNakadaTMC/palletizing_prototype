@@ -1,6 +1,8 @@
 ---
 name: visualizer
 description: パレタイズ結果の3D/2D可視化・ビューアツール開発
+tools: [read, edit, search, execute]
+model: gpt-5.3-codex
 ---
 
 # Copilot Prompt: Visualizer（可視化ツール開発担当）

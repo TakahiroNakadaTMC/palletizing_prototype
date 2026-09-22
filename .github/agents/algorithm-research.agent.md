@@ -1,6 +1,8 @@
 ---
 name: algorithm-research
 description: パレタイズアルゴリズム候補調査・比較・最適方式の提案
+tools: [read, edit, search, web, execute]
+model: claude-opus-5
 ---
 
 # Copilot Prompt: Algorithm Research（アルゴリズム調査・提案担当）

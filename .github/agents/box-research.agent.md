@@ -1,6 +1,8 @@
 ---
 name: box-research
 description: パレタイズ対象箱の仕様調査・データベース構築
+tools: [read, edit, search, web, execute]
+model: gpt-5.4-mini
 ---
 
 # Copilot Prompt: Box Research（箱仕様調査担当）
