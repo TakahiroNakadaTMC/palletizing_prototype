@@ -8,34 +8,46 @@
 
 ## 1. GitHub Copilot エージェント構成と役割
 
-GitHub Copilot Chat に以下のロールを割り当てて、ループエンジニアリングを実行します。各ロール用プロンプトは `.github/prompts/` ディレクトリに格納されています。
+以下の8ロールでループエンジニアリングを実行します。各ロールのサブエージェント定義は `.github/agents/` ディレクトリに `*.agent.md` として格納されており、GitHub Copilot CLI から `/agent <name>` または `@<name>` で直接呼び出せます。
 
-- **`orchestrator`** (`.github/prompts/orchestrator.prompt.md`)
+- **`orchestrator`** (`.github/agents/orchestrator.agent.md`)
   - 全体進行管理。ユーザーからの要望に応じて計画を立案し、作業指示を行い、プロジェクト全体の進行と整合性を管理する。
 
-- **`box-research`** (`.github/prompts/box-research.prompt.md`)
+- **`box-research`** (`.github/agents/box-research.agent.md`)
   - パレタイズ対象となる箱（通い箱・オリコン等）の寸法・嵌合深さ・リブ仕様などを調査し、データベース化する。
 
-- **`algorithm-research`** (`.github/prompts/algorithm-research.prompt.md`)
+- **`algorithm-research`** (`.github/agents/algorithm-research.agent.md`)
   - 嵌合やリブ構造を考慮した箱パレタイズアルゴリズムに関して情報を検索・調査し、本プロジェクトに適した方式を提案する。
 
-- **`test-programmer`** (`.github/prompts/test-programmer.prompt.md`)
+- **`test-programmer`** (`.github/agents/test-programmer.agent.md`)
   - `box-research` がデータベース化した箱情報をもとに、テスト・評価用の箱リスト（単載・混載等の投入パターン）を作成する。
 
-- **`algorithm-programmer`** (`.github/prompts/algorithm-programmer.prompt.md`)
+- **`algorithm-programmer`** (`.github/agents/algorithm-programmer.agent.md`)
   - `algorithm-research` が提案した方式に基づきパレタイズアルゴリズムを実装する。
   - `supervisor` や `tester` からのフィードバックをもとにプログラムの改良を行う。
 
-- **`visualizer`** (`.github/prompts/visualizer.prompt.md`)
+- **`visualizer`** (`.github/agents/visualizer.agent.md`)
   - アルゴリズムが出力したパレタイズ結果（配置座標、回転、積み順）を3D/2Dで描画・可視化するツールを開発・提供する。
 
-- **`tester`** (`.github/prompts/tester.prompt.md`)
+- **`tester`** (`.github/agents/tester.agent.md`)
   - `test-programmer` が作成した箱リストを入力として `algorithm-programmer` のプログラムを実行し、荷山形成シミュレーションを行う。
   - エラーや例外発生時はエラー内容をプログラマにフィードバックする。
 
-- **`supervisor`** (`.github/prompts/supervisor.prompt.md`)
+- **`supervisor`** (`.github/agents/supervisor.agent.md`)
   - `constraints/constraints.md`（荷姿制約）に基づき、出力された荷姿や積み順が制約を満たしているかを監視・検証する。
   - 制約違反がある場合は、具体的な問題点とともにプログラムの修正を依頼する。
+
+### 1.1 役割定義ファイルの3系統について
+
+本リポジトリには目的の異なる3種類のロール定義ファイル群があり、混同しないよう役割を整理する。
+
+| ディレクトリ | 位置づけ | 読み込まれ方 |
+|---|---|---|
+| **`.github/agents/*.agent.md`** | **サブエージェント定義（正）**。各ロールの詳細な行動指針を保持する | GitHub Copilot CLI から `/agent <name>` や `@<name>` で明示的に呼び出す |
+| `.github/instructions/*.instructions.md` | 各ロールの要約版。常時参照させたい要点のみを保持する | GitHub Copilot CLI/VS Code に**常時自動読込**される（呼び出し不要） |
+| `.github/prompts/*.prompt.md` | VS Code Copilot Chat 用スラッシュコマンド（`.github/agents/` と同内容＋`argument-hint`） | VS Code で `/<name>` を入力して呼び出す（VS Code利用時の代替手段） |
+
+ロールの行動指針を変更・追加する場合は **`.github/agents/*.agent.md` を正として更新**し、必要に応じて `.github/prompts/*.prompt.md`（VS Code用）と `.github/instructions/*.instructions.md`（常時読込の要約）にも反映する。
 
 ---
 
@@ -123,17 +135,36 @@ flowchart TD
 
 ## 5. GitHub Copilot 利用方法
 
-### ロール別プロンプト呼び出し
+### サブエージェント呼び出し（GitHub Copilot CLI・推奨）
 
-GitHub Copilot Chat で特定ロールを担当する場合、以下のいずれかの方法でプロンプトを適用してください：
+`.github/agents/*.agent.md` に定義されたサブエージェントは、CLI から以下のいずれかの方法で直接呼び出せます：
 
-1. **ファイル参照による呼び出し** (推奨)
+1. **`/agent` コマンドで選択**
+   ```
+   /agent orchestrator
+   ```
+
+2. **`@<name>` によるメンション呼び出し**
+   ```
+   @orchestrator [タスク説明]
+   ```
+
+### ロール別プロンプト呼び出し（VS Code Copilot Chat）
+
+VS Code の Copilot Chat で作業する場合は、`.github/prompts/*.prompt.md` をスラッシュコマンドとして利用できます：
+
+1. **スラッシュコマンド呼び出し** (推奨)
+   ```
+   /orchestrator [タスク説明]
+   ```
+
+2. **ファイル参照による呼び出し**
    ```
    @codebase
    .github/prompts/orchestrator.prompt.md の指示に基づいて [タスク] を実行してください。
    ```
 
-2. **直接的な指示**
+3. **直接的な指示**
    ```
    orchestrator として以下を実行してください：
    [タスク説明]
@@ -144,6 +175,8 @@ GitHub Copilot Chat で特定ロールを担当する場合、以下のいずれ
 - `.github/copilot-instructions.md`: GitHub Copilot 全体のグローバル指示書
   - コーディング規約、ビルド/テストコマンド、制約仕様、キー概念解説を含む
   - 常時参照可能なリファレンス
+- `.github/instructions/*.instructions.md`: 各ロールの要約版行動指針
+  - GitHub Copilot CLI・VS Code に**常時自動読込**され、呼び出し不要で常に参照される
 
 ---
 
@@ -156,7 +189,26 @@ palletizing_prototype/feature/
 ├── README.md                  # 【このファイル】プロジェクト構成・GitHub Copilot 実行ガイド
 ├── .github/
 │   ├── copilot-instructions.md # GitHub Copilot グローバル指示書（v2.0）
-│   └── prompts/               # GitHub Copilot Chat 用ロール別プロンプト集
+│   ├── agents/                # 【正】GitHub Copilot CLI サブエージェント定義（/agent, @<name> で呼び出し）
+│   │   ├── orchestrator.agent.md
+│   │   ├── box-research.agent.md
+│   │   ├── algorithm-research.agent.md
+│   │   ├── test-programmer.agent.md
+│   │   ├── algorithm-programmer.agent.md
+│   │   ├── visualizer.agent.md
+│   │   ├── tester.agent.md
+│   │   ├── supervisor.agent.md
+│   │   └── README.md
+│   ├── instructions/           # 各ロールの要約版行動指針（常時自動読込）
+│   │   ├── orchestrator.instructions.md
+│   │   ├── box-research.instructions.md
+│   │   ├── algorithm-research.instructions.md
+│   │   ├── test-programmer.instructions.md
+│   │   ├── algorithm-programmer.instructions.md
+│   │   ├── visualizer.instructions.md
+│   │   ├── tester.instructions.md
+│   │   └── supervisor.instructions.md
+│   └── prompts/                # VS Code Copilot Chat 用ロール別スラッシュコマンド（代替手段）
 │       ├── orchestrator.prompt.md
 │       ├── box-research.prompt.md
 │       ├── algorithm-research.prompt.md
@@ -198,10 +250,12 @@ palletizing_prototype/feature/
 
 - **`constraints/constraints.md`**: 荷姿制約の詳細仕様
 - **`.github/copilot-instructions.md`**: GitHub Copilot 用グローバル指示書（コーディング規約、ビルド/テストコマンド含む）
-- **`.github/prompts/README.md`**: ロール別プロンプトの使用ガイド
+- **`.github/agents/README.md`**: GitHub Copilot CLI サブエージェントの一覧・使用ガイド（正）
+- **`.github/instructions/`**: 各ロールの要約版行動指針（常時自動読込）
+- **`.github/prompts/README.md`**: VS Code用ロール別プロンプトの使用ガイド（代替手段）
 
 ---
 
-**バージョン**: 2.0 (GitHub Copilot 版)  
-**最終更新**: 2026-09-20  
+**バージョン**: 2.1 (GitHub Copilot 版・`.github/agents` サブエージェント対応)  
+**最終更新**: 2026-09-22  
 **プロジェクト状態**: ✅ 全テストケース合格 (13/13 PASS)
