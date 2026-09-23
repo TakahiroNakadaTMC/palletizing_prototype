@@ -11,6 +11,7 @@ HM-Palletizer:
 
 import math
 import copy
+from collections import Counter
 from typing import List, Dict, Tuple, Optional, Any
 from algorithm_programmer.models import BoxSpec, PlacedBox, PalletSpec, PalletizeResult
 
@@ -269,59 +270,50 @@ class Palletizer:
 
     # -------------------------------------------------------------------------
     # 2. 混載パレタイズ (Mixed-load Palletizer)
+    #    MSP-EP ハイブリッド方式:
+    #      - Module-Aware Strip Packing (行分割 + 行内FFD詰め) を主アルゴリズムとし、
+    #      - 残渣は Extreme Points 法（既配置箱の右端・下端から動的候補生成）で補完する。
+    #    層ループは箱切れ/高さ超過/配置不能のいずれかでのみ終了し、中間層の四隅不一致で
+    #    打ち切らない（四隅高さ揃えは最上段のみ level_top_four_corners で保証する）。
     # -------------------------------------------------------------------------
     def palletize_mixed(self, boxes: List[BoxSpec]) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
-        """混載パレタイズ: レイヤー別パッキングと四隅高さ揃え"""
+        """混載パレタイズ: MSP-EPハイブリッドによるレイヤー別パッキング"""
         placed_boxes: List[PlacedBox] = []
 
-        # 箱をフットプリントと高さで整理
-        # TPモジュールグリッド (335mm単位)
-        # 1200x1000 パレットに対して 1340mm (4 x 335) x 1005mm (3 x 335) の6スロット (2x3 または 4x3)
-        # スロットグリッド: X=0, 335, 670, 1005 (幅1340mm), Y=0, 335, 670 (奥行1005mm)
-        slots_2x3 = [
-            # 670x503 箱用、または 670x335, 335x335 の組み合わせ
-            # 2列 x 2行 (670x503) = 1340 x 1006
-            # 2列 x 3行 (670x335) = 1340 x 1005
-            # 4列 x 3行 (335x335) = 1340 x 1005
-        ]
-
-        # 利用可能な箱のプール
         box_pool = list(boxes)
         box_pool.sort(key=lambda b: (b.width * b.length, b.height), reverse=True)
 
-        current_z = 0.0
-        current_fitting = 8.0
+        # 荷姿エンベロープ（全層で共通のX/Y作業範囲）を投入箱構成から一度だけ決定する。
+        # 同じエンベロープを全層で使い回すことで、上段箱が常に下段箱の上に
+        # 高い支持率で乗るようにし（構造的な支持率確保）、最上段の四隅も
+        # 揃いやすくする。
+        envelope = self._determine_mixed_envelope(box_pool)
 
-        # パレット上面または前層の上面から、層ごとに積み上げる
+        current_z = 0.0
         layer_idx = 0
+
         while box_pool and current_z < self.pallet.max_height:
-            layer_placed, remaining_pool = self._pack_mixed_layer(box_pool, current_z, layer_idx)
+            # 高さが異なる箱が同一層に混在すると、層の上面が四隅で不揃いになる
+            # ため、この層で使う代表高さ(layer_h)を選び、同じ高さの箱だけを
+            # この層のパッキング対象とする（異なる高さの箱は後続の層に持ち越す）。
+            layer_h = self._choose_layer_height(box_pool)
+            layer_pool = [b for b in box_pool if abs(b.height - layer_h) <= 1.0]
+            carry_over_pool = [b for b in box_pool if abs(b.height - layer_h) > 1.0]
+
+            layer_placed, remaining_layer_pool = self._pack_mixed_layer(
+                layer_pool, current_z, layer_idx, placed_boxes, envelope
+            )
             if not layer_placed:
+                # これ以上どの箱も配置できない（デッドロック回避）
                 break
 
-            # この層の最高上面
             layer_top = max(pb.top_z for pb in layer_placed)
             if layer_top > self.pallet.max_height + 1e-4:
-                break
-
-            # この層で四隅が揃っているか確認
-            min_x = min(pb.x for pb in layer_placed)
-            max_x = max(pb.max_x for pb in layer_placed)
-            min_y = min(pb.y for pb in layer_placed)
-            max_y = max(pb.max_y for pb in layer_placed)
-            margin = 35.0
-
-            c1 = any(pb.x <= min_x + margin and pb.y <= min_y + margin for pb in layer_placed)
-            c2 = any(pb.max_x >= max_x - margin and pb.y <= min_y + margin for pb in layer_placed)
-            c3 = any(pb.x <= min_x + margin and pb.max_y >= max_y - margin for pb in layer_placed)
-            c4 = any(pb.max_x >= max_x - margin and pb.max_y >= max_y - margin for pb in layer_placed)
-
-            if not (c1 and c2 and c3 and c4) and layer_idx > 0:
-                # 四隅が揃わない中途半端な層は積まない
+                # この層は積載高さを超過するため積まない
                 break
 
             placed_boxes.extend(layer_placed)
-            box_pool = remaining_pool
+            box_pool = remaining_layer_pool + carry_over_pool
             layer_idx += 1
 
             # 次の層のZ基準 (直前の箱の上面 - fitting_depth)
@@ -338,94 +330,398 @@ class Palletizer:
         self._align_pallet_bounds(placed_boxes)
         return placed_boxes, unplaced_boxes
 
-    def _pack_mixed_layer(self, pool: List[BoxSpec], base_z: float, layer_idx: int) -> Tuple[List[PlacedBox], List[BoxSpec]]:
-        """1つの層（レイヤー）を2Dモジュールグリッドで隙間なくパッキング"""
+    def _choose_layer_height(self, pool: List[BoxSpec]) -> float:
+        """現在の残り箱プールから、この層で使う代表高さを選ぶ。
+
+        同一層内で高さの異なる箱が混在すると層の上面が四隅で不揃いになり
+        `level_top_four_corners` の判定基準（最上段のみ四隅一致）を崩す
+        原因になるため、層ごとに単一の高さグループのみを対象とする。
+        代表高さは残数（総個数）が最も多い高さを優先し、同数の場合は
+        底面積が最大の箱の高さを優先する。
+        """
+        counts: Dict[float, int] = {}
+        best_area: Dict[float, float] = {}
+        for b in pool:
+            h = round(b.height, 1)
+            counts[h] = counts.get(h, 0) + 1
+            area = b.width * b.length
+            if area > best_area.get(h, -1.0):
+                best_area[h] = area
+
+        return max(counts.keys(), key=lambda h: (counts[h], best_area[h]))
+
+    def _determine_mixed_envelope(self, pool: List[BoxSpec]) -> Dict[str, float]:
+        """投入箱構成から全層共通のX/Y作業エンベロープを決定する。
+
+        短辺方向 (Y) は、箱の代表寸法のうち短辺許容範囲 [min_y_span, max_y_span)
+        に収まる最小のモジュール単位を選び、その整数倍を採用する。
+        これにより異なる箱サイズが混在してもモジュール嵌合しやすい行分割が
+        可能になる。
+        """
+        dims = set()
+        for b in pool:
+            dims.add(round(b.width, 1))
+            dims.add(round(b.length, 1))
+
+        max_depth_allowed = self.pallet.max_y_span - 1.0
+        candidates = []
+        for d in sorted(dims):
+            if d <= 0 or d > max_depth_allowed:
+                continue
+            n = int(max_depth_allowed // d)
+            span = n * d
+            if self.pallet.min_y_span <= span < self.pallet.max_y_span:
+                candidates.append((d, span))
+
+        if candidates:
+            # 最も細かいモジュール単位（複数箱種を混在させやすい）を優先
+            _, best_span = min(candidates, key=lambda t: t[0])
+        else:
+            best_span = max_depth_allowed
+
+        return {
+            "x_span": self.pallet.max_x_span - 1.0,
+            "y_span": best_span
+        }
+
+    def _support_ratio(self, x: float, y: float, w: float, l: float,
+                       base_z: float, fitting_depth: float,
+                       lower_boxes: List[PlacedBox], tol: float = 1.0) -> float:
+        """パレット直置き、または直下段箱に対する底面支持面積比率を算出"""
+        if base_z <= 1e-3:
+            return 1.0
+
+        bottom_area = w * l
+        if bottom_area <= 0:
+            return 0.0
+
+        total_support = 0.0
+        for ob in lower_boxes:
+            if abs(ob.top_z - (base_z + fitting_depth)) > tol:
+                continue
+            ix_min = max(x, ob.x)
+            ix_max = min(x + w, ob.max_x)
+            iy_min = max(y, ob.y)
+            iy_max = min(y + l, ob.max_y)
+            if ix_max > ix_min and iy_max > iy_min:
+                total_support += (ix_max - ix_min) * (iy_max - iy_min)
+
+        return total_support / bottom_area
+
+    @staticmethod
+    def _is_oversized_support(lower_w: float, lower_l: float, upper_w: float, upper_l: float,
+                              tol: float = 1.0) -> bool:
+        """下段箱が上段箱より幅・奥行きの両方とも大きいか判定する。
+
+        下段（支持側）箱が上段（被支持側）箱よりも幅・奥行きの両方で大きい場合、
+        上段箱が下段箱の縁からずれて安定した嵌合が期待できず、荷崩れの
+        危険性があるため段積み不可とする。片方の寸法のみ大きい場合や
+        同一サイズの場合は許容する。
+        """
+        return lower_w > upper_w + tol and lower_l > upper_l + tol
+
+    def _has_oversized_support(self, x: float, y: float, w: float, l: float,
+                               base_z: float, fitting_depth: float,
+                               lower_boxes: List[PlacedBox], tol: float = 1.0) -> bool:
+        """直下段の支持箱の中に、上段箱より幅・奥行き両方とも大きい箱が
+        含まれるかを判定する（パレット直置きの場合は下段箱が無いのでFalse）。
+        """
+        if base_z <= 1e-3:
+            return False
+
+        for ob in lower_boxes:
+            if abs(ob.top_z - (base_z + fitting_depth)) > tol:
+                continue
+            # 2D的に支持面へ関与しているか（重なりがあるか）
+            ix_min = max(x, ob.x)
+            ix_max = min(x + w, ob.max_x)
+            iy_min = max(y, ob.y)
+            iy_max = min(y + l, ob.max_y)
+            if ix_max <= ix_min or iy_max <= iy_min:
+                continue
+            if self._is_oversized_support(ob.width, ob.length, w, l, tol):
+                return True
+
+        return False
+
+    def _row_free_intervals(self, layer_boxes: List[PlacedBox], row_y: float,
+                            row_depth: float, max_row_width: float,
+                            tol: float = 1e-3) -> List[Tuple[float, float]]:
+        """指定した行(Y帯域)における、既配置箱に占有されていないX区間を算出"""
+        intervals = [(0.0, max_row_width)]
+        row_top = row_y + row_depth
+
+        for pb in layer_boxes:
+            if pb.y < row_top - tol and pb.max_y > row_y + tol:
+                new_intervals = []
+                for (s, e) in intervals:
+                    if pb.max_x <= s + tol or pb.x >= e - tol:
+                        new_intervals.append((s, e))
+                        continue
+                    if pb.x > s + tol:
+                        new_intervals.append((s, pb.x))
+                    if pb.max_x < e - tol:
+                        new_intervals.append((pb.max_x, e))
+                intervals = new_intervals
+
+        return [(s, e) for (s, e) in intervals if e - s > tol]
+
+    def _eligible_row_items(self, pool_counter: Counter, id_to_spec: Dict[str, BoxSpec],
+                            row_depth: float, tol: float = 1.0) -> List[Tuple[BoxSpec, int, float, float]]:
+        """行の深さ(row_depth)に適合する箱の(仕様, 回転, 幅, 奥行)候補を列挙"""
+        eligible = []
+        for bid, cnt in pool_counter.items():
+            if cnt <= 0:
+                continue
+            spec = id_to_spec[bid]
+            is_square = abs(spec.width - spec.length) <= tol
+            if abs(spec.length - row_depth) <= tol:
+                eligible.append((spec, 0, spec.width, spec.length))
+            if not is_square and abs(spec.width - row_depth) <= tol:
+                eligible.append((spec, 90, spec.length, spec.width))
+        eligible.sort(key=lambda it: it[2], reverse=True)
+        return eligible
+
+    def _fill_row_intervals(self, intervals: List[Tuple[float, float]], row_y: float,
+                           row_depth: float, pool_counter: Counter, id_to_spec: Dict[str, BoxSpec],
+                           base_z: float, layer_idx: int, lower_boxes: List[PlacedBox],
+                           tol: float = 1e-3) -> List[PlacedBox]:
+        """行の空きX区間を、在庫箱でFFD(First-Fit-Decreasing)的に詰める"""
         placed: List[PlacedBox] = []
-        rem_pool = list(pool)
 
-        # ターゲット荷姿: 1340 x 1005 (または 1006)
-        # パレット中心へのセンタリングオフセット
-        offset_x = (self.pallet.width - 1340.0) / 2.0  # -70.0 (パレット上では 0〜1340)
-        offset_y = (self.pallet.length - 1005.0) / 2.0  # -2.5 (パレット上では 0〜1005)
-        if offset_x < 0: offset_x = (1360.0 - 1340.0) / 2.0  # 10.0
-        if offset_y < 0: offset_y = 0.0
+        for (s, e) in intervals:
+            x_cursor = s
+            progress = True
+            while progress and x_cursor < e - tol:
+                progress = False
+                eligible = self._eligible_row_items(pool_counter, id_to_spec, row_depth)
+                for spec, rot, w, l in eligible:
+                    if pool_counter[spec.id] <= 0:
+                        continue
+                    if x_cursor + w > e + tol:
+                        continue
+                    if layer_idx > 0:
+                        ratio = self._support_ratio(x_cursor, row_y, w, l, base_z, spec.fitting_depth, lower_boxes)
+                        if ratio < 0.85 - 1e-6:
+                            continue
+                        if self._has_oversized_support(x_cursor, row_y, w, l, base_z, spec.fitting_depth, lower_boxes):
+                            continue
+                    pb = PlacedBox(
+                        order=0,
+                        box_id=spec.id,
+                        x=round(x_cursor, 2),
+                        y=round(row_y, 2),
+                        z=round(base_z, 2),
+                        width=w,
+                        length=l,
+                        height=spec.height,
+                        fitting_depth=spec.fitting_depth,
+                        rib_thickness=spec.rib_thickness,
+                        rotation=rot,
+                        layer_index=layer_idx
+                    )
+                    placed.append(pb)
+                    pool_counter[spec.id] -= 1
+                    x_cursor += w
+                    progress = True
+                    break
 
-        # モジュールグリッド定義: 4列 (X: 0, 335, 670, 1005) x 3行 (Y: 0, 335, 670) または 2行 (Y: 0, 503)
-        # スロットマトリクス (4x6 の 335x168 サブセル等)
-        occupied = [[False for _ in range(6)] for _ in range(4)]  # 4x6 グリッド (dx=335, dy=168)
+        return placed
 
-        # 箱の選択と配置
-        # 四隅を確実に埋める順序: (0,0), (3,0), (0,4), (3,4), その他内部
-        corners_order = [
-            (0, 0), (2, 0), (0, 3), (2, 3),
-            (1, 0), (1, 3), (0, 1), (2, 1), (1, 1), (0, 2), (2, 2), (1, 2)
+    def _try_place_at(self, x: float, y: float, spec: BoxSpec, rot: int,
+                      layer_boxes: List[PlacedBox], max_row_width: float, max_total_depth: float,
+                      base_z: float, layer_idx: int, lower_boxes: List[PlacedBox],
+                      tol: float = 1e-3) -> Optional[PlacedBox]:
+        """指定座標・回転で箱を置けるか判定し、置ければPlacedBoxを返す"""
+        w, l = (spec.width, spec.length) if rot == 0 else (spec.length, spec.width)
+        if x < -tol or y < -tol or x + w > max_row_width + tol or y + l > max_total_depth + tol:
+            return None
+        for pb in layer_boxes:
+            if intersects_2d(x, y, w, l, pb.x, pb.y, pb.width, pb.length):
+                return None
+        if layer_idx > 0:
+            ratio = self._support_ratio(x, y, w, l, base_z, spec.fitting_depth, lower_boxes)
+            if ratio < 0.85 - 1e-6:
+                return None
+            if self._has_oversized_support(x, y, w, l, base_z, spec.fitting_depth, lower_boxes):
+                return None
+        return PlacedBox(
+            order=0,
+            box_id=spec.id,
+            x=round(x, 2),
+            y=round(y, 2),
+            z=round(base_z, 2),
+            width=w,
+            length=l,
+            height=spec.height,
+            fitting_depth=spec.fitting_depth,
+            rib_thickness=spec.rib_thickness,
+            rotation=rot,
+            layer_index=layer_idx
+        )
+
+    def _anchor_corners(self, layer_boxes: List[PlacedBox], pool_counter: Counter,
+                        id_to_spec: Dict[str, BoxSpec], max_row_width: float, max_total_depth: float,
+                        base_z: float, layer_idx: int, lower_boxes: List[PlacedBox]) -> None:
+        """層の四隅（上端を優先）に在庫箱を1個ずつ仮配置し、最上段になった場合でも
+        四隅高さ揃えチェックを通過しやすくする。在庫が少ない最終層でも、
+        連続した1行ではなく4隅individual配置になるためコーナー欠落を防げる。
+        """
+        # 上端(Y最大側)から埋めることで、行詰めが下から積み上がっても
+        # 最終的に上端コーナーが空のまま残るリスクを減らす。
+        corner_targets = [
+            ("top", "left"), ("top", "right"),
+            ("bottom", "left"), ("bottom", "right"),
         ]
 
-        # プール内の代表的な箱の高さをこの層の標準高さとする
-        first_box = rem_pool[0]
-        layer_h = first_box.height
-
-        # この層に適した高さの箱を優先配置
-        suitable_boxes = [b for b in rem_pool if abs(b.height - layer_h) <= 1.0]
-        other_boxes = [b for b in rem_pool if abs(b.height - layer_h) > 1.0]
-
-        curr_pool = suitable_boxes + other_boxes
-        rem_pool = []
-
-        # グリッド配置
-        # 1340 x 1005 をカバーするブロック配置
-        grid_x_steps = [0.0, 335.0, 670.0, 1005.0]
-        grid_y_steps = [0.0, 335.0, 670.0]
-
-        # 670x503 の場合は 2x2
-        # まず大きい箱（TP-462: 670x503, TP-362: 670x335）を配置できるか試す
-        for b in curr_pool:
-            placed_box = False
-            # 0度と90度を試す
-            for rot in [0, 90]:
-                bw, bl = (b.width, b.length) if rot == 0 else (b.length, b.width)
-
-                # パレット許容枠チェック
-                for gx in [0.0, 335.0, 670.0, 1005.0]:
-                    for gy in [0.0, 335.0, 503.0, 670.0]:
-                        if gx + bw > 1341.0 or gy + bl > 1008.0:
-                            continue
-
-                        # 既存配置との重なりチェック
-                        overlap = False
-                        for pb in placed:
-                            if intersects_2d(gx, gy, bw, bl, pb.x, pb.y, pb.width, pb.length):
-                                overlap = True
-                                break
-
-                        if not overlap:
-                            pb = PlacedBox(
-                                order=len(placed) + 1,
-                                box_id=b.id,
-                                x=round(gx, 2),
-                                y=round(gy, 2),
-                                z=round(base_z, 2),
-                                width=bw,
-                                length=bl,
-                                height=b.height,
-                                fitting_depth=b.fitting_depth,
-                                rib_thickness=b.rib_thickness,
-                                rotation=rot,
-                                layer_index=layer_idx
-                            )
-                            placed.append(pb)
-                            placed_box = True
-                            break
-                    if placed_box:
+        for cy_mode, cx_mode in corner_targets:
+            candidates = sorted(
+                (bid for bid, cnt in pool_counter.items() if cnt > 0),
+                key=lambda bid: id_to_spec[bid].width * id_to_spec[bid].length,
+                reverse=True
+            )
+            for bid in candidates:
+                spec = id_to_spec[bid]
+                placed_here = False
+                for rot in (0, 90):
+                    w, l = (spec.width, spec.length) if rot == 0 else (spec.length, spec.width)
+                    x = 0.0 if cx_mode == "left" else max_row_width - w
+                    y = 0.0 if cy_mode == "bottom" else max_total_depth - l
+                    pb = self._try_place_at(x, y, spec, rot, layer_boxes, max_row_width, max_total_depth,
+                                            base_z, layer_idx, lower_boxes)
+                    if pb is not None:
+                        layer_boxes.append(pb)
+                        pool_counter[bid] -= 1
+                        placed_here = True
                         break
-            if not placed_box:
-                rem_pool.append(b)
+                if placed_here:
+                    break
 
-        # もし1箱も置けなかったら終了
-        if not placed:
+    def _ep_fill_layer(self, layer_boxes: List[PlacedBox], pool_counter: Counter,
+                       id_to_spec: Dict[str, BoxSpec], max_row_width: float, max_total_depth: float,
+                       base_z: float, layer_idx: int, lower_boxes: List[PlacedBox]) -> None:
+        """Extreme Points法によるフォールバック充填: 既配置箱の右端・下端＋原点を
+        動的な候補位置とし、行詰めで埋まらなかった残渣を可能な限り充填する。
+        """
+        changed = True
+        while changed:
+            changed = False
+            candidates = {(0.0, 0.0)}
+            for pb in layer_boxes:
+                candidates.add((round(pb.max_x, 2), round(pb.y, 2)))
+                candidates.add((round(pb.x, 2), round(pb.max_y, 2)))
+            sorted_candidates = sorted(candidates, key=lambda p: (p[1], p[0]))
+
+            remaining_ids = sorted(
+                (bid for bid, cnt in pool_counter.items() if cnt > 0),
+                key=lambda bid: id_to_spec[bid].width * id_to_spec[bid].length,
+                reverse=True
+            )
+
+            placed_this_round = False
+            for bid in remaining_ids:
+                spec = id_to_spec[bid]
+                for (cx, cy) in sorted_candidates:
+                    for rot in (0, 90):
+                        pb = self._try_place_at(cx, cy, spec, rot, layer_boxes, max_row_width, max_total_depth,
+                                                base_z, layer_idx, lower_boxes)
+                        if pb is not None:
+                            layer_boxes.append(pb)
+                            pool_counter[bid] -= 1
+                            placed_this_round = True
+                            changed = True
+                            break
+                    if placed_this_round:
+                        break
+                if placed_this_round:
+                    break
+
+    def _pack_mixed_layer(self, pool: List[BoxSpec], base_z: float, layer_idx: int,
+                          placed_so_far: List[PlacedBox], envelope: Dict[str, float]
+                          ) -> Tuple[List[PlacedBox], List[BoxSpec]]:
+        """1つの層（レイヤー）をMSP-EPハイブリッドでパッキングする。
+
+        Phase A: 四隅アンカー配置（最上段の四隅高さ揃え要件を満たしやすくする）
+        Phase B: Module-Aware Strip Packing（行分割 + 行内FFD詰め）
+        Phase C: Extreme Points法による残渣充填
+        """
+        if not pool:
             return [], pool
 
-        return placed, rem_pool
+        max_row_width = envelope["x_span"]
+        max_total_depth = envelope["y_span"]
+
+        pool_counter: Counter = Counter(b.id for b in pool)
+        id_to_spec: Dict[str, BoxSpec] = {}
+        for b in pool:
+            id_to_spec.setdefault(b.id, b)
+
+        # 上段の支持率判定に用いる「直下段」の箱リスト
+        lower_boxes = [pb for pb in placed_so_far if pb.z < base_z - 1e-3] if layer_idx > 0 else []
+
+        layer_boxes: List[PlacedBox] = []
+
+        # Phase A: 四隅アンカー
+        self._anchor_corners(layer_boxes, pool_counter, id_to_spec, max_row_width, max_total_depth,
+                            base_z, layer_idx, lower_boxes)
+
+        # Phase B: 行分割 + 行内FFD詰め（ボトムアップ）
+        y_cursor = 0.0
+        while y_cursor < max_total_depth - 1e-3:
+            remaining_ids = [bid for bid, cnt in pool_counter.items() if cnt > 0]
+            if not remaining_ids:
+                break
+
+            depth_budget = max_total_depth - y_cursor
+            candidate_depths = sorted(
+                {round(id_to_spec[bid].width, 1) for bid in remaining_ids if id_to_spec[bid].width <= depth_budget + 1.0} |
+                {round(id_to_spec[bid].length, 1) for bid in remaining_ids if id_to_spec[bid].length <= depth_budget + 1.0},
+                reverse=True
+            )
+
+            best = None
+            for d in candidate_depths:
+                if y_cursor + d > max_total_depth + 1e-3:
+                    continue
+                intervals = self._row_free_intervals(layer_boxes, y_cursor, d, max_row_width)
+                if not intervals:
+                    continue
+                trial_counter = Counter(pool_counter)
+                row_boxes = self._fill_row_intervals(intervals, y_cursor, d, trial_counter, id_to_spec,
+                                                     base_z, layer_idx, lower_boxes)
+                if not row_boxes:
+                    continue
+                fill = sum(rb.width for rb in row_boxes)
+                if best is None or fill > best[0]:
+                    best = (fill, d, row_boxes, trial_counter)
+
+            if best is None:
+                break
+
+            _, d, row_boxes, trial_counter = best
+            layer_boxes.extend(row_boxes)
+            pool_counter = trial_counter
+            y_cursor += d
+
+        # Phase C: Extreme Points法による残渣充填
+        self._ep_fill_layer(layer_boxes, pool_counter, id_to_spec, max_row_width, max_total_depth,
+                           base_z, layer_idx, lower_boxes)
+
+        if not layer_boxes:
+            return [], pool
+
+        # 消費されなかった箱をpoolから再構成
+        counts_left = dict(pool_counter)
+        remaining_pool: List[BoxSpec] = []
+        for b in pool:
+            if counts_left.get(b.id, 0) > 0:
+                remaining_pool.append(b)
+                counts_left[b.id] -= 1
+
+        for idx, pb in enumerate(layer_boxes, start=1):
+            pb.order = idx
+
+        return layer_boxes, remaining_pool
 
     def _align_pallet_bounds(self, placed_boxes: List[PlacedBox]):
         if not placed_boxes:

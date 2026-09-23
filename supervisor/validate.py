@@ -199,6 +199,18 @@ class PalletizeValidator:
             if support_ratio < MIN_SUPPORT_RATIO - EPS:
                 violations.append(f"Order #{order} ({b['box_id']}): 支持面積不足 ({support_ratio*100:.1f}% < {MIN_SUPPORT_RATIO*100:.0f}%)")
 
+            # 下段箱が上段箱より幅・奥行き両方とも大きい場合はNG
+            # （上段箱が下段箱の縁からずれた不安定な段積みとなり荷崩れの危険があるため）
+            for sb in supporting_boxes:
+                sb_w = sb["dimensions"]["width"]
+                sb_l = sb["dimensions"]["length"]
+                if sb_w > w + 1.0 and sb_l > l + 1.0:
+                    violations.append(
+                        f"Order #{order} ({b['box_id']}): 下段箱サイズ超過エラー "
+                        f"(下段 Order #{sb['order']} ({sb['box_id']}) {sb_w:.0f}x{sb_l:.0f}mm が "
+                        f"上段 {w:.0f}x{l:.0f}mm より大きいため段積み不可)"
+                    )
+
         # -------------------------------------------------------------
         # 5. 積み込み順序（Order）のトポロジカル依存性検証
         # -------------------------------------------------------------

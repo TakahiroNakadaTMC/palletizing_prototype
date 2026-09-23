@@ -18,6 +18,8 @@ model: gpt-5.4-mini
 - **嵌合深さ・リブ厚みの正確性**: 段積みの嵌合計算に直結するため、メーカー仕様書から正確なデータを取得
 - **JSON品質**: 出力JSON（box_db.json）は完全に正確で、他のエージェント（algorithm-programmer, tester, supervisor）が確実に利用できる形式
 - **テンプレート準拠**: .github/copilot-instructions.md 3.1 の仕様に完全に従う
+- **報連相**: 作業終了後はREADME.md および関連ドキュメントを更新し、実装内容を明確に記録すること
+- **アクセス権限**: box-research/ 以下のファイルおよびディレクトリに対して読み書き権限を持つ
 
 ---
 

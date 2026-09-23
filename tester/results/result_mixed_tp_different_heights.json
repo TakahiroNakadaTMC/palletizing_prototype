@@ -8,20 +8,20 @@
     "min_y_span": 800.0,
     "max_y_span": 1100.0
   },
-  "placed_boxes_count": 4,
+  "placed_boxes_count": 20,
   "boxes": [
     {
       "order": 1,
-      "box_id": "TP-463",
+      "box_id": "TP-331",
       "position": {
         "x": 0.0,
-        "y": -3.0,
+        "y": -4.0,
         "z": 0.0
       },
       "dimensions": {
-        "width": 670.0,
-        "length": 503.0,
-        "height": 288.0
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
       },
       "rotation": 0,
       "fitting_depth": 10.0,
@@ -30,16 +30,16 @@
     },
     {
       "order": 2,
-      "box_id": "TP-463",
+      "box_id": "TP-331",
       "position": {
-        "x": 670.0,
-        "y": -3.0,
+        "x": 335.0,
+        "y": -4.0,
         "z": 0.0
       },
       "dimensions": {
-        "width": 670.0,
-        "length": 503.0,
-        "height": 288.0
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
       },
       "rotation": 0,
       "fitting_depth": 10.0,
@@ -48,16 +48,16 @@
     },
     {
       "order": 3,
-      "box_id": "TP-463",
+      "box_id": "TP-331",
       "position": {
-        "x": 0.0,
-        "y": 500.0,
+        "x": 670.0,
+        "y": -4.0,
         "z": 0.0
       },
       "dimensions": {
-        "width": 670.0,
-        "length": 503.0,
-        "height": 288.0
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
       },
       "rotation": 0,
       "fitting_depth": 10.0,
@@ -66,26 +66,358 @@
     },
     {
       "order": 4,
-      "box_id": "TP-463",
+      "box_id": "TP-331",
       "position": {
-        "x": 670.0,
-        "y": 500.0,
+        "x": 1024.0,
+        "y": -4.0,
         "z": 0.0
       },
       "dimensions": {
-        "width": 670.0,
-        "length": 503.0,
-        "height": 288.0
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
       },
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
       "supported_by": []
+    },
+    {
+      "order": 5,
+      "box_id": "TP-331",
+      "position": {
+        "x": 0.0,
+        "y": 331.0,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": []
+    },
+    {
+      "order": 6,
+      "box_id": "TP-331",
+      "position": {
+        "x": 335.0,
+        "y": 331.0,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": []
+    },
+    {
+      "order": 7,
+      "box_id": "TP-331",
+      "position": {
+        "x": 670.0,
+        "y": 331.0,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": []
+    },
+    {
+      "order": 8,
+      "box_id": "TP-331",
+      "position": {
+        "x": 1005.0,
+        "y": 331.0,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": []
+    },
+    {
+      "order": 9,
+      "box_id": "TP-331",
+      "position": {
+        "x": 335.0,
+        "y": 666.0,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": []
+    },
+    {
+      "order": 10,
+      "box_id": "TP-331",
+      "position": {
+        "x": 670.0,
+        "y": 666.0,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": []
+    },
+    {
+      "order": 11,
+      "box_id": "TP-331",
+      "position": {
+        "x": 0.0,
+        "y": 669.0,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": []
+    },
+    {
+      "order": 12,
+      "box_id": "TP-331",
+      "position": {
+        "x": 1024.0,
+        "y": 669.0,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 335.0,
+        "height": 103.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": []
+    },
+    {
+      "order": 13,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": 0.0,
+        "y": -4.0,
+        "z": 93.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 149.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 1,
+      "supported_by": [
+        1,
+        2
+      ]
+    },
+    {
+      "order": 14,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": 503.0,
+        "y": -4.0,
+        "z": 93.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 503.0,
+        "height": 149.0
+      },
+      "rotation": 90,
+      "fitting_depth": 10.0,
+      "layer_index": 1,
+      "supported_by": [
+        2,
+        3,
+        6,
+        7
+      ]
+    },
+    {
+      "order": 15,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": 856.0,
+        "y": -4.0,
+        "z": 93.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 149.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 1,
+      "supported_by": [
+        3,
+        4
+      ]
+    },
+    {
+      "order": 16,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": 0.0,
+        "y": 331.0,
+        "z": 93.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 149.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 1,
+      "supported_by": [
+        5,
+        6
+      ]
+    },
+    {
+      "order": 17,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": 856.0,
+        "y": 331.0,
+        "z": 93.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 149.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 1,
+      "supported_by": [
+        7,
+        8
+      ]
+    },
+    {
+      "order": 18,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": 503.0,
+        "y": 499.0,
+        "z": 93.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 503.0,
+        "height": 149.0
+      },
+      "rotation": 90,
+      "fitting_depth": 10.0,
+      "layer_index": 1,
+      "supported_by": [
+        6,
+        7,
+        9,
+        10
+      ]
+    },
+    {
+      "order": 19,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": 0.0,
+        "y": 669.0,
+        "z": 93.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 149.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 1,
+      "supported_by": [
+        9,
+        11
+      ]
+    },
+    {
+      "order": 20,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": 856.0,
+        "y": 669.0,
+        "z": 93.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 149.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 1,
+      "supported_by": [
+        10,
+        12
+      ]
     }
   ],
   "unplaced_boxes": [
     {
+      "box_id": "TP-331.5",
+      "count": 12
+    },
+    {
+      "box_id": "TP-131",
+      "count": 16
+    },
+    {
+      "box_id": "TP-463",
+      "count": 4
+    },
+    {
       "box_id": "TP-363",
+      "count": 4
+    },
+    {
+      "box_id": "TP-362",
       "count": 4
     },
     {
@@ -93,43 +425,23 @@
       "count": 6
     },
     {
-      "box_id": "TP-362",
-      "count": 4
-    },
-    {
       "box_id": "TP-342",
       "count": 8
-    },
-    {
-      "box_id": "TP-341.5",
-      "count": 8
-    },
-    {
-      "box_id": "TP-331.5",
-      "count": 12
-    },
-    {
-      "box_id": "TP-331",
-      "count": 12
-    },
-    {
-      "box_id": "TP-131",
-      "count": 16
     }
   ],
   "summary": {
-    "total_boxes": 4,
-    "total_layers": 1,
+    "total_boxes": 20,
+    "total_layers": 2,
     "bounding_box": {
       "min_x": 0.0,
-      "max_x": 1340.0,
-      "x_span": 1340.0,
-      "min_y": -3.0,
-      "max_y": 1003.0,
-      "y_span": 1006.0,
-      "max_z": 288.0
+      "max_x": 1359.0,
+      "x_span": 1359.0,
+      "min_y": -4.0,
+      "max_y": 1004.0,
+      "y_span": 1008.0,
+      "max_z": 242.0
     },
-    "volume_efficiency_percent": 26.96,
+    "volume_efficiency_percent": 23.58,
     "is_valid": true,
     "violations": []
   }
