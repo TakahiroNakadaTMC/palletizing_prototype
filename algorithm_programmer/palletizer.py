@@ -735,7 +735,17 @@ class Palletizer:
         max_y = max(pb.max_y for pb in placed_boxes)
         y_span = max_y - min_y
 
-        # 短辺センタリング
+        # 長辺センタリング（X方向）
+        if min_x < 0:
+            shift_x = -min_x
+            for pb in placed_boxes:
+                pb.x = round(pb.x + shift_x, 2)
+        elif max_x < self.pallet.max_x_span and x_span < self.pallet.max_x_span:
+            shift_x = (self.pallet.width - x_span) / 2.0 - min_x
+            for pb in placed_boxes:
+                pb.x = round(pb.x + shift_x, 2)
+
+        # 短辺センタリング（Y方向）
         if min_y < 0:
             shift_y = -min_y
             for pb in placed_boxes:
