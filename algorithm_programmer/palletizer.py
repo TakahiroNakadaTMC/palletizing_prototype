@@ -534,17 +534,24 @@ class Palletizer:
                       tol: float = 1e-3) -> Optional[PlacedBox]:
         """指定座標・回転で箱を置けるか判定し、置ければPlacedBoxを返す"""
         w, l = (spec.width, spec.length) if rot == 0 else (spec.length, spec.width)
+        
+        # 範囲外チェック
         if x < -tol or y < -tol or x + w > max_row_width + tol or y + l > max_total_depth + tol:
             return None
+        
+        # 干渉チェック
         for pb in layer_boxes:
             if intersects_2d(x, y, w, l, pb.x, pb.y, pb.width, pb.length):
                 return None
+        
+        # 支持率チェック（上層のみ）
         if layer_idx > 0:
             ratio = self._support_ratio(x, y, w, l, base_z, spec.fitting_depth, lower_boxes)
             if ratio < 0.85 - 1e-6:
                 return None
             if self._has_oversized_support(x, y, w, l, base_z, spec.fitting_depth, lower_boxes):
                 return None
+        
         return PlacedBox(
             order=0,
             box_id=spec.id,
@@ -560,42 +567,45 @@ class Palletizer:
             layer_index=layer_idx
         )
 
-    def _anchor_corners(self, layer_boxes: List[PlacedBox], pool_counter: Counter,
-                        id_to_spec: Dict[str, BoxSpec], max_row_width: float, max_total_depth: float,
-                        base_z: float, layer_idx: int, lower_boxes: List[PlacedBox]) -> None:
-        """層の四隅（上端を優先）に在庫箱を1個ずつ仮配置し、最上段になった場合でも
-        四隅高さ揃えチェックを通過しやすくする。在庫が少ない最終層でも、
-        連続した1行ではなく4隅individual配置になるためコーナー欠落を防げる。
-        """
-        # 上端(Y最大側)から埋めることで、行詰めが下から積み上がっても
-        # 最終的に上端コーナーが空のまま残るリスクを減らす。
-        corner_targets = [
-            ("top", "left"), ("top", "right"),
-            ("bottom", "left"), ("bottom", "right"),
-        ]
-
-        for cy_mode, cx_mode in corner_targets:
-            candidates = sorted(
-                (bid for bid, cnt in pool_counter.items() if cnt > 0),
-                key=lambda bid: id_to_spec[bid].width * id_to_spec[bid].length,
-                reverse=True
-            )
-            for bid in candidates:
-                spec = id_to_spec[bid]
-                placed_here = False
-                for rot in (0, 90):
-                    w, l = (spec.width, spec.length) if rot == 0 else (spec.length, spec.width)
-                    x = 0.0 if cx_mode == "left" else max_row_width - w
-                    y = 0.0 if cy_mode == "bottom" else max_total_depth - l
-                    pb = self._try_place_at(x, y, spec, rot, layer_boxes, max_row_width, max_total_depth,
-                                            base_z, layer_idx, lower_boxes)
-                    if pb is not None:
-                        layer_boxes.append(pb)
-                        pool_counter[bid] -= 1
-                        placed_here = True
-                        break
-                if placed_here:
-                    break
+    # [廃止] Anchor Corners メソッド
+    # 制約仕様に「パレット4隅への配置要件」は存在しない
+    # 最上層の四隅高さ揃えは level_top_four_corners() で対応済み
+    # def _anchor_corners(self, layer_boxes: List[PlacedBox], pool_counter: Counter,
+    #                     id_to_spec: Dict[str, BoxSpec], max_row_width: float, max_total_depth: float,
+    #                     base_z: float, layer_idx: int, lower_boxes: List[PlacedBox]) -> None:
+    #     """層の四隅（上端を優先）に在庫箱を1個ずつ仮配置し、最上段になった場合でも
+    #     四隅高さ揃えチェックを通過しやすくする。在庫が少ない最終層でも、
+    #     連続した1行ではなく4隅individual配置になるためコーナー欠落を防げる。
+    #     """
+    #     # 上端(Y最大側)から埋めることで、行詰めが下から積み上がっても
+    #     # 最終的に上端コーナーが空のまま残るリスクを減らす。
+    #     corner_targets = [
+    #         ("top", "left"), ("top", "right"),
+    #         ("bottom", "left"), ("bottom", "right"),
+    #     ]
+    #
+    #     for cy_mode, cx_mode in corner_targets:
+    #         candidates = sorted(
+    #             (bid for bid, cnt in pool_counter.items() if cnt > 0),
+    #             key=lambda bid: id_to_spec[bid].width * id_to_spec[bid].length,
+    #             reverse=True
+    #         )
+    #         for bid in candidates:
+    #             spec = id_to_spec[bid]
+    #             placed_here = False
+    #             for rot in (0, 90):
+    #                 w, l = (spec.width, spec.length) if rot == 0 else (spec.length, spec.width)
+    #                 x = 0.0 if cx_mode == "left" else max_row_width - w
+    #                 y = 0.0 if cy_mode == "bottom" else max_total_depth - l
+    #                 pb = self._try_place_at(x, y, spec, rot, layer_boxes, max_row_width, max_total_depth,
+    #                                         base_z, layer_idx, lower_boxes)
+    #                 if pb is not None:
+    #                     layer_boxes.append(pb)
+    #                     pool_counter[bid] -= 1
+    #                     placed_here = True
+    #                     break
+    #             if placed_here:
+    #                 break
 
     def _ep_fill_layer(self, layer_boxes: List[PlacedBox], pool_counter: Counter,
                        id_to_spec: Dict[str, BoxSpec], max_row_width: float, max_total_depth: float,
@@ -604,7 +614,9 @@ class Palletizer:
         動的な候補位置とし、行詰めで埋まらなかった残渣を可能な限り充填する。
         """
         changed = True
+        ep_round = 0
         while changed:
+            ep_round += 1
             changed = False
             candidates = {(0.0, 0.0)}
             for pb in layer_boxes:
@@ -625,6 +637,7 @@ class Palletizer:
                     for rot in (0, 90):
                         pb = self._try_place_at(cx, cy, spec, rot, layer_boxes, max_row_width, max_total_depth,
                                                 base_z, layer_idx, lower_boxes)
+                        
                         if pb is not None:
                             layer_boxes.append(pb)
                             pool_counter[bid] -= 1
@@ -661,18 +674,24 @@ class Palletizer:
 
         layer_boxes: List[PlacedBox] = []
 
-        # Phase A: 四隅アンカー
-        self._anchor_corners(layer_boxes, pool_counter, id_to_spec, max_row_width, max_total_depth,
-                            base_z, layer_idx, lower_boxes)
+        # Phase A: 四隅アンカー（廃止）
+        # Anchor Corners の制約はパレット仕様に存在しない
+        # 最上層の四隅高さ揃えは level_top_four_corners() で対応済み
+        # self._anchor_corners(layer_boxes, pool_counter, id_to_spec, max_row_width, max_total_depth,
+        #                     base_z, layer_idx, lower_boxes)
 
         # Phase B: 行分割 + 行内FFD詰め（ボトムアップ）
+        # Phase B: 行分割 + 行内FFD詰め（ボトムアップ）
         y_cursor = 0.0
+        phase_b_round = 0
         while y_cursor < max_total_depth - 1e-3:
+            phase_b_round += 1
             remaining_ids = [bid for bid, cnt in pool_counter.items() if cnt > 0]
             if not remaining_ids:
                 break
 
             depth_budget = max_total_depth - y_cursor
+            
             candidate_depths = sorted(
                 {round(id_to_spec[bid].width, 1) for bid in remaining_ids if id_to_spec[bid].width <= depth_budget + 1.0} |
                 {round(id_to_spec[bid].length, 1) for bid in remaining_ids if id_to_spec[bid].length <= depth_budget + 1.0},
@@ -683,6 +702,7 @@ class Palletizer:
             for d in candidate_depths:
                 if y_cursor + d > max_total_depth + 1e-3:
                     continue
+                
                 intervals = self._row_free_intervals(layer_boxes, y_cursor, d, max_row_width)
                 if not intervals:
                     continue
@@ -691,6 +711,7 @@ class Palletizer:
                                                      base_z, layer_idx, lower_boxes)
                 if not row_boxes:
                     continue
+                
                 fill = sum(rb.width for rb in row_boxes)
                 if best is None or fill > best[0]:
                     best = (fill, d, row_boxes, trial_counter)
@@ -699,6 +720,7 @@ class Palletizer:
                 break
 
             _, d, row_boxes, trial_counter = best
+            
             layer_boxes.extend(row_boxes)
             pool_counter = trial_counter
             y_cursor += d
