@@ -21,12 +21,36 @@
 
 | コマンド | 説明 | 入力 | 出力 |
 |---------|------|------|------|
+| `python box_research/serve_viewer.py` | 箱・蓋DBビューア起動 | — | ブラウザで `http://localhost:8081` |
 | `python3 test_programmer/generate_testcases.py` | テストケース生成 | `box_research/box_db.json` | `test_programmer/test_cases/*.json` |
 | `python3 tester/run_tests.py` | 全テストケース実行 | `test_programmer/test_cases/` | `tester/results/result_*.json` |
 | `python3 tester/run_tests.py -k single_tp332` | 特定テストを実行 | 名前パターン | 該当結果 |
 | `python3 supervisor/validate.py` | 制約バリデーション | `tester/results/*.json` | `supervisor/reports/validation_report.md` |
 | `python3 visualizer/visualize.py tester/results/result_*.json` | 3D可視化（スタンドアロンHTML生成） | 結果JSON | `visualizer/viewer.html` |
 | `python3 visualizer/serve_3d_viewer.py` | 統合ビューワサーバー起動 | — | ブラウザで `http://localhost:8082` |
+
+### Lid Database Management **[NEW: Phase 2]**
+
+蓋データベースを管理するUIツール：
+
+```bash
+# サーバー起動
+python box_research/serve_viewer.py
+
+# ブラウザで以下のURLにアクセス:
+# - 箱DBビューア: http://localhost:8081/box_db_viewer.html
+# - 蓋DBビューア: http://localhost:8081/lid_db_viewer.html
+```
+
+**蓋DBビューアの機能**:
+- 蓋一覧表示・追加・編集・削除
+- 嵌め方（fit_type）の選択: 外嵌め / 内嵌め / なし
+- 蓋仕様（寸法・厚み等）の管理
+- サーバーへの永続化保存
+
+**箱DBビューアの新機能**:
+- 箱編集時に互換蓋（compatible_lids）をチェックボックスで選択
+- 蓋を箱に紐付けて保存
 
 ### Quick Single-Test Validation
 
@@ -100,7 +124,7 @@ tester/results/result_*.json
 2. **混載エンジン (`palletize_mixed`)**
    - 拡張 Extreme Points (EP) 法 ＋ Best-Fit Decreasing 配置
    - 嵌合Z座標ソルバー: `Z = max(Z_top of support - fitting_depth)`
-   - 支持面判定: 底面積85%以上が接地（空中浮き排除）
+   - 支持面判定: 広面積85%以上が接地（空中浮き排除）
    - TP規格モジュール嵌合ボーナス・境界ペナルティ付き多目的評価関数
 
 3. **積み順決定 (`assign_loading_orders`)**
@@ -117,7 +141,7 @@ tester/results/result_*.json
 4. 最高層四隅高さ一致 (誤差 ±1.0mm以内)
 5. 3D干渉検出（嵌合沈み込みを許容）
 6. 嵌合・段積み整合性
-7. 底面支持率 ≥85%
+7. 広面支持率 ≥85%
 8. 回転角度 0° or 90° のみ
 9. 積み順トポロジカル整合性
 

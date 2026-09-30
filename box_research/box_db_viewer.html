@@ -278,6 +278,15 @@
           </div>
         </div>
 
+        <!-- Compatible Lids Section -->
+        <div class="border-t border-slate-100 pt-4">
+          <label class="block text-xs font-bold text-slate-700 mb-2">対応可能な蓋 (互換蓋)</label>
+          <div id="lids-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <!-- Lids will be loaded here by JavaScript -->
+          </div>
+          <p id="lids-loading" class="text-xs text-slate-500 italic">蓋データを読み込み中...</p>
+        </div>
+
         <!-- Modal Footer -->
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
           <button type="button" id="btn-cancel-modal" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition">キャンセル</button>
@@ -861,6 +870,56 @@
       }, 2500);
     }
 
+    // Global cache for lids
+    let lidDB = {};
+
+    // Fetch and cache lid database
+    async function loadLids() {
+      try {
+        console.log('[DEBUG] loadLids() を呼び出しました');
+        const response = await fetch('/api/lids');
+        console.log('[DEBUG] API /api/lids から応答を受け取りました:', response.status);
+        if (response.ok) {
+          lidDB = await response.json();
+          console.log('[DEBUG] JSON解析完了。蓋データ:', lidDB);
+          console.log('[DEBUG] Lids loaded:', Object.keys(lidDB).length, 'lids');
+        } else {
+          console.warn('[DEBUG] API /api/lids が 200 以外のステータスを返しました:', response.status);
+        }
+      } catch (error) {
+        console.error('[DEBUG] loadLids() でエラーが発生しました:', error);
+        console.warn('Could not load lids from server, will use empty list:', error);
+      }
+    }
+
+    // Render lid checkboxes in modal
+    function renderLidCheckboxes(selectedLids = []) {
+      const container = document.getElementById('lids-container');
+      const loadingMsg = document.getElementById('lids-loading');
+      
+      container.innerHTML = '';
+      loadingMsg.style.display = 'none';
+
+      if (Object.keys(lidDB).length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-500 italic col-span-2">利用可能な蓋がありません</p>';
+        return;
+      }
+
+      Object.entries(lidDB).forEach(([lidId, lid]) => {
+        const isSelected = selectedLids.includes(lidId);
+        const checkbox = document.createElement('label');
+        checkbox.className = 'flex items-center gap-2 p-2 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition';
+        checkbox.innerHTML = `
+          <input type="checkbox" class="lid-checkbox w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" data-lid-id="${lidId}" ${isSelected ? 'checked' : ''}>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-bold text-slate-900">${lid.name}</div>
+            <div class="text-[11px] text-slate-500">${lidId} • ${lid.width}×${lid.length}mm</div>
+          </div>
+        `;
+        container.appendChild(checkbox);
+      });
+    }
+
     // Modal Control (for Add & Edit)
     const modal = document.getElementById('modal-box');
     const modalContainer = document.getElementById('modal-container');
@@ -892,6 +951,7 @@
         document.getElementById('input-height').value = box.height;
         document.getElementById('input-rib').value = box.rib_thickness;
         document.getElementById('input-desc').value = box.description || '';
+        renderLidCheckboxes(box.compatible_lids || []);  // ← 既存箱の蓋を表示
       } else {
         modalTitle.textContent = `新しい箱の仕様を登録`;
         modalSub.textContent = `パレタイズ対象として箱データベースに追加します`;
@@ -903,6 +963,7 @@
         inputId.disabled = false;
         document.getElementById('input-fitting').value = "10.0";
         document.getElementById('input-rib').value = "22.0";
+        renderLidCheckboxes([]);  // ← 新規箱は蓋なしで開始
       }
 
       modal.classList.remove('hidden');
@@ -950,11 +1011,16 @@
       const moduleRatio = document.getElementById('input-module').value.trim() || null;
       const description = document.getElementById('input-desc').value.trim() || "";
 
+      // 修正1: チェックボックスから選択された蓋IDを取得
+      const selectedLids = Array.from(document.querySelectorAll('.lid-checkbox:checked'))
+        .map(cb => cb.getAttribute('data-lid-id'));
+
       if (!id || !name || isNaN(width) || isNaN(length) || isNaN(height) || isNaN(fittingDepth)) {
         alert("必須項目を正しく入力してください。");
         return;
       }
 
+      // 修正2: boxObjにcompatible_lidsフィールドを追加
       const boxObj = {
         id: id,
         name: name,
@@ -965,7 +1031,8 @@
         fitting_depth: fittingDepth,
         rib_thickness: ribThickness,
         module_ratio: type === 'TP' ? moduleRatio : null,
-        description: description
+        description: description,
+        compatible_lids: selectedLids
       };
 
       if (editTargetId) {
@@ -1111,6 +1178,7 @@
     // Initialize & Fetch from API if available
     async function init() {
       loadState();
+      await loadLids();  // 修正3: 蓋DBを読み込み、完了するまで待つ ← await を追加！
       updateStats();
       renderTable();
 

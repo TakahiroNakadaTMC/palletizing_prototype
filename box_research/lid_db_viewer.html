@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>蓋データベース管理ビューア</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .scale-in { animation: scaleIn 0.2s ease-out; }
+    @keyframes scaleIn { from { transform: scale(0.95); } to { transform: scale(1); } }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen p-6">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="p-3 bg-blue-100 text-blue-700 rounded-lg">
+          <i data-lucide="package" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold text-slate-900">蓋データベース管理</h1>
+          <p class="text-sm text-slate-600 mt-1">パレタイズ用蓋仕様の一元管理ツール</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+        <div class="text-sm font-medium text-slate-600">登録蓋数</div>
+        <div class="text-2xl font-bold text-slate-900" id="stat-lid-count">0</div>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 border-l-4 border-indigo-500">
+        <div class="text-sm font-medium text-slate-600">外嵌め蓋</div>
+        <div class="text-2xl font-bold text-slate-900" id="stat-outer-fit">0</div>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
+        <div class="text-sm font-medium text-slate-600">内嵌め蓋</div>
+        <div class="text-2xl font-bold text-slate-900" id="stat-inner-fit">0</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      <button id="btn-add-lid" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition flex items-center gap-2 shadow">
+        <i data-lucide="plus" class="w-4 h-4"></i> 新しい蓋を追加
+      </button>
+      <button id="btn-save-all" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition flex items-center gap-2 shadow">
+        <i data-lucide="save" class="w-4 h-4"></i> 直接保存
+      </button>
+    </div>
+
+    <!-- Lids Table -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden fade-in">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-900 text-white">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold">蓋ID</th>
+              <th class="px-4 py-3 text-left font-semibold">蓋名称</th>
+              <th class="px-4 py-3 text-left font-semibold">寸法 (W×L)</th>
+              <th class="px-4 py-3 text-left font-semibold">厚み</th>
+              <th class="px-4 py-3 text-left font-semibold">嵌め方</th>
+              <th class="px-4 py-3 text-left font-semibold">説明</th>
+              <th class="px-4 py-3 text-center font-semibold">操作</th>
+            </tr>
+          </thead>
+          <tbody id="lids-table-body" class="divide-y divide-slate-200">
+            <!-- Lids will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Add/Edit Lid -->
+  <div id="modal-lid" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40 flex items-center justify-center p-4 fade-in">
+    <div id="modal-container" class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto scale-in">
+      <div class="sticky top-0 bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-4 flex items-center justify-between">
+        <div>
+          <h2 id="modal-title" class="text-xl font-bold">蓋の追加</h2>
+          <p id="modal-subtitle" class="text-xs text-slate-300 mt-1">新しい蓋仕様をデータベースに登録します</p>
+        </div>
+        <button id="btn-close-modal" class="text-slate-300 hover:text-white transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="form-lid" class="p-6 space-y-4">
+        <!-- Lid ID -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">蓋ID (例: LID-001)</label>
+          <input type="text" id="input-lid-id" placeholder="LID-001" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+
+        <!-- Name -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">蓋名称</label>
+          <input type="text" id="input-lid-name" placeholder="クリア蓋 TP-330系用" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+
+        <!-- Type -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">タイプ</label>
+          <select id="input-lid-type" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <option value="TP">TP規格</option>
+            <option value="NONE">無蓋</option>
+            <option value="OTHER">その他</option>
+          </select>
+        </div>
+
+        <!-- Dimensions -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">幅 [mm]</label>
+            <input type="number" id="input-lid-width" placeholder="335" step="1" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">長さ [mm]</label>
+            <input type="number" id="input-lid-length" placeholder="335" step="1" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <!-- Thickness -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">厚み [mm]</label>
+          <input type="number" id="input-lid-thickness" placeholder="15" step="0.1" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+
+        <!-- Fit Type -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">嵌め方</label>
+          <select id="input-lid-fit-type" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <option value="外嵌め">外嵌め（箱外側面と蓋で位置決め）</option>
+            <option value="内嵌め">内嵌め（箱内壁面と蓋で位置決め）</option>
+            <option value="なし">なし（無蓋の場合）</option>
+          </select>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">説明 / 特徴</label>
+          <input type="text" id="input-lid-desc" placeholder="対応規格や用途の説明" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
+          <button type="button" id="btn-cancel-modal" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition">キャンセル</button>
+          <button type="submit" id="modal-submit-btn" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow flex items-center gap-1.5">
+            <i data-lucide="check" class="w-4 h-4"></i> 保存する
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-medium transform transition-all duration-300 opacity-0 translate-y-4 pointer-events-none flex items-center gap-2 z-50">
+    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toast-msg">通知メッセージ</span>
+  </div>
+
+  <script>
+    // Global Lid DB
+    let currentLidDB = {};
+    let editTargetId = null;
+
+    // Toast Notification
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-4');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 3000);
+    }
+
+    // Load Lids from API
+    async function loadLidsFromServer() {
+      try {
+        const res = await fetch('/api/lids');
+        if (res.ok) {
+          currentLidDB = await res.json();
+          updateStats();
+          renderLidsTable();
+          showToast('蓋データをサーバーから読み込みました');
+        }
+      } catch (error) {
+        console.warn('Could not load from server:', error);
+      }
+    }
+
+    // Update Statistics
+    function updateStats() {
+      const totalLids = Object.keys(currentLidDB).length;
+      const outerFitLids = Object.values(currentLidDB).filter(l => l.fit_type === '外嵌め').length;
+      const innerFitLids = Object.values(currentLidDB).filter(l => l.fit_type === '内嵌め').length;
+
+      document.getElementById('stat-lid-count').textContent = totalLids;
+      document.getElementById('stat-outer-fit').textContent = outerFitLids;
+      document.getElementById('stat-inner-fit').textContent = innerFitLids;
+    }
+
+    // Render Lids Table
+    function renderLidsTable() {
+      const tbody = document.getElementById('lids-table-body');
+      tbody.innerHTML = '';
+
+      if (Object.keys(currentLidDB).length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 text-sm">登録された蓋がありません</td></tr>`;
+        return;
+      }
+
+      Object.entries(currentLidDB).forEach(([lidId, lid]) => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-slate-50 transition';
+        row.innerHTML = `
+          <td class="px-4 py-3 font-mono font-bold text-indigo-600">${lid.id}</td>
+          <td class="px-4 py-3">${lid.name}</td>
+          <td class="px-4 py-3 text-slate-600">${lid.width}×${lid.length}mm</td>
+          <td class="px-4 py-3 text-slate-600">${lid.thickness}mm</td>
+          <td class="px-4 py-3">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+              lid.fit_type === '外嵌め' ? 'bg-blue-100 text-blue-700' :
+              lid.fit_type === '内嵌め' ? 'bg-purple-100 text-purple-700' :
+              'bg-slate-100 text-slate-700'
+            }">
+              ${lid.fit_type || '未設定'}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-slate-600 text-xs truncate">${lid.description || '—'}</td>
+          <td class="px-4 py-3 text-center">
+            <button class="text-indigo-600 hover:text-indigo-700 font-medium text-xs transition" onclick="openModal('${lidId}')">
+              <i data-lucide="edit-2" class="w-4 h-4 inline"></i> 編集
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Modal Control
+    const modal = document.getElementById('modal-lid');
+    const modalContainer = document.getElementById('modal-container');
+
+    function openModal(lidId = null) {
+      editTargetId = lidId;
+      const modalTitle = document.getElementById('modal-title');
+      const modalSub = document.getElementById('modal-subtitle');
+      const modalBtn = document.getElementById('modal-submit-btn');
+
+      if (lidId && currentLidDB[lidId]) {
+        const lid = currentLidDB[lidId];
+        modalTitle.textContent = `蓋仕様の編集 (${lid.id})`;
+        modalSub.textContent = `寸法、嵌め方等のパラメータを変更します`;
+        modalBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> 更新して保存`;
+
+        document.getElementById('input-lid-id').value = lid.id;
+        document.getElementById('input-lid-id').disabled = true;
+        document.getElementById('input-lid-name').value = lid.name || '';
+        document.getElementById('input-lid-type').value = lid.type || 'TP';
+        document.getElementById('input-lid-width').value = lid.width;
+        document.getElementById('input-lid-length').value = lid.length;
+        document.getElementById('input-lid-thickness').value = lid.thickness;
+        document.getElementById('input-lid-fit-type').value = lid.fit_type || '外嵌め';
+        document.getElementById('input-lid-desc').value = lid.description || '';
+      } else {
+        modalTitle.textContent = `新しい蓋を登録`;
+        modalSub.textContent = `新しい蓋仕様をデータベースに追加します`;
+        modalBtn.innerHTML = `<i data-lucide="plus" class="w-4 h-4"></i> 登録する`;
+
+        document.getElementById('form-lid').reset();
+        document.getElementById('input-lid-id').disabled = false;
+        document.getElementById('input-lid-thickness').value = '15';
+        document.getElementById('input-lid-fit-type').value = '外嵌め';
+      }
+
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modalContainer.classList.remove('scale-95');
+        modalContainer.classList.add('scale-100');
+        document.getElementById('input-lid-id').focus();
+        lucide.createIcons();
+      }, 10);
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      editTargetId = null;
+    }
+
+    // Form Submit
+    document.getElementById('form-lid').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const id = document.getElementById('input-lid-id').value.trim();
+      const name = document.getElementById('input-lid-name').value.trim();
+      const type = document.getElementById('input-lid-type').value;
+      const width = parseFloat(document.getElementById('input-lid-width').value) || 0;
+      const length = parseFloat(document.getElementById('input-lid-length').value) || 0;
+      const thickness = parseFloat(document.getElementById('input-lid-thickness').value) || 0;
+      const fitType = document.getElementById('input-lid-fit-type').value;
+      const description = document.getElementById('input-lid-desc').value.trim();
+
+      if (!id || !name) {
+        showToast('蓋IDと蓋名称は必須です');
+        return;
+      }
+
+      currentLidDB[id] = { id, name, type, width, length, thickness, fit_type: fitType, description };
+      updateStats();
+      renderLidsTable();
+      closeModal();
+      showToast(`蓋 "${name}" を${editTargetId ? '更新' : '登録'}しました`);
+    });
+
+    // Event Listeners
+    document.getElementById('btn-add-lid').addEventListener('click', () => openModal());
+    document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
+    document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+
+    document.getElementById('btn-save-all').addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/lids/save_all', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(currentLidDB)
+        });
+        if (res.ok) {
+          showToast('蓋データをサーバーに保存しました');
+        } else {
+          showToast('保存に失敗しました');
+        }
+      } catch (error) {
+        console.error('Save error:', error);
+        showToast('通信エラーが発生しました');
+      }
+    });
+
+    // Initialize
+    window.addEventListener('load', () => {
+      loadLidsFromServer();
+    });
+  </script>
+</body>
+</html>

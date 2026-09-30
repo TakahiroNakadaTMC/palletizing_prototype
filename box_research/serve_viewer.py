@@ -15,6 +15,7 @@ import urllib.parse
 PORT = 8080
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BOX_DB_PATH = os.path.join(BASE_DIR, "box_db.json")
+LID_DB_PATH = os.path.join(BASE_DIR, "lid_db.json")
 VIEWER_HTML_PATH = os.path.join(BASE_DIR, "box_db_viewer.html")
 
 class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
@@ -37,6 +38,16 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
             with open(BOX_DB_PATH, "rb") as f:
                 self.wfile.write(f.read())
             return
+        elif parsed.path == "/api/lids":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            if os.path.exists(LID_DB_PATH):
+                with open(LID_DB_PATH, "rb") as f:
+                    self.wfile.write(f.read())
+            else:
+                self.wfile.write(b"{}")
+            return
         super().do_GET()
 
     def do_POST(self):
@@ -53,6 +64,26 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.end_headers()
                 response = {"status": "ok", "message": f"Successfully updated {len(data)} boxes in box_db.json"}
+                self.wfile.write(json.dumps(response).encode("utf-8"))
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                response = {"status": "error", "message": str(e)}
+                self.wfile.write(json.dumps(response).encode("utf-8"))
+            return
+        elif parsed.path == "/api/lids/save_all":
+            content_len = int(self.headers.get("Content-Length", 0))
+            post_body = self.rfile.read(content_len)
+            try:
+                data = json.loads(post_body.decode("utf-8"))
+                with open(LID_DB_PATH, "w", encoding="utf-8") as f:
+                    json.dump(data, f, ensure_ascii=False, indent=2)
+                
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                response = {"status": "ok", "message": f"Successfully updated {len(data)} lids in lid_db.json"}
                 self.wfile.write(json.dumps(response).encode("utf-8"))
             except Exception as e:
                 self.send_response(500)

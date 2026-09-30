@@ -1,0 +1,112 @@
+{
+  "LID-001": {
+    "id": "LID-001",
+    "name": "クリア蓋 TP-330系用",
+    "type": "TP",
+    "width": 335,
+    "length": 335,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "description": "TP-330系1型対応（TP-331, TP-332, TP-333用）"
+  },
+  "LID-002": {
+    "id": "LID-002",
+    "name": "黒蓋 TP-330系用",
+    "type": "TP",
+    "width": 335,
+    "length": 335,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "description": "TP-330系1型対応（TP-331, TP-332, TP-333用）"
+  },
+  "LID-003": {
+    "id": "LID-003",
+    "name": "クリア蓋 TP-340系用",
+    "type": "TP",
+    "width": 503,
+    "length": 335,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "description": "TP-340系1.5型対応（TP-341, TP-342, TP-343用）"
+  },
+  "LID-004": {
+    "id": "LID-004",
+    "name": "黒蓋 TP-340系用",
+    "type": "TP",
+    "width": 503,
+    "length": 335,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "description": "TP-340系1.5型対応（TP-341, TP-342, TP-343用）"
+  },
+  "LID-005": {
+    "id": "LID-005",
+    "name": "クリア蓋 TP-360系用",
+    "type": "TP",
+    "width": 670,
+    "length": 335,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "description": "TP-360系2型対応（TP-362, TP-363用）"
+  },
+  "LID-006": {
+    "id": "LID-006",
+    "name": "黒蓋 TP-360系用",
+    "type": "TP",
+    "width": 670,
+    "length": 335,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "description": "TP-360系2型対応（TP-362, TP-363用）"
+  },
+  "LID-007": {
+    "id": "LID-007",
+    "name": "クリア蓋 TP-460系用",
+    "type": "TP",
+    "width": 670,
+    "length": 503,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "description": "TP-460系大型対応（TP-462, TP-463用）"
+  },
+  "LID-008": {
+    "id": "LID-008",
+    "name": "黒蓋 TP-460系用",
+    "type": "TP",
+    "width": 670,
+    "length": 503,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "description": "TP-460系大型対応（TP-462, TP-463用）"
+  },
+  "LID-009": {
+    "id": "LID-009",
+    "name": "クリア蓋 TP-130系用",
+    "type": "TP",
+    "width": 335,
+    "length": 168,
+    "thickness": 12,
+    "fit_type": "外嵌め",
+    "description": "TP-130系ハーフモジュール対応（TP-131用）"
+  },
+  "LID-010": {
+    "id": "LID-010",
+    "name": "無蓋",
+    "type": "NONE",
+    "width": 0,
+    "length": 0,
+    "thickness": 0,
+    "fit_type": "なし",
+    "description": "蓋を使用しない場合"
+  },
+  "TEST": {
+    "id": "TEST",
+    "name": "機能確認用",
+    "type": "TP",
+    "width": 350,
+    "length": 300,
+    "thickness": 15,
+    "fit_type": "内嵌め",
+    "description": "機能確認用"
+  }
+}

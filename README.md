@@ -62,6 +62,25 @@
 - `height` (float): 外寸高さ [mm]
 - `fitting_depth` (float): 上下に積み重ねたときの勘合（はまり込み）深さ [mm]
 - `rib_thickness` (float): 外周リブや底面リブの厚み [mm]
+- `compatible_lids` (array): 互換性のある蓋IDリスト（例: `["LID-001", "LID-002", "LID-010"]`)
+
+### (1.5) 蓋データベース仕様 (`lid_db`) **[NEW: Phase 2]**
+- `id` (string): 蓋の識別子 / 蓋ID
+- `name` (string): 蓋の名称（例: 「クリア蓋 TP-330系用」）
+- `type` (string): 蓋の規格タイプ（例: `"TP"`, `"NONE"`, `"OTHER"`）
+- `width` (float): 蓋の幅 [mm]
+- `length` (float): 蓋の長さ [mm]
+- `thickness` (float): 蓋の厚み [mm]
+- `fit_type` (string): 蓋の嵌め方
+  - `"外嵌め"`: 箱外側面と蓋で位置決め（最も一般的）
+  - `"内嵌め"`: 箱内壁面と蓋で位置決め
+  - `"なし"`: 蓋を使用しない場合
+- `description` (string): 対応規格や特徴の説明
+
+**蓋DBの用途**:
+- 箱データ（`box_db`）の `compatible_lids` フィールドで箱と蓋の互換性を管理
+- テストケース生成時に蓋選択肢を提供
+- パレタイズ結果に蓋情報を付加（将来拡張）
 
 ### (2) パレット仕様 (`pallet_spec`)
 - `width` (float): パレット幅 [mm]
