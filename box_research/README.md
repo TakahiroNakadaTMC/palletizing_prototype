@@ -111,7 +111,85 @@ $$\text{側面厚み} = \frac{\text{外寸} - \text{有効内寸}}{2} \quad (\te
 
 ---
 
-## 5. 後続フェーズへの引き継ぎ
+## 5. 蓋データベース仕様（Phase 2 新規追加）
+
+### 5.1 蓋DB の位置づけ
+
+- **ファイル**: `box_research/lid_db.json`
+- **目的**: パレタイズ対象箱に対応する蓋（フタ）の仕様を一元管理
+- **用途**:
+  - テストケース生成時の蓋選択肢の提供
+  - パレタイズ結果への蓋情報付加（将来拡張）
+  - UI上での箱-蓋関連性の可視化
+
+### 5.2 蓋データ項目
+
+各蓋について以下を管理：
+
+| フィールド | 型 | 説明 |
+|-----------|-----|------|
+| `id` | string | 蓋識別子（例: `"LID-001"`） |
+| `name` | string | 蓋の名称（例: `"TP-330系対応クリア蓋"`） |
+| `type` | string | 蓋の規格タイプ（例: `"TP"`, `"OTHER"`） |
+| `width` | float | 蓋の幅 [mm] |
+| `length` | float | 蓋の奥行き [mm] |
+| `thickness` | float | 蓋の厚み [mm] |
+| `fit_type` | string | 蓋の嵌め方：`"外嵌め"` \| `"内嵌め"` \| `"なし"` |
+| `description` | string | 対応規格や特徴の説明 |
+
+**fit_type の定義**:
+- `"外嵌め"`: 箱外側面と蓋で位置決め（標準方式、9個の蓋）
+- `"内嵌め"`: 箱内壁面と蓋で位置決め
+- `"なし"`: 蓋を使用しない場合（universal option、LID-010）
+
+### 5.3 箱と蓋の互換性管理
+
+Phase 2 で箱DB（`box_db.json`）を拡張し、各箱に `compatible_lids` フィールドを追加：
+
+- **フィールド**: `compatible_lids` (array of string)
+- **内容**: 当該箱に対応する蓋IDリスト
+- **例**: 
+  ```json
+  {
+    "id": "TP-331",
+    "name": "TP-331コンテナ",
+    ...
+    "compatible_lids": ["LID-001", "LID-002", "LID-010"]
+  }
+  ```
+- **全体方針**: 全箱が蓋なし選択肢（`LID-010`）を含む（フレキシビリティ確保）
+
+### 5.4 Phase 2 成果物一覧
+
+| ファイル | 説明 |
+|---------|------|
+| `box_research/lid_db.json` | 蓋DB本体（10個の蓋定義、fit_type フィールド付き） |
+| `box_research/lid_db_viewer.html` | 蓋CRUD管理UI（新規作成、追加・編集・削除機能） |
+| `box_research/box_db_viewer.html` | 蓋選択チェックボックス機能を拡張 |
+| `box_research/serve_viewer.py` | REST API拡張（`/api/lids`, `/api/lids/save_all` エンドポイント追加） |
+
+### 5.5 技術的ハイライト
+
+- **REST API**: `serve_viewer.py` に蓋DB用エンドポイントを実装
+  - `GET /api/lids` — 蓋DB全体を取得
+  - `POST /api/lids/save_all` — 蓋DB全体を保存
+- **UI**: HTML5 + Tailwind CSS で蓋管理画面を実装
+  - 蓋統計（総数、外嵌め数、内嵌め数）を表示
+  - 蓋の追加・編集・削除をモーダルフォームで実行
+  - fit_type をドロップダウンで選択
+- **データ永続化**: UTF-8 JSON ファイルとして直接保存（DB エンジン不要）
+
+---
+
+## 6. 後続フェーズへの引き継ぎ
 
 - `test-programmer` は、本DBの型番（特にモジュール関係にある TP-331/332, TP-341/342, TP-362, TP-462 や OC-50L）を組み合わせてテストケースを作成してください。
+- `test-programmer` は Phase 3 で、テストケース生成時に蓋情報（`compatible_lids` から蓋を選択）をテストケースJSONに含めてください。
 - `algorithm-programmer` は、`box_db.json` の `fitting_depth` および `module_ratio` を参照して嵌合計算を実装してください。
+- 将来フェーズで、パレタイズ結果に蓋情報を付加し、可視化ツールで蓋の配置も表示することを検討してください。
+
+---
+
+**Phase 2 完了日**: 2026-09-30  
+**担当エージェント**: `box-research`  
+**次フェーズ**: Phase 3 (テストケースビューア統合)
