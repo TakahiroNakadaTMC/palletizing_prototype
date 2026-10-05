@@ -167,7 +167,7 @@
         <!-- Box Input List Table -->
         <div class="border border-slate-200 rounded-xl overflow-hidden">
           <div class="bg-slate-50 px-4 py-2.5 border-b border-slate-200 flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-700">投入箱リスト（荷山構成）</span>
+            <span class="text-xs font-bold text-slate-700">投入箱リスト（荷山構成）- 各箱ごとに蓋を選択</span>
             <button type="button" id="btn-add-box-row" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 cursor-pointer">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> 箱を追加
             </button>
@@ -203,6 +203,7 @@
     let editTargetTcName = null;
     let currentFilter = 'all';
     let searchQuery = '';
+    let lidDB = {}; // ← Add lidDB cache
 
     const STORAGE_KEY_TC_APPROVAL = 'palletize_tc_approval_v1';
     const STORAGE_KEY_TC_CUSTOM = 'palletize_tc_custom_v1';
@@ -228,6 +229,9 @@
       } catch (e) {
         console.warn("Using fallback boxDB", e);
       }
+
+      // 1.5. Load Lids
+      await loadLids();
 
       // 2. Load Test Cases
       try {
@@ -272,6 +276,67 @@
       if (cat === 'single') return '<span class="text-[10px] px-2 py-0.5 rounded-full font-bold badge-single">単載</span>';
       if (cat === 'boundary') return '<span class="text-[10px] px-2 py-0.5 rounded-full font-bold badge-boundary">境界値</span>';
       return '<span class="text-[10px] px-2 py-0.5 rounded-full font-bold badge-mixed">混載</span>';
+    }
+
+    // ========== Lid Management Functions ==========
+    /**
+     * loadLids() - サーバーから蓋DBを取得してキャッシング
+     */
+    async function loadLids() {
+      try {
+        const response = await fetch('/api/lids');
+        if (response.ok) {
+          lidDB = await response.json();
+          console.log('Lids loaded:', Object.keys(lidDB).length, 'lids');
+        }
+      } catch (error) {
+        console.warn('Could not load lids:', error);
+        lidDB = {};
+      }
+    }
+
+    /**
+     * renderLidOptions() - ドロップダウンを動的更新
+     * @param {string[]} compatibleLids - 箱に対応する蓋IDの配列（未使用、互換性のため予約）
+     * @param {string} selectedLidId - 現在選択されている蓋ID
+     */
+    function renderLidOptions(compatibleLids = [], selectedLidId = '') {
+      const selector = document.getElementById('lid-selector');
+      if (!selector) return;
+
+      // Save scroll position
+      const scrollTop = selector.scrollTop;
+
+      // Always include "no lid" option
+      const options = [{ id: '', name: '蓋なし' }];
+
+      // Add all available lids
+      Object.keys(lidDB).forEach(lidId => {
+        const lid = lidDB[lidId];
+        options.push({
+          id: lidId,
+          name: lid.name || lidId
+        });
+      });
+
+      // Build option elements
+      selector.innerHTML = options.map(opt =>
+        `<option value="${opt.id}" ${opt.id === selectedLidId ? 'selected' : ''}>${opt.name}</option>`
+      ).join('');
+
+      // Restore scroll position
+      if (selector.scrollTop !== scrollTop) {
+        selector.scrollTop = scrollTop;
+      }
+    }
+
+    /**
+     * getSelectedLid() - 現在選択されている蓋IDを取得
+     * @returns {string} 選択されている蓋ID（蓋なしの場合は空文字列）
+     */
+    function getSelectedLid() {
+      const selector = document.getElementById('lid-selector');
+      return selector ? selector.value : '';
     }
 
     // Render Grid Cards
@@ -453,14 +518,14 @@
 
       if (tcName && testCasesData[tcName]) {
         const tc = testCasesData[tcName];
-        modalTitle.textContent = `テストパターンの編集 (${name})`;
-        modalSub.textContent = `投入箱の種類と数量を変更します`;
+        modalTitle.textContent = `テストパターンの編集 (${tcName})`;
+        modalSub.textContent = `投入箱の種類と数量、対応蓋を変更します`;
         inputName.value = tc.name || tcName;
         inputName.disabled = true;
         inputDesc.value = tc.description || '';
 
         (tc.box_list || []).forEach(b => {
-          addBoxRow(b.box_id, b.count);
+          addBoxRow(b.box_id, b.count, b.lid_id || 'LID-010');
         });
       } else {
         modalTitle.textContent = `新しいテストパターンの作成`;
@@ -469,7 +534,7 @@
         inputName.disabled = false;
         // Default rows
         const available = Object.keys(masterBoxDB);
-        addBoxRow(available[0] || 'TP-332', 20);
+        addBoxRow(available[0] || 'TP-332', 20, 'LID-010');
       }
 
       modal.classList.remove('hidden');
@@ -492,35 +557,77 @@
       }, 200);
     }
 
-    function addBoxRow(selectedId = '', count = 10) {
+    function addBoxRow(selectedId = '', count = 10, lidId = 'LID-010') {
       const container = document.getElementById('box-rows-container');
       const row = document.createElement('div');
-      row.className = 'box-input-row flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200';
+      row.className = 'box-input-row flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 flex-wrap';
 
       const boxOptions = Object.keys(masterBoxDB).map(id => {
         const b = masterBoxDB[id];
         return `<option value="${id}" ${id === selectedId ? 'selected' : ''}>${id} (${b.width}x${b.length}x${b.height}) - ${b.name}</option>`;
       }).join('');
 
+      // 選択された箱の対応蓋リストを取得
+      const selectedBox = masterBoxDB[selectedId];
+      const compatibleLids = selectedBox?.compatible_lids || ['LID-010'];
+      
+      const lidOptions = [];
+      compatibleLids.forEach(id => {
+        const lid = lidDB[id] || { name: id };
+        lidOptions.push(`<option value="${id}" ${lidId === id ? 'selected' : ''}>${lid.name || id}</option>`);
+      });
+
       row.innerHTML = `
-        <div class="flex-1">
+        <div class="flex-1 min-w-max">
           <select class="box-id-select w-full px-2.5 py-1.5 text-xs font-mono border border-slate-300 rounded-md focus:ring-1 focus:ring-indigo-500 bg-white">
             ${boxOptions}
           </select>
         </div>
-        <div class="w-24">
+        <div class="w-20">
           <div class="flex items-center gap-1">
             <span class="text-[11px] text-slate-500">個数:</span>
             <input type="number" min="1" max="500" value="${count}" class="box-count-input w-full px-2 py-1 text-xs font-mono font-bold text-indigo-700 border border-slate-300 rounded-md text-right">
           </div>
         </div>
-        <button type="button" class="btn-remove-row p-1 text-slate-400 hover:text-rose-600 rounded transition cursor-pointer">
+        <div class="w-32">
+          <div class="flex items-center gap-1">
+            <span class="text-[11px] text-slate-500">蓋:</span>
+            <select class="box-lid-select w-full px-2 py-1.5 text-xs border border-slate-300 rounded-md focus:ring-1 focus:ring-indigo-500 bg-white">
+              ${lidOptions.join('')}
+            </select>
+          </div>
+        </div>
+        <button type="button" class="btn-remove-row p-1 text-slate-400 hover:text-rose-600 rounded transition cursor-pointer flex-shrink-0">
           <i data-lucide="trash" class="w-4 h-4"></i>
         </button>
       `;
 
       row.querySelector('.btn-remove-row').addEventListener('click', () => {
         row.remove();
+      });
+
+      // 箱型番が変更されたら、対応蓋を更新
+      row.querySelector('.box-id-select').addEventListener('change', (e) => {
+        const newBoxId = e.target.value;
+        const newBox = masterBoxDB[newBoxId];
+        const newCompatibleLids = newBox?.compatible_lids || ['LID-010'];
+        
+        // 新しい蓋ドロップダウンを再構築
+        const lidSelect = row.querySelector('.box-lid-select');
+        const currentLidValue = lidSelect.value;
+        
+        lidSelect.innerHTML = '';
+        newCompatibleLids.forEach(id => {
+          const lid = lidDB[id] || { name: id };
+          const option = document.createElement('option');
+          option.value = id;
+          option.text = lid.name || id;
+          // 現在の蓋が新しい互換蓋リストに含まれていればそれを選択、そうでなければ最初の蓋を選択
+          if (id === currentLidValue || (!lidSelect.querySelector('option[selected]') && newCompatibleLids.indexOf(id) === 0)) {
+            option.selected = true;
+          }
+          lidSelect.appendChild(option);
+        });
       });
 
       container.appendChild(row);
@@ -549,8 +656,9 @@
       boxRows.forEach(r => {
         const bid = r.querySelector('.box-id-select').value;
         const cnt = parseInt(r.querySelector('.box-count-input').value) || 1;
+        const lid = r.querySelector('.box-lid-select').value || 'LID-010';
         if (bid && cnt > 0) {
-          boxList.push({ box_id: bid, count: cnt });
+          boxList.push({ box_id: bid, count: cnt, lid_id: lid });
         }
       });
 

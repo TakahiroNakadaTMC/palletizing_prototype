@@ -17,6 +17,7 @@ import urllib.parse
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 BOX_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "box_db.json")
+LID_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "lid_db.json")
 TEST_CASES_DIR = os.path.join(BASE_DIR, "test_cases")
 DEFAULT_PORT = 8083
 
@@ -41,6 +42,18 @@ class TestCaseViewerHandler(SimpleHTTPRequestHandler):
                     self.wfile.write(f.read())
             else:
                 self.wfile.write(b"{}")
+            return
+
+        # API: 蓋DBの取得
+        if parsed.path == "/api/lids":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            if os.path.exists(LID_DB_PATH):
+                with open(LID_DB_PATH, "rb") as f:
+                    self.wfile.write(f.read())
+            else:
+                self.wfile.write(b'{}')
             return
 
         # API: テストケース一覧の取得

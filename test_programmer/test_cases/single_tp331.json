@@ -12,7 +12,8 @@
   "box_list": [
     {
       "box_id": "TP-331",
-      "count": 80
+      "count": 80,
+      "lid_id": "LID-010"
     }
   ]
 }

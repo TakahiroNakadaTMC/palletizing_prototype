@@ -12,11 +12,13 @@
   "box_list": [
     {
       "box_id": "TP-342",
-      "count": 16
+      "count": 16,
+      "lid_id": "LID-010"
     },
     {
       "box_id": "TP-332",
-      "count": 16
+      "count": 16,
+      "lid_id": "LID-010"
     }
   ]
 }
