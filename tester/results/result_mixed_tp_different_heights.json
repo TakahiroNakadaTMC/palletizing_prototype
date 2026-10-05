@@ -26,7 +26,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 2,
@@ -44,7 +46,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 3,
@@ -62,7 +66,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 4,
@@ -80,7 +86,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 5,
@@ -98,7 +106,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 6,
@@ -116,7 +126,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 7,
@@ -134,7 +146,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 8,
@@ -152,7 +166,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 9,
@@ -170,7 +186,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 10,
@@ -188,7 +206,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 11,
@@ -206,7 +226,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 12,
@@ -224,7 +246,9 @@
       "rotation": 0,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 13,
@@ -245,7 +269,9 @@
       "supported_by": [
         1,
         2
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 14,
@@ -267,7 +293,9 @@
         2,
         3,
         4
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 15,
@@ -287,7 +315,9 @@
       "layer_index": 1,
       "supported_by": [
         4
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 16,
@@ -308,7 +338,9 @@
       "supported_by": [
         5,
         6
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 17,
@@ -330,7 +362,9 @@
         6,
         7,
         8
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 18,
@@ -350,7 +384,9 @@
       "layer_index": 1,
       "supported_by": [
         8
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 19,
@@ -371,7 +407,9 @@
       "supported_by": [
         9,
         10
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 20,
@@ -393,7 +431,9 @@
         10,
         11,
         12
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     },
     {
       "order": 21,
@@ -413,7 +453,9 @@
       "layer_index": 1,
       "supported_by": [
         12
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0.0
     }
   ],
   "unplaced_boxes": [

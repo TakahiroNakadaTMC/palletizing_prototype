@@ -46,12 +46,14 @@ class PlacedBox:
     z: float                      # mm (底面Z座標)
     width: float                  # mm (配置後のX方向寸法)
     length: float                 # mm (配置後のY方向寸法)
-    height: float                 # mm (配置後のZ方向寸法)
+    height: float                 # mm (配置後のZ方向寸法、蓋含む)
     fitting_depth: float          # mm
     rib_thickness: float          # mm
     rotation: int                 # 0 or 90
     layer_index: int = 0          # 段数インデックス (0, 1, 2, ...)
     supported_by: List[int] = field(default_factory=list) # 下段の箱のorderリスト
+    lid_id: str = "LID-010"       # 【NEW】蓋ID（デフォルト: 蓋無）
+    lid_thickness: float = 0.0    # 【NEW】蓋の厚さ [mm]
 
     @property
     def top_z(self) -> float:
@@ -82,7 +84,9 @@ class PlacedBox:
             "rotation": self.rotation,
             "fitting_depth": self.fitting_depth,
             "layer_index": self.layer_index,
-            "supported_by": self.supported_by
+            "supported_by": self.supported_by,
+            "lid_id": self.lid_id,              # 【NEW】蓋ID
+            "lid_thickness": round(self.lid_thickness, 2)  # 【NEW】蓋厚
         }
 
 @dataclass

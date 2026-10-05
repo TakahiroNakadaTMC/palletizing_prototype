@@ -31,6 +31,11 @@ def main():
         raw_db = json.load(f)
     box_db = {bid: BoxSpec.from_dict(bdata) for bid, bdata in raw_db.items()}
 
+    # 1-2. 蓋DBのロード【NEW】
+    lid_db_path = os.path.join(PROJECT_ROOT, "box_research", "lid_db.json")
+    with open(lid_db_path, "r", encoding="utf-8") as f:
+        lid_db = json.load(f)
+
     # 2. テストケースのロード
     with open(args.testcase, "r", encoding="utf-8") as f:
         tc_data = json.load(f)
@@ -41,7 +46,7 @@ def main():
 
     # 3. パレタイズの実行
     palletizer = Palletizer(box_db, pallet_spec)
-    result = palletizer.run(test_name, box_list)
+    result = palletizer.run(test_name, box_list, lid_db)  # 【NEW】lid_db を追加
 
     result_dict = result.to_dict()
 

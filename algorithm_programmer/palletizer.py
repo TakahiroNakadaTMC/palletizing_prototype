@@ -51,15 +51,35 @@ class Palletizer:
         self.box_db = box_db
         self.pallet = pallet or PalletSpec()
 
-    def run(self, test_name: str, box_input_list: List[Dict[str, Any]]) -> PalletizeResult:
-        """テストケース投入リストを受け取り、単載または混載アルゴリズムを実行"""
+    def run(self, test_name: str, box_input_list: List[Dict[str, Any]], lid_db: Dict[str, Dict[str, Any]] = None) -> PalletizeResult:
+        """テストケース投入リストを受け取り、単載または混載アルゴリズムを実行
+        
+        Args:
+            test_name: テスト名
+            box_input_list: 投入箱リスト [{"box_id": "TP-332", "count": 60, "lid_id": "LID-010"}, ...]
+            lid_db: 蓋DB {"LID-001": {...}, ...} 【NEW】
+        """
+        if lid_db is None:
+            lid_db = {}
+        
         expanded_boxes: List[BoxSpec] = []
+        expanded_lids: List[Dict[str, Any]] = []  # 【NEW】各展開箱に対応する蓋情報
+        
         for item in box_input_list:
             bid = item["box_id"]
             cnt = item.get("count", 1)
+            lid_id = item.get("lid_id", "LID-010")  # 【NEW】箱ごとの蓋ID取得
+            
             if bid in self.box_db:
+                lid_info = lid_db.get(lid_id, {})  # 【NEW】蓋情報を取得
                 for _ in range(cnt):
                     expanded_boxes.append(self.box_db[bid])
+                    expanded_lids.append({  # 【NEW】蓋情報を追加
+                        "lid_id": lid_id,
+                        "lid_thickness": lid_info.get("thickness", 0.0),
+                        "lid_width": lid_info.get("width", 0.0),
+                        "lid_length": lid_info.get("length", 0.0)
+                    })
 
         if not expanded_boxes:
             return PalletizeResult(
@@ -72,9 +92,9 @@ class Palletizer:
 
         unique_ids = set(b.id for b in expanded_boxes)
         if len(unique_ids) == 1:
-            placed, unplaced = self.palletize_single(expanded_boxes)
+            placed, unplaced = self.palletize_single(expanded_boxes, expanded_lids)  # 【NEW】蓋情報を渡す
         else:
-            placed, unplaced = self.palletize_mixed(expanded_boxes)
+            placed, unplaced = self.palletize_mixed(expanded_boxes, expanded_lids)  # 【NEW】蓋情報を渡す
 
         # 最高層四隅高さ揃え処理
         placed, unplaced = self.level_top_four_corners(placed, unplaced)
@@ -96,7 +116,11 @@ class Palletizer:
     # -------------------------------------------------------------------------
     # 1. 単載パレタイズ (Mono-load Palletizer)
     # -------------------------------------------------------------------------
-    def palletize_single(self, boxes: List[BoxSpec]) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
+    def palletize_single(self, boxes: List[BoxSpec], lids: List[Dict[str, Any]] = None) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
+        """【MODIFIED】蓋情報を受け取るように修正"""
+        if lids is None:
+            lids = [{"lid_id": "LID-010", "lid_thickness": 0.0, "lid_width": 0.0, "lid_length": 0.0} for _ in boxes]
+        
         sample_box = boxes[0]
         w, l, h = sample_box.width, sample_box.length, sample_box.height
         depth = sample_box.fitting_depth
@@ -161,6 +185,10 @@ class Palletizer:
                 if box_idx >= total_needed:
                     break
 
+                # 【NEW】蓋情報を取得
+                lid_info = lids[box_idx]
+                lid_thickness = lid_info.get("lid_thickness", 0.0)
+                
                 pb = PlacedBox(
                     order=box_idx + 1,
                     box_id=sample_box.id,
@@ -169,11 +197,13 @@ class Palletizer:
                     z=round(layer_z, 2),
                     width=b_pos["w"],
                     length=b_pos["l"],
-                    height=h,
+                    height=h + lid_thickness,  # 【MODIFIED】蓋の厚さを加算
                     fitting_depth=depth,
                     rib_thickness=rib,
                     rotation=b_pos["rot"],
-                    layer_index=layer
+                    layer_index=layer,
+                    lid_id=lid_info.get("lid_id", "LID-010"),  # 【NEW】蓋ID
+                    lid_thickness=lid_thickness  # 【NEW】蓋厚
                 )
                 placed_boxes.append(pb)
                 box_idx += 1
@@ -276,12 +306,26 @@ class Palletizer:
     #    層ループは箱切れ/高さ超過/配置不能のいずれかでのみ終了し、中間層の四隅不一致で
     #    打ち切らない（四隅高さ揃えは最上段のみ level_top_four_corners で保証する）。
     # -------------------------------------------------------------------------
-    def palletize_mixed(self, boxes: List[BoxSpec]) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
-        """混載パレタイズ: MSP-EPハイブリッドによるレイヤー別パッキング"""
+    def palletize_mixed(self, boxes: List[BoxSpec], lids: List[Dict[str, Any]] = None) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
+        """混載パレタイズ: MSP-EPハイブリッドによるレイヤー別パッキング
+        
+        Args:
+            boxes: 投入箱リスト
+            lids: 【NEW】各箱に対応する蓋情報リスト
+        """
+        if lids is None:
+            lids = [{"lid_id": "LID-010", "lid_thickness": 0.0, "lid_width": 0.0, "lid_length": 0.0} for _ in boxes]
+        
+        # 【NEW】箱と蓋をペアで保持する辞書を作成（インデックスの対応を記録）
+        box_lid_pairs = [(boxes[i], lids[i]) for i in range(len(boxes))]
+        
         placed_boxes: List[PlacedBox] = []
 
-        box_pool = list(boxes)
-        box_pool.sort(key=lambda b: (b.width * b.length, b.height), reverse=True)
+        # 【MODIFIED】ペアリストをソート（箱のみでソート）
+        box_lid_pairs.sort(key=lambda p: (p[0].width * p[0].length, p[0].height), reverse=True)
+        box_pool = [p[0] for p in box_lid_pairs]
+        # 【NEW】蓋のマッピングを作成（箱インデックス -> 蓋情報）
+        box_idx_to_lid = {i: box_lid_pairs[i][1] for i in range(len(box_lid_pairs))}
 
         # 荷姿エンベロープ（全層で共通のX/Y作業範囲）を投入箱構成から一度だけ決定する。
         # 同じエンベロープを全層で使い回すことで、上段箱が常に下段箱の上に
@@ -514,11 +558,13 @@ class Palletizer:
                         z=round(base_z, 2),
                         width=w,
                         length=l,
-                        height=spec.height,
+                        height=spec.height,  # 【TODO-混載】蓋厚を加算する
                         fitting_depth=spec.fitting_depth,
                         rib_thickness=spec.rib_thickness,
                         rotation=rot,
-                        layer_index=layer_idx
+                        layer_index=layer_idx,
+                        lid_id="LID-010",  # 【NEW】混載はデフォルト蓋（今は無蓋）
+                        lid_thickness=0.0  # 【NEW】混載は厚さなし（後で対応予定）
                     )
                     placed.append(pb)
                     pool_counter[spec.id] -= 1
@@ -560,11 +606,13 @@ class Palletizer:
             z=round(base_z, 2),
             width=w,
             length=l,
-            height=spec.height,
+            height=spec.height,  # 【TODO-混載】蓋厚を加算する
             fitting_depth=spec.fitting_depth,
             rib_thickness=spec.rib_thickness,
             rotation=rot,
-            layer_index=layer_idx
+            layer_index=layer_idx,
+            lid_id="LID-010",  # 【NEW】混載はデフォルト蓋（今は無蓋）
+            lid_thickness=0.0  # 【NEW】混載は厚さなし（後で対応予定）
         )
 
     # [廃止] Anchor Corners メソッド

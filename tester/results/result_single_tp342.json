@@ -26,7 +26,9 @@
       "rotation": 90,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 2,
@@ -44,7 +46,9 @@
       "rotation": 90,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 3,
@@ -62,7 +66,9 @@
       "rotation": 90,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 4,
@@ -80,7 +86,9 @@
       "rotation": 90,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 5,
@@ -98,7 +106,9 @@
       "rotation": 90,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 6,
@@ -116,7 +126,9 @@
       "rotation": 90,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 7,
@@ -134,7 +146,9 @@
       "rotation": 90,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 8,
@@ -152,7 +166,9 @@
       "rotation": 90,
       "fitting_depth": 10.0,
       "layer_index": 0,
-      "supported_by": []
+      "supported_by": [],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 9,
@@ -172,7 +188,9 @@
       "layer_index": 1,
       "supported_by": [
         1
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 10,
@@ -192,7 +210,9 @@
       "layer_index": 1,
       "supported_by": [
         2
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 11,
@@ -212,7 +232,9 @@
       "layer_index": 1,
       "supported_by": [
         3
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 12,
@@ -232,7 +254,9 @@
       "layer_index": 1,
       "supported_by": [
         4
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 13,
@@ -252,7 +276,9 @@
       "layer_index": 1,
       "supported_by": [
         5
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 14,
@@ -272,7 +298,9 @@
       "layer_index": 1,
       "supported_by": [
         6
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 15,
@@ -292,7 +320,9 @@
       "layer_index": 1,
       "supported_by": [
         7
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 16,
@@ -312,7 +342,9 @@
       "layer_index": 1,
       "supported_by": [
         8
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 17,
@@ -332,7 +364,9 @@
       "layer_index": 2,
       "supported_by": [
         9
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 18,
@@ -352,7 +386,9 @@
       "layer_index": 2,
       "supported_by": [
         10
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 19,
@@ -372,7 +408,9 @@
       "layer_index": 2,
       "supported_by": [
         11
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 20,
@@ -392,7 +430,9 @@
       "layer_index": 2,
       "supported_by": [
         12
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 21,
@@ -412,7 +452,9 @@
       "layer_index": 2,
       "supported_by": [
         13
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 22,
@@ -432,7 +474,9 @@
       "layer_index": 2,
       "supported_by": [
         14
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 23,
@@ -452,7 +496,9 @@
       "layer_index": 2,
       "supported_by": [
         15
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 24,
@@ -472,7 +518,9 @@
       "layer_index": 2,
       "supported_by": [
         16
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 25,
@@ -492,7 +540,9 @@
       "layer_index": 3,
       "supported_by": [
         17
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 26,
@@ -512,7 +562,9 @@
       "layer_index": 3,
       "supported_by": [
         18
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 27,
@@ -532,7 +584,9 @@
       "layer_index": 3,
       "supported_by": [
         19
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 28,
@@ -552,7 +606,9 @@
       "layer_index": 3,
       "supported_by": [
         20
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 29,
@@ -572,7 +628,9 @@
       "layer_index": 3,
       "supported_by": [
         21
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 30,
@@ -592,7 +650,9 @@
       "layer_index": 3,
       "supported_by": [
         22
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 31,
@@ -612,7 +672,9 @@
       "layer_index": 3,
       "supported_by": [
         23
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 32,
@@ -632,7 +694,9 @@
       "layer_index": 3,
       "supported_by": [
         24
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 33,
@@ -652,7 +716,9 @@
       "layer_index": 4,
       "supported_by": [
         25
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 34,
@@ -672,7 +738,9 @@
       "layer_index": 4,
       "supported_by": [
         26
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 35,
@@ -692,7 +760,9 @@
       "layer_index": 4,
       "supported_by": [
         27
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 36,
@@ -712,7 +782,9 @@
       "layer_index": 4,
       "supported_by": [
         28
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 37,
@@ -732,7 +804,9 @@
       "layer_index": 4,
       "supported_by": [
         29
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 38,
@@ -752,7 +826,9 @@
       "layer_index": 4,
       "supported_by": [
         30
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 39,
@@ -772,7 +848,9 @@
       "layer_index": 4,
       "supported_by": [
         31
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     },
     {
       "order": 40,
@@ -792,7 +870,9 @@
       "layer_index": 4,
       "supported_by": [
         32
-      ]
+      ],
+      "lid_id": "LID-010",
+      "lid_thickness": 0
     }
   ],
   "unplaced_boxes": [],
