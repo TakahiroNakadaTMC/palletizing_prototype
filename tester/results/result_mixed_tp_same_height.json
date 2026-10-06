@@ -8,7 +8,9 @@
     "min_y_span": 800.0,
     "max_y_span": 1100.0
   },
+  "input_boxes_count": 42,
   "placed_boxes_count": 10,
+  "unplaced_boxes_count": 32,
   "boxes": [
     {
       "order": 1,
@@ -274,19 +276,23 @@
   "unplaced_boxes": [
     {
       "box_id": "TP-332",
-      "count": 16
+      "count": 16,
+      "reason": "次の層を積むと最大積載高さを超えます / 最高層の四隅高さを揃えるため除外されました"
     },
     {
       "box_id": "TP-462",
-      "count": 2
+      "count": 2,
+      "reason": "最高層の四隅高さを揃えるため除外されました"
     },
     {
       "box_id": "TP-362",
-      "count": 2
+      "count": 2,
+      "reason": "最高層の四隅高さを揃えるため除外されました"
     },
     {
       "box_id": "TP-342",
-      "count": 12
+      "count": 12,
+      "reason": "最高層の四隅高さを揃えるため除外されました"
     }
   ],
   "summary": {

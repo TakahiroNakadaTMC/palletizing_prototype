@@ -8,7 +8,9 @@
     "min_y_span": 800.0,
     "max_y_span": 1100.0
   },
+  "input_boxes_count": 74,
   "placed_boxes_count": 21,
+  "unplaced_boxes_count": 53,
   "boxes": [
     {
       "order": 1,
@@ -566,35 +568,43 @@
   "unplaced_boxes": [
     {
       "box_id": "TP-341.5",
-      "count": 2
+      "count": 2,
+      "reason": "配置スペース、支持率、箱の向きなどの制約を満たす場所がありません"
     },
     {
       "box_id": "TP-331.5",
-      "count": 9
+      "count": 9,
+      "reason": "配置スペース、支持率、箱の向きなどの制約を満たす場所がありません"
     },
     {
       "box_id": "TP-131",
-      "count": 16
+      "count": 16,
+      "reason": "配置スペース、支持率、箱の向きなどの制約を満たす場所がありません"
     },
     {
       "box_id": "TP-463",
-      "count": 4
+      "count": 4,
+      "reason": "配置スペース、支持率、箱の向きなどの制約を満たす場所がありません"
     },
     {
       "box_id": "TP-363",
-      "count": 4
+      "count": 4,
+      "reason": "配置スペース、支持率、箱の向きなどの制約を満たす場所がありません"
     },
     {
       "box_id": "TP-362",
-      "count": 4
+      "count": 4,
+      "reason": "配置スペース、支持率、箱の向きなどの制約を満たす場所がありません"
     },
     {
       "box_id": "TP-343",
-      "count": 6
+      "count": 6,
+      "reason": "配置スペース、支持率、箱の向きなどの制約を満たす場所がありません"
     },
     {
       "box_id": "TP-342",
-      "count": 8
+      "count": 8,
+      "reason": "配置スペース、支持率、箱の向きなどの制約を満たす場所がありません"
     }
   ],
   "summary": {

@@ -169,12 +169,16 @@ class PalletizeResult:
     boxes: List[PlacedBox]
     summary: Dict[str, Any]
     unplaced_boxes: List[Dict[str, Any]] = field(default_factory=list)
+    input_boxes_count: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
+        placed_count = len(self.boxes)
         return {
             "test_name": self.test_name,
             "pallet": asdict(self.pallet),
-            "placed_boxes_count": len(self.boxes),
+            "input_boxes_count": self.input_boxes_count,
+            "placed_boxes_count": placed_count,
+            "unplaced_boxes_count": max(0, self.input_boxes_count - placed_count),
             "boxes": [b.to_dict() for b in self.boxes],
             "unplaced_boxes": self.unplaced_boxes,
             "summary": self.summary

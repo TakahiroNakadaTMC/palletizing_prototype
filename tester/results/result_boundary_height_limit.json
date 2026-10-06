@@ -8,7 +8,9 @@
     "min_y_span": 800.0,
     "max_y_span": 1100.0
   },
+  "input_boxes_count": 48,
   "placed_boxes_count": 20,
+  "unplaced_boxes_count": 28,
   "boxes": [
     {
       "order": 1,
@@ -544,15 +546,18 @@
   "unplaced_boxes": [
     {
       "box_id": "TP-463",
-      "count": 4
+      "count": 4,
+      "reason": "次の層を積むと最大積載高さを超えます"
     },
     {
       "box_id": "TP-343",
-      "count": 12
+      "count": 12,
+      "reason": "次の層を積むと最大積載高さを超えます"
     },
     {
       "box_id": "TP-333",
-      "count": 12
+      "count": 12,
+      "reason": "次の層を積むと最大積載高さを超えます"
     }
   ],
   "summary": {

@@ -64,12 +64,15 @@ class Palletizer:
         if lid_db is None:
             lid_db = {}
 
+        input_boxes_count = sum(max(0, int(item.get("count", 1))) for item in box_input_list)
+
         default_lid_id = next(
             (lid_id for lid_id, lid_info in lid_db.items() if lid_info.get("type") == "NONE"),
             ""
         )
         
         expanded_boxes: List[BoxSpec] = []
+        unplaced_boxes: List[Dict[str, Any]] = []
         
         for item in box_input_list:
             bid = item["box_id"]
@@ -86,6 +89,12 @@ class Palletizer:
                     box.lid_thickness = float(lid_info.get("thickness", 0.0))
                     box.lid_fit_type = lid_info.get("fit_type", "なし")
                     expanded_boxes.append(box)
+            elif cnt > 0:
+                unplaced_boxes.append({
+                    "box_id": bid,
+                    "count": cnt,
+                    "reason": "箱DBに型番が登録されていません"
+                })
 
         if not expanded_boxes:
             return PalletizeResult(
@@ -93,17 +102,19 @@ class Palletizer:
                 pallet=self.pallet,
                 boxes=[],
                 summary={"error": "No valid boxes provided"},
-                unplaced_boxes=[]
+                unplaced_boxes=unplaced_boxes,
+                input_boxes_count=input_boxes_count
             )
 
         unique_variants = set(b.pool_key for b in expanded_boxes)
         if len(unique_variants) == 1:
-            placed, unplaced = self.palletize_single(expanded_boxes)
+            placed, algorithm_unplaced = self.palletize_single(expanded_boxes)
         else:
-            placed, unplaced = self.palletize_mixed(expanded_boxes)
+            placed, algorithm_unplaced = self.palletize_mixed(expanded_boxes)
+        unplaced_boxes.extend(algorithm_unplaced)
 
         # 最高層四隅高さ揃え処理
-        placed, unplaced = self.level_top_four_corners(placed, unplaced)
+        placed, unplaced_boxes = self.level_top_four_corners(placed, unplaced_boxes)
 
         # トポロジカルソートで積み順 order を付番
         placed = self.assign_loading_orders(placed)
@@ -116,7 +127,8 @@ class Palletizer:
             pallet=self.pallet,
             boxes=placed,
             summary=summary,
-            unplaced_boxes=unplaced
+            unplaced_boxes=unplaced_boxes,
+            input_boxes_count=input_boxes_count
         )
 
     # -------------------------------------------------------------------------
@@ -163,10 +175,12 @@ class Palletizer:
         y_span = best_pattern["y_span"]
         offset_x = (self.pallet.width - x_span) / 2.0
         offset_y = (self.pallet.length - y_span) / 2.0
+        unplaced_reason = "最大積載高さの上限に達しました"
 
         for layer in range(max_layers):
             layer_z = layer * (effective_height - depth)
             if layer_z + effective_height > self.pallet.max_height + 1e-4:
+                unplaced_reason = "最大積載高さを超えるため配置できません"
                 break
 
             layer_pattern = best_pattern["boxes"]
@@ -185,6 +199,7 @@ class Palletizer:
             boxes_in_layer = len(layer_pattern)
             # 四隅が揃う完全な層のみを積む
             if box_idx + boxes_in_layer > total_needed and box_idx > 0:
+                unplaced_reason = "最上段を一層分そろえられず、四隅高さ一致を保てません"
                 break
 
             for b_pos in layer_pattern:
@@ -221,7 +236,7 @@ class Palletizer:
                 break
 
         unplaced_count = total_needed - box_idx
-        unplaced = [{"box_id": sample_box.id, "count": unplaced_count}] if unplaced_count > 0 else []
+        unplaced = [{"box_id": sample_box.id, "count": unplaced_count, "reason": unplaced_reason}] if unplaced_count > 0 else []
 
         return placed_boxes, unplaced
 
@@ -347,6 +362,7 @@ class Palletizer:
 
         current_z = 0.0
         layer_idx = 0
+        stop_reason = None
 
         while box_pool and current_z < self.pallet.max_height:
             # 高さが異なる箱が同一層に混在すると、層の上面が四隅で不揃いになる
@@ -361,11 +377,13 @@ class Palletizer:
             )
             if not layer_placed:
                 # これ以上どの箱も配置できない（デッドロック回避）
+                stop_reason = "配置スペース、支持率、箱の向きなどの制約を満たす場所がありません"
                 break
 
             layer_top = max(pb.top_z for pb in layer_placed)
             if layer_top > self.pallet.max_height + 1e-4:
                 # この層は積載高さを超過するため積まない
+                stop_reason = "次の層を積むと最大積載高さを超えます"
                 break
 
             placed_boxes.extend(layer_placed)
@@ -381,7 +399,12 @@ class Palletizer:
         unplaced_map: Dict[str, int] = {}
         for b in box_pool:
             unplaced_map[b.id] = unplaced_map.get(b.id, 0) + 1
-        unplaced_boxes = [{"box_id": bid, "count": cnt} for bid, cnt in unplaced_map.items()]
+        if stop_reason is None and box_pool:
+            stop_reason = "最大積載高さの上限に達しました"
+        unplaced_boxes = [
+            {"box_id": bid, "count": cnt, "reason": stop_reason or "配置可能な箱がありません"}
+            for bid, cnt in unplaced_map.items()
+        ]
 
         self._align_pallet_bounds(placed_boxes)
         return placed_boxes, unplaced_boxes
@@ -896,11 +919,17 @@ class Palletizer:
             else:
                 removed_count[pb.box_id] = removed_count.get(pb.box_id, 0) + 1
 
-        unplaced_map = {item["box_id"]: item["count"] for item in unplaced_boxes}
+        unplaced_map = {item["box_id"]: dict(item) for item in unplaced_boxes}
         for bid, cnt in removed_count.items():
-            unplaced_map[bid] = unplaced_map.get(bid, 0) + cnt
+            item = unplaced_map.setdefault(bid, {"box_id": bid, "count": 0, "reason": ""})
+            item["count"] += cnt
+            reason = "最高層の四隅高さを揃えるため除外されました"
+            if item["reason"] and reason not in item["reason"]:
+                item["reason"] += " / " + reason
+            elif not item["reason"]:
+                item["reason"] = reason
 
-        new_unplaced = [{"box_id": k, "count": v} for k, v in unplaced_map.items() if v > 0]
+        new_unplaced = [item for item in unplaced_map.values() if item["count"] > 0]
 
         return leveled_boxes, new_unplaced
 
