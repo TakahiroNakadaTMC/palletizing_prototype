@@ -1,0 +1,293 @@
+{
+  "test_name": "mixed_tp_different_heights_with_lids",
+  "pallet": {
+    "width": 1200.0,
+    "length": 1000.0,
+    "max_height": 1200.0,
+    "max_x_span": 1360.0,
+    "min_y_span": 800.0,
+    "max_y_span": 1100.0
+  },
+  "placed_boxes_count": 9,
+  "boxes": [
+    {
+      "order": 1,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": -70.5,
+        "y": -2.5,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 164.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": [],
+      "lid_id": "LID-003",
+      "lid_thickness": 15.0,
+      "lid_dimensions": {
+        "width": 503.0,
+        "length": 335.0
+      },
+      "lid_fit_type": "外嵌め"
+    },
+    {
+      "order": 2,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": 432.5,
+        "y": -2.5,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 164.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": [],
+      "lid_id": "LID-003",
+      "lid_thickness": 15.0,
+      "lid_dimensions": {
+        "width": 503.0,
+        "length": 335.0
+      },
+      "lid_fit_type": "外嵌め"
+    },
+    {
+      "order": 3,
+      "box_id": "TP-331.5",
+      "position": {
+        "x": 935.5,
+        "y": -2.5,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 335.0,
+        "height": 164.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": [],
+      "lid_id": "LID-001",
+      "lid_thickness": 15.0,
+      "lid_dimensions": {
+        "width": 335.0,
+        "length": 335.0
+      },
+      "lid_fit_type": "外嵌め"
+    },
+    {
+      "order": 4,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": -70.5,
+        "y": 332.5,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 164.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": [],
+      "lid_id": "LID-003",
+      "lid_thickness": 15.0,
+      "lid_dimensions": {
+        "width": 503.0,
+        "length": 335.0
+      },
+      "lid_fit_type": "外嵌め"
+    },
+    {
+      "order": 5,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": 432.5,
+        "y": 332.5,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 164.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": [],
+      "lid_id": "LID-003",
+      "lid_thickness": 15.0,
+      "lid_dimensions": {
+        "width": 503.0,
+        "length": 335.0
+      },
+      "lid_fit_type": "外嵌め"
+    },
+    {
+      "order": 6,
+      "box_id": "TP-331.5",
+      "position": {
+        "x": 935.5,
+        "y": 332.5,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 335.0,
+        "height": 164.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": [],
+      "lid_id": "LID-001",
+      "lid_thickness": 15.0,
+      "lid_dimensions": {
+        "width": 335.0,
+        "length": 335.0
+      },
+      "lid_fit_type": "外嵌め"
+    },
+    {
+      "order": 7,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": -70.5,
+        "y": 667.5,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 164.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": [],
+      "lid_id": "LID-003",
+      "lid_thickness": 15.0,
+      "lid_dimensions": {
+        "width": 503.0,
+        "length": 335.0
+      },
+      "lid_fit_type": "外嵌め"
+    },
+    {
+      "order": 8,
+      "box_id": "TP-341.5",
+      "position": {
+        "x": 432.5,
+        "y": 667.5,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 503.0,
+        "length": 335.0,
+        "height": 164.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": [],
+      "lid_id": "LID-003",
+      "lid_thickness": 15.0,
+      "lid_dimensions": {
+        "width": 503.0,
+        "length": 335.0
+      },
+      "lid_fit_type": "外嵌め"
+    },
+    {
+      "order": 9,
+      "box_id": "TP-331.5",
+      "position": {
+        "x": 935.5,
+        "y": 667.5,
+        "z": 0.0
+      },
+      "dimensions": {
+        "width": 335.0,
+        "length": 335.0,
+        "height": 164.0
+      },
+      "rotation": 0,
+      "fitting_depth": 10.0,
+      "layer_index": 0,
+      "supported_by": [],
+      "lid_id": "LID-001",
+      "lid_thickness": 15.0,
+      "lid_dimensions": {
+        "width": 335.0,
+        "length": 335.0
+      },
+      "lid_fit_type": "外嵌め"
+    }
+  ],
+  "unplaced_boxes": [
+    {
+      "box_id": "TP-341.5",
+      "count": 2
+    },
+    {
+      "box_id": "TP-331.5",
+      "count": 9
+    },
+    {
+      "box_id": "TP-463",
+      "count": 4
+    },
+    {
+      "box_id": "TP-363",
+      "count": 4
+    },
+    {
+      "box_id": "TP-362",
+      "count": 4
+    },
+    {
+      "box_id": "TP-343",
+      "count": 6
+    },
+    {
+      "box_id": "TP-342",
+      "count": 8
+    },
+    {
+      "box_id": "TP-331",
+      "count": 12
+    },
+    {
+      "box_id": "TP-131",
+      "count": 16
+    }
+  ],
+  "summary": {
+    "total_boxes": 9,
+    "total_layers": 1,
+    "bounding_box": {
+      "min_x": -70.5,
+      "max_x": 1270.5,
+      "x_span": 1341.0,
+      "min_y": -2.5,
+      "max_y": 1002.5,
+      "y_span": 1005.0,
+      "max_z": 164.0
+    },
+    "volume_efficiency_percent": 15.35,
+    "is_valid": true,
+    "violations": []
+  }
+}

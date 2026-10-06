@@ -8,6 +8,7 @@ box_research/box_db.json に登録・承認された箱データに基づき、
 import json
 import os
 import sys
+import copy
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
@@ -204,6 +205,22 @@ def generate_test_cases():
                 {"box_id": "TP-332", "count": 16, "lid_id": "LID-010"}
             ]
         }
+
+    # -------------------------------------------------------------
+    # 4. 蓋付き派生ケース (Lid-equipped variants)
+    # -------------------------------------------------------------
+    for base_name, base_case in list(test_cases.items()):
+        lid_case = copy.deepcopy(base_case)
+        lid_name = f"{base_name}_with_lids"
+        lid_case["name"] = lid_name
+        lid_case["description"] += "（各箱に対応する標準蓋を使用）"
+
+        for item in lid_case["box_list"]:
+            compatible_lids = box_db[item["box_id"]].get("compatible_lids", [])
+            standard_lid = next((lid_id for lid_id in compatible_lids if lid_id != "LID-010"), "LID-010")
+            item["lid_id"] = standard_lid
+
+        test_cases[lid_name] = lid_case
 
     # JSONファイルへ書き出し
     created_files = []

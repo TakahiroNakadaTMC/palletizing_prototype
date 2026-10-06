@@ -276,6 +276,10 @@ def generate_html(result_data: dict, output_html_path: str):
         `;
         legendList.appendChild(item);
       }});
+      const lidLegend = document.createElement('div');
+      lidLegend.className = 'flex items-center gap-2 text-slate-300';
+      lidLegend.innerHTML = '<span class="w-3 h-3 rounded-sm inline-block" style="background:#f59e0b;border:1px solid #fef3c7"></span><span>蓋</span>';
+      legendList.appendChild(lidLegend);
 
       selectedBoxOrder = null;
       resetViewTransform();
@@ -450,6 +454,7 @@ def generate_html(result_data: dict, output_html_path: str):
         const b = item.box;
         const colors = boxColorMap[b.box_id] || COLOR_PALETTE[0];
         const isSelected = (b.order === selectedBoxOrder);
+        const lid = getLidGeometry(b);
 
         const customColors = isSelected ? {{
           fill: '#0284c7', top: '#38bdf8', side: '#0369a1', stroke: '#ffffff'
@@ -457,12 +462,39 @@ def generate_html(result_data: dict, output_html_path: str):
 
         drawSolidBox(
           b.position.x, b.position.y, b.position.z,
-          b.dimensions.width, b.dimensions.length, b.dimensions.height,
+          b.dimensions.width, b.dimensions.length, b.dimensions.height - (lid?.thickness || 0),
           customColors,
-          showLabels,
+          showLabels && !lid,
           `${{b.order}}: ${{b.box_id}}`
         );
+
+        if (lid) {{
+          drawSolidBox(lid.x, lid.y, lid.z, lid.width, lid.length, lid.thickness, {{
+            fill: '#f59e0b', top: '#fbbf24', side: '#b45309', stroke: '#fef3c7'
+          }});
+          if (showLabels) {{
+            const labelPoint = project3D(lid.x + lid.width / 2, lid.y + lid.length / 2, lid.z + lid.thickness);
+            drawBadge(labelPoint.x, labelPoint.y, `${{b.order}}: ${{b.box_id}}`);
+          }}
+        }}
       }});
+    }}
+
+    function getLidGeometry(b) {{
+      const thickness = Number(b.lid_thickness || 0);
+      if (thickness <= 0 || b.lid_id === 'LID-010') return null;
+
+      const lidDimensions = b.lid_dimensions || {{}};
+      const width = Number(lidDimensions.width || b.dimensions.width);
+      const length = Number(lidDimensions.length || b.dimensions.length);
+      return {{
+        x: b.position.x + (b.dimensions.width - width) / 2,
+        y: b.position.y + (b.dimensions.length - length) / 2,
+        z: b.position.z + b.dimensions.height - thickness,
+        width,
+        length,
+        thickness
+      }};
     }}
 
     function drawSolidBox(x, y, z, w, l, h, colors, drawLabel = false, labelText = "") {{
@@ -591,15 +623,24 @@ def generate_html(result_data: dict, output_html_path: str):
 
       for (let i = visibleBoxes.length - 1; i >= 0; i--) {{
         const b = visibleBoxes[i];
-        const p1 = project3D(b.position.x, b.position.y, b.position.z);
-        const p2 = project3D(b.position.x + b.dimensions.width, b.position.y + b.dimensions.length, b.position.z + b.dimensions.height);
+        const lid = getLidGeometry(b);
+        const x = lid ? Math.min(b.position.x, lid.x) : b.position.x;
+        const y = lid ? Math.min(b.position.y, lid.y) : b.position.y;
+        const maxX = lid ? Math.max(b.position.x + b.dimensions.width, lid.x + lid.width) : b.position.x + b.dimensions.width;
+        const maxY = lid ? Math.max(b.position.y + b.dimensions.length, lid.y + lid.length) : b.position.y + b.dimensions.length;
+        const zTop = b.position.z + b.dimensions.height;
+        const projected = [
+          project3D(x, y, b.position.z), project3D(maxX, y, b.position.z),
+          project3D(maxX, maxY, b.position.z), project3D(x, maxY, b.position.z),
+          project3D(x, y, zTop), project3D(maxX, y, zTop),
+          project3D(maxX, maxY, zTop), project3D(x, maxY, zTop)
+        ];
+        const minX = Math.min(...projected.map(p => p.x)) - 20;
+        const maxScreenX = Math.max(...projected.map(p => p.x)) + 20;
+        const minY = Math.min(...projected.map(p => p.y)) - 20;
+        const maxScreenY = Math.max(...projected.map(p => p.y)) + 20;
 
-        const minX = Math.min(p1.x, p2.x) - 20;
-        const maxX = Math.max(p1.x, p2.x) + 20;
-        const minY = Math.min(p1.y, p2.y) - 20;
-        const maxY = Math.max(p1.y, p2.y) + 20;
-
-        if (mouseX >= minX && mouseX <= maxX && mouseY >= minY && mouseY <= maxY) {{
+        if (mouseX >= minX && mouseX <= maxScreenX && mouseY >= minY && mouseY <= maxScreenY) {{
           selectedBoxOrder = b.order;
           inspectBox(b);
           return;
@@ -609,6 +650,7 @@ def generate_html(result_data: dict, output_html_path: str):
 
     function inspectBox(b) {{
       const content = document.getElementById('inspector-content');
+      const lid = getLidGeometry(b);
       content.innerHTML = `
         <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 space-y-2">
           <div class="flex items-center justify-between">
@@ -620,6 +662,12 @@ def generate_html(result_data: dict, output_html_path: str):
             <div><span class="text-slate-500">外寸寸法:</span><br><span class="font-mono text-slate-200">${{b.dimensions.width}}×${{b.dimensions.length}}×${{b.dimensions.height}}</span></div>
             <div><span class="text-slate-500">回転角:</span><br><span class="font-mono text-slate-200">${{b.rotation}}°</span></div>
             <div><span class="text-slate-500">勘合深さ:</span><br><span class="font-mono text-indigo-400 font-bold">${{b.fitting_depth}} mm</span></div>
+          </div>
+          <div class="pt-2 border-t border-slate-700 text-[11px]">
+            <span class="text-slate-500">蓋:</span>
+            <span class="font-mono text-amber-300 font-bold">${{b.lid_id || 'LID-010'}}</span>
+            <span class="text-slate-400">${{lid ? `${{lid.width}}×${{lid.length}}×${{lid.thickness}} mm` : 'なし'}}</span>
+            ${{b.lid_fit_type && b.lid_fit_type !== 'なし' ? `<span class="ml-1 text-slate-500">(${{b.lid_fit_type}})</span>` : ''}}
           </div>
           ${{b.supported_by && b.supported_by.length > 0 ? `
             <div class="pt-2 border-t border-slate-700 text-[11px]">

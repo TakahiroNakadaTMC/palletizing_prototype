@@ -17,6 +17,27 @@ class BoxSpec:
     rib_thickness: float          # mm (側面リブ厚み)
     module_ratio: Optional[str] = None  # "1x1", "1.5x1", "2x1", etc.
     description: str = ""
+    lid_id: str = "LID-010"
+    lid_width: float = 0.0
+    lid_length: float = 0.0
+    lid_thickness: float = 0.0
+    lid_fit_type: str = "なし"
+
+    @property
+    def pool_key(self) -> Tuple[str, str]:
+        return self.id, self.lid_id
+
+    @property
+    def footprint_width(self) -> float:
+        if self.lid_fit_type == "外嵌め":
+            return max(self.width, self.lid_width)
+        return self.width
+
+    @property
+    def footprint_length(self) -> float:
+        if self.lid_fit_type == "外嵌め":
+            return max(self.length, self.lid_length)
+        return self.length
 
     @property
     def is_tp(self) -> bool:
@@ -54,6 +75,21 @@ class PlacedBox:
     supported_by: List[int] = field(default_factory=list) # 下段の箱のorderリスト
     lid_id: str = "LID-010"       # 【NEW】蓋ID（デフォルト: 蓋無）
     lid_thickness: float = 0.0    # 【NEW】蓋の厚さ [mm]
+    lid_width: float = 0.0
+    lid_length: float = 0.0
+    lid_fit_type: str = "なし"
+
+    @property
+    def footprint_min_x(self) -> float:
+        if self.lid_fit_type == "外嵌め":
+            return self.x - max(0.0, self.lid_width - self.width) / 2.0
+        return self.x
+
+    @property
+    def footprint_min_y(self) -> float:
+        if self.lid_fit_type == "外嵌め":
+            return self.y - max(0.0, self.lid_length - self.length) / 2.0
+        return self.y
 
     @property
     def top_z(self) -> float:
@@ -61,10 +97,14 @@ class PlacedBox:
 
     @property
     def max_x(self) -> float:
+        if self.lid_fit_type == "外嵌め":
+            return self.footprint_min_x + max(self.width, self.lid_width)
         return self.x + self.width
 
     @property
     def max_y(self) -> float:
+        if self.lid_fit_type == "外嵌め":
+            return self.footprint_min_y + max(self.length, self.lid_length)
         return self.y + self.length
 
     def to_dict(self) -> Dict[str, Any]:
@@ -86,7 +126,12 @@ class PlacedBox:
             "layer_index": self.layer_index,
             "supported_by": self.supported_by,
             "lid_id": self.lid_id,              # 【NEW】蓋ID
-            "lid_thickness": round(self.lid_thickness, 2)  # 【NEW】蓋厚
+            "lid_thickness": round(self.lid_thickness, 2),  # 【NEW】蓋厚
+            "lid_dimensions": {
+                "width": round(self.lid_width, 2),
+                "length": round(self.lid_length, 2)
+            },
+            "lid_fit_type": self.lid_fit_type
         }
 
 @dataclass

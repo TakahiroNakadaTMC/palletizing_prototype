@@ -17,6 +17,7 @@ sys.stderr.reconfigure(encoding="utf-8")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 BOX_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "box_db.json")
+LID_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "lid_db.json")
 RESULTS_DIR = os.path.join(PROJECT_ROOT, "tester", "results")
 REPORT_PATH = os.path.join(BASE_DIR, "reports", "validation_report.md")
 
@@ -32,6 +33,25 @@ def load_box_db() -> Dict[str, Any]:
     with open(BOX_DB_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
+def load_lid_db() -> Dict[str, Any]:
+    with open(LID_DB_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def get_footprint_bounds(box: Dict[str, Any]) -> Tuple[float, float, float, float]:
+    pos = box["position"]
+    dims = box["dimensions"]
+    lid_dims = box.get("lid_dimensions", {})
+    x, y = pos["x"], pos["y"]
+    width, length = dims["width"], dims["length"]
+
+    if box.get("lid_fit_type") == "外嵌め":
+        width = max(width, lid_dims.get("width", 0.0))
+        length = max(length, lid_dims.get("length", 0.0))
+        x -= (width - dims["width"]) / 2.0
+        y -= (length - dims["length"]) / 2.0
+
+    return x, y, x + width, y + length
+
 def intersects_2d_rect(x1, y1, w1, l1, x2, y2, w2, l2, eps=EPS):
     return not (x1 + w1 <= x2 + eps or x2 + w2 <= x1 + eps or
                 y1 + l1 <= y2 + eps or y2 + l2 <= y1 + eps)
@@ -46,8 +66,9 @@ def get_intersection_area(x1, y1, w1, l1, x2, y2, w2, l2):
     return 0.0
 
 class PalletizeValidator:
-    def __init__(self, box_db: Dict[str, Any]):
+    def __init__(self, box_db: Dict[str, Any], lid_db: Dict[str, Any]):
         self.box_db = box_db
+        self.lid_db = lid_db
 
     def validate_case(self, result_path: str) -> Dict[str, Any]:
         with open(result_path, "r", encoding="utf-8") as f:
@@ -73,12 +94,13 @@ class PalletizeValidator:
         # -------------------------------------------------------------
         # 1. 荷姿寸法・境界制約の検証
         # -------------------------------------------------------------
-        min_x = min(b["position"]["x"] for b in boxes)
-        max_x = max(b["position"]["x"] + b["dimensions"]["width"] for b in boxes)
+        footprint_bounds = [get_footprint_bounds(b) for b in boxes]
+        min_x = min(bounds[0] for bounds in footprint_bounds)
+        max_x = max(bounds[2] for bounds in footprint_bounds)
         x_span = max_x - min_x
 
-        min_y = min(b["position"]["y"] for b in boxes)
-        max_y = max(b["position"]["y"] + b["dimensions"]["length"] for b in boxes)
+        min_y = min(bounds[1] for bounds in footprint_bounds)
+        max_y = max(bounds[3] for bounds in footprint_bounds)
         y_span = max_y - min_y
 
         max_z = max(b["position"]["z"] + b["dimensions"]["height"] for b in boxes)
@@ -113,10 +135,28 @@ class PalletizeValidator:
                 continue
 
             master = self.box_db[bid]
+            lid_id = b.get("lid_id", "LID-010")
+            lid_thickness = float(b.get("lid_thickness", 0.0))
+            lid = self.lid_db.get(lid_id)
+            if lid is None:
+                violations.append(f"Order #{order} ({bid}): 未知の蓋ID '{lid_id}' が使用されています")
+            else:
+                compatible_lids = master.get("compatible_lids", [])
+                if compatible_lids and lid_id not in compatible_lids:
+                    violations.append(f"Order #{order} ({bid}): 蓋 '{lid_id}' は箱と互換性がありません")
+                if abs(lid_thickness - float(lid.get("thickness", 0.0))) > EPS:
+                    violations.append(f"Order #{order} ({bid}): 蓋厚データが蓋DBと一致しません")
+                output_lid_dims = b.get("lid_dimensions", {})
+                expected_lid_width = float(lid.get("length" if rot == 90 else "width", 0.0))
+                expected_lid_length = float(lid.get("width" if rot == 90 else "length", 0.0))
+                if (abs(float(output_lid_dims.get("width", 0.0)) - expected_lid_width) > EPS or
+                        abs(float(output_lid_dims.get("length", 0.0)) - expected_lid_length) > EPS):
+                    violations.append(f"Order #{order} ({bid}): 蓋寸法が蓋DBと一致しません")
 
             # 天地固定（高さチェック）
-            if abs(dims["height"] - master["height"]) > EPS:
-                violations.append(f"Order #{order} ({bid}): 天地固定違反（外寸高さ {master['height']}mm に対して {dims['height']}mm）")
+            expected_height = float(master["height"]) + lid_thickness
+            if abs(dims["height"] - expected_height) > EPS:
+                violations.append(f"Order #{order} ({bid}): 高さ不一致（箱高+蓋厚 {expected_height}mm に対して {dims['height']}mm）")
 
             # 回転角チェック
             if rot not in [0, 90]:
@@ -139,8 +179,10 @@ class PalletizeValidator:
                 b2 = boxes[j]
 
                 # 2D平面での重なりチェック
-                if intersects_2d_rect(b1["position"]["x"], b1["position"]["y"], b1["dimensions"]["width"], b1["dimensions"]["length"],
-                                      b2["position"]["x"], b2["position"]["y"], b2["dimensions"]["width"], b2["dimensions"]["length"]):
+                b1_bounds = get_footprint_bounds(b1)
+                b2_bounds = get_footprint_bounds(b2)
+                if intersects_2d_rect(b1_bounds[0], b1_bounds[1], b1_bounds[2] - b1_bounds[0], b1_bounds[3] - b1_bounds[1],
+                                      b2_bounds[0], b2_bounds[1], b2_bounds[2] - b2_bounds[0], b2_bounds[3] - b2_bounds[1]):
                     
                     b1_z = b1["position"]["z"]
                     b1_top = b1_z + b1["dimensions"]["height"]
@@ -181,7 +223,9 @@ class PalletizeValidator:
                 other_top = other["position"]["z"] + other["dimensions"]["height"]
                 # 上面Zが (z + fitting) と一致しているか
                 if abs(other_top - (z + fitting)) <= 1.0:
-                    if intersects_2d_rect(x, y, w, l, other["position"]["x"], other["position"]["y"], other["dimensions"]["width"], other["dimensions"]["length"]):
+                    other_bounds = get_footprint_bounds(other)
+                    if intersects_2d_rect(x, y, w, l, other_bounds[0], other_bounds[1],
+                                          other_bounds[2] - other_bounds[0], other_bounds[3] - other_bounds[1]):
                         supporting_boxes.append(other)
 
             if not supporting_boxes:
@@ -191,7 +235,9 @@ class PalletizeValidator:
             # 支持面積比率の算出
             total_support_area = 0.0
             for sb in supporting_boxes:
-                area = get_intersection_area(x, y, w, l, sb["position"]["x"], sb["position"]["y"], sb["dimensions"]["width"], sb["dimensions"]["length"])
+                sb_bounds = get_footprint_bounds(sb)
+                area = get_intersection_area(x, y, w, l, sb_bounds[0], sb_bounds[1],
+                                             sb_bounds[2] - sb_bounds[0], sb_bounds[3] - sb_bounds[1])
                 total_support_area += area
 
             box_bottom_area = w * l
@@ -227,8 +273,10 @@ class PalletizeValidator:
                     continue
                 other_top = other["position"]["z"] + other["dimensions"]["height"]
                 if abs(other_top - (z + fitting)) <= 1.0:
-                    if intersects_2d_rect(b["position"]["x"], b["position"]["y"], b["dimensions"]["width"], b["dimensions"]["length"],
-                                          other["position"]["x"], other["position"]["y"], other["dimensions"]["width"], other["dimensions"]["length"]):
+                    upper_bounds = get_footprint_bounds(b)
+                    lower_bounds = get_footprint_bounds(other)
+                    if intersects_2d_rect(upper_bounds[0], upper_bounds[1], upper_bounds[2] - upper_bounds[0], upper_bounds[3] - upper_bounds[1],
+                                          lower_bounds[0], lower_bounds[1], lower_bounds[2] - lower_bounds[0], lower_bounds[3] - lower_bounds[1]):
                         if other["order"] >= order:
                             violations.append(f"積み順トポロジカル違反: 上段 Order #{order} ({b['box_id']}) が下段 Order #{other['order']} ({other['box_id']}) より先に配置されています")
 
@@ -236,10 +284,10 @@ class PalletizeValidator:
         # 6. 最高層四隅高さ一致（Top 4-Corner Leveling）の検証
         # -------------------------------------------------------------
         margin = 35.0  # mm
-        c1_boxes = [b for b in boxes if b["position"]["x"] <= min_x + margin and b["position"]["y"] <= min_y + margin]
-        c2_boxes = [b for b in boxes if b["position"]["x"] + b["dimensions"]["width"] >= max_x - margin and b["position"]["y"] <= min_y + margin]
-        c3_boxes = [b for b in boxes if b["position"]["x"] <= min_x + margin and b["position"]["y"] + b["dimensions"]["length"] >= max_y - margin]
-        c4_boxes = [b for b in boxes if b["position"]["x"] + b["dimensions"]["width"] >= max_x - margin and b["position"]["y"] + b["dimensions"]["length"] >= max_y - margin]
+        c1_boxes = [b for b, bounds in zip(boxes, footprint_bounds) if bounds[0] <= min_x + margin and bounds[1] <= min_y + margin]
+        c2_boxes = [b for b, bounds in zip(boxes, footprint_bounds) if bounds[2] >= max_x - margin and bounds[1] <= min_y + margin]
+        c3_boxes = [b for b, bounds in zip(boxes, footprint_bounds) if bounds[0] <= min_x + margin and bounds[3] >= max_y - margin]
+        c4_boxes = [b for b, bounds in zip(boxes, footprint_bounds) if bounds[2] >= max_x - margin and bounds[3] >= max_y - margin]
 
         if not (c1_boxes and c2_boxes and c3_boxes and c4_boxes):
             violations.append("最高層四隅エラー: 荷姿の四隅（4コーナー）の一部に箱が配置されていません")
@@ -275,7 +323,8 @@ class PalletizeValidator:
 
 def run_supervisor_validation():
     box_db = load_box_db()
-    validator = PalletizeValidator(box_db)
+    lid_db = load_lid_db()
+    validator = PalletizeValidator(box_db, lid_db)
 
     result_files = sorted(glob.glob(os.path.join(RESULTS_DIR, "*.json")))
     if not result_files:

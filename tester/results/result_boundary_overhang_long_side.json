@@ -28,7 +28,12 @@
       "layer_index": 0,
       "supported_by": [],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 2,
@@ -48,7 +53,12 @@
       "layer_index": 0,
       "supported_by": [],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 3,
@@ -68,7 +78,12 @@
       "layer_index": 0,
       "supported_by": [],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 4,
@@ -88,7 +103,12 @@
       "layer_index": 0,
       "supported_by": [],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 5,
@@ -108,7 +128,12 @@
       "layer_index": 0,
       "supported_by": [],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 6,
@@ -128,7 +153,12 @@
       "layer_index": 0,
       "supported_by": [],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 7,
@@ -150,7 +180,12 @@
         1
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 8,
@@ -172,7 +207,12 @@
         2
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 9,
@@ -194,7 +234,12 @@
         3
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 10,
@@ -216,7 +261,12 @@
         4
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 11,
@@ -238,7 +288,12 @@
         5
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 12,
@@ -260,7 +315,12 @@
         6
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 13,
@@ -282,7 +342,12 @@
         7
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 14,
@@ -304,7 +369,12 @@
         8
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 15,
@@ -326,7 +396,12 @@
         9
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 16,
@@ -348,7 +423,12 @@
         10
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 17,
@@ -370,7 +450,12 @@
         11
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 18,
@@ -392,7 +477,12 @@
         12
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 19,
@@ -414,7 +504,12 @@
         13
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 20,
@@ -436,7 +531,12 @@
         14
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 21,
@@ -458,7 +558,12 @@
         15
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 22,
@@ -480,7 +585,12 @@
         16
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 23,
@@ -502,7 +612,12 @@
         17
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 24,
@@ -524,7 +639,12 @@
         18
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 25,
@@ -546,7 +666,12 @@
         19
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 26,
@@ -568,7 +693,12 @@
         20
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 27,
@@ -590,7 +720,12 @@
         21
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 28,
@@ -612,7 +747,12 @@
         22
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 29,
@@ -634,7 +774,12 @@
         23
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     },
     {
       "order": 30,
@@ -656,7 +801,12 @@
         24
       ],
       "lid_id": "LID-010",
-      "lid_thickness": 0.0
+      "lid_thickness": 0.0,
+      "lid_dimensions": {
+        "width": 0.0,
+        "length": 0.0
+      },
+      "lid_fit_type": "なし"
     }
   ],
   "unplaced_boxes": [],

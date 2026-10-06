@@ -11,7 +11,7 @@
 
 本ディレクトリは、パレタイズアルゴリズムの評価・シミュレーションに使用するテストデータ生成スクリプトおよびテストケースJSON群を管理します。
 
-[`box_research/box_db.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/box_research/box_db.json) で承認された13種類のTP規格箱（基準335系、1.5倍340系、2倍360系、大型460系、ハーフ131系、および浅型/標準/深型の各高さ体系）をもとに、単載・同高混載・異高モジュール混載・境界値テストを網羅した **計13件のテストケース** を作成しました。
+[`box_research/box_db.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/box_research/box_db.json) で承認された13種類のTP規格箱（基準335系、1.5倍340系、2倍360系、大型460系、ハーフ131系、および浅型/標準/深型の各高さ体系）をもとに、単載・同高混載・異高モジュール混載・境界値テストを設計しています。既存13件の蓋なしケースを維持し、同じ構成の標準蓋付き派生ケース13件を加え、生成後は計26件になります。
 
 ---
 
@@ -302,12 +302,14 @@ GET /api/lids HTTP/1.1
 python3 test_programmer/generate_testcases.py
 ```
 
-結果例:
+結果例（既存13件＋標準蓋付き派生13件）:
 ```
 ✓ 生成: single_tp332.json ...
 ✓ 生成: mixed_tp_modular_stack.json ...
 ...
-✨ 合計 13 件のテストケースJSONを生成しました
+✓ 生成: single_tp332_with_lids.json ...
+✓ 生成: mixed_tp_modular_stack_with_lids.json ...
+✨ 合計 26 件のテストケースJSONを生成しました
 ```
 
 #### ユーザーによる蓋変更
@@ -321,7 +323,11 @@ testcase_viewer.html で編集モーダルを開き、**各箱行の蓋ドロッ
 4. 「保存する」をクリック
 5. テストケースJSON に反映
 
-### 5.6 ファイル構成（Phase 3-1更新）
+### 5.6 標準蓋付き派生ケース（Phase 3-2 Stage 2）
+
+`generate_testcases.py` は既存ケースを書き換えず、各ケースに対応する `*_with_lids.json` を追加生成します。単載では箱種に対応する標準蓋、混載では各箱種に対応する標準蓋をそれぞれ割り当てます。結果には蓋ID・厚さ・回転後の蓋寸法・嵌め方が記録され、外嵌め蓋は荷姿の幅・奥行き制約にも含めます。
+
+### 5.7 ファイル構成（Phase 3-1更新）
 
 ```
 test_programmer/
@@ -345,7 +351,7 @@ test_programmer/
 └── README.md
 ```
 
-### 5.7 使用方法
+### 5.8 使用方法
 
 1. **サーバー起動**:
    ```bash

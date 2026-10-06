@@ -33,7 +33,9 @@ def intersects_2d(x1: float, y1: float, w1: float, l1: float,
 def check_collision_3d(b1: PlacedBox, x2: float, y2: float, z2: float,
                        w2: float, l2: float, h2: float, d2: float, eps: float = 1e-4) -> bool:
     """3D空間での干渉判定（嵌合深さ沈み込みを許容）"""
-    if not intersects_2d(b1.x, b1.y, b1.width, b1.length, x2, y2, w2, l2, eps):
+    if not intersects_2d(b1.footprint_min_x, b1.footprint_min_y,
+                         b1.max_x - b1.footprint_min_x, b1.max_y - b1.footprint_min_y,
+                         x2, y2, w2, l2, eps):
         return False
 
     b1_top = b1.z + b1.height
@@ -63,7 +65,6 @@ class Palletizer:
             lid_db = {}
         
         expanded_boxes: List[BoxSpec] = []
-        expanded_lids: List[Dict[str, Any]] = []  # 【NEW】各展開箱に対応する蓋情報
         
         for item in box_input_list:
             bid = item["box_id"]
@@ -73,13 +74,13 @@ class Palletizer:
             if bid in self.box_db:
                 lid_info = lid_db.get(lid_id, {})  # 【NEW】蓋情報を取得
                 for _ in range(cnt):
-                    expanded_boxes.append(self.box_db[bid])
-                    expanded_lids.append({  # 【NEW】蓋情報を追加
-                        "lid_id": lid_id,
-                        "lid_thickness": lid_info.get("thickness", 0.0),
-                        "lid_width": lid_info.get("width", 0.0),
-                        "lid_length": lid_info.get("length", 0.0)
-                    })
+                    box = copy.copy(self.box_db[bid])
+                    box.lid_id = lid_id
+                    box.lid_width = float(lid_info.get("width", 0.0))
+                    box.lid_length = float(lid_info.get("length", 0.0))
+                    box.lid_thickness = float(lid_info.get("thickness", 0.0))
+                    box.lid_fit_type = lid_info.get("fit_type", "なし")
+                    expanded_boxes.append(box)
 
         if not expanded_boxes:
             return PalletizeResult(
@@ -90,11 +91,11 @@ class Palletizer:
                 unplaced_boxes=[]
             )
 
-        unique_ids = set(b.id for b in expanded_boxes)
-        if len(unique_ids) == 1:
-            placed, unplaced = self.palletize_single(expanded_boxes, expanded_lids)  # 【NEW】蓋情報を渡す
+        unique_variants = set(b.pool_key for b in expanded_boxes)
+        if len(unique_variants) == 1:
+            placed, unplaced = self.palletize_single(expanded_boxes)
         else:
-            placed, unplaced = self.palletize_mixed(expanded_boxes, expanded_lids)  # 【NEW】蓋情報を渡す
+            placed, unplaced = self.palletize_mixed(expanded_boxes)
 
         # 最高層四隅高さ揃え処理
         placed, unplaced = self.level_top_four_corners(placed, unplaced)
@@ -117,17 +118,17 @@ class Palletizer:
     # 1. 単載パレタイズ (Mono-load Palletizer)
     # -------------------------------------------------------------------------
     def palletize_single(self, boxes: List[BoxSpec], lids: List[Dict[str, Any]] = None) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
-        """【MODIFIED】蓋情報を受け取るように修正"""
-        if lids is None:
-            lids = [{"lid_id": "LID-010", "lid_thickness": 0.0, "lid_width": 0.0, "lid_length": 0.0} for _ in boxes]
-        
+        """単一の箱型番・蓋組み合わせをパレットに配置する。"""
         sample_box = boxes[0]
         w, l, h = sample_box.width, sample_box.length, sample_box.height
         depth = sample_box.fitting_depth
         rib = sample_box.rib_thickness
+        effective_height = h + sample_box.lid_thickness
+        footprint_w = sample_box.footprint_width
+        footprint_l = sample_box.footprint_length
 
-        max_layers = calculate_max_layers(h, depth, self.pallet.max_height)
-        candidate_patterns = self._generate_single_2d_patterns(w, l)
+        max_layers = calculate_max_layers(effective_height, depth, self.pallet.max_height)
+        candidate_patterns = self._generate_single_2d_patterns(footprint_w, footprint_l)
 
         best_pattern = None
         best_count_per_layer = 0
@@ -159,8 +160,8 @@ class Palletizer:
         offset_y = (self.pallet.length - y_span) / 2.0
 
         for layer in range(max_layers):
-            layer_z = layer * (h - depth)
-            if layer_z + h > self.pallet.max_height + 1e-4:
+            layer_z = layer * (effective_height - depth)
+            if layer_z + effective_height > self.pallet.max_height + 1e-4:
                 break
 
             layer_pattern = best_pattern["boxes"]
@@ -185,25 +186,28 @@ class Palletizer:
                 if box_idx >= total_needed:
                     break
 
-                # 【NEW】蓋情報を取得
-                lid_info = lids[box_idx]
-                lid_thickness = lid_info.get("lid_thickness", 0.0)
+                box = boxes[box_idx]
+                box_w, box_l = (w, l) if b_pos["rot"] == 0 else (l, w)
+                lid_w, lid_l = (box.lid_width, box.lid_length) if b_pos["rot"] == 0 else (box.lid_length, box.lid_width)
                 
                 pb = PlacedBox(
                     order=box_idx + 1,
-                    box_id=sample_box.id,
-                    x=round(offset_x + b_pos["x"], 2),
-                    y=round(offset_y + b_pos["y"], 2),
+                    box_id=box.id,
+                    x=round(offset_x + b_pos["x"] + (b_pos["w"] - box_w) / 2.0, 2),
+                    y=round(offset_y + b_pos["y"] + (b_pos["l"] - box_l) / 2.0, 2),
                     z=round(layer_z, 2),
-                    width=b_pos["w"],
-                    length=b_pos["l"],
-                    height=h + lid_thickness,  # 【MODIFIED】蓋の厚さを加算
+                    width=box_w,
+                    length=box_l,
+                    height=effective_height,
                     fitting_depth=depth,
                     rib_thickness=rib,
                     rotation=b_pos["rot"],
                     layer_index=layer,
-                    lid_id=lid_info.get("lid_id", "LID-010"),  # 【NEW】蓋ID
-                    lid_thickness=lid_thickness  # 【NEW】蓋厚
+                    lid_id=box.lid_id,
+                    lid_thickness=box.lid_thickness,
+                    lid_width=lid_w,
+                    lid_length=lid_l,
+                    lid_fit_type=box.lid_fit_type
                 )
                 placed_boxes.append(pb)
                 box_idx += 1
@@ -313,19 +317,22 @@ class Palletizer:
             boxes: 投入箱リスト
             lids: 【NEW】各箱に対応する蓋情報リスト
         """
-        if lids is None:
-            lids = [{"lid_id": "LID-010", "lid_thickness": 0.0, "lid_width": 0.0, "lid_length": 0.0} for _ in boxes]
-        
-        # 【NEW】箱と蓋をペアで保持する辞書を作成（インデックスの対応を記録）
-        box_lid_pairs = [(boxes[i], lids[i]) for i in range(len(boxes))]
-        
         placed_boxes: List[PlacedBox] = []
 
-        # 【MODIFIED】ペアリストをソート（箱のみでソート）
-        box_lid_pairs.sort(key=lambda p: (p[0].width * p[0].length, p[0].height), reverse=True)
-        box_pool = [p[0] for p in box_lid_pairs]
-        # 【NEW】蓋のマッピングを作成（箱インデックス -> 蓋情報）
-        box_idx_to_lid = {i: box_lid_pairs[i][1] for i in range(len(box_lid_pairs))}
+        if lids is not None:
+            boxes = [copy.copy(box) for box in boxes]
+            for box, lid in zip(boxes, lids):
+                box.lid_id = lid.get("lid_id", box.lid_id)
+                box.lid_width = float(lid.get("lid_width", box.lid_width))
+                box.lid_length = float(lid.get("lid_length", box.lid_length))
+                box.lid_thickness = float(lid.get("lid_thickness", box.lid_thickness))
+                box.lid_fit_type = lid.get("fit_type", box.lid_fit_type)
+
+        box_pool = sorted(
+            boxes,
+            key=lambda b: (b.footprint_width * b.footprint_length, b.height + b.lid_thickness),
+            reverse=True
+        )
 
         # 荷姿エンベロープ（全層で共通のX/Y作業範囲）を投入箱構成から一度だけ決定する。
         # 同じエンベロープを全層で使い回すことで、上段箱が常に下段箱の上に
@@ -341,8 +348,8 @@ class Palletizer:
             # ため、この層で使う代表高さ(layer_h)を選び、同じ高さの箱だけを
             # この層のパッキング対象とする（異なる高さの箱は後続の層に持ち越す）。
             layer_h = self._choose_layer_height(box_pool)
-            layer_pool = [b for b in box_pool if abs(b.height - layer_h) <= 1.0]
-            carry_over_pool = [b for b in box_pool if abs(b.height - layer_h) > 1.0]
+            layer_pool = [b for b in box_pool if abs(b.height + b.lid_thickness - layer_h) <= 1.0]
+            carry_over_pool = [b for b in box_pool if abs(b.height + b.lid_thickness - layer_h) > 1.0]
 
             layer_placed, remaining_layer_pool = self._pack_mixed_layer(
                 layer_pool, current_z, layer_idx, placed_boxes, envelope
@@ -386,9 +393,9 @@ class Palletizer:
         counts: Dict[float, int] = {}
         best_area: Dict[float, float] = {}
         for b in pool:
-            h = round(b.height, 1)
+            h = round(b.height + b.lid_thickness, 1)
             counts[h] = counts.get(h, 0) + 1
-            area = b.width * b.length
+            area = b.footprint_width * b.footprint_length
             if area > best_area.get(h, -1.0):
                 best_area[h] = area
 
@@ -404,8 +411,8 @@ class Palletizer:
         """
         dims = set()
         for b in pool:
-            dims.add(round(b.width, 1))
-            dims.add(round(b.length, 1))
+            dims.add(round(b.footprint_width, 1))
+            dims.add(round(b.footprint_length, 1))
 
         max_depth_allowed = self.pallet.max_y_span - 1.0
         candidates = []
@@ -443,9 +450,9 @@ class Palletizer:
         for ob in lower_boxes:
             if abs(ob.top_z - (base_z + fitting_depth)) > tol:
                 continue
-            ix_min = max(x, ob.x)
+            ix_min = max(x, ob.footprint_min_x)
             ix_max = min(x + w, ob.max_x)
-            iy_min = max(y, ob.y)
+            iy_min = max(y, ob.footprint_min_y)
             iy_max = min(y + l, ob.max_y)
             if ix_max > ix_min and iy_max > iy_min:
                 total_support += (ix_max - ix_min) * (iy_max - iy_min)
@@ -477,9 +484,9 @@ class Palletizer:
             if abs(ob.top_z - (base_z + fitting_depth)) > tol:
                 continue
             # 2D的に支持面へ関与しているか（重なりがあるか）
-            ix_min = max(x, ob.x)
+            ix_min = max(x, ob.footprint_min_x)
             ix_max = min(x + w, ob.max_x)
-            iy_min = max(y, ob.y)
+            iy_min = max(y, ob.footprint_min_y)
             iy_max = min(y + l, ob.max_y)
             if ix_max <= ix_min or iy_max <= iy_min:
                 continue
@@ -496,38 +503,38 @@ class Palletizer:
         row_top = row_y + row_depth
 
         for pb in layer_boxes:
-            if pb.y < row_top - tol and pb.max_y > row_y + tol:
+            if pb.footprint_min_y < row_top - tol and pb.max_y > row_y + tol:
                 new_intervals = []
                 for (s, e) in intervals:
-                    if pb.max_x <= s + tol or pb.x >= e - tol:
+                    if pb.max_x <= s + tol or pb.footprint_min_x >= e - tol:
                         new_intervals.append((s, e))
                         continue
-                    if pb.x > s + tol:
-                        new_intervals.append((s, pb.x))
+                    if pb.footprint_min_x > s + tol:
+                        new_intervals.append((s, pb.footprint_min_x))
                     if pb.max_x < e - tol:
                         new_intervals.append((pb.max_x, e))
                 intervals = new_intervals
 
         return [(s, e) for (s, e) in intervals if e - s > tol]
 
-    def _eligible_row_items(self, pool_counter: Counter, id_to_spec: Dict[str, BoxSpec],
+    def _eligible_row_items(self, pool_counter: Counter, id_to_spec: Dict[Tuple[str, str], BoxSpec],
                             row_depth: float, tol: float = 1.0) -> List[Tuple[BoxSpec, int, float, float]]:
         """行の深さ(row_depth)に適合する箱の(仕様, 回転, 幅, 奥行)候補を列挙"""
         eligible = []
-        for bid, cnt in pool_counter.items():
+        for pool_key, cnt in pool_counter.items():
             if cnt <= 0:
                 continue
-            spec = id_to_spec[bid]
-            is_square = abs(spec.width - spec.length) <= tol
-            if abs(spec.length - row_depth) <= tol:
-                eligible.append((spec, 0, spec.width, spec.length))
-            if not is_square and abs(spec.width - row_depth) <= tol:
-                eligible.append((spec, 90, spec.length, spec.width))
+            spec = id_to_spec[pool_key]
+            is_square = abs(spec.footprint_width - spec.footprint_length) <= tol
+            if abs(spec.footprint_length - row_depth) <= tol:
+                eligible.append((spec, 0, spec.footprint_width, spec.footprint_length))
+            if not is_square and abs(spec.footprint_width - row_depth) <= tol:
+                eligible.append((spec, 90, spec.footprint_length, spec.footprint_width))
         eligible.sort(key=lambda it: it[2], reverse=True)
         return eligible
 
     def _fill_row_intervals(self, intervals: List[Tuple[float, float]], row_y: float,
-                           row_depth: float, pool_counter: Counter, id_to_spec: Dict[str, BoxSpec],
+                           row_depth: float, pool_counter: Counter, id_to_spec: Dict[Tuple[str, str], BoxSpec],
                            base_z: float, layer_idx: int, lower_boxes: List[PlacedBox],
                            tol: float = 1e-3) -> List[PlacedBox]:
         """行の空きX区間を、在庫箱でFFD(First-Fit-Decreasing)的に詰める"""
@@ -540,34 +547,41 @@ class Palletizer:
                 progress = False
                 eligible = self._eligible_row_items(pool_counter, id_to_spec, row_depth)
                 for spec, rot, w, l in eligible:
-                    if pool_counter[spec.id] <= 0:
+                    if pool_counter[spec.pool_key] <= 0:
                         continue
                     if x_cursor + w > e + tol:
                         continue
+                    box_w, box_l = (spec.width, spec.length) if rot == 0 else (spec.length, spec.width)
+                    box_x = x_cursor + (w - box_w) / 2.0
+                    box_y = row_y + (l - box_l) / 2.0
                     if layer_idx > 0:
-                        ratio = self._support_ratio(x_cursor, row_y, w, l, base_z, spec.fitting_depth, lower_boxes)
+                        ratio = self._support_ratio(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes)
                         if ratio < 0.85 - 1e-6:
                             continue
-                        if self._has_oversized_support(x_cursor, row_y, w, l, base_z, spec.fitting_depth, lower_boxes):
+                        if self._has_oversized_support(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes):
                             continue
+                    lid_w, lid_l = (spec.lid_width, spec.lid_length) if rot == 0 else (spec.lid_length, spec.lid_width)
                     pb = PlacedBox(
                         order=0,
                         box_id=spec.id,
-                        x=round(x_cursor, 2),
-                        y=round(row_y, 2),
+                        x=round(box_x, 2),
+                        y=round(box_y, 2),
                         z=round(base_z, 2),
-                        width=w,
-                        length=l,
-                        height=spec.height,  # 【TODO-混載】蓋厚を加算する
+                        width=box_w,
+                        length=box_l,
+                        height=spec.height + spec.lid_thickness,
                         fitting_depth=spec.fitting_depth,
                         rib_thickness=spec.rib_thickness,
                         rotation=rot,
                         layer_index=layer_idx,
-                        lid_id="LID-010",  # 【NEW】混載はデフォルト蓋（今は無蓋）
-                        lid_thickness=0.0  # 【NEW】混載は厚さなし（後で対応予定）
+                        lid_id=spec.lid_id,
+                        lid_thickness=spec.lid_thickness,
+                        lid_width=lid_w,
+                        lid_length=lid_l,
+                        lid_fit_type=spec.lid_fit_type
                     )
                     placed.append(pb)
-                    pool_counter[spec.id] -= 1
+                    pool_counter[spec.pool_key] -= 1
                     x_cursor += w
                     progress = True
                     break
@@ -579,40 +593,47 @@ class Palletizer:
                       base_z: float, layer_idx: int, lower_boxes: List[PlacedBox],
                       tol: float = 1e-3) -> Optional[PlacedBox]:
         """指定座標・回転で箱を置けるか判定し、置ければPlacedBoxを返す"""
-        w, l = (spec.width, spec.length) if rot == 0 else (spec.length, spec.width)
-        
-        # 範囲外チェック
-        if x < -tol or y < -tol or x + w > max_row_width + tol or y + l > max_total_depth + tol:
+        footprint_w = spec.footprint_width if rot == 0 else spec.footprint_length
+        footprint_l = spec.footprint_length if rot == 0 else spec.footprint_width
+        box_w, box_l = (spec.width, spec.length) if rot == 0 else (spec.length, spec.width)
+        lid_w, lid_l = (spec.lid_width, spec.lid_length) if rot == 0 else (spec.lid_length, spec.lid_width)
+
+        if x < -tol or y < -tol or x + footprint_w > max_row_width + tol or y + footprint_l > max_total_depth + tol:
             return None
-        
-        # 干渉チェック
-        for pb in layer_boxes:
-            if intersects_2d(x, y, w, l, pb.x, pb.y, pb.width, pb.length):
+
+        for placed in layer_boxes:
+            if intersects_2d(x, y, footprint_w, footprint_l,
+                             placed.footprint_min_x, placed.footprint_min_y,
+                             placed.max_x - placed.footprint_min_x, placed.max_y - placed.footprint_min_y):
                 return None
-        
-        # 支持率チェック（上層のみ）
+
+        box_x = x + (footprint_w - box_w) / 2.0
+        box_y = y + (footprint_l - box_l) / 2.0
         if layer_idx > 0:
-            ratio = self._support_ratio(x, y, w, l, base_z, spec.fitting_depth, lower_boxes)
+            ratio = self._support_ratio(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes)
             if ratio < 0.85 - 1e-6:
                 return None
-            if self._has_oversized_support(x, y, w, l, base_z, spec.fitting_depth, lower_boxes):
+            if self._has_oversized_support(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes):
                 return None
-        
+
         return PlacedBox(
             order=0,
             box_id=spec.id,
-            x=round(x, 2),
-            y=round(y, 2),
+            x=round(box_x, 2),
+            y=round(box_y, 2),
             z=round(base_z, 2),
-            width=w,
-            length=l,
-            height=spec.height,  # 【TODO-混載】蓋厚を加算する
+            width=box_w,
+            length=box_l,
+            height=spec.height + spec.lid_thickness,
             fitting_depth=spec.fitting_depth,
             rib_thickness=spec.rib_thickness,
             rotation=rot,
             layer_index=layer_idx,
-            lid_id="LID-010",  # 【NEW】混載はデフォルト蓋（今は無蓋）
-            lid_thickness=0.0  # 【NEW】混載は厚さなし（後で対応予定）
+            lid_id=spec.lid_id,
+            lid_thickness=spec.lid_thickness,
+            lid_width=lid_w,
+            lid_length=lid_l,
+            lid_fit_type=spec.lid_fit_type
         )
 
     # [廃止] Anchor Corners メソッド
@@ -656,7 +677,7 @@ class Palletizer:
     #                 break
 
     def _ep_fill_layer(self, layer_boxes: List[PlacedBox], pool_counter: Counter,
-                       id_to_spec: Dict[str, BoxSpec], max_row_width: float, max_total_depth: float,
+                       id_to_spec: Dict[Tuple[str, str], BoxSpec], max_row_width: float, max_total_depth: float,
                        base_z: float, layer_idx: int, lower_boxes: List[PlacedBox]) -> None:
         """Extreme Points法によるフォールバック充填: 既配置箱の右端・下端＋原点を
         動的な候補位置とし、行詰めで埋まらなかった残渣を可能な限り充填する。
@@ -668,19 +689,19 @@ class Palletizer:
             changed = False
             candidates = {(0.0, 0.0)}
             for pb in layer_boxes:
-                candidates.add((round(pb.max_x, 2), round(pb.y, 2)))
-                candidates.add((round(pb.x, 2), round(pb.max_y, 2)))
+                candidates.add((round(pb.max_x, 2), round(pb.footprint_min_y, 2)))
+                candidates.add((round(pb.footprint_min_x, 2), round(pb.max_y, 2)))
             sorted_candidates = sorted(candidates, key=lambda p: (p[1], p[0]))
 
             remaining_ids = sorted(
-                (bid for bid, cnt in pool_counter.items() if cnt > 0),
-                key=lambda bid: id_to_spec[bid].width * id_to_spec[bid].length,
+                (pool_key for pool_key, cnt in pool_counter.items() if cnt > 0),
+                key=lambda pool_key: id_to_spec[pool_key].footprint_width * id_to_spec[pool_key].footprint_length,
                 reverse=True
             )
 
             placed_this_round = False
-            for bid in remaining_ids:
-                spec = id_to_spec[bid]
+            for pool_key in remaining_ids:
+                spec = id_to_spec[pool_key]
                 for (cx, cy) in sorted_candidates:
                     for rot in (0, 90):
                         pb = self._try_place_at(cx, cy, spec, rot, layer_boxes, max_row_width, max_total_depth,
@@ -688,7 +709,7 @@ class Palletizer:
                         
                         if pb is not None:
                             layer_boxes.append(pb)
-                            pool_counter[bid] -= 1
+                            pool_counter[pool_key] -= 1
                             placed_this_round = True
                             changed = True
                             break
@@ -712,10 +733,10 @@ class Palletizer:
         max_row_width = envelope["x_span"]
         max_total_depth = envelope["y_span"]
 
-        pool_counter: Counter = Counter(b.id for b in pool)
-        id_to_spec: Dict[str, BoxSpec] = {}
+        pool_counter: Counter = Counter(b.pool_key for b in pool)
+        id_to_spec: Dict[Tuple[str, str], BoxSpec] = {}
         for b in pool:
-            id_to_spec.setdefault(b.id, b)
+            id_to_spec.setdefault(b.pool_key, b)
 
         # 上段の支持率判定に用いる「直下段」の箱リスト
         lower_boxes = [pb for pb in placed_so_far if pb.z < base_z - 1e-3] if layer_idx > 0 else []
@@ -734,15 +755,15 @@ class Palletizer:
         phase_b_round = 0
         while y_cursor < max_total_depth - 1e-3:
             phase_b_round += 1
-            remaining_ids = [bid for bid, cnt in pool_counter.items() if cnt > 0]
+            remaining_ids = [pool_key for pool_key, cnt in pool_counter.items() if cnt > 0]
             if not remaining_ids:
                 break
 
             depth_budget = max_total_depth - y_cursor
             
             candidate_depths = sorted(
-                {round(id_to_spec[bid].width, 1) for bid in remaining_ids if id_to_spec[bid].width <= depth_budget + 1.0} |
-                {round(id_to_spec[bid].length, 1) for bid in remaining_ids if id_to_spec[bid].length <= depth_budget + 1.0},
+                {round(id_to_spec[key].footprint_width, 1) for key in remaining_ids if id_to_spec[key].footprint_width <= depth_budget + 1.0} |
+                {round(id_to_spec[key].footprint_length, 1) for key in remaining_ids if id_to_spec[key].footprint_length <= depth_budget + 1.0},
                 reverse=True
             )
 
@@ -784,9 +805,9 @@ class Palletizer:
         counts_left = dict(pool_counter)
         remaining_pool: List[BoxSpec] = []
         for b in pool:
-            if counts_left.get(b.id, 0) > 0:
+            if counts_left.get(b.pool_key, 0) > 0:
                 remaining_pool.append(b)
-                counts_left[b.id] -= 1
+                counts_left[b.pool_key] -= 1
 
         for idx, pb in enumerate(layer_boxes, start=1):
             pb.order = idx
@@ -797,11 +818,11 @@ class Palletizer:
         if not placed_boxes:
             return
 
-        min_x = min(pb.x for pb in placed_boxes)
+        min_x = min(pb.footprint_min_x for pb in placed_boxes)
         max_x = max(pb.max_x for pb in placed_boxes)
         x_span = max_x - min_x
 
-        min_y = min(pb.y for pb in placed_boxes)
+        min_y = min(pb.footprint_min_y for pb in placed_boxes)
         max_y = max(pb.max_y for pb in placed_boxes)
         y_span = max_y - min_y
 
@@ -833,16 +854,16 @@ class Palletizer:
         if not placed_boxes:
             return placed_boxes, unplaced_boxes
 
-        min_x = min(pb.x for pb in placed_boxes)
+        min_x = min(pb.footprint_min_x for pb in placed_boxes)
         max_x = max(pb.max_x for pb in placed_boxes)
-        min_y = min(pb.y for pb in placed_boxes)
+        min_y = min(pb.footprint_min_y for pb in placed_boxes)
         max_y = max(pb.max_y for pb in placed_boxes)
 
         margin = 35.0
 
-        c1_boxes = [pb for pb in placed_boxes if pb.x <= min_x + margin and pb.y <= min_y + margin]
-        c2_boxes = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.y <= min_y + margin]
-        c3_boxes = [pb for pb in placed_boxes if pb.x <= min_x + margin and pb.max_y >= max_y - margin]
+        c1_boxes = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.footprint_min_y <= min_y + margin]
+        c2_boxes = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.footprint_min_y <= min_y + margin]
+        c3_boxes = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.max_y >= max_y - margin]
         c4_boxes = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.max_y >= max_y - margin]
 
         if not (c1_boxes and c2_boxes and c3_boxes and c4_boxes):
@@ -894,7 +915,10 @@ class Palletizer:
                 for other in sorted_boxes:
                     if other.order >= pb.order:
                         break
-                    if intersects_2d(pb.x, pb.y, pb.width, pb.length, other.x, other.y, other.width, other.length):
+                    if intersects_2d(pb.footprint_min_x, pb.footprint_min_y,
+                                     pb.max_x - pb.footprint_min_x, pb.max_y - pb.footprint_min_y,
+                                     other.footprint_min_x, other.footprint_min_y,
+                                     other.max_x - other.footprint_min_x, other.max_y - other.footprint_min_y):
                         if abs(other.top_z - (pb.z + pb.fitting_depth)) <= 1.0:
                             supporting_orders.append(other.order)
             pb.supported_by = supporting_orders
@@ -910,11 +934,11 @@ class Palletizer:
                 "violations": ["No boxes placed"]
             }
 
-        min_x = min(pb.x for pb in placed_boxes)
+        min_x = min(pb.footprint_min_x for pb in placed_boxes)
         max_x = max(pb.max_x for pb in placed_boxes)
         x_span = max_x - min_x
 
-        min_y = min(pb.y for pb in placed_boxes)
+        min_y = min(pb.footprint_min_y for pb in placed_boxes)
         max_y = max(pb.max_y for pb in placed_boxes)
         y_span = max_y - min_y
 
@@ -937,9 +961,9 @@ class Palletizer:
 
         # 四隅高さチェック
         margin = 35.0
-        c1 = [pb for pb in placed_boxes if pb.x <= min_x + margin and pb.y <= min_y + margin]
-        c2 = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.y <= min_y + margin]
-        c3 = [pb for pb in placed_boxes if pb.x <= min_x + margin and pb.max_y >= max_y - margin]
+        c1 = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.footprint_min_y <= min_y + margin]
+        c2 = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.footprint_min_y <= min_y + margin]
+        c3 = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.max_y >= max_y - margin]
         c4 = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.max_y >= max_y - margin]
 
         if c1 and c2 and c3 and c4:
