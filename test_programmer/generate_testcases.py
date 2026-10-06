@@ -16,6 +16,7 @@ sys.stderr.reconfigure(encoding="utf-8")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 BOX_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "box_db.json")
+LID_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "lid_db.json")
 OUTPUT_DIR = os.path.join(BASE_DIR, "test_cases")
 
 PALLET_SPEC = {
@@ -31,9 +32,21 @@ def load_box_db():
     with open(BOX_DB_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
+def load_lid_db():
+    with open(LID_DB_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
 def generate_test_cases():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     box_db = load_box_db()
+    lid_db = load_lid_db()
+    no_lid_id = next(
+        (lid["id"] for lid in lid_db.values() if lid.get("type") == "NONE"),
+        None
+    )
+    if no_lid_id is None:
+        raise ValueError("蓋DBに type == 'NONE' の蓋IDがありません")
+
     available_ids = list(box_db.keys())
     print(f"📦 利用可能な承認済み箱 ({len(available_ids)} 種類): {available_ids}")
 
@@ -49,7 +62,7 @@ def generate_test_cases():
             "description": "TP-332 (335x335x195) 基準モジュール標準型の単載テスト",
             "pallet": PALLET_SPEC,
             "box_list": [
-                {"box_id": "TP-332", "count": 60, "lid_id": "LID-010"}
+                {"box_id": "TP-332", "count": 60, "lid_id": no_lid_id}
             ]
         }
 
@@ -60,7 +73,7 @@ def generate_test_cases():
             "description": "TP-342 (503x335x195) 1.5モジュール標準型の単載テスト",
             "pallet": PALLET_SPEC,
             "box_list": [
-                {"box_id": "TP-342", "count": 40, "lid_id": "LID-010"}
+                {"box_id": "TP-342", "count": 40, "lid_id": no_lid_id}
             ]
         }
 
@@ -71,7 +84,7 @@ def generate_test_cases():
             "description": "TP-362 (670x335x195) 2倍モジュールの単載（長辺1340mmフィット）テスト",
             "pallet": PALLET_SPEC,
             "box_list": [
-                {"box_id": "TP-362", "count": 30, "lid_id": "LID-010"}
+                {"box_id": "TP-362", "count": 30, "lid_id": no_lid_id}
             ]
         }
 
@@ -82,7 +95,7 @@ def generate_test_cases():
             "description": "TP-462 (670x503x195) 大型モジュール標準型の単載テスト",
             "pallet": PALLET_SPEC,
             "box_list": [
-                {"box_id": "TP-462", "count": 24, "lid_id": "LID-010"}
+                {"box_id": "TP-462", "count": 24, "lid_id": no_lid_id}
             ]
         }
 
@@ -93,7 +106,7 @@ def generate_test_cases():
             "description": "TP-131 (335x168x103) ハーフモジュール浅型の単載テスト",
             "pallet": PALLET_SPEC,
             "box_list": [
-                {"box_id": "TP-131", "count": 120, "lid_id": "LID-010"}
+                {"box_id": "TP-131", "count": 120, "lid_id": no_lid_id}
             ]
         }
 
@@ -104,7 +117,7 @@ def generate_test_cases():
             "description": "TP-331 (335x335x103) 基準モジュール浅型の単載テスト",
             "pallet": PALLET_SPEC,
             "box_list": [
-                {"box_id": "TP-331", "count": 80, "lid_id": "LID-010"}
+                {"box_id": "TP-331", "count": 80, "lid_id": no_lid_id}
             ]
         }
 
@@ -115,7 +128,7 @@ def generate_test_cases():
     mixed_same_h_boxes = []
     for bid, cnt in [("TP-332", 16), ("TP-342", 12), ("TP-362", 8), ("TP-462", 6)]:
         if bid in box_db:
-            mixed_same_h_boxes.append({"box_id": bid, "count": cnt, "lid_id": "LID-010"})
+            mixed_same_h_boxes.append({"box_id": bid, "count": cnt, "lid_id": no_lid_id})
     if mixed_same_h_boxes:
         test_cases["mixed_tp_same_height"] = {
             "name": "mixed_tp_same_height",
@@ -128,7 +141,7 @@ def generate_test_cases():
     modular_stack_boxes = []
     for bid, cnt in [("TP-331", 24), ("TP-332", 18), ("TP-362", 10), ("TP-462", 6)]:
         if bid in box_db:
-            modular_stack_boxes.append({"box_id": bid, "count": cnt, "lid_id": "LID-010"})
+            modular_stack_boxes.append({"box_id": bid, "count": cnt, "lid_id": no_lid_id})
     if modular_stack_boxes:
         test_cases["mixed_tp_modular_stack"] = {
             "name": "mixed_tp_modular_stack",
@@ -145,7 +158,7 @@ def generate_test_cases():
         ("TP-362", 4), ("TP-363", 4), ("TP-463", 4)
     ]:
         if bid in box_db:
-            diff_h_boxes.append({"box_id": bid, "count": cnt, "lid_id": "LID-010"})
+            diff_h_boxes.append({"box_id": bid, "count": cnt, "lid_id": no_lid_id})
     if diff_h_boxes:
         test_cases["mixed_tp_different_heights"] = {
             "name": "mixed_tp_different_heights",
@@ -157,7 +170,7 @@ def generate_test_cases():
     # (10) mixed_tp_large_volume: 大量投入・上限パッキングテスト
     large_vol_boxes = []
     for bid in available_ids:
-        large_vol_boxes.append({"box_id": bid, "count": 10, "lid_id": "LID-010"})
+        large_vol_boxes.append({"box_id": bid, "count": 10, "lid_id": no_lid_id})
     test_cases["mixed_tp_large_volume"] = {
         "name": "mixed_tp_large_volume",
         "description": "全承認箱種（各10箱）を大量投入し、最大積載高1200mmまで充填する混載テスト",
@@ -173,7 +186,7 @@ def generate_test_cases():
     deep_boxes = []
     for bid in ["TP-333", "TP-343", "TP-363", "TP-463"]:
         if bid in box_db:
-            deep_boxes.append({"box_id": bid, "count": 12, "lid_id": "LID-010"})
+            deep_boxes.append({"box_id": bid, "count": 12, "lid_id": no_lid_id})
     if deep_boxes:
         test_cases["boundary_height_limit"] = {
             "name": "boundary_height_limit",
@@ -189,8 +202,8 @@ def generate_test_cases():
             "description": "長辺670mm箱を2列配置し、長辺荷姿1340mm（<1360mm許容枠）を検証するテスト",
             "pallet": PALLET_SPEC,
             "box_list": [
-                {"box_id": "TP-362", "count": 18, "lid_id": "LID-010"},
-                {"box_id": "TP-363", "count": 12, "lid_id": "LID-010"}
+                {"box_id": "TP-362", "count": 18, "lid_id": no_lid_id},
+                {"box_id": "TP-363", "count": 12, "lid_id": no_lid_id}
             ]
         }
 
@@ -201,8 +214,8 @@ def generate_test_cases():
             "description": "短辺方向が800mm以上1000mm以下の制約を満たしているかを検証するテスト",
             "pallet": PALLET_SPEC,
             "box_list": [
-                {"box_id": "TP-342", "count": 16, "lid_id": "LID-010"},
-                {"box_id": "TP-332", "count": 16, "lid_id": "LID-010"}
+                {"box_id": "TP-342", "count": 16, "lid_id": no_lid_id},
+                {"box_id": "TP-332", "count": 16, "lid_id": no_lid_id}
             ]
         }
 
@@ -217,7 +230,10 @@ def generate_test_cases():
 
         for item in lid_case["box_list"]:
             compatible_lids = box_db[item["box_id"]].get("compatible_lids", [])
-            standard_lid = next((lid_id for lid_id in compatible_lids if lid_id != "LID-010"), "LID-010")
+            standard_lid = next(
+                (lid_id for lid_id in compatible_lids if lid_id != no_lid_id),
+                no_lid_id
+            )
             item["lid_id"] = standard_lid
 
         test_cases[lid_name] = lid_case

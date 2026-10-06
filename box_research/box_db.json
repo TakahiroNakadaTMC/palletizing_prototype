@@ -10,7 +10,10 @@
     "rib_thickness": 22,
     "module_ratio": "1x0.5",
     "description": "TP-130系 1型 ハーフモジュール (有効内寸291x123, 側面厚22.0mm)",
-    "compatible_lids": ["LID-009", "LID-010"]
+    "compatible_lids": [
+      "TP130フタ",
+      "無蓋"
+    ]
   },
   "TP-331": {
     "id": "TP-331",
@@ -23,7 +26,11 @@
     "rib_thickness": 22,
     "module_ratio": "1x1",
     "description": "TP-330系 1型 基準モジュール浅型 (内寸300x300/有効内寸291x291, 側面厚22.0mm)",
-    "compatible_lids": ["LID-001", "LID-002", "LID-010"]
+    "compatible_lids": [
+      "TP330フタ",
+      "サンボックス330フタ",
+      "無蓋"
+    ]
   },
   "TP-331.5": {
     "id": "TP-331.5",
@@ -36,7 +43,11 @@
     "rib_thickness": 22,
     "module_ratio": "1x1",
     "description": "TP-330系 1.5型 基準モジュール中浅型 (有効内寸291x291, 側面厚22.0mm)",
-    "compatible_lids": ["LID-001", "LID-002", "LID-010"]
+    "compatible_lids": [
+      "TP330フタ",
+      "サンボックス330フタ",
+      "無蓋"
+    ]
   },
   "TP-332": {
     "id": "TP-332",
@@ -49,7 +60,11 @@
     "rib_thickness": 22,
     "module_ratio": "1x1",
     "description": "TP-330系 2型 基準モジュール標準型 (内寸300x300/有効内寸291x291, 側面厚22.0mm)",
-    "compatible_lids": ["LID-001", "LID-002", "LID-010"]
+    "compatible_lids": [
+      "TP330フタ",
+      "サンボックス330フタ",
+      "無蓋"
+    ]
   },
   "TP-333": {
     "id": "TP-333",
@@ -62,7 +77,11 @@
     "rib_thickness": 22,
     "module_ratio": "1x1",
     "description": "TP-330系 3型 基準モジュール深型 (有効内寸291x291, 側面厚22.0mm)",
-    "compatible_lids": ["LID-001", "LID-002", "LID-010"]
+    "compatible_lids": [
+      "TP330フタ",
+      "サンボックス330フタ",
+      "無蓋"
+    ]
   },
   "TP-341": {
     "id": "TP-341",
@@ -75,7 +94,11 @@
     "rib_thickness": 22.5,
     "module_ratio": "1.5x1",
     "description": "TP-340系 1型 1.5モジュール浅型 (内寸468x300/有効内寸458x290, 側面厚22.5mm)",
-    "compatible_lids": ["LID-003", "LID-004", "LID-010"]
+    "compatible_lids": [
+      "TP340フタ",
+      "サンボックス340フタ",
+      "無蓋"
+    ]
   },
   "TP-341.5": {
     "id": "TP-341.5",
@@ -88,7 +111,11 @@
     "rib_thickness": 22.5,
     "module_ratio": "1.5x1",
     "description": "TP-340系 1.5型 1.5モジュール中浅型 (有効内寸458x290, 側面厚22.5mm)",
-    "compatible_lids": ["LID-003", "LID-004", "LID-010"]
+    "compatible_lids": [
+      "TP340フタ",
+      "サンボックス340フタ",
+      "無蓋"
+    ]
   },
   "TP-342": {
     "id": "TP-342",
@@ -101,7 +128,11 @@
     "rib_thickness": 22.5,
     "module_ratio": "1.5x1",
     "description": "TP-340系 2型 1.5モジュール標準型 (内寸468x300/有効内寸458x290, 側面厚22.5mm)",
-    "compatible_lids": ["LID-003", "LID-004", "LID-010"]
+    "compatible_lids": [
+      "TP340フタ",
+      "サンボックス340フタ",
+      "無蓋"
+    ]
   },
   "TP-343": {
     "id": "TP-343",
@@ -114,7 +145,11 @@
     "rib_thickness": 22.5,
     "module_ratio": "1.5x1",
     "description": "TP-340系 3型 1.5モジュール深型 (有効内寸458x290, 側面厚22.5mm)",
-    "compatible_lids": ["LID-003", "LID-004", "LID-010"]
+    "compatible_lids": [
+      "TP340フタ",
+      "サンボックス340フタ",
+      "無蓋"
+    ]
   },
   "TP-362": {
     "id": "TP-362",
@@ -127,7 +162,11 @@
     "rib_thickness": 22.5,
     "module_ratio": "2x1",
     "description": "TP-360系 2型 2倍モジュール標準型 (内寸635x300/有効内寸625x290, 側面厚22.5mm)",
-    "compatible_lids": ["LID-005", "LID-006", "LID-010"]
+    "compatible_lids": [
+      "TP360フタ",
+      "サンボックス360フタ",
+      "無蓋"
+    ]
   },
   "TP-363": {
     "id": "TP-363",
@@ -140,7 +179,11 @@
     "rib_thickness": 22.5,
     "module_ratio": "2x1",
     "description": "TP-360系 3型 2倍モジュール深型 (有効内寸625x290, 側面厚22.5mm)",
-    "compatible_lids": ["LID-005", "LID-006", "LID-010"]
+    "compatible_lids": [
+      "TP360フタ",
+      "サンボックス360フタ",
+      "無蓋"
+    ]
   },
   "TP-462": {
     "id": "TP-462",
@@ -153,7 +196,11 @@
     "rib_thickness": 22,
     "module_ratio": "2x1.5",
     "description": "TP-460系 2型 大型モジュール標準型 (内寸635x468/有効内寸626x458, 側面厚22.0mm)",
-    "compatible_lids": ["LID-007", "LID-008", "LID-010"]
+    "compatible_lids": [
+      "TP460フタ",
+      "サンボックス460フタ",
+      "無蓋"
+    ]
   },
   "TP-463": {
     "id": "TP-463",
@@ -166,6 +213,10 @@
     "rib_thickness": 22,
     "module_ratio": "2x1.5",
     "description": "TP-460系 3型 大型モジュール深型 (有効内寸626x458, 側面厚22.0mm)",
-    "compatible_lids": ["LID-007", "LID-008", "LID-010"]
+    "compatible_lids": [
+      "TP460フタ",
+      "サンボックス460フタ",
+      "無蓋"
+    ]
   }
 }

@@ -13,22 +13,22 @@
     {
       "box_id": "TP-332",
       "count": 16,
-      "lid_id": "LID-001"
+      "lid_id": "TP330フタ"
     },
     {
       "box_id": "TP-342",
       "count": 12,
-      "lid_id": "LID-003"
+      "lid_id": "TP340フタ"
     },
     {
       "box_id": "TP-362",
       "count": 8,
-      "lid_id": "LID-005"
+      "lid_id": "TP360フタ"
     },
     {
       "box_id": "TP-462",
       "count": 6,
-      "lid_id": "LID-007"
+      "lid_id": "TP460フタ"
     }
   ]
 }

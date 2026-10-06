@@ -58,18 +58,23 @@ class Palletizer:
         
         Args:
             test_name: テスト名
-            box_input_list: 投入箱リスト [{"box_id": "TP-332", "count": 60, "lid_id": "LID-010"}, ...]
-            lid_db: 蓋DB {"LID-001": {...}, ...} 【NEW】
+            box_input_list: 投入箱リスト [{"box_id": "TP-332", "count": 60, "lid_id": "蓋ID"}, ...]
+            lid_db: 蓋DB。lid_id 省略時は type が "NONE" の蓋を使用
         """
         if lid_db is None:
             lid_db = {}
+
+        default_lid_id = next(
+            (lid_id for lid_id, lid_info in lid_db.items() if lid_info.get("type") == "NONE"),
+            ""
+        )
         
         expanded_boxes: List[BoxSpec] = []
         
         for item in box_input_list:
             bid = item["box_id"]
             cnt = item.get("count", 1)
-            lid_id = item.get("lid_id", "LID-010")  # 【NEW】箱ごとの蓋ID取得
+            lid_id = item.get("lid_id", default_lid_id)
             
             if bid in self.box_db:
                 lid_info = lid_db.get(lid_id, {})  # 【NEW】蓋情報を取得

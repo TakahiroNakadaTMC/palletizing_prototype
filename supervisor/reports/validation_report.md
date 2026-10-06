@@ -12,31 +12,31 @@
 | テストケース名 | 判定 | 配置箱数 | 荷姿寸法 (X × Y × Z mm) | 体積充填率 | 備考・検証詳細 |
 | :--- | :---: | :---: | :---: | :---: | :--- |
 | **`boundary_height_limit`** | ✅ PASS | 20 箱 | 1341 × 1005 × 1122 | 107.8% | 制約項目全クリア |
-| **`boundary_height_limit_with_lids`** | ✅ PASS | 20 箱 | 1341 × 1005 × 1182 | 113.4% | 制約項目全クリア |
+| **`boundary_height_limit_with_lids`** | ✅ PASS | 20 箱 | 1341 × 1005 × 1174 | 112.7% | 制約項目全クリア |
 | **`boundary_min_short_side`** | ✅ PASS | 28 箱 | 1341 × 1005 × 565 | 54.7% | 制約項目全クリア |
-| **`boundary_min_short_side_with_lids`** | ✅ PASS | 28 箱 | 1341 × 1005 × 610 | 59.0% | 制約項目全クリア |
+| **`boundary_min_short_side_with_lids`** | ✅ PASS | 28 箱 | 1341 × 1005 × 604 | 58.4% | 制約項目全クリア |
 | **`boundary_overhang_long_side`** | ✅ PASS | 30 箱 | 1340 × 1005 × 1121 | 108.6% | 制約項目全クリア |
-| **`boundary_overhang_long_side_with_lids`** | ✅ PASS | 30 箱 | 1340 × 1005 × 1196 | 115.6% | 制約項目全クリア |
+| **`boundary_overhang_long_side_with_lids`** | ✅ PASS | 30 箱 | 1340 × 1005 × 1186 | 114.7% | 制約項目全クリア |
 | **`mixed_tp_different_heights`** | ✅ PASS | 21 箱 | 1341 × 1005 × 242 | 23.6% | 制約項目全クリア |
-| **`mixed_tp_different_heights_with_lids`** | ✅ PASS | 9 箱 | 1341 × 1005 × 164 | 15.3% | 制約項目全クリア |
+| **`mixed_tp_different_heights_with_lids`** | ✅ PASS | 21 箱 | 1341 × 1005 × 268 | 26.0% | 制約項目全クリア |
 | **`mixed_tp_large_volume`** | ✅ PASS | 20 箱 | 1341 × 1005 × 936 | 90.4% | 制約項目全クリア |
-| **`mixed_tp_large_volume_with_lids`** | ✅ PASS | 20 箱 | 1341 × 1005 × 996 | 96.0% | 制約項目全クリア |
+| **`mixed_tp_large_volume_with_lids`** | ✅ PASS | 20 箱 | 1341 × 1005 × 988 | 95.3% | 制約項目全クリア |
 | **`mixed_tp_modular_stack`** | ✅ PASS | 15 箱 | 1341 × 1005 × 565 | 54.7% | 制約項目全クリア |
-| **`mixed_tp_modular_stack_with_lids`** | ✅ PASS | 15 箱 | 1341 × 1005 × 610 | 58.9% | 制約項目全クリア |
+| **`mixed_tp_modular_stack_with_lids`** | ✅ PASS | 15 箱 | 1341 × 1005 × 604 | 58.4% | 制約項目全クリア |
 | **`mixed_tp_same_height`** | ✅ PASS | 10 箱 | 1341 × 1005 × 380 | 36.5% | 制約項目全クリア |
-| **`mixed_tp_same_height_with_lids`** | ✅ PASS | 10 箱 | 1341 × 1005 × 410 | 39.3% | 制約項目全クリア |
+| **`mixed_tp_same_height_with_lids`** | ✅ PASS | 10 箱 | 1341 × 1005 × 406 | 38.9% | 制約項目全クリア |
 | **`single_tp131`** | ✅ PASS | 120 箱 | 1340 × 1008 × 483 | 48.3% | 制約項目全クリア |
-| **`single_tp131_with_lids`** | ✅ PASS | 120 箱 | 1340 × 1008 × 543 | 53.9% | 制約項目全クリア |
+| **`single_tp131_with_lids`** | ✅ PASS | 120 箱 | 1340 × 1008 × 548 | 54.4% | 制約項目全クリア |
 | **`single_tp331`** | ✅ PASS | 72 箱 | 1340 × 1005 × 568 | 57.8% | 制約項目全クリア |
-| **`single_tp331_with_lids`** | ✅ PASS | 72 箱 | 1340 × 1005 × 658 | 66.2% | 制約項目全クリア |
+| **`single_tp331_with_lids`** | ✅ PASS | 72 箱 | 1340 × 1005 × 646 | 65.1% | 制約項目全クリア |
 | **`single_tp332`** | ✅ PASS | 60 箱 | 1340 × 1005 × 935 | 91.2% | 制約項目全クリア |
-| **`single_tp332_with_lids`** | ✅ PASS | 60 箱 | 1340 × 1005 × 1010 | 98.2% | 制約項目全クリア |
+| **`single_tp332_with_lids`** | ✅ PASS | 60 箱 | 1340 × 1005 × 1000 | 97.3% | 制約項目全クリア |
 | **`single_tp342`** | ✅ PASS | 40 箱 | 1340 × 1006 × 935 | 91.3% | 制約項目全クリア |
-| **`single_tp342_with_lids`** | ✅ PASS | 40 箱 | 1340 × 1006 × 1010 | 98.3% | 制約項目全クリア |
+| **`single_tp342_with_lids`** | ✅ PASS | 40 箱 | 1340 × 1006 × 1000 | 97.4% | 制約項目全クリア |
 | **`single_tp362`** | ✅ PASS | 30 箱 | 1340 × 1005 × 935 | 91.2% | 制約項目全クリア |
-| **`single_tp362_with_lids`** | ✅ PASS | 30 箱 | 1340 × 1005 × 1010 | 98.2% | 制約項目全クリア |
+| **`single_tp362_with_lids`** | ✅ PASS | 30 箱 | 1340 × 1005 × 1000 | 97.3% | 制約項目全クリア |
 | **`single_tp462`** | ✅ PASS | 24 箱 | 1340 × 1006 × 1120 | 109.5% | 制約項目全クリア |
-| **`single_tp462_with_lids`** | ✅ PASS | 20 箱 | 1340 × 1006 × 1010 | 98.3% | 制約項目全クリア |
+| **`single_tp462_with_lids`** | ✅ PASS | 24 箱 | 1340 × 1006 × 1198 | 116.8% | 制約項目全クリア |
 
 ---
 

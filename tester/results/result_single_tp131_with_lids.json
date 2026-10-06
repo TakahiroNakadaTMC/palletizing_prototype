@@ -21,19 +21,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 2,
@@ -46,19 +46,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 3,
@@ -71,19 +71,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 4,
@@ -96,19 +96,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 5,
@@ -121,19 +121,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 6,
@@ -146,19 +146,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 7,
@@ -171,19 +171,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 8,
@@ -196,19 +196,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 9,
@@ -221,19 +221,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 10,
@@ -246,19 +246,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 11,
@@ -271,19 +271,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 12,
@@ -296,19 +296,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 13,
@@ -321,19 +321,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 14,
@@ -346,19 +346,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 15,
@@ -371,19 +371,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 16,
@@ -396,19 +396,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 17,
@@ -421,19 +421,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 18,
@@ -446,19 +446,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 19,
@@ -471,19 +471,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 20,
@@ -496,19 +496,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 21,
@@ -521,19 +521,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 22,
@@ -546,19 +546,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 23,
@@ -571,19 +571,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 24,
@@ -596,19 +596,19 @@
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
       "layer_index": 0,
       "supported_by": [],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 25,
@@ -616,12 +616,12 @@
       "position": {
         "x": -70.0,
         "y": -4.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -629,13 +629,13 @@
       "supported_by": [
         1
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 26,
@@ -643,12 +643,12 @@
       "position": {
         "x": 265.0,
         "y": -4.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -656,13 +656,13 @@
       "supported_by": [
         2
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 27,
@@ -670,12 +670,12 @@
       "position": {
         "x": 600.0,
         "y": -4.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -683,13 +683,13 @@
       "supported_by": [
         3
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 28,
@@ -697,12 +697,12 @@
       "position": {
         "x": 935.0,
         "y": -4.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -710,13 +710,13 @@
       "supported_by": [
         4
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 29,
@@ -724,12 +724,12 @@
       "position": {
         "x": -70.0,
         "y": 164.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -737,13 +737,13 @@
       "supported_by": [
         5
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 30,
@@ -751,12 +751,12 @@
       "position": {
         "x": 265.0,
         "y": 164.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -764,13 +764,13 @@
       "supported_by": [
         6
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 31,
@@ -778,12 +778,12 @@
       "position": {
         "x": 600.0,
         "y": 164.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -791,13 +791,13 @@
       "supported_by": [
         7
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 32,
@@ -805,12 +805,12 @@
       "position": {
         "x": 935.0,
         "y": 164.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -818,13 +818,13 @@
       "supported_by": [
         8
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 33,
@@ -832,12 +832,12 @@
       "position": {
         "x": -70.0,
         "y": 332.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -845,13 +845,13 @@
       "supported_by": [
         9
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 34,
@@ -859,12 +859,12 @@
       "position": {
         "x": 265.0,
         "y": 332.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -872,13 +872,13 @@
       "supported_by": [
         10
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 35,
@@ -886,12 +886,12 @@
       "position": {
         "x": 600.0,
         "y": 332.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -899,13 +899,13 @@
       "supported_by": [
         11
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 36,
@@ -913,12 +913,12 @@
       "position": {
         "x": 935.0,
         "y": 332.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -926,13 +926,13 @@
       "supported_by": [
         12
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 37,
@@ -940,12 +940,12 @@
       "position": {
         "x": -70.0,
         "y": 500.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -953,13 +953,13 @@
       "supported_by": [
         13
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 38,
@@ -967,12 +967,12 @@
       "position": {
         "x": 265.0,
         "y": 500.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -980,13 +980,13 @@
       "supported_by": [
         14
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 39,
@@ -994,12 +994,12 @@
       "position": {
         "x": 600.0,
         "y": 500.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1007,13 +1007,13 @@
       "supported_by": [
         15
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 40,
@@ -1021,12 +1021,12 @@
       "position": {
         "x": 935.0,
         "y": 500.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1034,13 +1034,13 @@
       "supported_by": [
         16
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 41,
@@ -1048,12 +1048,12 @@
       "position": {
         "x": -70.0,
         "y": 668.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1061,13 +1061,13 @@
       "supported_by": [
         17
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 42,
@@ -1075,12 +1075,12 @@
       "position": {
         "x": 265.0,
         "y": 668.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1088,13 +1088,13 @@
       "supported_by": [
         18
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 43,
@@ -1102,12 +1102,12 @@
       "position": {
         "x": 600.0,
         "y": 668.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1115,13 +1115,13 @@
       "supported_by": [
         19
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 44,
@@ -1129,12 +1129,12 @@
       "position": {
         "x": 935.0,
         "y": 668.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1142,13 +1142,13 @@
       "supported_by": [
         20
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 45,
@@ -1156,12 +1156,12 @@
       "position": {
         "x": -70.0,
         "y": 836.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1169,13 +1169,13 @@
       "supported_by": [
         21
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 46,
@@ -1183,12 +1183,12 @@
       "position": {
         "x": 265.0,
         "y": 836.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1196,13 +1196,13 @@
       "supported_by": [
         22
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 47,
@@ -1210,12 +1210,12 @@
       "position": {
         "x": 600.0,
         "y": 836.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1223,13 +1223,13 @@
       "supported_by": [
         23
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 48,
@@ -1237,12 +1237,12 @@
       "position": {
         "x": 935.0,
         "y": 836.0,
-        "z": 107.0
+        "z": 108.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1250,13 +1250,13 @@
       "supported_by": [
         24
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 49,
@@ -1264,12 +1264,12 @@
       "position": {
         "x": -70.0,
         "y": -4.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1277,13 +1277,13 @@
       "supported_by": [
         25
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 50,
@@ -1291,12 +1291,12 @@
       "position": {
         "x": 265.0,
         "y": -4.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1304,13 +1304,13 @@
       "supported_by": [
         26
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 51,
@@ -1318,12 +1318,12 @@
       "position": {
         "x": 600.0,
         "y": -4.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1331,13 +1331,13 @@
       "supported_by": [
         27
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 52,
@@ -1345,12 +1345,12 @@
       "position": {
         "x": 935.0,
         "y": -4.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1358,13 +1358,13 @@
       "supported_by": [
         28
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 53,
@@ -1372,12 +1372,12 @@
       "position": {
         "x": -70.0,
         "y": 164.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1385,13 +1385,13 @@
       "supported_by": [
         29
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 54,
@@ -1399,12 +1399,12 @@
       "position": {
         "x": 265.0,
         "y": 164.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1412,13 +1412,13 @@
       "supported_by": [
         30
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 55,
@@ -1426,12 +1426,12 @@
       "position": {
         "x": 600.0,
         "y": 164.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1439,13 +1439,13 @@
       "supported_by": [
         31
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 56,
@@ -1453,12 +1453,12 @@
       "position": {
         "x": 935.0,
         "y": 164.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1466,13 +1466,13 @@
       "supported_by": [
         32
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 57,
@@ -1480,12 +1480,12 @@
       "position": {
         "x": -70.0,
         "y": 332.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1493,13 +1493,13 @@
       "supported_by": [
         33
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 58,
@@ -1507,12 +1507,12 @@
       "position": {
         "x": 265.0,
         "y": 332.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1520,13 +1520,13 @@
       "supported_by": [
         34
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 59,
@@ -1534,12 +1534,12 @@
       "position": {
         "x": 600.0,
         "y": 332.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1547,13 +1547,13 @@
       "supported_by": [
         35
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 60,
@@ -1561,12 +1561,12 @@
       "position": {
         "x": 935.0,
         "y": 332.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1574,13 +1574,13 @@
       "supported_by": [
         36
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 61,
@@ -1588,12 +1588,12 @@
       "position": {
         "x": -70.0,
         "y": 500.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1601,13 +1601,13 @@
       "supported_by": [
         37
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 62,
@@ -1615,12 +1615,12 @@
       "position": {
         "x": 265.0,
         "y": 500.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1628,13 +1628,13 @@
       "supported_by": [
         38
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 63,
@@ -1642,12 +1642,12 @@
       "position": {
         "x": 600.0,
         "y": 500.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1655,13 +1655,13 @@
       "supported_by": [
         39
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 64,
@@ -1669,12 +1669,12 @@
       "position": {
         "x": 935.0,
         "y": 500.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1682,13 +1682,13 @@
       "supported_by": [
         40
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 65,
@@ -1696,12 +1696,12 @@
       "position": {
         "x": -70.0,
         "y": 668.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1709,13 +1709,13 @@
       "supported_by": [
         41
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 66,
@@ -1723,12 +1723,12 @@
       "position": {
         "x": 265.0,
         "y": 668.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1736,13 +1736,13 @@
       "supported_by": [
         42
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 67,
@@ -1750,12 +1750,12 @@
       "position": {
         "x": 600.0,
         "y": 668.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1763,13 +1763,13 @@
       "supported_by": [
         43
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 68,
@@ -1777,12 +1777,12 @@
       "position": {
         "x": 935.0,
         "y": 668.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1790,13 +1790,13 @@
       "supported_by": [
         44
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 69,
@@ -1804,12 +1804,12 @@
       "position": {
         "x": -70.0,
         "y": 836.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1817,13 +1817,13 @@
       "supported_by": [
         45
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 70,
@@ -1831,12 +1831,12 @@
       "position": {
         "x": 265.0,
         "y": 836.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1844,13 +1844,13 @@
       "supported_by": [
         46
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 71,
@@ -1858,12 +1858,12 @@
       "position": {
         "x": 600.0,
         "y": 836.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1871,13 +1871,13 @@
       "supported_by": [
         47
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 72,
@@ -1885,12 +1885,12 @@
       "position": {
         "x": 935.0,
         "y": 836.0,
-        "z": 214.0
+        "z": 216.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1898,13 +1898,13 @@
       "supported_by": [
         48
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 73,
@@ -1912,12 +1912,12 @@
       "position": {
         "x": -70.0,
         "y": -4.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1925,13 +1925,13 @@
       "supported_by": [
         49
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 74,
@@ -1939,12 +1939,12 @@
       "position": {
         "x": 265.0,
         "y": -4.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1952,13 +1952,13 @@
       "supported_by": [
         50
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 75,
@@ -1966,12 +1966,12 @@
       "position": {
         "x": 600.0,
         "y": -4.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -1979,13 +1979,13 @@
       "supported_by": [
         51
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 76,
@@ -1993,12 +1993,12 @@
       "position": {
         "x": 935.0,
         "y": -4.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2006,13 +2006,13 @@
       "supported_by": [
         52
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 77,
@@ -2020,12 +2020,12 @@
       "position": {
         "x": -70.0,
         "y": 164.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2033,13 +2033,13 @@
       "supported_by": [
         53
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 78,
@@ -2047,12 +2047,12 @@
       "position": {
         "x": 265.0,
         "y": 164.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2060,13 +2060,13 @@
       "supported_by": [
         54
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 79,
@@ -2074,12 +2074,12 @@
       "position": {
         "x": 600.0,
         "y": 164.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2087,13 +2087,13 @@
       "supported_by": [
         55
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 80,
@@ -2101,12 +2101,12 @@
       "position": {
         "x": 935.0,
         "y": 164.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2114,13 +2114,13 @@
       "supported_by": [
         56
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 81,
@@ -2128,12 +2128,12 @@
       "position": {
         "x": -70.0,
         "y": 332.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2141,13 +2141,13 @@
       "supported_by": [
         57
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 82,
@@ -2155,12 +2155,12 @@
       "position": {
         "x": 265.0,
         "y": 332.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2168,13 +2168,13 @@
       "supported_by": [
         58
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 83,
@@ -2182,12 +2182,12 @@
       "position": {
         "x": 600.0,
         "y": 332.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2195,13 +2195,13 @@
       "supported_by": [
         59
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 84,
@@ -2209,12 +2209,12 @@
       "position": {
         "x": 935.0,
         "y": 332.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2222,13 +2222,13 @@
       "supported_by": [
         60
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 85,
@@ -2236,12 +2236,12 @@
       "position": {
         "x": -70.0,
         "y": 500.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2249,13 +2249,13 @@
       "supported_by": [
         61
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 86,
@@ -2263,12 +2263,12 @@
       "position": {
         "x": 265.0,
         "y": 500.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2276,13 +2276,13 @@
       "supported_by": [
         62
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 87,
@@ -2290,12 +2290,12 @@
       "position": {
         "x": 600.0,
         "y": 500.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2303,13 +2303,13 @@
       "supported_by": [
         63
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 88,
@@ -2317,12 +2317,12 @@
       "position": {
         "x": 935.0,
         "y": 500.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2330,13 +2330,13 @@
       "supported_by": [
         64
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 89,
@@ -2344,12 +2344,12 @@
       "position": {
         "x": -70.0,
         "y": 668.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2357,13 +2357,13 @@
       "supported_by": [
         65
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 90,
@@ -2371,12 +2371,12 @@
       "position": {
         "x": 265.0,
         "y": 668.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2384,13 +2384,13 @@
       "supported_by": [
         66
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 91,
@@ -2398,12 +2398,12 @@
       "position": {
         "x": 600.0,
         "y": 668.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2411,13 +2411,13 @@
       "supported_by": [
         67
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 92,
@@ -2425,12 +2425,12 @@
       "position": {
         "x": 935.0,
         "y": 668.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2438,13 +2438,13 @@
       "supported_by": [
         68
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 93,
@@ -2452,12 +2452,12 @@
       "position": {
         "x": -70.0,
         "y": 836.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2465,13 +2465,13 @@
       "supported_by": [
         69
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 94,
@@ -2479,12 +2479,12 @@
       "position": {
         "x": 265.0,
         "y": 836.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2492,13 +2492,13 @@
       "supported_by": [
         70
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 95,
@@ -2506,12 +2506,12 @@
       "position": {
         "x": 600.0,
         "y": 836.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2519,13 +2519,13 @@
       "supported_by": [
         71
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 96,
@@ -2533,12 +2533,12 @@
       "position": {
         "x": 935.0,
         "y": 836.0,
-        "z": 321.0
+        "z": 324.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2546,13 +2546,13 @@
       "supported_by": [
         72
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 97,
@@ -2560,12 +2560,12 @@
       "position": {
         "x": -70.0,
         "y": -4.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2573,13 +2573,13 @@
       "supported_by": [
         73
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 98,
@@ -2587,12 +2587,12 @@
       "position": {
         "x": 265.0,
         "y": -4.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2600,13 +2600,13 @@
       "supported_by": [
         74
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 99,
@@ -2614,12 +2614,12 @@
       "position": {
         "x": 600.0,
         "y": -4.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2627,13 +2627,13 @@
       "supported_by": [
         75
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 100,
@@ -2641,12 +2641,12 @@
       "position": {
         "x": 935.0,
         "y": -4.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2654,13 +2654,13 @@
       "supported_by": [
         76
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 101,
@@ -2668,12 +2668,12 @@
       "position": {
         "x": -70.0,
         "y": 164.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2681,13 +2681,13 @@
       "supported_by": [
         77
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 102,
@@ -2695,12 +2695,12 @@
       "position": {
         "x": 265.0,
         "y": 164.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2708,13 +2708,13 @@
       "supported_by": [
         78
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 103,
@@ -2722,12 +2722,12 @@
       "position": {
         "x": 600.0,
         "y": 164.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2735,13 +2735,13 @@
       "supported_by": [
         79
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 104,
@@ -2749,12 +2749,12 @@
       "position": {
         "x": 935.0,
         "y": 164.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2762,13 +2762,13 @@
       "supported_by": [
         80
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 105,
@@ -2776,12 +2776,12 @@
       "position": {
         "x": -70.0,
         "y": 332.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2789,13 +2789,13 @@
       "supported_by": [
         81
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 106,
@@ -2803,12 +2803,12 @@
       "position": {
         "x": 265.0,
         "y": 332.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2816,13 +2816,13 @@
       "supported_by": [
         82
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 107,
@@ -2830,12 +2830,12 @@
       "position": {
         "x": 600.0,
         "y": 332.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2843,13 +2843,13 @@
       "supported_by": [
         83
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 108,
@@ -2857,12 +2857,12 @@
       "position": {
         "x": 935.0,
         "y": 332.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2870,13 +2870,13 @@
       "supported_by": [
         84
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 109,
@@ -2884,12 +2884,12 @@
       "position": {
         "x": -70.0,
         "y": 500.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2897,13 +2897,13 @@
       "supported_by": [
         85
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 110,
@@ -2911,12 +2911,12 @@
       "position": {
         "x": 265.0,
         "y": 500.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2924,13 +2924,13 @@
       "supported_by": [
         86
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 111,
@@ -2938,12 +2938,12 @@
       "position": {
         "x": 600.0,
         "y": 500.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2951,13 +2951,13 @@
       "supported_by": [
         87
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 112,
@@ -2965,12 +2965,12 @@
       "position": {
         "x": 935.0,
         "y": 500.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -2978,13 +2978,13 @@
       "supported_by": [
         88
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 113,
@@ -2992,12 +2992,12 @@
       "position": {
         "x": -70.0,
         "y": 668.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -3005,13 +3005,13 @@
       "supported_by": [
         89
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 114,
@@ -3019,12 +3019,12 @@
       "position": {
         "x": 265.0,
         "y": 668.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -3032,13 +3032,13 @@
       "supported_by": [
         90
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 115,
@@ -3046,12 +3046,12 @@
       "position": {
         "x": 600.0,
         "y": 668.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -3059,13 +3059,13 @@
       "supported_by": [
         91
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 116,
@@ -3073,12 +3073,12 @@
       "position": {
         "x": 935.0,
         "y": 668.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -3086,13 +3086,13 @@
       "supported_by": [
         92
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 117,
@@ -3100,12 +3100,12 @@
       "position": {
         "x": -70.0,
         "y": 836.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -3113,13 +3113,13 @@
       "supported_by": [
         93
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 118,
@@ -3127,12 +3127,12 @@
       "position": {
         "x": 265.0,
         "y": 836.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -3140,13 +3140,13 @@
       "supported_by": [
         94
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 119,
@@ -3154,12 +3154,12 @@
       "position": {
         "x": 600.0,
         "y": 836.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -3167,13 +3167,13 @@
       "supported_by": [
         95
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     },
     {
       "order": 120,
@@ -3181,12 +3181,12 @@
       "position": {
         "x": 935.0,
         "y": 836.0,
-        "z": 428.0
+        "z": 432.0
       },
       "dimensions": {
         "width": 335.0,
         "length": 168.0,
-        "height": 115.0
+        "height": 116.0
       },
       "rotation": 0,
       "fitting_depth": 8.0,
@@ -3194,13 +3194,13 @@
       "supported_by": [
         96
       ],
-      "lid_id": "LID-009",
-      "lid_thickness": 12.0,
+      "lid_id": "TP130フタ",
+      "lid_thickness": 13.0,
       "lid_dimensions": {
         "width": 335.0,
         "length": 168.0
       },
-      "lid_fit_type": "外嵌め"
+      "lid_fit_type": "内嵌め"
     }
   ],
   "unplaced_boxes": [],
@@ -3214,9 +3214,9 @@
       "min_y": -4.0,
       "max_y": 1004.0,
       "y_span": 1008.0,
-      "max_z": 543.0
+      "max_z": 548.0
     },
-    "volume_efficiency_percent": 53.94,
+    "volume_efficiency_percent": 54.4,
     "is_valid": true,
     "violations": []
   }

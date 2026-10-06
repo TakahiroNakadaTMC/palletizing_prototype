@@ -17,7 +17,7 @@ class BoxSpec:
     rib_thickness: float          # mm (側面リブ厚み)
     module_ratio: Optional[str] = None  # "1x1", "1.5x1", "2x1", etc.
     description: str = ""
-    lid_id: str = "LID-010"
+    lid_id: str = ""
     lid_width: float = 0.0
     lid_length: float = 0.0
     lid_thickness: float = 0.0
@@ -73,7 +73,7 @@ class PlacedBox:
     rotation: int                 # 0 or 90
     layer_index: int = 0          # 段数インデックス (0, 1, 2, ...)
     supported_by: List[int] = field(default_factory=list) # 下段の箱のorderリスト
-    lid_id: str = "LID-010"       # 【NEW】蓋ID（デフォルト: 蓋無）
+    lid_id: str = ""               # 蓋ID（デフォルト: 蓋無）
     lid_thickness: float = 0.0    # 【NEW】蓋の厚さ [mm]
     lid_width: float = 0.0
     lid_length: float = 0.0

@@ -69,6 +69,10 @@ class PalletizeValidator:
     def __init__(self, box_db: Dict[str, Any], lid_db: Dict[str, Any]):
         self.box_db = box_db
         self.lid_db = lid_db
+        self.default_lid_id = next(
+            (lid_id for lid_id, lid in lid_db.items() if lid.get("type") == "NONE"),
+            "LID-010"
+        )
 
     def validate_case(self, result_path: str) -> Dict[str, Any]:
         with open(result_path, "r", encoding="utf-8") as f:
@@ -135,7 +139,7 @@ class PalletizeValidator:
                 continue
 
             master = self.box_db[bid]
-            lid_id = b.get("lid_id", "LID-010")
+            lid_id = b.get("lid_id", self.default_lid_id)
             lid_thickness = float(b.get("lid_thickness", 0.0))
             lid = self.lid_db.get(lid_id)
             if lid is None:

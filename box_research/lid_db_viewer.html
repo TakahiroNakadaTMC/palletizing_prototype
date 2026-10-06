@@ -168,6 +168,9 @@
   <script>
     // Global Lid DB
     let currentLidDB = {};
+    let currentBoxDB = {};
+    let boxDbLoaded = false;
+    let boxDbChanged = false;
     let editTargetId = null;
 
     // Toast Notification
@@ -263,7 +266,7 @@
         modalBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> 更新して保存`;
 
         document.getElementById('input-lid-id').value = lid.id;
-        document.getElementById('input-lid-id').disabled = true;
+        document.getElementById('input-lid-id').disabled = false;
         document.getElementById('input-lid-name').value = lid.name || '';
         document.getElementById('input-lid-type').value = lid.type || 'TP';
         document.getElementById('input-lid-width').value = lid.width;
@@ -315,6 +318,26 @@
         return;
       }
 
+      if (editTargetId && id !== editTargetId && currentLidDB[id]) {
+        showToast(`蓋ID "${id}" はすでに使用されています`);
+        return;
+      }
+
+      if (editTargetId && id !== editTargetId && !boxDbLoaded) {
+        showToast('箱DBを読み込めないため、IDを変更できません');
+        return;
+      }
+
+      if (editTargetId && id !== editTargetId) {
+        delete currentLidDB[editTargetId];
+        Object.values(currentBoxDB).forEach(box => {
+          if (Array.isArray(box.compatible_lids) && box.compatible_lids.includes(editTargetId)) {
+            box.compatible_lids = [...new Set(box.compatible_lids.map(lidId => lidId === editTargetId ? id : lidId))];
+          }
+        });
+        boxDbChanged = true;
+      }
+
       currentLidDB[id] = { id, name, type, width, length, thickness, fit_type: fitType, description };
       updateStats();
       renderLidsTable();
@@ -329,13 +352,22 @@
 
     document.getElementById('btn-save-all').addEventListener('click', async () => {
       try {
-        const res = await fetch('/api/lids/save_all', {
+        const saves = [fetch('/api/lids/save_all', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(currentLidDB)
-        });
-        if (res.ok) {
-          showToast('蓋データをサーバーに保存しました');
+        })];
+        if (boxDbChanged) {
+          saves.push(fetch('/api/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(currentBoxDB)
+          }));
+        }
+        const responses = await Promise.all(saves);
+        if (responses.every(res => res.ok)) {
+          boxDbChanged = false;
+          showToast('蓋DBと箱DBを保存しました');
         } else {
           showToast('保存に失敗しました');
         }
@@ -346,8 +378,17 @@
     });
 
     // Initialize
-    window.addEventListener('load', () => {
-      loadLidsFromServer();
+    window.addEventListener('load', async () => {
+      await loadLidsFromServer();
+      try {
+        const response = await fetch('/api/boxes');
+        if (!response.ok) throw new Error('箱DBの読み込みに失敗しました');
+        currentBoxDB = await response.json();
+        boxDbLoaded = true;
+      } catch (error) {
+        console.error('Box DB load error:', error);
+        showToast('箱DBを読み込めませんでした');
+      }
     });
   </script>
 </body>

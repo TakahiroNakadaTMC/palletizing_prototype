@@ -13,67 +13,67 @@
     {
       "box_id": "TP-131",
       "count": 10,
-      "lid_id": "LID-009"
+      "lid_id": "TP130フタ"
     },
     {
       "box_id": "TP-331",
       "count": 10,
-      "lid_id": "LID-001"
+      "lid_id": "TP330フタ"
     },
     {
       "box_id": "TP-331.5",
       "count": 10,
-      "lid_id": "LID-001"
+      "lid_id": "TP330フタ"
     },
     {
       "box_id": "TP-332",
       "count": 10,
-      "lid_id": "LID-001"
+      "lid_id": "TP330フタ"
     },
     {
       "box_id": "TP-333",
       "count": 10,
-      "lid_id": "LID-001"
+      "lid_id": "TP330フタ"
     },
     {
       "box_id": "TP-341",
       "count": 10,
-      "lid_id": "LID-003"
+      "lid_id": "TP340フタ"
     },
     {
       "box_id": "TP-341.5",
       "count": 10,
-      "lid_id": "LID-003"
+      "lid_id": "TP340フタ"
     },
     {
       "box_id": "TP-342",
       "count": 10,
-      "lid_id": "LID-003"
+      "lid_id": "TP340フタ"
     },
     {
       "box_id": "TP-343",
       "count": 10,
-      "lid_id": "LID-003"
+      "lid_id": "TP340フタ"
     },
     {
       "box_id": "TP-362",
       "count": 10,
-      "lid_id": "LID-005"
+      "lid_id": "TP360フタ"
     },
     {
       "box_id": "TP-363",
       "count": 10,
-      "lid_id": "LID-005"
+      "lid_id": "TP360フタ"
     },
     {
       "box_id": "TP-462",
       "count": 10,
-      "lid_id": "LID-007"
+      "lid_id": "TP460フタ"
     },
     {
       "box_id": "TP-463",
       "count": 10,
-      "lid_id": "LID-007"
+      "lid_id": "TP460フタ"
     }
   ]
 }
