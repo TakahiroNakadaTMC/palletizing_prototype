@@ -19,6 +19,7 @@ PROJECT_ROOT = os.path.dirname(BASE_DIR)
 BOX_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "box_db.json")
 LID_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "lid_db.json")
 RESULTS_DIR = os.path.join(PROJECT_ROOT, "tester", "results")
+APPROVAL_STATE_PATH = os.path.join(PROJECT_ROOT, "test_programmer", "test_case_approval.json")
 REPORT_PATH = os.path.join(BASE_DIR, "reports", "validation_report.md")
 
 # 荷姿制約パラメータ (constraints/constraints.md より)
@@ -36,6 +37,21 @@ def load_box_db() -> Dict[str, Any]:
 def load_lid_db() -> Dict[str, Any]:
     with open(LID_DB_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
+
+def select_approved_results(result_files: List[str]) -> List[str]:
+    if not os.path.exists(APPROVAL_STATE_PATH):
+        return result_files
+
+    with open(APPROVAL_STATE_PATH, "r", encoding="utf-8") as f:
+        approval_state = json.load(f)
+    if not isinstance(approval_state, dict):
+        raise ValueError("test_case_approval.json must contain an object")
+
+    return [
+        path for path in result_files
+        if approval_state.get(os.path.basename(path)[len("result_"):-len(".json")]) is True
+        and os.path.basename(path).startswith("result_")
+    ]
 
 def get_footprint_bounds(box: Dict[str, Any]) -> Tuple[float, float, float, float]:
     pos = box["position"]
@@ -330,9 +346,14 @@ def run_supervisor_validation():
     lid_db = load_lid_db()
     validator = PalletizeValidator(box_db, lid_db)
 
-    result_files = sorted(glob.glob(os.path.join(RESULTS_DIR, "*.json")))
-    if not result_files:
+    all_result_files = sorted(glob.glob(os.path.join(RESULTS_DIR, "*.json")))
+    if not all_result_files:
         print("❌ テスト結果ファイルが見つかりません。先に tester/run_tests.py を実行してください。")
+        return
+
+    result_files = select_approved_results(all_result_files)
+    if not result_files:
+        print("⚠️ 採用済みテストケースの結果がありません。先に tester/run_tests.py を実行してください。")
         return
 
     print("="*80)
@@ -367,7 +388,7 @@ def run_supervisor_validation():
         f.write("# 荷姿制約 総合検証レポート (validation_report.md)\n\n")
         f.write(f"**作成日:** 2026-08-19  \n")
         f.write(f"**検証エージェント:** `supervisor`  \n")
-        f.write(f"**検証対象:** `tester/results/*.json` (全 {len(reports)} 件)  \n")
+        f.write(f"**検証対象:** 採用済み結果JSON ({len(reports)} 件)\n")
         f.write(f"**総合判定:** {'✅ **全ケース合格 (100% PASS)**' if fail_count == 0 else '❌ **制約違反あり (要修正)**'}  \n\n")
         f.write("---\n\n")
         f.write("## 1. 検証結果サマリー\n\n")

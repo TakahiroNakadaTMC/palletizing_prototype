@@ -12,7 +12,6 @@
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
     .badge-single { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
     .badge-mixed { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-    .badge-boundary { background-color: #fce7f3; color: #9d174d; border: 1px solid #fbcfe8; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
@@ -90,10 +89,10 @@
         </div>
       </div>
 
-      <!-- Mixed / Boundary Breakdown -->
+      <!-- Mixed Breakdown -->
       <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-sm flex items-center justify-between bg-amber-50/30">
         <div>
-          <p class="text-xs font-semibold text-amber-700 uppercase tracking-wider">採用中 混載・境界値</p>
+          <p class="text-xs font-semibold text-amber-700 uppercase tracking-wider">採用中 混載パターン</p>
           <p id="stat-approved-mixed" class="text-2xl font-black text-amber-600 mt-1">7</p>
         </div>
         <div class="p-3 bg-amber-100 text-amber-700 rounded-lg">
@@ -113,7 +112,6 @@
         <button class="filter-tab px-3 py-1.5 rounded-md transition active-tab bg-white text-slate-900 shadow-sm cursor-pointer" data-filter="all">すべて</button>
         <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900 cursor-pointer" data-filter="single">単載のみ</button>
         <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900 cursor-pointer" data-filter="mixed">混載のみ</button>
-        <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900 cursor-pointer" data-filter="boundary">境界値のみ</button>
         <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900 cursor-pointer" data-filter="approved">採用中のみ</button>
       </div>
     </div>
@@ -204,9 +202,7 @@
     let currentFilter = 'all';
     let searchQuery = '';
     let lidDB = {}; // ← Add lidDB cache
-
-    const STORAGE_KEY_TC_APPROVAL = 'palletize_tc_approval_v1';
-    const STORAGE_KEY_TC_CUSTOM = 'palletize_tc_custom_v1';
+    let persistedTestCaseNames = new Set();
 
     // Pallet Default Specification
     const PALLET_SPEC = {
@@ -243,38 +239,35 @@
         console.warn("Failed to fetch testcases", e);
       }
 
-      // 3. LocalStorage Approval State
-      const savedApproval = localStorage.getItem(STORAGE_KEY_TC_APPROVAL);
-      if (savedApproval) {
-        try {
-          approvalState = JSON.parse(savedApproval);
-        } catch (e) {}
+      persistedTestCaseNames = new Set(Object.keys(testCasesData));
+
+      // 3. Load shared approval state
+      try {
+        const resApproval = await fetch('/api/testcase/approval_state');
+        if (!resApproval.ok) throw new Error('採否状態の読み込みに失敗しました');
+        approvalState = await resApproval.json();
+      } catch (e) {
+        console.error('Failed to fetch shared approval state', e);
+        approvalState = {};
       }
 
       Object.keys(testCasesData).forEach(name => {
-        if (approvalState[name] === undefined) {
-          approvalState[name] = true; // default approved
-        }
+        approvalState[name] = approvalState[name] === true;
       });
 
       updateStats();
       renderGrid();
     }
 
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY_TC_APPROVAL, JSON.stringify(approvalState));
-      updateStats();
-    }
-
-    function getCategory(name) {
-      if (name.startsWith('single_')) return 'single';
-      if (name.startsWith('boundary_')) return 'boundary';
-      return 'mixed';
+    function getCategory(testCase) {
+      const variants = new Set((testCase.box_list || [])
+        .filter(box => box.box_id)
+        .map(box => JSON.stringify([box.box_id, box.lid_id || getNoLidId()])));
+      return variants.size > 1 ? 'mixed' : 'single';
     }
 
     function getCategoryBadge(cat) {
       if (cat === 'single') return '<span class="text-[10px] px-2 py-0.5 rounded-full font-bold badge-single">単載</span>';
-      if (cat === 'boundary') return '<span class="text-[10px] px-2 py-0.5 rounded-full font-bold badge-boundary">境界値</span>';
       return '<span class="text-[10px] px-2 py-0.5 rounded-full font-bold badge-mixed">混載</span>';
     }
 
@@ -293,6 +286,10 @@
         console.warn('Could not load lids:', error);
         lidDB = {};
       }
+    }
+
+    function getNoLidId() {
+      return Object.keys(lidDB).find(id => lidDB[id].type === 'NONE') || '';
     }
 
     /**
@@ -350,12 +347,11 @@
       tcNames.forEach(name => {
         const tc = testCasesData[name];
         const isApproved = approvalState[name] !== false;
-        const cat = getCategory(name);
+        const cat = getCategory(tc);
 
         // Filter condition
         if (currentFilter === 'single' && cat !== 'single') return;
         if (currentFilter === 'mixed' && cat !== 'mixed') return;
-        if (currentFilter === 'boundary' && cat !== 'boundary') return;
         if (currentFilter === 'approved' && !isApproved) return;
 
         // Search condition
@@ -369,7 +365,7 @@
         matchCount++;
 
         const totalBoxes = (tc.box_list || []).reduce((sum, b) => sum + (b.count || 0), 0);
-        const uniqueBoxKinds = (tc.box_list || []).length;
+        const uniqueBoxKinds = new Set((tc.box_list || []).map(box => box.box_id)).size;
 
         const card = document.createElement('div');
         card.className = `bg-white rounded-xl border transition shadow-sm p-5 flex flex-col justify-between ${isApproved ? 'border-slate-200 hover:border-indigo-300' : 'border-slate-200 bg-slate-50/60 opacity-60'}`;
@@ -443,7 +439,7 @@
         btn.addEventListener('click', () => {
           const name = btn.getAttribute('data-name');
           approvalState[name] = !approvalState[name];
-          saveState();
+          updateStats();
           renderGrid();
         });
       });
@@ -461,7 +457,7 @@
           if (confirm(`テストケース "${name}" を削除しますか？`)) {
             delete testCasesData[name];
             delete approvalState[name];
-            saveState();
+            updateStats();
             renderGrid();
             showToast(`テストケース "${name}" を削除しました`);
           }
@@ -479,7 +475,7 @@
       allNames.forEach(name => {
         if (approvalState[name]) {
           approvedCount++;
-          if (getCategory(name) === 'single') approvedSingle++;
+          if (getCategory(testCasesData[name]) === 'single') approvedSingle++;
           else approvedMixed++;
         }
       });
@@ -525,7 +521,7 @@
         inputDesc.value = tc.description || '';
 
         (tc.box_list || []).forEach(b => {
-          addBoxRow(b.box_id, b.count, b.lid_id || 'LID-010');
+          addBoxRow(b.box_id, b.count, b.lid_id || getNoLidId());
         });
       } else {
         modalTitle.textContent = `新しいテストパターンの作成`;
@@ -534,7 +530,7 @@
         inputName.disabled = false;
         // Default rows
         const available = Object.keys(masterBoxDB);
-        addBoxRow(available[0] || 'TP-332', 20, 'LID-010');
+        addBoxRow(available[0] || 'TP-332', 20, getNoLidId());
       }
 
       modal.classList.remove('hidden');
@@ -557,7 +553,7 @@
       }, 200);
     }
 
-    function addBoxRow(selectedId = '', count = 10, lidId = 'LID-010') {
+    function addBoxRow(selectedId = '', count = 10, lidId = getNoLidId()) {
       const container = document.getElementById('box-rows-container');
       const row = document.createElement('div');
       row.className = 'box-input-row flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 flex-wrap';
@@ -569,7 +565,7 @@
 
       // 選択された箱の対応蓋リストを取得
       const selectedBox = masterBoxDB[selectedId];
-      const compatibleLids = selectedBox?.compatible_lids || ['LID-010'];
+      const compatibleLids = selectedBox?.compatible_lids || [getNoLidId()];
       
       const lidOptions = [];
       compatibleLids.forEach(id => {
@@ -610,7 +606,7 @@
       row.querySelector('.box-id-select').addEventListener('change', (e) => {
         const newBoxId = e.target.value;
         const newBox = masterBoxDB[newBoxId];
-        const newCompatibleLids = newBox?.compatible_lids || ['LID-010'];
+        const newCompatibleLids = newBox?.compatible_lids || [getNoLidId()];
         
         // 新しい蓋ドロップダウンを再構築
         const lidSelect = row.querySelector('.box-lid-select');
@@ -643,6 +639,33 @@
     document.getElementById('btn-close-modal').addEventListener('click', closeModal);
     document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
 
+    function validateTestCase(name, description, boxList) {
+      if (!name || name.length > 120 || /[<>:"/\\|?*\u0000-\u001f]/.test(name) || /[. ]$/.test(name) || name === '.' || name === '..') {
+        return 'テスト名が空、長すぎる、またはファイル名に使用できない文字を含んでいます';
+      }
+      if (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?$/i.test(name)) {
+        return 'このテスト名はWindowsの予約名のため使用できません';
+      }
+      if (!description) return 'テスト説明 / 検証目的を入力してください';
+      if (!Array.isArray(boxList) || boxList.length === 0) return '少なくとも1つの箱を追加してください';
+
+      for (let index = 0; index < boxList.length; index++) {
+        const item = boxList[index];
+        const box = masterBoxDB[item.box_id];
+        if (!box) return `箱行${index + 1}: 箱型番を選択してください`;
+        if (!Number.isInteger(item.count) || item.count < 1 || item.count > 500) {
+          return `箱行${index + 1}: 個数は1〜500の整数で入力してください`;
+        }
+        if (!item.lid_id || !Object.prototype.hasOwnProperty.call(lidDB, item.lid_id)) {
+          return `箱行${index + 1}: 登録済みの蓋を選択してください`;
+        }
+        if (!Array.isArray(box.compatible_lids) || !box.compatible_lids.includes(item.lid_id)) {
+          return `箱行${index + 1}: 選択した蓋はこの箱に対応していません`;
+        }
+      }
+      return '';
+    }
+
     // Submit Form
     document.getElementById('form-testcase').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -650,20 +673,21 @@
       const name = document.getElementById('input-tc-name').value.trim();
       const desc = document.getElementById('input-tc-desc').value.trim();
 
-      const boxRows = document.querySelectorAll('.box-input-row');
-      const boxList = [];
-
-      boxRows.forEach(r => {
+      const boxRows = [...document.querySelectorAll('.box-input-row')];
+      const boxList = boxRows.map(r => {
         const bid = r.querySelector('.box-id-select').value;
-        const cnt = parseInt(r.querySelector('.box-count-input').value) || 1;
-        const lid = r.querySelector('.box-lid-select').value || 'LID-010';
-        if (bid && cnt > 0) {
-          boxList.push({ box_id: bid, count: cnt, lid_id: lid });
-        }
+        const cnt = Number(r.querySelector('.box-count-input').value);
+        const lid = r.querySelector('.box-lid-select').value || getNoLidId();
+        return { box_id: bid, count: cnt, lid_id: lid };
       });
 
-      if (!name || boxList.length === 0) {
-        alert("テスト名と少なくとも1つの箱を入力してください。");
+      const validationError = validateTestCase(name, desc, boxList);
+      if (validationError) {
+        showToast(validationError);
+        return;
+      }
+      if (!editTargetTcName && Object.prototype.hasOwnProperty.call(testCasesData, name)) {
+        showToast('同じテスト名がすでに登録されています');
         return;
       }
 
@@ -676,54 +700,65 @@
 
       testCasesData[name] = tcObj;
       if (!editTargetTcName) {
-        approvalState[name] = true;
+        approvalState[name] = false;
       }
 
-      saveState();
+      updateStats();
       renderGrid();
       closeModal();
-      showToast(`テストケース "${name}" を保存しました`);
+      showToast(`テストケース "${name}" を未採用で追加しました`);
     });
 
     // Header Action Buttons
     document.getElementById('btn-select-all').addEventListener('click', () => {
       Object.keys(testCasesData).forEach(n => approvalState[n] = true);
-      saveState();
+      updateStats();
       renderGrid();
       showToast("全てのテストパターンを採用に設定しました");
     });
 
     document.getElementById('btn-deselect-all').addEventListener('click', () => {
       Object.keys(testCasesData).forEach(n => approvalState[n] = false);
-      saveState();
+      updateStats();
       renderGrid();
       showToast("全てのテストパターンの選択を解除しました");
     });
 
     // Direct Save to Backend API
     document.getElementById('btn-direct-save').addEventListener('click', async () => {
-      const approvedTCs = {};
-      Object.keys(testCasesData).forEach(name => {
-        if (approvalState[name]) {
-          approvedTCs[name] = testCasesData[name];
+      const deletedNames = [...persistedTestCaseNames].filter(name => !Object.prototype.hasOwnProperty.call(testCasesData, name));
+      if (deletedNames.length && !confirm(`保存すると削除済みのテストケース ${deletedNames.length} 件のJSONファイルも削除します。続けますか？`)) return;
+
+      for (const [name, testCase] of Object.entries(testCasesData)) {
+        const validationError = validateTestCase(name, testCase.description || '', testCase.box_list || []);
+        if (validationError) {
+          showToast(`${name}: ${validationError}`);
+          return;
         }
-      });
+      }
 
       try {
         const res = await fetch('/api/testcase/save_all', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(approvedTCs, null, 2)
+          body: JSON.stringify({
+            test_cases: testCasesData,
+            approval_state: approvalState,
+            delete_ids: deletedNames
+          })
         });
         if (res.ok) {
-          showToast(`承認済みテストケース (${Object.keys(approvedTCs).length} 件) を test_cases/ に保存しました`);
+          const result = await res.json();
+          persistedTestCaseNames = new Set(Object.keys(testCasesData));
+          showToast(`保存 ${result.saved_count} 件 / 採用 ${result.approved_count} 件 / 削除 ${result.deleted_count} 件`);
           return;
         }
+        const result = await res.json().catch(() => ({}));
+        showToast(`保存に失敗しました${result.message ? `: ${result.message}` : ''}`);
       } catch (e) {
-        console.warn("API not available", e);
+        console.error("API save failed", e);
+        showToast("サーバーへの保存に失敗しました");
       }
-
-      showToast(`承認状態を保存しました (${Object.keys(approvedTCs).length} 件採用)`);
     });
 
     // Search & Filter Tabs

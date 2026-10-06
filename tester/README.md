@@ -31,5 +31,7 @@ tester/
 python3 tester/run_tests.py
 ```
 
+`test_programmer/test_case_approval.json` の採否状態を参照し、`true` のテストケースのみ実行します。採否状態に登録されていないケースは実行対象外です。supervisor も同じ状態を使い、採用済みケースの結果だけを検証します。
+
 実行が完了すると、`tester/results/` 配下に各テストケースのシミュレーション結果（配置座標、回転、積み順、支持関係、荷姿サマリー）が出力されます。
 これらは `visualizer`（3Dビューワ）および `supervisor`（制約バリデータ）の入力として使用されます。

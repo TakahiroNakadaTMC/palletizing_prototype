@@ -18,16 +18,44 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 TEST_CASES_DIR = os.path.join(PROJECT_ROOT, "test_programmer", "test_cases")
 RESULTS_DIR = os.path.join(PROJECT_ROOT, "tester", "results")
+APPROVAL_STATE_PATH = os.path.join(PROJECT_ROOT, "test_programmer", "test_case_approval.json")
+
+def load_approval_state():
+    if not os.path.exists(APPROVAL_STATE_PATH):
+        return None
+
+    with open(APPROVAL_STATE_PATH, "r", encoding="utf-8") as f:
+        approval_state = json.load(f)
+    if not isinstance(approval_state, dict):
+        raise ValueError("test_case_approval.json must contain an object")
+    return approval_state
+
+def select_approved_cases(test_case_paths, approval_state):
+    if approval_state is None:
+        return list(test_case_paths)
+
+    return [
+        path for path in test_case_paths
+        if approval_state.get(os.path.basename(path)[:-5]) is True
+    ]
 
 def run_all_tests():
     os.makedirs(RESULTS_DIR, exist_ok=True)
-    tc_files = sorted(glob.glob(os.path.join(TEST_CASES_DIR, "*.json")))
+    all_tc_files = sorted(glob.glob(os.path.join(TEST_CASES_DIR, "*.json")))
+
+    if not all_tc_files:
+        print("❌ テストケースが見つかりません。先に generate_testcases.py を実行してください。")
+        return 1
+
+    approval_state = load_approval_state()
+    tc_files = select_approved_cases(all_tc_files, approval_state)
+    skipped_count = len(all_tc_files) - len(tc_files)
 
     if not tc_files:
-        print("❌ テストケースが見つかりません。先に generate_testcases.py を実行してください。")
-        return
+        print(f"⚠️ 採用済みのテストケースがありません（未採用: {skipped_count} 件）。")
+        return 1
 
-    print(f"🧪 {len(tc_files)} 件のテストケースを実行します...\n")
+    print(f"🧪 {len(tc_files)} 件の採用済みテストケースを実行します（除外: {skipped_count} 件）...\n")
 
     summary_list = []
 
@@ -78,6 +106,7 @@ def run_all_tests():
         dims = f"{row['x_span']:.0f} × {row['y_span']:.0f} × {row['z_max']:.0f}"
         print(f"{row['name']:<30} | {row['status']:<6} | {row['boxes']:<4} | {row['layers']:<3} | {row['vol']:>5.1f}% | {dims}")
     print("="*80)
+    return 0
 
 if __name__ == "__main__":
-    run_all_tests()
+    sys.exit(run_all_tests())
