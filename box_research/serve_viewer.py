@@ -17,6 +17,7 @@ PORT = 8081
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BOX_DB_PATH = os.path.join(BASE_DIR, "box_db.json")
 LID_DB_PATH = os.path.join(BASE_DIR, "lid_db.json")
+TEST_CASES_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "test_programmer", "test_cases"))
 BOX_VIEWER_HTML_PATH = os.path.join(BASE_DIR, "box_db_viewer.html")
 LID_VIEWER_HTML_PATH = os.path.join(BASE_DIR, "lid_db_viewer.html")
 
@@ -68,6 +69,40 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
                     self.wfile.write(f.read())
             else:
                 self.wfile.write(b"{}")
+            return
+        elif parsed.path == "/api/lid_references":
+            try:
+                with open(LID_DB_PATH, "r", encoding="utf-8") as f:
+                    lid_db = json.load(f)
+                default_lid_id = next(
+                    (lid_id for lid_id, lid in lid_db.items() if lid.get("type") == "NONE"),
+                    None
+                )
+                test_case_references = {}
+                for filename in sorted(os.listdir(TEST_CASES_DIR)):
+                    if not filename.endswith(".json"):
+                        continue
+                    with open(os.path.join(TEST_CASES_DIR, filename), "r", encoding="utf-8") as f:
+                        test_case = json.load(f)
+                    for item in test_case.get("box_list", []):
+                        lid_id = item.get("lid_id", default_lid_id)
+                        if lid_id:
+                            test_case_references.setdefault(lid_id, set()).add(filename)
+
+                response = {
+                    lid_id: sorted(filenames)
+                    for lid_id, filenames in test_case_references.items()
+                }
+                body = json.dumps(response, ensure_ascii=False).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(body)
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
             return
         super().do_GET()
 

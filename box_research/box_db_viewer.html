@@ -133,7 +133,7 @@
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs border-collapse">
           <thead>
-            <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider">
+            <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold tracking-wider">
               <th class="py-3.5 px-4 w-12 text-center">
                 <span class="sr-only">選択</span>
               </th>
@@ -141,8 +141,8 @@
               <th class="py-3.5 px-4">型番 (ID)</th>
               <th class="py-3.5 px-4">名称 / シリーズ</th>
               <th class="py-3.5 px-3">種別</th>
+              <th class="py-3.5 px-3 text-right">長さ L (mm)</th>
               <th class="py-3.5 px-3 text-right">幅 W (mm)</th>
-              <th class="py-3.5 px-3 text-right">奥行 L (mm)</th>
               <th class="py-3.5 px-3 text-right">高さ H (mm)</th>
               <th class="py-3.5 px-3 text-right">勘合深さ (mm)</th>
               <th class="py-3.5 px-3 text-right">側面リブ厚 (mm)</th>
@@ -245,16 +245,16 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Length -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">外寸長さ L (mm) <span class="text-rose-500">*</span></label>
+            <input type="number" step="0.1" id="input-length" required placeholder="例: 335.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+
           <!-- Width -->
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">外寸幅 W (mm) <span class="text-rose-500">*</span></label>
             <input type="number" step="0.1" id="input-width" required placeholder="例: 335.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-          </div>
-
-          <!-- Length -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">外寸奥行 L (mm) <span class="text-rose-500">*</span></label>
-            <input type="number" step="0.1" id="input-length" required placeholder="例: 335.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
           </div>
 
           <!-- Height -->
@@ -658,8 +658,20 @@
   }
 };
 
+    function normalizeDimensionOrder(db) {
+      Object.values(db).forEach(box => {
+        const width = Number(box.width);
+        const length = Number(box.length);
+        if (Number.isFinite(width) && Number.isFinite(length) && width > length) {
+          box.width = length;
+          box.length = width;
+        }
+      });
+      return db;
+    }
+
     // Current Working DB
-    let currentBoxDB = JSON.parse(JSON.stringify(defaultBoxDB));
+    let currentBoxDB = normalizeDimensionOrder(JSON.parse(JSON.stringify(defaultBoxDB)));
 
     // State: box approval status mapping (id -> boolean)
     const STORAGE_KEY_APPROVAL = 'palletize_box_approval_v3';
@@ -672,7 +684,7 @@
       const savedDB = localStorage.getItem(STORAGE_KEY_CUSTOM_DB);
       if (savedDB) {
         try {
-          currentBoxDB = JSON.parse(savedDB);
+          currentBoxDB = normalizeDimensionOrder(JSON.parse(savedDB));
         } catch (e) {
           console.error("Failed to parse custom DB", e);
         }
@@ -693,6 +705,7 @@
           approvalState[id] = true;
         }
       });
+      saveState();
     }
 
     function saveState() {
@@ -753,8 +766,8 @@
               ${isTp ? 'TP規格' : '非TP'}
             </span>
           </td>
-          <td class="py-3 px-3 text-right font-mono font-semibold">${box.width}</td>
           <td class="py-3 px-3 text-right font-mono font-semibold">${box.length}</td>
+          <td class="py-3 px-3 text-right font-mono font-semibold">${box.width}</td>
           <td class="py-3 px-3 text-right font-mono font-semibold">${box.height}</td>
           <td class="py-3 px-3 text-right font-mono text-indigo-600 font-bold">${box.fitting_depth}</td>
           <td class="py-3 px-3 text-right font-mono text-slate-600 font-bold">${box.rib_thickness}</td>
@@ -880,7 +893,7 @@
         const response = await fetch('/api/lids');
         console.log('[DEBUG] API /api/lids から応答を受け取りました:', response.status);
         if (response.ok) {
-          lidDB = await response.json();
+          lidDB = normalizeDimensionOrder(await response.json());
           console.log('[DEBUG] JSON解析完了。蓋データ:', lidDB);
           console.log('[DEBUG] Lids loaded:', Object.keys(lidDB).length, 'lids');
         } else {
@@ -913,7 +926,7 @@
           <input type="checkbox" class="lid-checkbox w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" data-lid-id="${lidId}" ${isSelected ? 'checked' : ''}>
           <div class="flex-1 min-w-0">
             <div class="text-xs font-bold text-slate-900">${lid.name}</div>
-            <div class="text-[11px] text-slate-500">${lidId} • ${lid.width}×${lid.length}mm</div>
+            <div class="text-[11px] text-slate-500">${lidId} • ${lid.length}×${lid.width} mm</div>
           </div>
         `;
         container.appendChild(checkbox);
@@ -946,8 +959,8 @@
         document.getElementById('input-type').value = box.type || 'TP';
         document.getElementById('input-module').value = box.module_ratio || '';
         document.getElementById('input-fitting').value = box.fitting_depth;
-        document.getElementById('input-width').value = box.width;
         document.getElementById('input-length').value = box.length;
+        document.getElementById('input-width').value = box.width;
         document.getElementById('input-height').value = box.height;
         document.getElementById('input-rib').value = box.rib_thickness;
         document.getElementById('input-desc').value = box.description || '';
@@ -1019,6 +1032,10 @@
         alert("必須項目を正しく入力してください。");
         return;
       }
+      if (length < width) {
+        alert("長さ L は幅 W 以上の値を入力してください。");
+        return;
+      }
 
       // 修正2: boxObjにcompatible_lidsフィールドを追加
       const boxObj = {
@@ -1061,7 +1078,7 @@
     // Reset Master Data
     document.getElementById('btn-reset-db').addEventListener('click', () => {
       if (confirm("全ての箱データを初期マスター値に戻しますか？（追加・編集した内容はリセットされます）")) {
-        currentBoxDB = JSON.parse(JSON.stringify(defaultBoxDB));
+        currentBoxDB = normalizeDimensionOrder(JSON.parse(JSON.stringify(defaultBoxDB)));
         approvalState = {};
         Object.keys(currentBoxDB).forEach(id => approvalState[id] = true);
         saveState();

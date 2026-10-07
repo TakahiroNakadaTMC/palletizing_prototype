@@ -7,91 +7,108 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .badge-tp { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+    .badge-nontp { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
     .fade-in { animation: fadeIn 0.3s ease-in; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .scale-in { animation: scaleIn 0.2s ease-out; }
     @keyframes scaleIn { from { transform: scale(0.95); } to { transform: scale(1); } }
   </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen p-6">
-  <div class="max-w-6xl mx-auto">
-    <!-- Header -->
-    <div class="mb-8">
-      <div class="flex items-center gap-3 mb-2">
-        <div class="p-3 bg-blue-100 text-blue-700 rounded-lg">
-          <i data-lucide="package" class="w-6 h-6"></i>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="p-2 bg-indigo-600 text-white rounded-lg shadow-sm">
+            <i data-lucide="package-check" class="w-5 h-5"></i>
+          </span>
+          <h1 class="text-xl font-bold text-slate-900">蓋仕様 採用・編集 承認ビューア</h1>
+          <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-medium border border-indigo-200">lid_db.json</span>
         </div>
-        <div>
-          <h1 class="text-3xl font-bold text-slate-900">蓋データベース管理</h1>
-          <p class="text-sm text-slate-600 mt-1">パレタイズ用蓋仕様の一元管理ツール</p>
-        </div>
+        <p class="text-xs text-slate-500 mt-1">パレタイズ用蓋仕様の寸法編集・登録・保存を行います。</p>
+      </div>
+      <div class="flex items-center flex-wrap gap-2">
+        <button id="btn-add-lid" class="px-3.5 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition shadow-sm flex items-center gap-1.5">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> 新しい蓋を追加
+        </button>
+        <button id="btn-save-all" class="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md transition shadow flex items-center gap-1.5">
+          <i data-lucide="save" class="w-3.5 h-3.5"></i> lid_db.json に保存
+        </button>
       </div>
     </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
     <!-- Stats Bar -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-      <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
-        <div class="text-sm font-medium text-slate-600">登録蓋数</div>
-        <div class="text-2xl font-bold text-slate-900" id="stat-lid-count">0</div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-slate-500">登録蓋数</p>
+          <p class="text-2xl font-black text-slate-900 mt-1" id="stat-lid-count">0</p>
+        </div>
+        <div class="p-3 bg-slate-100 text-slate-600 rounded-lg"><i data-lucide="layers" class="w-5 h-5"></i></div>
       </div>
-      <div class="bg-white rounded-lg shadow p-4 border-l-4 border-indigo-500">
-        <div class="text-sm font-medium text-slate-600">外嵌め蓋</div>
-        <div class="text-2xl font-bold text-slate-900" id="stat-outer-fit">0</div>
+      <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm flex items-center justify-between bg-blue-50/30">
+        <div>
+          <p class="text-xs font-semibold text-blue-700">外嵌め蓋</p>
+          <p class="text-2xl font-black text-blue-600 mt-1" id="stat-outer-fit">0</p>
+        </div>
+        <div class="p-3 bg-blue-100 text-blue-700 rounded-lg"><i data-lucide="box" class="w-5 h-5"></i></div>
       </div>
-      <div class="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
-        <div class="text-sm font-medium text-slate-600">内嵌め蓋</div>
-        <div class="text-2xl font-bold text-slate-900" id="stat-inner-fit">0</div>
+      <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm flex items-center justify-between bg-emerald-50/30">
+        <div>
+          <p class="text-xs font-semibold text-emerald-700">内嵌め蓋</p>
+          <p class="text-2xl font-black text-emerald-600 mt-1" id="stat-inner-fit">0</p>
+        </div>
+        <div class="p-3 bg-emerald-100 text-emerald-700 rounded-lg"><i data-lucide="box" class="w-5 h-5"></i></div>
       </div>
-    </div>
-
-    <!-- Controls -->
-    <div class="flex flex-wrap gap-2 mb-6">
-      <button id="btn-add-lid" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition flex items-center gap-2 shadow">
-        <i data-lucide="plus" class="w-4 h-4"></i> 新しい蓋を追加
-      </button>
-      <button id="btn-save-all" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition flex items-center gap-2 shadow">
-        <i data-lucide="save" class="w-4 h-4"></i> 直接保存
-      </button>
     </div>
 
     <!-- Lids Table -->
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden fade-in">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden fade-in">
       <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-slate-900 text-white">
-            <tr>
-              <th class="px-4 py-3 text-left font-semibold">蓋ID</th>
-              <th class="px-4 py-3 text-left font-semibold">蓋名称</th>
-              <th class="px-4 py-3 text-left font-semibold">寸法 (W×L)</th>
-              <th class="px-4 py-3 text-left font-semibold">厚み</th>
-              <th class="px-4 py-3 text-left font-semibold">嵌め方</th>
-              <th class="px-4 py-3 text-left font-semibold">説明</th>
-              <th class="px-4 py-3 text-center font-semibold">操作</th>
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold">
+              <th class="py-3.5 px-4">蓋ID</th>
+              <th class="py-3.5 px-4">蓋名称</th>
+              <th class="py-3.5 px-3">種別</th>
+              <th class="py-3.5 px-3 text-right">長さ L (mm)</th>
+              <th class="py-3.5 px-3 text-right">幅 W (mm)</th>
+              <th class="py-3.5 px-3 text-right">厚み (mm)</th>
+              <th class="py-3.5 px-3">嵌め方</th>
+              <th class="py-3.5 px-4">説明</th>
+              <th class="py-3.5 px-3 text-center w-24">操作</th>
             </tr>
           </thead>
-          <tbody id="lids-table-body" class="divide-y divide-slate-200">
+          <tbody id="lids-table-body" class="divide-y divide-slate-100 font-normal text-slate-700">
             <!-- Lids will be loaded here -->
           </tbody>
         </table>
       </div>
     </div>
-  </div>
+  </main>
 
   <!-- Modal for Add/Edit Lid -->
-  <div id="modal-lid" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40 flex items-center justify-center p-4 fade-in">
-    <div id="modal-container" class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto scale-in">
-      <div class="sticky top-0 bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-4 flex items-center justify-between">
-        <div>
-          <h2 id="modal-title" class="text-xl font-bold">蓋の追加</h2>
-          <p id="modal-subtitle" class="text-xs text-slate-300 mt-1">新しい蓋仕様をデータベースに登録します</p>
+  <div id="modal-lid" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200 p-4">
+    <div id="modal-container" class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-xl w-full p-6 space-y-5 transform transition-transform duration-200 scale-95">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="p-2 bg-indigo-100 text-indigo-700 rounded-lg"><i data-lucide="edit-3" class="w-5 h-5"></i></div>
+          <div>
+            <h2 id="modal-title" class="text-base font-bold text-slate-900">蓋の追加</h2>
+            <p id="modal-subtitle" class="text-xs text-slate-500 mt-1">新しい蓋仕様をデータベースに登録します</p>
+          </div>
         </div>
-        <button id="btn-close-modal" class="text-slate-300 hover:text-white transition">
+        <button id="btn-close-modal" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form id="form-lid" class="p-6 space-y-4">
+      <form id="form-lid" class="space-y-4">
         <!-- Lid ID -->
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">蓋ID (例: LID-001)</label>
@@ -115,21 +132,21 @@
         </div>
 
         <!-- Dimensions -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">幅 [mm]</label>
-            <input type="number" id="input-lid-width" placeholder="335" step="1" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <label class="block text-xs font-bold text-slate-700 mb-1">長さ L (mm)</label>
+            <input type="number" id="input-lid-length" placeholder="335" step="0.1" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">長さ [mm]</label>
-            <input type="number" id="input-lid-length" placeholder="335" step="1" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <label class="block text-xs font-bold text-slate-700 mb-1">幅 W (mm)</label>
+            <input type="number" id="input-lid-width" placeholder="335" step="0.1" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
           </div>
         </div>
 
         <!-- Thickness -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">厚み [mm]</label>
-          <input type="number" id="input-lid-thickness" placeholder="15" step="0.1" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          <label class="block text-xs font-bold text-slate-700 mb-1">厚み (mm)</label>
+          <input type="number" id="input-lid-thickness" placeholder="15" step="0.1" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
         </div>
 
         <!-- Fit Type -->
@@ -172,6 +189,20 @@
     let boxDbLoaded = false;
     let boxDbChanged = false;
     let editTargetId = null;
+    let testCaseLidReferences = {};
+    let lidReferencesLoaded = false;
+
+    function normalizeDimensionOrder(db) {
+      Object.values(db).forEach(item => {
+        const width = Number(item.width);
+        const length = Number(item.length);
+        if (Number.isFinite(width) && Number.isFinite(length) && width > length) {
+          item.width = length;
+          item.length = width;
+        }
+      });
+      return db;
+    }
 
     // Toast Notification
     function showToast(msg) {
@@ -190,7 +221,7 @@
       try {
         const res = await fetch('/api/lids');
         if (res.ok) {
-          currentLidDB = await res.json();
+          currentLidDB = normalizeDimensionOrder(await res.json());
           updateStats();
           renderLidsTable();
           showToast('蓋データをサーバーから読み込みました');
@@ -198,6 +229,20 @@
       } catch (error) {
         console.warn('Could not load from server:', error);
       }
+    }
+
+    async function loadLidReferences() {
+      try {
+        const response = await fetch('/api/lid_references');
+        if (!response.ok) throw new Error('蓋のテストケース参照を読み込めませんでした');
+        testCaseLidReferences = await response.json();
+        lidReferencesLoaded = true;
+      } catch (error) {
+        lidReferencesLoaded = false;
+        console.error('Lid reference load error:', error);
+      }
+      renderLidsTable();
+      return lidReferencesLoaded;
     }
 
     // Update Statistics
@@ -217,19 +262,27 @@
       tbody.innerHTML = '';
 
       if (Object.keys(currentLidDB).length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 text-sm">登録された蓋がありません</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="px-4 py-8 text-center text-slate-500">登録された蓋がありません</td></tr>`;
         return;
       }
 
       Object.entries(currentLidDB).forEach(([lidId, lid]) => {
         const row = document.createElement('tr');
         row.className = 'hover:bg-slate-50 transition';
+        const typeDisplay = {
+          TP: { label: 'TP規格', className: 'badge-tp' },
+          NONE: { label: '無蓋', className: 'bg-slate-100 text-slate-700 border border-slate-200' },
+          OTHER: { label: 'その他', className: 'badge-nontp' }
+        }[lid.type] || { label: lid.type || '未設定', className: 'bg-slate-100 text-slate-600 border border-slate-200' };
+        const canDelete = boxDbLoaded && lidReferencesLoaded;
         row.innerHTML = `
-          <td class="px-4 py-3 font-mono font-bold text-indigo-600">${lid.id}</td>
-          <td class="px-4 py-3">${lid.name}</td>
-          <td class="px-4 py-3 text-slate-600">${lid.width}×${lid.length}mm</td>
-          <td class="px-4 py-3 text-slate-600">${lid.thickness}mm</td>
-          <td class="px-4 py-3">
+          <td class="py-3 px-4 font-mono font-bold text-slate-900">${lid.id}</td>
+          <td class="py-3 px-4 font-medium text-slate-800">${lid.name}</td>
+          <td class="py-3 px-3"><span class="inline-block px-2 py-0.5 rounded text-[11px] font-bold ${typeDisplay.className}">${typeDisplay.label}</span></td>
+          <td class="py-3 px-3 text-right font-mono font-semibold">${lid.length}</td>
+          <td class="py-3 px-3 text-right font-mono font-semibold">${lid.width}</td>
+          <td class="py-3 px-3 text-right font-mono text-slate-600">${lid.thickness}</td>
+          <td class="py-3 px-3">
             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
               lid.fit_type === '外嵌め' ? 'bg-blue-100 text-blue-700' :
               lid.fit_type === '内嵌め' ? 'bg-purple-100 text-purple-700' :
@@ -238,15 +291,65 @@
               ${lid.fit_type || '未設定'}
             </span>
           </td>
-          <td class="px-4 py-3 text-slate-600 text-xs truncate">${lid.description || '—'}</td>
-          <td class="px-4 py-3 text-center">
-            <button class="text-indigo-600 hover:text-indigo-700 font-medium text-xs transition" onclick="openModal('${lidId}')">
-              <i data-lucide="edit-2" class="w-4 h-4 inline"></i> 編集
-            </button>
+          <td class="py-3 px-4 text-slate-500 max-w-xs truncate" title="${lid.description || ''}">${lid.description || '—'}</td>
+          <td class="py-3 px-3 text-center">
+            <div class="inline-flex items-center gap-1">
+              <button class="p-1 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded transition" title="この蓋の寸法・仕様を変更" onclick="openModal('${lidId}')">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              </button>
+              <button class="delete-lid-btn p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition disabled:opacity-40 disabled:cursor-not-allowed" data-lid-id="${lidId}" title="${canDelete ? 'この蓋を削除' : '箱DB・テストケース参照の確認中'}" ${canDelete ? '' : 'disabled'}>
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
           </td>
         `;
         tbody.appendChild(row);
       });
+
+      tbody.querySelectorAll('.delete-lid-btn').forEach(button => {
+        button.addEventListener('click', () => deleteLid(button.dataset.lidId));
+      });
+      lucide.createIcons();
+    }
+
+    async function deleteLid(lidId) {
+      if (!boxDbLoaded || !await loadLidReferences()) {
+        showToast('箱DBまたはテストケース参照を確認できないため削除できません');
+        return;
+      }
+
+      const lid = currentLidDB[lidId];
+      if (!lid) return;
+
+      const remainingNoLidOptions = Object.entries(currentLidDB)
+        .filter(([id, item]) => id !== lidId && item.type === 'NONE');
+      if (lid.type === 'NONE' && remainingNoLidOptions.length === 0) {
+        showToast('最後の「無蓋」は既定値のため削除できません');
+        return;
+      }
+
+      const testCases = testCaseLidReferences[lidId] || [];
+      if (testCases.length > 0) {
+        alert(`蓋 "${lidId}" はテストケースから参照されているため削除できません。\n\n${testCases.join('\n')}`);
+        return;
+      }
+
+      const compatibleBoxes = Object.entries(currentBoxDB)
+        .filter(([, box]) => Array.isArray(box.compatible_lids) && box.compatible_lids.includes(lidId));
+      const boxNotice = compatibleBoxes.length > 0
+        ? `\n\n互換蓋として登録されている ${compatibleBoxes.length} 件の箱からも参照を削除します。`
+        : '';
+      if (!confirm(`蓋 "${lid.name}" (${lidId}) を削除しますか？${boxNotice}\n\n「lid_db.json に保存」を押すと確定します。`)) return;
+
+      delete currentLidDB[lidId];
+      compatibleBoxes.forEach(([, box]) => {
+        box.compatible_lids = box.compatible_lids.filter(id => id !== lidId);
+      });
+      if (compatibleBoxes.length > 0) boxDbChanged = true;
+
+      updateStats();
+      renderLidsTable();
+      showToast(`蓋 "${lid.name}" を削除しました。保存ボタンで確定してください`);
     }
 
     // Modal Control
@@ -296,6 +399,9 @@
     }
 
     function closeModal() {
+      modal.classList.add('opacity-0');
+      modalContainer.classList.remove('scale-100');
+      modalContainer.classList.add('scale-95');
       modal.classList.add('hidden');
       editTargetId = null;
     }
@@ -315,6 +421,10 @@
 
       if (!id || !name) {
         showToast('蓋IDと蓋名称は必須です');
+        return;
+      }
+      if (length < width) {
+        showToast('長さ L は幅 W 以上の値を入力してください');
         return;
       }
 
@@ -383,12 +493,13 @@
       try {
         const response = await fetch('/api/boxes');
         if (!response.ok) throw new Error('箱DBの読み込みに失敗しました');
-        currentBoxDB = await response.json();
+        currentBoxDB = normalizeDimensionOrder(await response.json());
         boxDbLoaded = true;
       } catch (error) {
         console.error('Box DB load error:', error);
         showToast('箱DBを読み込めませんでした');
       }
+      await loadLidReferences();
     });
   </script>
 </body>
