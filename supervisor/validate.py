@@ -162,7 +162,7 @@ class PalletizeValidator:
                 violations.append(f"Order #{order} ({bid}): 未知の蓋ID '{lid_id}' が使用されています")
             else:
                 compatible_lids = master.get("compatible_lids", [])
-                if compatible_lids and lid_id not in compatible_lids:
+                if lid.get("type") != "NONE" and compatible_lids and lid_id not in compatible_lids:
                     violations.append(f"Order #{order} ({bid}): 蓋 '{lid_id}' は箱と互換性がありません")
                 if abs(lid_thickness - float(lid.get("thickness", 0.0))) > EPS:
                     violations.append(f"Order #{order} ({bid}): 蓋厚データが蓋DBと一致しません")

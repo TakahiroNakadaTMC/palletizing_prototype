@@ -165,7 +165,7 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 
 **処理内容**:
 - Box行に **3番目の列** として蓋セレクトボックスを追加
-- **選択された箱の `compatible_lids` に含まれる蓋のみ** を表示
+- **選択された箱の `compatible_lids` に含まれる実蓋** と、全箱共通の無蓋を表示
 - 箱型番が変更されたら、蓋ドロップダウンも自動更新
 
 **重要**: 各箱型番の対応蓋は `box_research/box_db.json` の `"compatible_lids"` フィールドで管理されています：
@@ -175,7 +175,7 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 "TP-332": {
   "id": "TP-332",
   ...
-  "compatible_lids": ["LID-001", "LID-002", "LID-010"]  // この蓋のみ表示
+  "compatible_lids": ["LID-001", "LID-002"]  // 箱に対応する実蓋
 }
 ```
 
@@ -188,9 +188,10 @@ function addBoxRow(selectedId = '', count = 10, lidId = 'LID-010') {
   // ...
   // 選択された箱の対応蓋リストを取得
   const selectedBox = masterBoxDB[selectedId];
-  const compatibleLids = selectedBox?.compatible_lids || ['LID-010'];
+  const noLidId = Object.keys(lidDB).find(id => lidDB[id].type === 'NONE');
+  const compatibleLids = [...(selectedBox?.compatible_lids || []), noLidId];
   
-  // compatibleLids に含まれる蓋のみをドロップダウンに追加
+  // 対応する実蓋と全箱共通の無蓋をドロップダウンに追加
   const lidOptions = [];
   compatibleLids.forEach(id => {
     const lid = lidDB[id] || { name: id };
@@ -201,7 +202,8 @@ function addBoxRow(selectedId = '', count = 10, lidId = 'LID-010') {
   row.querySelector('.box-id-select').addEventListener('change', (e) => {
     const newBoxId = e.target.value;
     const newBox = masterBoxDB[newBoxId];
-    const newCompatibleLids = newBox?.compatible_lids || ['LID-010'];
+    const noLidId = Object.keys(lidDB).find(id => lidDB[id].type === 'NONE');
+    const newCompatibleLids = [...(newBox?.compatible_lids || []), noLidId];
     // 蓋ドロップダウンを newCompatibleLids で再構築
     // ...
   });

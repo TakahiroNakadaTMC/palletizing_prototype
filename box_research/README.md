@@ -154,10 +154,10 @@ Phase 2 で箱DB（`box_db.json`）を拡張し、各箱に `compatible_lids` �
     "id": "TP-331",
     "name": "TP-331コンテナ",
     ...
-    "compatible_lids": ["LID-001", "LID-002", "LID-010"]
+    "compatible_lids": ["LID-001", "LID-002"]
   }
   ```
-- **全体方針**: 全箱が蓋なし選択肢（`LID-010`）を含む（フレキシビリティ確保）
+- **全体方針**: `compatible_lids` には箱に対応する実蓋のみを登録する。蓋DBの `type: "NONE"` は全箱共通の選択肢として扱い、箱ごとの互換リストには登録しない。
 
 ### 5.4 Phase 2 成果物一覧
 

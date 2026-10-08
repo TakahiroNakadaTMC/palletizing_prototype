@@ -62,7 +62,7 @@
 - `height` (float): 外寸高さ [mm]
 - `fitting_depth` (float): 上下に積み重ねたときの勘合（はまり込み）深さ [mm]
 - `rib_thickness` (float): 外周リブや底面リブの厚み [mm]
-- `compatible_lids` (array): 互換性のある蓋IDリスト（例: `["LID-001", "LID-002", "LID-010"]`)
+- `compatible_lids` (array): 箱に対応する実蓋IDリスト（例: `["LID-001", "LID-002"]`）。無蓋は全箱共通の選択肢として扱い、この配列には含めない。
 
 ### (1.5) 蓋データベース仕様 (`lid_db`) **[NEW: Phase 2]**
 - `id` (string): 蓋の識別子 / 蓋ID

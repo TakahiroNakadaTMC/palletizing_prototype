@@ -1,26 +1,25 @@
 {
   "TP-131": {
     "id": "TP-131",
-    "name": "TP規格コンテナ TP-131",
+    "name": "TP-131",
     "type": "TP",
-    "length": 335,
     "width": 168,
+    "length": 335,
     "height": 103,
     "fitting_depth": 8,
     "rib_thickness": 22,
     "module_ratio": "1x0.5",
     "description": "TP-130系 1型 ハーフモジュール (有効内寸291x123, 側面厚22.0mm)",
     "compatible_lids": [
-      "TP130フタ",
-      "無蓋"
+      "TP130フタ"
     ]
   },
   "TP-331": {
     "id": "TP-331",
-    "name": "TP規格コンテナ TP-331",
+    "name": "TP-331",
     "type": "TP",
-    "length": 335,
     "width": 335,
+    "length": 335,
     "height": 103,
     "fitting_depth": 10,
     "rib_thickness": 22,
@@ -28,16 +27,15 @@
     "description": "TP-330系 1型 基準モジュール浅型 (内寸300x300/有効内寸291x291, 側面厚22.0mm)",
     "compatible_lids": [
       "TP330フタ",
-      "サンボックス330フタ",
-      "無蓋"
+      "サンボックス330フタ"
     ]
   },
   "TP-331.5": {
     "id": "TP-331.5",
-    "name": "TP規格コンテナ TP-331.5",
+    "name": "TP-331.5",
     "type": "TP",
-    "length": 335,
     "width": 335,
+    "length": 335,
     "height": 149,
     "fitting_depth": 10,
     "rib_thickness": 22,
@@ -45,16 +43,15 @@
     "description": "TP-330系 1.5型 基準モジュール中浅型 (有効内寸291x291, 側面厚22.0mm)",
     "compatible_lids": [
       "TP330フタ",
-      "サンボックス330フタ",
-      "無蓋"
+      "サンボックス330フタ"
     ]
   },
   "TP-332": {
     "id": "TP-332",
-    "name": "TP規格コンテナ TP-332",
+    "name": "TP-332",
     "type": "TP",
-    "length": 335,
     "width": 335,
+    "length": 335,
     "height": 195,
     "fitting_depth": 10,
     "rib_thickness": 22,
@@ -62,16 +59,15 @@
     "description": "TP-330系 2型 基準モジュール標準型 (内寸300x300/有効内寸291x291, 側面厚22.0mm)",
     "compatible_lids": [
       "TP330フタ",
-      "サンボックス330フタ",
-      "無蓋"
+      "サンボックス330フタ"
     ]
   },
   "TP-333": {
     "id": "TP-333",
-    "name": "TP規格コンテナ TP-333",
+    "name": "TP-333",
     "type": "TP",
-    "length": 335,
     "width": 335,
+    "length": 335,
     "height": 288,
     "fitting_depth": 10,
     "rib_thickness": 22,
@@ -79,16 +75,15 @@
     "description": "TP-330系 3型 基準モジュール深型 (有効内寸291x291, 側面厚22.0mm)",
     "compatible_lids": [
       "TP330フタ",
-      "サンボックス330フタ",
-      "無蓋"
+      "サンボックス330フタ"
     ]
   },
   "TP-341": {
     "id": "TP-341",
-    "name": "TP規格コンテナ TP-341",
+    "name": "TP-341",
     "type": "TP",
-    "length": 503,
     "width": 335,
+    "length": 503,
     "height": 103,
     "fitting_depth": 10,
     "rib_thickness": 22.5,
@@ -96,16 +91,15 @@
     "description": "TP-340系 1型 1.5モジュール浅型 (内寸468x300/有効内寸458x290, 側面厚22.5mm)",
     "compatible_lids": [
       "TP340フタ",
-      "サンボックス340フタ",
-      "無蓋"
+      "サンボックス340フタ"
     ]
   },
   "TP-341.5": {
     "id": "TP-341.5",
-    "name": "TP規格コンテナ TP-341.5",
+    "name": "TP-341.5",
     "type": "TP",
-    "length": 503,
     "width": 335,
+    "length": 503,
     "height": 149,
     "fitting_depth": 10,
     "rib_thickness": 22.5,
@@ -113,16 +107,15 @@
     "description": "TP-340系 1.5型 1.5モジュール中浅型 (有効内寸458x290, 側面厚22.5mm)",
     "compatible_lids": [
       "TP340フタ",
-      "サンボックス340フタ",
-      "無蓋"
+      "サンボックス340フタ"
     ]
   },
   "TP-342": {
     "id": "TP-342",
-    "name": "TP規格コンテナ TP-342",
+    "name": "TP-342",
     "type": "TP",
-    "length": 503,
     "width": 335,
+    "length": 503,
     "height": 195,
     "fitting_depth": 10,
     "rib_thickness": 22.5,
@@ -130,16 +123,15 @@
     "description": "TP-340系 2型 1.5モジュール標準型 (内寸468x300/有効内寸458x290, 側面厚22.5mm)",
     "compatible_lids": [
       "TP340フタ",
-      "サンボックス340フタ",
-      "無蓋"
+      "サンボックス340フタ"
     ]
   },
   "TP-343": {
     "id": "TP-343",
-    "name": "TP規格コンテナ TP-343",
+    "name": "TP-343",
     "type": "TP",
-    "length": 503,
     "width": 335,
+    "length": 503,
     "height": 288,
     "fitting_depth": 10,
     "rib_thickness": 22.5,
@@ -147,16 +139,15 @@
     "description": "TP-340系 3型 1.5モジュール深型 (有効内寸458x290, 側面厚22.5mm)",
     "compatible_lids": [
       "TP340フタ",
-      "サンボックス340フタ",
-      "無蓋"
+      "サンボックス340フタ"
     ]
   },
   "TP-362": {
     "id": "TP-362",
-    "name": "TP規格コンテナ TP-362",
+    "name": "TP-362",
     "type": "TP",
-    "length": 670,
     "width": 335,
+    "length": 670,
     "height": 195,
     "fitting_depth": 10,
     "rib_thickness": 22.5,
@@ -164,16 +155,15 @@
     "description": "TP-360系 2型 2倍モジュール標準型 (内寸635x300/有効内寸625x290, 側面厚22.5mm)",
     "compatible_lids": [
       "TP360フタ",
-      "サンボックス360フタ",
-      "無蓋"
+      "サンボックス360フタ"
     ]
   },
   "TP-363": {
     "id": "TP-363",
-    "name": "TP規格コンテナ TP-363",
+    "name": "TP-363",
     "type": "TP",
-    "length": 670,
     "width": 335,
+    "length": 670,
     "height": 288,
     "fitting_depth": 10,
     "rib_thickness": 22.5,
@@ -181,16 +171,15 @@
     "description": "TP-360系 3型 2倍モジュール深型 (有効内寸625x290, 側面厚22.5mm)",
     "compatible_lids": [
       "TP360フタ",
-      "サンボックス360フタ",
-      "無蓋"
+      "サンボックス360フタ"
     ]
   },
   "TP-462": {
     "id": "TP-462",
-    "name": "TP規格コンテナ TP-462",
+    "name": "TP-462",
     "type": "TP",
-    "length": 670,
     "width": 503,
+    "length": 670,
     "height": 195,
     "fitting_depth": 10,
     "rib_thickness": 22,
@@ -198,16 +187,15 @@
     "description": "TP-460系 2型 大型モジュール標準型 (内寸635x468/有効内寸626x458, 側面厚22.0mm)",
     "compatible_lids": [
       "TP460フタ",
-      "サンボックス460フタ",
-      "無蓋"
+      "サンボックス460フタ"
     ]
   },
   "TP-463": {
     "id": "TP-463",
-    "name": "TP規格コンテナ TP-463",
+    "name": "TP-463",
     "type": "TP",
-    "length": 670,
     "width": 503,
+    "length": 670,
     "height": 288,
     "fitting_depth": 10,
     "rib_thickness": 22,
@@ -215,8 +203,7 @@
     "description": "TP-460系 3型 大型モジュール深型 (有効内寸626x458, 側面厚22.0mm)",
     "compatible_lids": [
       "TP460フタ",
-      "サンボックス460フタ",
-      "無蓋"
+      "サンボックス460フタ"
     ]
   }
 }

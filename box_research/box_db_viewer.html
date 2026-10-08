@@ -670,6 +670,18 @@
       return db;
     }
 
+    function normalizeCompatibleLids(db) {
+      const noLidIds = new Set(Object.entries(lidDB)
+        .filter(([, lid]) => lid.type === 'NONE')
+        .map(([lidId]) => lidId));
+      Object.values(db).forEach(box => {
+        if (Array.isArray(box.compatible_lids)) {
+          box.compatible_lids = box.compatible_lids.filter(lidId => !noLidIds.has(lidId));
+        }
+      });
+      return db;
+    }
+
     // Current Working DB
     let currentBoxDB = normalizeDimensionOrder(JSON.parse(JSON.stringify(defaultBoxDB)));
 
@@ -913,22 +925,48 @@
       container.innerHTML = '';
       loadingMsg.style.display = 'none';
 
-      if (Object.keys(lidDB).length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-500 italic col-span-2">利用可能な蓋がありません</p>';
+      const noLidAvailable = Object.values(lidDB).some(lid => lid.type === 'NONE');
+      const noLidNote = document.createElement('p');
+      noLidNote.className = 'text-xs text-slate-600 sm:col-span-2';
+      noLidNote.textContent = noLidAvailable
+        ? '無蓋はすべての箱で選択できます（互換蓋への登録は不要です）。'
+        : '蓋DBに「無蓋」の定義がありません。';
+      container.appendChild(noLidNote);
+
+      const physicalLids = Object.entries(lidDB).filter(([, lid]) => lid.type !== 'NONE');
+      if (physicalLids.length === 0) {
+        const emptyMessage = document.createElement('p');
+        emptyMessage.className = 'text-xs text-slate-500 italic sm:col-span-2';
+        emptyMessage.textContent = '選択可能な蓋がありません';
+        container.appendChild(emptyMessage);
         return;
       }
 
-      Object.entries(lidDB).forEach(([lidId, lid]) => {
+      physicalLids.forEach(([lidId, lid]) => {
         const isSelected = selectedLids.includes(lidId);
         const checkbox = document.createElement('label');
         checkbox.className = 'flex items-center gap-2 p-2 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition';
-        checkbox.innerHTML = `
-          <input type="checkbox" class="lid-checkbox w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" data-lid-id="${lidId}" ${isSelected ? 'checked' : ''}>
-          <div class="flex-1 min-w-0">
-            <div class="text-xs font-bold text-slate-900">${lid.name}</div>
-            <div class="text-[11px] text-slate-500">${lidId} • ${lid.length}×${lid.width} mm</div>
-          </div>
-        `;
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.className = 'lid-checkbox w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500';
+        input.dataset.lidId = lidId;
+        input.checked = isSelected;
+
+        const details = document.createElement('div');
+        details.className = 'flex-1 min-w-0';
+        const name = document.createElement('div');
+        name.className = 'text-xs font-bold text-slate-900';
+        name.textContent = lid.name || lidId;
+        const fitType = document.createElement('span');
+        fitType.className = 'ml-1 font-medium text-slate-600';
+        fitType.textContent = lid.type === 'NONE' ? '（蓋なし）' : `（${lid.fit_type || '嵌め方未設定'}）`;
+        name.appendChild(fitType);
+
+        const dimensions = document.createElement('div');
+        dimensions.className = 'text-[11px] text-slate-500';
+        dimensions.textContent = `${lidId} • ${lid.length ?? '?'}×${lid.width ?? '?'} mm`;
+        details.append(name, dimensions);
+        checkbox.append(input, details);
         container.appendChild(checkbox);
       });
     }
@@ -1078,7 +1116,7 @@
     // Reset Master Data
     document.getElementById('btn-reset-db').addEventListener('click', () => {
       if (confirm("全ての箱データを初期マスター値に戻しますか？（追加・編集した内容はリセットされます）")) {
-        currentBoxDB = normalizeDimensionOrder(JSON.parse(JSON.stringify(defaultBoxDB)));
+        currentBoxDB = normalizeCompatibleLids(normalizeDimensionOrder(JSON.parse(JSON.stringify(defaultBoxDB))));
         approvalState = {};
         Object.keys(currentBoxDB).forEach(id => approvalState[id] = true);
         saveState();
@@ -1196,6 +1234,8 @@
     async function init() {
       loadState();
       await loadLids();  // 修正3: 蓋DBを読み込み、完了するまで待つ ← await を追加！
+      currentBoxDB = normalizeCompatibleLids(currentBoxDB);
+      saveState();
       updateStats();
       renderTable();
 
@@ -1205,6 +1245,8 @@
           const remoteDB = await res.json();
           currentBoxDB = remoteDB;
           loadState();
+          currentBoxDB = normalizeCompatibleLids(currentBoxDB);
+          saveState();
           updateStats();
           renderTable();
         }

@@ -572,6 +572,12 @@
       return `${lid.name || lidId}（${lid.fit_type || '嵌め方未設定'}）`;
     }
 
+    function getCompatibleLidIds(box) {
+      const compatibleLids = Array.isArray(box?.compatible_lids) ? box.compatible_lids : [];
+      const noLidId = getNoLidId();
+      return [...new Set([...compatibleLids, noLidId].filter(Boolean))];
+    }
+
     function addBoxRow(selectedId = '', count = 10, lidId = getNoLidId()) {
       const container = document.getElementById('box-rows-container');
       const row = document.createElement('div');
@@ -584,7 +590,7 @@
 
       // 選択された箱の対応蓋リストを取得
       const selectedBox = masterBoxDB[selectedId];
-      const compatibleLids = selectedBox?.compatible_lids || [getNoLidId()];
+      const compatibleLids = getCompatibleLidIds(selectedBox);
       
       const lidOptions = [];
       compatibleLids.forEach(id => {
@@ -624,7 +630,7 @@
       row.querySelector('.box-id-select').addEventListener('change', (e) => {
         const newBoxId = e.target.value;
         const newBox = masterBoxDB[newBoxId];
-        const newCompatibleLids = newBox?.compatible_lids || [getNoLidId()];
+        const newCompatibleLids = getCompatibleLidIds(newBox);
         
         // 新しい蓋ドロップダウンを再構築
         const lidSelect = row.querySelector('.box-lid-select');
@@ -676,7 +682,8 @@
         if (!item.lid_id || !Object.prototype.hasOwnProperty.call(lidDB, item.lid_id)) {
           return `箱行${index + 1}: 登録済みの蓋を選択してください`;
         }
-        if (!Array.isArray(box.compatible_lids) || !box.compatible_lids.includes(item.lid_id)) {
+        if (lidDB[item.lid_id].type !== 'NONE' &&
+          (!Array.isArray(box.compatible_lids) || !box.compatible_lids.includes(item.lid_id))) {
           return `箱行${index + 1}: 選択した蓋はこの箱に対応していません`;
         }
       }
