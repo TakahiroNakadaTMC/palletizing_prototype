@@ -292,6 +292,29 @@
       return Object.keys(lidDB).find(id => lidDB[id].type === 'NONE') || '';
     }
 
+    function renderBoxBreakdown(item) {
+      const box = masterBoxDB[item.box_id] || {};
+      const lidId = Object.prototype.hasOwnProperty.call(item, 'lid_id') ? item.lid_id : getNoLidId();
+      const lid = lidDB[lidId];
+      const lidStatus = !lid ? '蓋情報不明' : lid.type === 'NONE'
+        ? '蓋なし' : `蓋あり・${lid.fit_type || '嵌め方未設定'}`;
+      const dimensions = box.width ? `${box.width}x${box.length}x${box.height} mm` : '箱寸法不明';
+      const badge = document.createElement('span');
+      badge.className = 'box-breakdown inline-flex flex-wrap items-center gap-1.5 max-w-full px-2 py-1 bg-indigo-50/80 border border-indigo-100 text-indigo-900 rounded-md text-xs font-mono break-words';
+      badge.title = `${dimensions}\n蓋ID: ${lidId || '未指定'}\n蓋名称: ${lid?.name || '不明'}\n${lidStatus}`;
+      const boxLabel = document.createElement('strong');
+      boxLabel.className = 'max-w-full break-all';
+      boxLabel.textContent = item.box_id;
+      const countLabel = document.createElement('span');
+      countLabel.className = 'bg-indigo-200/70 text-indigo-800 text-[10px] px-1.5 rounded font-bold';
+      countLabel.textContent = `×${item.count}`;
+      const lidLabel = document.createElement('span');
+      lidLabel.className = 'lid-status font-sans max-w-full break-all';
+      lidLabel.textContent = lidStatus;
+      badge.append(boxLabel, countLabel, lidLabel);
+      return badge.outerHTML;
+    }
+
     /**
      * renderLidOptions() - ドロップダウンを動的更新
      * @param {string[]} compatibleLids - 箱に対応する蓋IDの配列（未使用、互換性のため予約）
@@ -398,16 +421,7 @@
             <div class="space-y-1.5">
               <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">投入箱内訳</span>
               <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
-                ${(tc.box_list || []).map(b => {
-                  const bspec = masterBoxDB[b.box_id] || {};
-                  const dimStr = bspec.width ? `${bspec.width}x${bspec.length}x${bspec.height}` : '';
-                  return `
-                    <span class="inline-flex items-center gap-1.5 px-2 py-1 bg-indigo-50/80 border border-indigo-100 text-indigo-900 rounded-md text-xs font-mono" title="${dimStr}">
-                      <strong>${b.box_id}</strong>
-                      <span class="bg-indigo-200/70 text-indigo-800 text-[10px] px-1.5 py-0.2 rounded font-bold">×${b.count}</span>
-                    </span>
-                  `;
-                }).join('')}
+                ${(tc.box_list || []).map(renderBoxBreakdown).join('')}
               </div>
             </div>
           </div>
