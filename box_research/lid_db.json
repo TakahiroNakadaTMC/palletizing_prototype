@@ -7,6 +7,7 @@
     "width": 300,
     "thickness": 15,
     "fit_type": "内嵌め",
+    "color": "",
     "description": "機能確認用"
   },
   "TP330フタ": {
@@ -17,6 +18,7 @@
     "width": 335,
     "thickness": 13,
     "fit_type": "内嵌め",
+    "color": "",
     "description": "TP-330系1型対応（TP-331, TP-332, TP-333用）"
   },
   "サンボックス330フタ": {
@@ -27,6 +29,7 @@
     "width": 344,
     "thickness": 13,
     "fit_type": "外嵌め",
+    "color": "",
     "description": "TP-330系1型対応（TP-331, TP-332, TP-333用）"
   },
   "TP340フタ": {
@@ -37,6 +40,7 @@
     "width": 335,
     "thickness": 13,
     "fit_type": "内嵌め",
+    "color": "",
     "description": "TP-340系1.5型対応（TP-341, TP-342, TP-343用）"
   },
   "サンボックス340フタ": {
@@ -47,6 +51,7 @@
     "width": 345,
     "thickness": 13,
     "fit_type": "外嵌め",
+    "color": "",
     "description": "TP-340系1.5型対応（TP-341, TP-342, TP-343用）"
   },
   "TP360フタ": {
@@ -57,6 +62,7 @@
     "width": 335,
     "thickness": 13,
     "fit_type": "内嵌め",
+    "color": "",
     "description": "TP-360系2型対応（TP-362, TP-363用）"
   },
   "サンボックス360フタ": {
@@ -67,6 +73,7 @@
     "width": 344,
     "thickness": 13,
     "fit_type": "外嵌め",
+    "color": "",
     "description": "TP-360系2型対応（TP-362, TP-363用）"
   },
   "TP460フタ": {
@@ -77,6 +84,7 @@
     "width": 503,
     "thickness": 13,
     "fit_type": "内嵌め",
+    "color": "",
     "description": "TP-460系大型対応（TP-462, TP-463用）"
   },
   "サンボックス460フタ": {
@@ -87,6 +95,7 @@
     "width": 512,
     "thickness": 13,
     "fit_type": "外嵌め",
+    "color": "",
     "description": "TP-460系大型対応（TP-462, TP-463用）"
   },
   "TP130フタ": {
@@ -97,6 +106,7 @@
     "width": 168,
     "thickness": 13,
     "fit_type": "内嵌め",
+    "color": "",
     "description": "TP-130系ハーフモジュール対応（TP-131用）"
   },
   "無蓋": {
@@ -107,6 +117,7 @@
     "width": 0,
     "thickness": 0,
     "fit_type": "なし",
+    "color": "",
     "description": "蓋を使用しない場合"
   }
 }

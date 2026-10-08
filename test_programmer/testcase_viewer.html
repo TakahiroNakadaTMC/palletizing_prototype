@@ -553,6 +553,11 @@
       }, 200);
     }
 
+    function getLidOptionLabel(lidId) {
+      const lid = lidDB[lidId] || {};
+      return `${lid.name || lidId}（${lid.fit_type || '嵌め方未設定'}）`;
+    }
+
     function addBoxRow(selectedId = '', count = 10, lidId = getNoLidId()) {
       const container = document.getElementById('box-rows-container');
       const row = document.createElement('div');
@@ -569,8 +574,7 @@
       
       const lidOptions = [];
       compatibleLids.forEach(id => {
-        const lid = lidDB[id] || { name: id };
-        lidOptions.push(`<option value="${id}" ${lidId === id ? 'selected' : ''}>${lid.name || id}</option>`);
+        lidOptions.push(new Option(getLidOptionLabel(id), id, lidId === id, lidId === id).outerHTML);
       });
 
       row.innerHTML = `
@@ -585,10 +589,10 @@
             <input type="number" min="1" max="500" value="${count}" class="box-count-input w-full px-2 py-1 text-xs font-mono font-bold text-indigo-700 border border-slate-300 rounded-md text-right">
           </div>
         </div>
-        <div class="w-32">
+        <div class="w-full sm:w-72 min-w-0">
           <div class="flex items-center gap-1">
-            <span class="text-[11px] text-slate-500">蓋:</span>
-            <select class="box-lid-select w-full px-2 py-1.5 text-xs border border-slate-300 rounded-md focus:ring-1 focus:ring-indigo-500 bg-white">
+            <span class="text-[11px] text-slate-500 shrink-0">蓋:</span>
+            <select class="box-lid-select w-full min-w-0 px-2 py-1.5 text-xs border border-slate-300 rounded-md focus:ring-1 focus:ring-indigo-500 bg-white">
               ${lidOptions.join('')}
             </select>
           </div>
@@ -614,10 +618,9 @@
         
         lidSelect.innerHTML = '';
         newCompatibleLids.forEach(id => {
-          const lid = lidDB[id] || { name: id };
           const option = document.createElement('option');
           option.value = id;
-          option.text = lid.name || id;
+          option.text = getLidOptionLabel(id);
           // 現在の蓋が新しい互換蓋リストに含まれていればそれを選択、そうでなければ最初の蓋を選択
           if (id === currentLidValue || (!lidSelect.querySelector('option[selected]') && newCompatibleLids.indexOf(id) === 0)) {
             option.selected = true;

@@ -70,12 +70,13 @@
     <!-- Lids Table -->
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden fade-in">
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs border-collapse">
+        <table class="w-full min-w-[1100px] text-left text-xs border-collapse">
           <thead>
             <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold">
               <th class="py-3.5 px-4">蓋ID</th>
               <th class="py-3.5 px-4">蓋名称</th>
               <th class="py-3.5 px-3">種別</th>
+              <th class="py-3.5 px-3">色</th>
               <th class="py-3.5 px-3 text-right">長さ L (mm)</th>
               <th class="py-3.5 px-3 text-right">幅 W (mm)</th>
               <th class="py-3.5 px-3 text-right">厚み (mm)</th>
@@ -94,7 +95,7 @@
 
   <!-- Modal for Add/Edit Lid -->
   <div id="modal-lid" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200 p-4">
-    <div id="modal-container" class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-xl w-full p-6 space-y-5 transform transition-transform duration-200 scale-95">
+    <div id="modal-container" class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-5 transform transition-transform duration-200 scale-95">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
           <div class="p-2 bg-indigo-100 text-indigo-700 rounded-lg"><i data-lucide="edit-3" class="w-5 h-5"></i></div>
@@ -157,6 +158,11 @@
             <option value="内嵌め">内嵌め（箱内壁面と蓋で位置決め）</option>
             <option value="なし">なし（無蓋の場合）</option>
           </select>
+        </div>
+
+        <div>
+          <label for="input-lid-color" class="block text-xs font-bold text-slate-700 mb-1">色（任意）</label>
+          <input type="text" id="input-lid-color" placeholder="例: 黒、青、透明" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
         </div>
 
         <!-- Description -->
@@ -262,7 +268,7 @@
       tbody.innerHTML = '';
 
       if (Object.keys(currentLidDB).length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="px-4 py-8 text-center text-slate-500">登録された蓋がありません</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="px-4 py-8 text-center text-slate-500">登録された蓋がありません</td></tr>`;
         return;
       }
 
@@ -279,6 +285,7 @@
           <td class="py-3 px-4 font-mono font-bold text-slate-900">${lid.id}</td>
           <td class="py-3 px-4 font-medium text-slate-800">${lid.name}</td>
           <td class="py-3 px-3"><span class="inline-block px-2 py-0.5 rounded text-[11px] font-bold ${typeDisplay.className}">${typeDisplay.label}</span></td>
+          <td class="lid-color py-3 px-3 text-slate-600 whitespace-nowrap"></td>
           <td class="py-3 px-3 text-right font-mono font-semibold">${lid.length}</td>
           <td class="py-3 px-3 text-right font-mono font-semibold">${lid.width}</td>
           <td class="py-3 px-3 text-right font-mono text-slate-600">${lid.thickness}</td>
@@ -303,6 +310,7 @@
             </div>
           </td>
         `;
+        row.querySelector('.lid-color').textContent = lid.color || '未設定';
         tbody.appendChild(row);
       });
 
@@ -377,6 +385,7 @@
         document.getElementById('input-lid-thickness').value = lid.thickness;
         document.getElementById('input-lid-fit-type').value = lid.fit_type || '外嵌め';
         document.getElementById('input-lid-desc').value = lid.description || '';
+        document.getElementById('input-lid-color').value = lid.color || '';
       } else {
         modalTitle.textContent = `新しい蓋を登録`;
         modalSub.textContent = `新しい蓋仕様をデータベースに追加します`;
@@ -418,6 +427,7 @@
       const thickness = parseFloat(document.getElementById('input-lid-thickness').value) || 0;
       const fitType = document.getElementById('input-lid-fit-type').value;
       const description = document.getElementById('input-lid-desc').value.trim();
+      const color = document.getElementById('input-lid-color').value.trim();
 
       if (!id || !name) {
         showToast('蓋IDと蓋名称は必須です');
@@ -448,7 +458,7 @@
         boxDbChanged = true;
       }
 
-      currentLidDB[id] = { id, name, type, width, length, thickness, fit_type: fitType, description };
+      currentLidDB[id] = { id, name, type, length, width, thickness, fit_type: fitType, color, description };
       updateStats();
       renderLidsTable();
       closeModal();
