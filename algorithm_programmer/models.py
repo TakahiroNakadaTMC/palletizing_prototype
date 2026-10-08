@@ -139,6 +139,7 @@ class PalletSpec:
     width: float = 1200.0         # mm (X軸 長辺)
     length: float = 1000.0        # mm (Y軸 短辺)
     max_height: float = 1200.0    # mm (Z軸 最大積載高)
+    min_x_span: float = 800.0     # mm (長辺荷姿最小幅: >=800mm)
     max_x_span: float = 1360.0    # mm (長辺荷姿許容上限: <1360mm)
     min_y_span: float = 800.0     # mm (短辺荷姿最小幅: >=800mm)
     max_y_span: float = 1100.0    # mm (短辺荷姿最大幅: <1100mm)
@@ -149,6 +150,7 @@ class PalletSpec:
             width=float(d.get("width", 1200.0)),
             length=float(d.get("length", 1000.0)),
             max_height=float(d.get("max_height", 1200.0)),
+            min_x_span=float(d.get("min_x_span", 800.0)),
             max_x_span=float(d.get("max_x_span", 1360.0)),
             min_y_span=float(d.get("min_y_span", 800.0)),
             max_y_span=float(d.get("max_y_span", 1100.0))

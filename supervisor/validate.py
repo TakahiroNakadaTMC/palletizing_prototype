@@ -24,10 +24,12 @@ REPORT_PATH = os.path.join(BASE_DIR, "reports", "validation_report.md")
 
 # 荷姿制約パラメータ (constraints/constraints.md より)
 MAX_HEIGHT = 1200.0        # mm (最大積載高)
+MIN_X_SPAN = 800.0         # mm (長辺荷姿最小幅: >=800mm)
 MAX_X_SPAN = 1360.0        # mm (長辺荷姿許容上限: <1360mm)
 MIN_Y_SPAN = 800.0         # mm (短辺荷姿最小幅: >=800mm)
 MAX_Y_SPAN = 1100.0        # mm (短辺荷姿許容上限: <1100mm)
 MIN_SUPPORT_RATIO = 0.85   # 底面支持面積比率の下限 (85%)
+CORNER_HEIGHT_TOLERANCE = 3.0  # mm (最高層四隅高さの許容誤差)
 EPS = 1e-3                 # 浮動小数点誤差マージン
 
 def load_box_db() -> Dict[str, Any]:
@@ -129,7 +131,9 @@ class PalletizeValidator:
         if max_z > MAX_HEIGHT + EPS:
             violations.append(f"最大積載高超過: {max_z:.1f}mm > {MAX_HEIGHT}mm (超過: {max_z - MAX_HEIGHT:.1f}mm)")
 
-        # (2) 長辺荷姿幅 (< 1360mm)
+        # (2) 長辺荷姿幅 (800mm <= X < 1360mm)
+        if x_span < MIN_X_SPAN - EPS:
+            violations.append(f"長辺荷姿幅不足: {x_span:.1f}mm < {MIN_X_SPAN}mm (安定性不足)")
         if x_span >= MAX_X_SPAN:
             violations.append(f"長辺荷姿幅超過: {x_span:.1f}mm >= {MAX_X_SPAN}mm")
 
@@ -317,8 +321,10 @@ class PalletizeValidator:
             top_c3 = max(b["position"]["z"] + b["dimensions"]["height"] for b in c3_boxes)
             top_c4 = max(b["position"]["z"] + b["dimensions"]["height"] for b in c4_boxes)
 
-            if not (abs(top_c1 - max_z) <= 1.0 and abs(top_c2 - max_z) <= 1.0 and
-                    abs(top_c3 - max_z) <= 1.0 and abs(top_c4 - max_z) <= 1.0):
+            if not (abs(top_c1 - max_z) <= CORNER_HEIGHT_TOLERANCE and
+                    abs(top_c2 - max_z) <= CORNER_HEIGHT_TOLERANCE and
+                    abs(top_c3 - max_z) <= CORNER_HEIGHT_TOLERANCE and
+                    abs(top_c4 - max_z) <= CORNER_HEIGHT_TOLERANCE):
                 violations.append(
                     f"最高層四隅高さ不一致: 左手前={top_c1:.1f}mm, 右手前={top_c2:.1f}mm, 左奥={top_c3:.1f}mm, 右奥={top_c4:.1f}mm (最高到達高={max_z:.1f}mm)"
                 )
@@ -402,14 +408,15 @@ def run_supervisor_validation():
         f.write("\n---\n\n")
         f.write("## 2. 制約別チェック項目と検証基準\n\n")
         f.write(r"1. **最大積載高さ制約** ($\le 1200\text{ mm}$): 全箱の頂点Z座標がパレット上面から1200mm以下であること。" + "\n")
-        f.write(r"2. **長辺荷姿スパン制約** ($< 1360\text{ mm}$): X方向の全幅が1360mm未満であること。" + "\n")
+        f.write(r"2. **長辺荷姿スパン制約** ($800\text{ mm} \le X < 1360\text{ mm}$): X方向の全幅が800mm以上1360mm未満であること。" + "\n")
         f.write(r"3. **短辺荷姿スパン制約** ($800\text{ mm} \le Y < 1100\text{ mm}$): Y方向の全幅が800mm以上かつオーバーハング許容枠1100mm未満であること。" + "\n")
         f.write(r"4. **天地固定・回転制約**: 全箱の外寸高さがカタログ仕様と一致し、回転角が0度または90度のみであること。" + "\n")
         f.write(r"5. **嵌合沈み込み計算**: 段積み時の上段箱の底面Z座標が `下段上面Z - fitting_depth` と正確に一致していること。" + "\n")
         f.write(r"6. **空中配置禁止・底面支持率** ($\ge 85\%$): 底面積の85%以上が下段箱またはパレットによって支持されていること。" + "\n")
         f.write(r"7. **3D幾何衝突の完全排除**: 箱同士の不正な空間食い込み（嵌合深さを超える干渉）が0件であること。" + "\n")
         f.write(r"8. **積み込み順序（Order）の物理的整合性**: 支持関係にある箱について、下段箱が上段箱より必ず先に積載されていること ($order_{lower} < order_{upper}$)。" + "\n")
-        f.write(r"9. **最高層四隅高さ一致制約 (Top 4-Corner Leveling)**: 荷姿の四隅（4コーナー）に位置する箱の上面高さが荷山の最高到達点 $Z_{max}$ と同一（フラット）であること。" + "\n")
+        f.write(r"9. **最高層四隅高さ一致制約 (Top 4-Corner Leveling)**: 四隅それぞれの上面高さが荷山の最高到達点 $Z_{max}$ と 3.0mm 以内で一致すること。" + "\n")
+        f.write(r"10. **下段支持箱サイズ制限**: 直接支持する下段箱の幅・奥行きが、上段箱より両方とも 1.0mm を超えて大きくないこと。" + "\n")
 
     print(f"📄 総合検証レポートを出力しました: {REPORT_PATH}")
 

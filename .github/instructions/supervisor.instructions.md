@@ -19,13 +19,15 @@
 
 ### バリデーション項目（チェックリスト）
 1. **積載全高チェック** - Z_max <= 1200mm（fitting_depth を考慮した正確な計算）
-2. **長辺荷姿寸法チェック** - X_max (or Y_max) < 1360mm
-3. **短辺荷姿寸法チェック** - Min(X, Y) >= 800mm AND <= 1000mm
-4. **箱同士の干渉・めり込みチェック** - fitting_depth 以外の衝突・重なりの有無
-5. **嵌合・段積み整合性チェック** - TP規格箱のモジュール嵌合ルール、非TP箱の同一箱コラム積みルール遵守
-6. **支持面チェック** - 空中浮き箱の有無、下段支持の妥当性
-7. **回転角チェック** - 全箱が 0度 or 90度のいずれかであること
-8. **積み順整合性チェック** - order フィールドが下段から上段への順序を保つ
+2. **長辺荷姿寸法チェック** - 800mm <= X_span < 1360mm
+3. **短辺荷姿寸法チェック** - 800mm <= Y_span < 1100mm
+4. **最高層四隅高さチェック** - 各コーナーの上面高さが $Z_{max}$ から 3.0mm 以内
+5. **箱同士の干渉・めり込みチェック** - fitting_depth 以外の衝突・重なりの有無
+6. **嵌合・段積み整合性チェック** - TP規格箱のモジュール嵌合ルール、非TP箱の同一箱コラム積みルール遵守
+7. **支持面チェック** - 空中浮き箱の有無、下段支持の妥当性（底面積85%以上）
+8. **下段支持箱サイズ制限** - 直接支持する下段箱が幅・奥行きの両方で上段箱より1.0mmを超えて大きくないこと
+9. **回転角チェック** - 全箱が 0度 or 90度のいずれかであること
+10. **積み順整合性チェック** - order フィールドが下段から上段への順序を保つ
 
 ### バリデーション結果レポート（JSON）
 ```json
@@ -35,10 +37,12 @@
   "checks": [
     {"name": "max_height", "result": "PASS", "value": 540, "limit": 1200},
     {"name": "long_side_overhang", "result": "PASS", "value": 660, "limit": 1360},
-    {"name": "short_side_range", "result": "PASS", "value": 330, "range": "800-1000"},
+    {"name": "short_side_range", "result": "PASS", "value": 900, "range": "800-<1100"},
+    {"name": "top_4_corner_leveling", "result": "PASS", "max_deviation": 2.0, "tolerance": 3.0},
     {"name": "box_interference", "result": "PASS", "detail": "No collisions detected"},
     {"name": "fitting_rule", "result": "PASS", "detail": "All TP boxes follow module fitting"},
     {"name": "support_integrity", "result": "PASS", "detail": "All boxes properly supported"},
+    {"name": "oversized_support", "result": "PASS", "detail": "No directly supporting box exceeds both footprint dimensions"},
     {"name": "rotation_validity", "result": "PASS", "detail": "All rotations are 0 or 90 degrees"},
     {"name": "order_consistency", "result": "PASS", "detail": "Order sequence is consistent"}
   ],

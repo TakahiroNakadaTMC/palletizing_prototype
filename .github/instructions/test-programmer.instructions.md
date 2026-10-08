@@ -25,7 +25,7 @@
 3. **境界値テスト**（Boundary Value Test）
    - `boundary_max_height_*.json` - 積載高さ 1200mm 上限テスト
    - `boundary_overhang_*.json` - 長辺 1360mm 上限テスト
-   - `boundary_short_side_*.json` - 短辺 800-1000mm 制約テスト
+  - `boundary_short_side_*.json` - 短辺荷姿幅 800mm以上1100mm未満の制約テスト
 
 ### テストケースJSON仕様
 ```json

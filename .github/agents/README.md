@@ -54,7 +54,7 @@ model: <各エージェントに最適なモデル>
 | `algorithm-programmer` | `gpt-5.3-codex` | パレタイズエンジンのコア実装（コーディング特化モデル） |
 | `visualizer` | `gpt-5.3-codex` | 3D/2D可視化ツール（Three.js/Plotly）の実装（コーディング特化モデル） |
 | `tester` | `gemini-3.5-flash` | テスト実行・結果収集という機械的作業。軽量・高速モデルで十分 |
-| `supervisor` | `claude-sonnet-5` | 9項目の制約を厳格に検証する品質ゲート。高い精度と一貫性が必要 |
+| `supervisor` | `claude-sonnet-5` | 10項目の制約を厳格に検証する品質ゲート。高い精度と一貫性が必要 |
 
 ## 利用可能なエージェント
 

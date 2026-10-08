@@ -31,7 +31,7 @@
 | **混載** | [`mixed_tp_large_volume.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_large_volume.json) | 全13種類のTP箱 (各10個) | 130 | 大量投入によるパレット最大積載高1200mm上限充填 |
 | **境界値** | [`boundary_height_limit.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_height_limit.json) | TP-333, 343, 363, 463 (高288) | 48 | 深型のみで4段積載（総高1122mm <= 1200mm）の境界値 |
 | **境界値** | [`boundary_overhang_long_side.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_overhang_long_side.json) | TP-362, 363 (長辺670) | 30 | 長辺荷姿1340mm（<1360mm許容枠）の境界値 |
-| **境界値** | [`boundary_min_short_side.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_min_short_side.json) | TP-342, 332 | 32 | 短辺荷姿が800mm以上1000mm以下の制約を満たすかの検証 |
+| **境界値** | [`boundary_min_short_side.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_min_short_side.json) | TP-342, 332 | 32 | 短辺荷姿が800mm以上1100mm未満の制約を満たすかの検証 |
 
 ---
 

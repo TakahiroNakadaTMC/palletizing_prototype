@@ -142,7 +142,7 @@ def check_max_height(positioned_boxes):
 ```python
 def check_overhang(positioned_boxes):
     """
-    長辺方向: < 1360mm
+    長辺方向: 800mm <= 幅 < 1360mm
     短辺方向: 800mm <= 幅 < 1100mm
     """
     xs = [p['position']['x'] for p in positioned_boxes]
@@ -151,17 +151,19 @@ def check_overhang(positioned_boxes):
     widths = [box_db[p['box_id']]['width'] for p in positioned_boxes]
     lengths = [box_db[p['box_id']]['length'] for p in positioned_boxes]
     
-    # 長辺（X方向）: < 1360mm
+    # 長辺（X方向）: 800mm <= 幅 < 1360mm
     x_max = max(xs[i] + (widths[i] if positioned_boxes[i]['rotation'] == 0 
                          else lengths[i])
                 for i in range(len(positioned_boxes)))
     
-    # 短辺（Y方向）: 800-1000mm
+    # 短辺（Y方向）: 800mm <= 幅 < 1100mm
     y_max = max(ys[i] + (lengths[i] if positioned_boxes[i]['rotation'] == 0 
                          else widths[i])
                 for i in range(len(positioned_boxes)))
     
-    return x_max < 1360.0 and 800.0 <= y_max < 1100.0
+    x_span = x_max - min(xs)
+    y_span = y_max - min(ys)
+    return 800.0 <= x_span < 1360.0 and 800.0 <= y_span < 1100.0
 ```
 
 #### (3) 支持面チェック
@@ -222,7 +224,7 @@ def check_order_integrity(positioned_boxes):
 def check_top_4_corner_leveling(positioned_boxes, box_db):
     """
     荷山の四隅（4つのコーナー）に位置する箱の上面高さが、
-    最高到達高さ Z_max と一致（±1.0mm）
+    最高到達高さ Z_max と各コーナーで3.0mm以内
     """
     # 1. 最高到達高さ Z_max を算出
     z_max = max(p['position']['z'] + box_db[p['box_id']]['height'] 
@@ -241,7 +243,7 @@ def check_top_4_corner_leveling(positioned_boxes, box_db):
     for corner_x, corner_y in corners:
         top_z_at_corner = find_top_z_at_corner(corner_x, corner_y, 
                                                positioned_boxes, box_db)
-        if abs(top_z_at_corner - z_max) > 1.0:  # 誤差1.0mm以内
+        if abs(top_z_at_corner - z_max) > 3.0:  # 誤差3.0mm以内
             return False
     
     return True

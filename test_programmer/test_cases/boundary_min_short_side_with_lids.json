@@ -1,6 +1,6 @@
 {
   "name": "boundary_min_short_side_with_lids",
-  "description": "短辺方向が800mm以上1000mm以下の制約を満たしているかを検証するテスト（各箱に対応する標準蓋を使用）",
+  "description": "短辺方向が800mm以上1100mm未満の制約を満たしているかを検証するテスト（各箱に対応する標準蓋を使用）",
   "pallet": {
     "width": 1200.0,
     "length": 1000.0,

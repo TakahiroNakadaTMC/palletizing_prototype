@@ -104,7 +104,7 @@ tester/run_tests.py
 tester/results/result_*.json
   ├→ visualizer/visualize.py（3D描画）→ visualizer/*.html
   └→ supervisor/validate.py
-    ├→ 9 constraint checks (積載高さ、長辺/短辺寸法、嵌合整合性、干渉検出等)
+    ├→ 10 constraint checks (積載高さ、荷姿幅、四隅高さ、段積みサイズ、嵌合整合性、干渉検出等)
     └→ supervisor/reports/validation_report.md（PASS/NG判定）
 
 [検証結果がNG] → algorithm-programmer に改善指示 → palletizer.py修正 → ループ再開
@@ -117,7 +117,7 @@ tester/results/result_*.json
 
 1. **単載エンジン (`palletize_single`)**
    - 0度/90度グリッド + スプリット（レンガ）分割パターンを自動生成・比較
-   - 長辺 <1360mm、短辺 800～1000mm の境界フィルタリング
+    - 長辺荷姿幅 $800\text{ mm} \le X_{span} < 1360\text{ mm}$、短辺荷姿幅 $800\text{ mm} \le Y_{span} < 1100\text{ mm}$ の境界フィルタリング
    - `fitting_depth` を考慮した最大段数・Z座標計算
    - 偶数/奇数段の反転によるインターロッキング（荷崩れ防止）
 
@@ -134,16 +134,17 @@ tester/results/result_*.json
 
 #### **validate.py** (制約バリデータ)
 
-9つの厳格なチェック項目 (詳細は [section 5 of README.md](../README.md)):
+10個の厳格なチェック項目 (詳細は [constraints/constraints.md](../constraints/constraints.md)):
 1. 積載全高 ≤ 1200mm
-2. 長辺荷姿 < 1360mm
-3. 短辺荷姿 800～1100mm
-4. 最高層四隅高さ一致 (誤差 ±1.0mm以内)
+2. 長辺荷姿幅 $800\text{ mm} \le X_{span} < 1360\text{ mm}$
+3. 短辺荷姿幅 $800\text{ mm} \le Y_{span} < 1100\text{ mm}$
+4. 最高層四隅高さ一致 (各コーナーの誤差 3.0mm以内)
 5. 3D干渉検出（嵌合沈み込みを許容）
 6. 嵌合・段積み整合性
 7. 広面支持率 ≥85%
-8. 回転角度 0° or 90° のみ
-9. 積み順トポロジカル整合性
+8. 下段支持箱サイズ制限（幅・奥行きの両方が上段箱より1.0mmを超えて大きい直接支持箱は禁止）
+9. 回転角度 0° or 90° のみ
+10. 積み順トポロジカル整合性
 
 ---
 
@@ -246,7 +247,7 @@ tester/results/result_*.json
 - **積載高さ**: 1200mm を **絶対に超えない** (物理的上限)
 - **回転角**: 0° または 90° のみ（45°等は禁止）
 - **上下反転**: 禁止（天地固定）
-- **最高層四隅**: 誤差 ±1.0mm以内で高さ一致（安定性確保）
+- **最高層四隅**: 各コーナーの高さ誤差 3.0mm以内で一致（安定性確保）
 
 #### ⚠️ Fitting Logic
 
@@ -257,8 +258,8 @@ tester/results/result_*.json
 
 #### 📏 Boundary Rules
 
-- **長辺**: パレット長辺 1200mm に対して、荷姿の長辺方向スパン < 1360mm（160mmオーバーハング許容）
-- **短辺**: パレット短辺 1000mm に対して、荷姿の短辺方向スパン 800～1100mm（安定性要件で下限800mm）
+- **長辺**: 荷姿の長辺方向スパン $800\text{ mm} \le X_{span} < 1360\text{ mm}$
+- **短辺**: 荷姿の短辺方向スパン $800\text{ mm} \le Y_{span} < 1100\text{ mm}$
 - **支持率**: 箱の底面積の85%以上がパレット/下段箱に接地（空中浮きを排除）
 
 ---

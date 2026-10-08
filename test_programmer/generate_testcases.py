@@ -207,11 +207,11 @@ def generate_test_cases():
             ]
         }
 
-    # (13) boundary_min_short_side: 短辺荷姿が800mm〜1000mmを満たすかの検証
+    # (13) boundary_min_short_side: 短辺荷姿が800mm以上1100mm未満を満たすかの検証
     if "TP-342" in box_db and "TP-332" in box_db:
         test_cases["boundary_min_short_side"] = {
             "name": "boundary_min_short_side",
-            "description": "短辺方向が800mm以上1000mm以下の制約を満たしているかを検証するテスト",
+            "description": "短辺方向が800mm以上1100mm未満の制約を満たしているかを検証するテスト",
             "pallet": PALLET_SPEC,
             "box_list": [
                 {"box_id": "TP-342", "count": 16, "lid_id": no_lid_id},

@@ -13,7 +13,7 @@ argument-hint: 検証対象の結果データファイルパスや特定チェ�
 
 ## 1. 基本原則
 
-- **厳格な検証**: 9つのチェック項目すべてに対して、PASS / NG の明確な判定
+- **厳格な検証**: 10個のチェック項目すべてに対して、PASS / NG の明確な判定
 - **詳細な違反報告**: NG項目については、具体的な数値や原因を明記
 - **改善指示の具体性**: algorithm-programmer が改修できるレベルの詳細な指示
 
@@ -21,19 +21,20 @@ argument-hint: 検証対象の結果データファイルパスや特定チェ�
 
 ## 2. 検証チェック項目
 
-### 2.1 9つのチェック項目
+### 2.1 10個のチェック項目
 
 | # | 項目 | 合格基準 | NG時の修正指示 |
 |:---|:---|:---|:---|
 | 1 | **積載全高** | 全ての箱の最高Z座標 ≤ 1200 mm | 超過箱を削除または段数削減 |
-| 2 | **長辺寸法** | 荷姿全体の長辺方向幅 < 1360 mm | 長辺配置幅を削減 |
+| 2 | **長辺寸法** | 800 mm ≤ 幅 < 1360 mm | 長辺配置幅を調整 |
 | 3 | **短辺寸法** | 800 mm ≤ 幅 < 1100 mm | 短辺幅を調整 |
-| 4 | **最高層四隅高さ** | 四隅の最上段箱上面高さが $Z_{max}$ と一致（±1.0mm） | 四隅タワー高さをレベリング |
+| 4 | **最高層四隅高さ** | 各コーナーの最上段箱上面高さが $Z_{max}$ と 3.0mm 以内で一致 | 四隅タワー高さをレベリング |
 | 5 | **重なり・干渉** | 嵌合深さを除き、箱が干渉していないこと | 配置座標を修正 |
 | 6 | **嵌合・段積み整合性** | TP規格モジュール嵌合または同箱コラム積みルールを満たしていること | 段積み組み合わせを見直し |
 | 7 | **支持面チェック** | 底面積の85%以上がパレットまたは下段箱に支持されていること | 配置位置・順序を修正 |
-| 8 | **回転角** | 回転角が 0度 または 90度 のみであること | 回転角度を是正 |
-| 9 | **積み順** | 支持関係にある箱について $order_{lower} < order_{upper}$ | `order` を再計算 |
+| 8 | **下段支持箱サイズ制限** | 直接支持する下段箱が幅・奥行きの両方で上段箱より1.0mmを超えて大きくないこと | 段積み組み合わせを見直し |
+| 9 | **回転角** | 回転角が 0度 または 90度 のみであること | 回転角度を是正 |
+| 10 | **積み順** | 支持関係にある箱について $order_{lower} < order_{upper}$ | `order` を再計算 |
 
 ---
 
@@ -63,7 +64,7 @@ class SupervisorValidator:
         self.max_overhang_long = 1360.0
         self.min_overhang_short = 800.0
         self.max_overhang_short = 1100.0
-        self.corner_tolerance = 1.0
+        self.corner_tolerance = 3.0
         self.support_threshold = 0.85
     
     def validate(self, result_json_path):
@@ -148,8 +149,9 @@ class SupervisorValidator:
         }
     
     def _check_long_side(self, positioned_boxes):
-        """2. 長辺 (X方向) < 1360mm"""
-        max_x = 0
+        """2. 長辺 (X方向) 800 <= 幅 < 1360mm"""
+        min_x = float('inf')
+        max_x = float('-inf')
         
         for box in positioned_boxes:
             box_data = self.box_db[box['box_id']]
@@ -160,18 +162,23 @@ class SupervisorValidator:
             else:  # 90度回転
                 width = box_data['length']
             
-            right_x = box['position']['x'] + width
+            left_x = box['position']['x']
+            right_x = left_x + width
+            min_x = min(min_x, left_x)
             max_x = max(max_x, right_x)
+
+        x_span = max_x - min_x
         
         return {
-            'result': 'PASS' if max_x < self.max_overhang_long else 'NG',
-            'width_actual': max_x,
+            'result': 'PASS' if 800.0 <= x_span < self.max_overhang_long else 'NG',
+            'width_actual': x_span,
             'width_limit': self.max_overhang_long
         }
     
     def _check_short_side(self, positioned_boxes):
         """3. 短辺 (Y方向) 800 <= 幅 < 1100mm"""
-        max_y = 0
+        min_y = float('inf')
+        max_y = float('-inf')
         
         for box in positioned_boxes:
             box_data = self.box_db[box['box_id']]
@@ -181,20 +188,24 @@ class SupervisorValidator:
             else:  # 90度回転
                 length = box_data['width']
             
-            front_y = box['position']['y'] + length
+            rear_y = box['position']['y']
+            front_y = rear_y + length
+            min_y = min(min_y, rear_y)
             max_y = max(max_y, front_y)
+
+        y_span = max_y - min_y
         
-        passes = (self.min_overhang_short <= max_y < self.max_overhang_short)
+        passes = (self.min_overhang_short <= y_span < self.max_overhang_short)
         
         return {
             'result': 'PASS' if passes else 'NG',
-            'depth_actual': max_y,
+            'depth_actual': y_span,
             'depth_min': self.min_overhang_short,
             'depth_max': self.max_overhang_short
         }
     
     def _check_top_4_corners(self, positioned_boxes):
-        """4. 最高層四隅高さが一致（±1.0mm）"""
+        """4. 最高層四隅高さが一致（各コーナー3.0mm以内）"""
         # 四隅座標の抽出と最高層Z座標の確認
         xs = [b['position']['x'] for b in positioned_boxes]
         ys = [b['position']['y'] for b in positioned_boxes]
@@ -410,7 +421,7 @@ supervisor/
 1. 最高層四隅高さが一致していない
    - 左前: 236 mm
    - 右前: 240 mm
-   - 誤差: 4 mm (許容: ±1.0 mm)
+    - 誤差: 4 mm (許容: 3.0 mm)
 
 2. 短辺オーバーハング超過
    - 実際: 1105 mm
@@ -419,7 +430,7 @@ supervisor/
 
 **改善指示 (@algorithm-programmer)**:
 - [ ] 最高層の四隅が均等な高さになるよう、段積みパターンを見直してください
-- [ ] 短辺方向の配置を削減し、1100 mm以下に収まるようにしてください
+- [ ] 短辺方向の荷姿幅を削減し、1100 mm未満に収めてください
 ```
 
 ---
@@ -427,7 +438,7 @@ supervisor/
 ## 6. 完了基準
 
 - [ ] `supervisor/validate.py` が実装されている
-- [ ] 9つのチェック項目がすべて実装されている
+- [ ] 10個のチェック項目がすべて実装されている
 - [ ] `tester/results/*.json` に対して自動バリデーションが実行できる
 - [ ] `supervisor/validation_summary.md` が生成される
 - [ ] NG項目に対する改善指示が具体的で、algorithm-programmer が対応可能

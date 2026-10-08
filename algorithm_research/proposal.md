@@ -11,7 +11,7 @@
 
 ### 1.1 背景と目的
 本プロジェクトは、樹脂製通い箱（サンコー TP規格コンテナ等）および一般箱（非TP規格箱）を、**1200mm × 1000mm パレット**上に効率的かつ安定的に積載するパレタイズアルゴリズムの確立を目的とする。
-本環境では、一般的な段ボール箱のパレタイズとは異なり、**「上下嵌合（かんごう）による沈み込み」**、**「TP規格特有のモジュール段積み・跨ぎ積み」**、**「非TP箱の同フットプリント限定コラム積み」**、**「長辺オーバーハング許容 vs 短辺オーバーハング禁止＋最小幅制約」**という非対称かつ厳格な幾何・物理制約が存在する。
+本環境では、一般的な段ボール箱のパレタイズとは異なり、**「上下嵌合（かんごう）による沈み込み」**、**「TP規格特有のモジュール段積み・跨ぎ積み」**、**「非TP箱の同フットプリント限定コラム積み」**、**「長辺・短辺それぞれの許容荷姿幅と最小幅制約」**という非対称かつ厳格な幾何・物理制約が存在する。
 
 ### 1.2 提案方式の概要
 本調査・検討に基づき、**「階層型モジュラー・ハイブリッドパレタイズ方式（Hierarchical Modular Hybrid Palletizer; HM-Palletizer）」** を提案する。
@@ -54,7 +54,7 @@ flowchart TD
 本方式は以下の特徴を持つ：
 1. **TPモジュール幾何学の活用**: TP規格の倍数比率（335/503/670/1005mm）に即したモジュールブロック化により、高密度かつ相互嵌合可能な荷姿を構築。
 2. **サポートグラフに基づく嵌合高さ計算エンジン**: 上段箱の底面Z座標を $Z = Z_{below\_top} - fitting\_depth$ で厳密に解くZ-Level Solver。
-3. **長短非対称バウンディングボックス評価**: 長辺（$<1360\text{mm}$）と短辺（$800\text{mm} \sim 1000\text{mm}$）の非対称制約を満たす評価関数。
+3. **長短非対称バウンディングボックス評価**: 長辺（$800\text{mm} \le X_{span} < 1360\text{mm}$）と短辺（$800\text{mm} \le Y_{span} < 1100\text{mm}$）の非対称制約を満たす評価関数。
 4. **トポロジカルソートによる積み順（order）決定**: 下段優先・作業者/ロボットの物理アクセス性を保証する干渉フリーな積み順の自動生成。
 
 ---
@@ -84,15 +84,16 @@ flowchart TD
 
 1. **長辺方向の荷姿許容幅 (Overhang Allowed)**:
    $$X_{min} = \min_{i} x_i, \quad X_{max} = \max_{i} (x_i + w_i)$$
-   $$X_{span} = X_{max} - X_{min} < 1360\text{ mm}$$
+    $$800\text{ mm} \le X_{span} = X_{max} - X_{min} < 1360\text{ mm}$$
    - パレット基準での長辺配置範囲（センタリング基準時）: $-80\text{ mm} \le X_{min} \le X_{max} \le 1280\text{ mm}$
-2. **短辺方向の荷姿許容幅 (No Overhang & Min Stability Width)**:
+2. **短辺方向の荷姿許容幅 (Overhang Allowed & Min Stability Width)**:
    $$Y_{min} = \min_{i} y_i, \quad Y_{max} = \max_{i} (y_i + l_i)$$
-   $$800\text{ mm} \le Y_{span} = Y_{max} - Y_{min} \le 1000\text{ mm}$$
-   $$0\text{ mm} \le Y_{min} \le Y_{max} \le 1000\text{ mm} \quad (\text{オーバーハング厳禁})$$
+    $$800\text{ mm} \le Y_{span} = Y_{max} - Y_{min} < 1100\text{ mm}$$
 3. **最大積載高さ**:
    $$Z_{max} = \max_{i} (z_i + h_i) \le 1200\text{ mm}$$
-4. **箱間クリアランス & 回転**:
+4. **最高層四隅高さ**:
+    各コーナー $c$ を覆う最上段箱の上面高さを $Z_c$ とし、四隅すべてで $|Z_{max} - Z_c| \le 3.0\text{ mm}$ とする。
+5. **箱間クリアランス & 回転**:
    - クリアランス $c = 0\text{ mm}$（箱同士は密着）。
    - 水平回転角 $\theta_i \in \{0^\circ, 90^\circ\}$（天地固定、横倒し禁止）。
 
@@ -130,7 +131,12 @@ TP規格箱は底面リブと天面フチが一定のピッチ（モジュール
    $$\text{Area}\left( R_i \cap \bigcup_{j \in Support(b_i)} R_j \right) = \text{Area}(R_i)$$
    かつ、すべての $j \in Support(b_i)$ において $z_j + h_j$ が同一（同一支持面高さ）であること。
 
-#### (4) 非TP規格箱のコラム積み制約
+#### (4) 下段支持箱のサイズ制限
+上段箱 $b_i$ の直接支持箱 $b_j$ について、幅・奥行きの両方が 1.0mm を超えて大きい組み合わせは禁止する：
+$$\neg(w_j > w_i + 1.0\text{ mm} \land l_j > l_i + 1.0\text{ mm})$$
+幅・奥行きの一方のみが 1.0mm を超えて大きい場合、または両方とも差が 1.0mm 以内の場合は許可する。
+
+#### (5) 非TP規格箱のコラム積み制約
 非TP箱 $b_k \notin \text{TP}$ の場合：
 $$Support(b_k) = \{b_m\} \implies \text{box\_id}(b_k) == \text{box\_id}(b_m) \land (x_k, y_k, w_k, l_k) == (x_m, y_m, w_m, l_m)$$
 （同一型番・同一フットプリントの直上積みのみ許可）
@@ -144,7 +150,7 @@ $$Support(b_k) = \{b_m\} \implies \text{box\_id}(b_k) == \text{box\_id}(b_m) \la
 | 手法 | 概要・アプローチ | 長所 | 短所 / 本課題への課題 | 適合性判定 |
 | :--- | :--- | :--- | :--- | :---: |
 | **A. レイヤー構築法 (Layer-by-Layer / Pallet Patterns)** | 2Dのパレット平面パターン（ブロック、レンガ、ピンウィール等）を生成し、Z方向に層状に積み上げる方式。 | - 実装が明快で高速<br>- 単載時の安定パターン生成に極めて強い<br>- 積み順の整合性が自明 | - 異種高さ・異種寸法の混載時に空間利用率が低下<br>- 嵌合沈み込みの個別追従に工夫が必要 | **◎ (単載・TP同高層に最適)** |
-| **B. 3D Extreme Points (EP) / EMS 法** | 箱を配置するごとに生じる極値点（Extreme Points）や最大空き直方体（EMS）を管理し、Greedy/Best-Fitで配置。 | - 異種寸法の混載に柔軟対応<br>- 任意の直方体充填に対応 | - 単純なEP法は嵌合沈み込み（Zの食い込み）を考慮できない<br>- 短辺800〜1000mm等の大域境界制約の制御が難しい | **◯ (2D/3D配置の核として拡張採用)** |
+| **B. 3D Extreme Points (EP) / EMS 法** | 箱を配置するごとに生じる極値点（Extreme Points）や最大空き直方体（EMS）を管理し、Greedy/Best-Fitで配置。 | - 異種寸法の混載に柔軟対応<br>- 任意の直方体充填に対応 | - 単純なEP法は嵌合沈み込み（Zの食い込み）を考慮できない<br>- 長辺800mm以上1360mm未満・短辺800mm以上1100mm未満等の大域境界制約の制御が難しい | **◯ (2D/3D配置の核として拡張採用)** |
 | **C. モジュールブロックパッキング法 (Block Building)** | 同一・倍数関係にある箱を事前結合して「スーパーブロック」を構成し、それをパレットに配置。 | - TP規格のモジュール性（335/503/670）と完全一致<br>- 非TPコラム積み制約を自然に吸収 | - ブロック生成ロジックの設計が必要 | **◎ (本プロジェクトの最重要コア)** |
 | **D. ギロチンカット法 (Guillotine / MaxRects)** | 2D/3D空間を平面で直交分割しながら箱を割り当てる方式。 | - 空間の重なり判定が高速<br>- ロボットの取り出しパスを確保しやすい | - 嵌合による跨ぎ積み（インターロッキング）の表現が困難 | **△ (補助的な2D分割に限定)** |
 | **E. 厳密解法 (MIP / CP: 混合整数計画・制約プログラミング)** | ソルバー（SCIP/OR-Tools/Gurobi）を用いて数理モデルを解く。 | - 最適解を保証可能<br>- 複雑な論理制約の記述が容易 | - 計算時間が膨大（実用パレタイズでタイムアウトリスク）<br>- 嵌合Zモデルの定式化が非線形化しやすい | **× (プロトタイプの速度・保守性に不向き)** |
@@ -211,11 +217,11 @@ graph TD
 
 #### (2) 単載パターンの制約検証と選定
 生成された各候補パターンについて：
-1. 長辺幅 $X_{span} < 1360\text{ mm}$ かつ 短辺幅 $800\text{ mm} \le Y_{span} \le 1000\text{ mm}$ をチェック。
+1. 長辺幅 $800\text{ mm} \le X_{span} < 1360\text{ mm}$ かつ 短辺幅 $800\text{ mm} \le Y_{span} < 1100\text{ mm}$ をチェック。
 2. 合格したパターンのうち、1層あたりの箱数 $K$ が最大のものを選択。
 3. パレット中心へのセンタリング（オフセット配置）:
    $$x_{offset} = \frac{1200 - X_{span}}{2}, \quad y_{offset} = \frac{1000 - Y_{span}}{2}$$
-   （※ $y_{offset} \ge 0$ かつ $y_{offset} + Y_{span} \le 1000$ であること）
+    （幅の合否は $Y_{span}$ で判定し、短辺側のオーバーハングを禁止しない。）
 4. 段数 $N_{max} = \lfloor (1200 - d) / (H - d) \rfloor$ を積載。各層のZ座標は $z_k = k \times (H - d)$。
 
 ---
@@ -263,8 +269,8 @@ flowchart TD
 - 箱/ブロック $B$（寸法 $W \times L \times H$）を点 $(x, y, z)$ に配置した際、新たに生成される候補点：
   $$EP_{new} = \{ (x + W, y, z), (x, y + L, z), (x, y, z + H - d) \}$$
 - **配置可能条件 (Feasibility Criteria)**:
-  1. $x + W \le 1360$（長辺オーバーハング許容枠内）
-  2. $y + L \le 1000$（短辺オーバーハング厳禁）
+    1. 配置後の荷姿全体の長辺スパンが $1360\text{ mm}$ 未満
+    2. 配置後の荷姿全体の短辺スパンが $1100\text{ mm}$ 未満（短辺オーバーハングを許容）
   3. $z + H \le 1200$（最大高さ制約）
   4. 既存配置箱との幾何干渉なし（嵌合深さ $d$ を除く）
   5. 支持面条件の充足（パレット面 $z=0$ または下段上面に安定支持）
@@ -296,8 +302,8 @@ $$S_{tp\_bonus} = \begin{cases} 50.0 & (\text{完全嵌合モジュール段積�
 
 #### 4. 荷姿境界ペナルティ $P_{edge}$ (長辺・短辺制約)
 - **短辺幅不足ペナルティ**: 短辺方向の荷姿全体幅が $800\text{ mm}$ 未満になりそうな孤立配置を抑制。
-- **長辺はみ出し超過ペナルティ**: $x + W > 1360\text{ mm}$ または $x < -80\text{ mm}$ の場合 $\infty$。
-- **短辺はみ出しペナルティ**: $y + L > 1000\text{ mm}$ または $y < 0$ の場合 $\infty$。
+- **長辺荷姿幅ペナルティ**: 長辺方向の荷姿スパンが $800\text{ mm}$ 未満または $1360\text{ mm}$ 以上の場合 $\infty$。
+- **短辺荷姿幅ペナルティ**: 短辺方向の荷姿スパンが $800\text{ mm}$ 未満または $1100\text{ mm}$ 以上の場合 $\infty$。
 
 ---
 
@@ -369,9 +375,10 @@ class PalletSpec:
     width: float = 1200.0       # mm (X軸 長辺)
     length: float = 1000.0      # mm (Y軸 短辺)
     max_height: float = 1200.0  # mm (Z軸 最大積載高)
+    min_x_span: float = 800.0   # mm (長辺荷姿最小幅: >=800mm)
     max_x_span: float = 1360.0  # mm (長辺荷姿許容上限: <1360mm)
     min_y_span: float = 800.0   # mm (短辺荷姿最小幅: >=800mm)
-    max_y_span: float = 1000.0  # mm (短辺荷姿最大幅: <=1000mm, オーバーハング禁止)
+    max_y_span: float = 1100.0  # mm (短辺荷姿最大幅: <1100mm)
 ```
 
 ---
@@ -393,10 +400,10 @@ def palletize_single(box: BoxSpec, pallet: PalletSpec) -> List[PlacedBox]:
         x_span = pattern.width_span
         y_span = pattern.length_span
         
-        if x_span >= pallet.max_x_span:
-            continue  # 長辺超過
-        if not (pallet.min_y_span <= y_span <= pallet.max_y_span):
-            continue  # 短辺制約違反 (オーバーハング or 800mm未満)
+        if not (pallet.min_x_span <= x_span < pallet.max_x_span):
+            continue  # 長辺制約違反
+        if not (pallet.min_y_span <= y_span < pallet.max_y_span):
+            continue  # 短辺制約違反
             
         # 段数の計算 (fitting_depth 考慮)
         layers = calculate_max_layers(box.height, box.fitting_depth, pallet.max_height)
@@ -476,7 +483,7 @@ def palletize_mixed(box_list: List[BoxSpec], pallet: PalletSpec) -> List[PlacedB
             # Extreme Points の更新
             update_extreme_points(extreme_points, newly_placed)
             
-    # 3. 荷姿全体の短辺安定幅チェック (800mm <= Y_span <= 1000mm)
+    # 3. 荷姿全体の短辺幅チェック (800mm <= Y_span < 1100mm)
     validate_and_adjust_overall_spans(placed_boxes, pallet)
     
     # 4. 積み順 (order) の付番
@@ -511,8 +518,8 @@ def solve_box_z_coordinate(placed_boxes: List[PlacedBox], box: BoxSpec, x: float
 | Supervisor チェック項目 | 合格基準 | アルゴリズムによる事前保証ロジック |
 | :--- | :--- | :--- |
 | **積載高さ** | $\le 1200\text{ mm}$ | `calculate_max_layers` および配置判定時の $Z + H \le 1200$ ガード |
-| **長辺寸法** | $X_{span} < 1360\text{ mm}$ | パターン生成およびEP配置時の $x + w < 1360$ 境界フィルター |
-| **短辺寸法** | $800\text{ mm} \le Y_{span} \le 1000\text{ mm}$ | 短辺オーバーハング $y+l \le 1000$ 厳格禁止 ＆ 最小幅 $800\text{mm}$ 未満パターンの足切り |
+| **長辺寸法** | $800\text{ mm} \le X_{span} < 1360\text{ mm}$ | 荷姿スパンが許容範囲外となる候補を除外 |
+| **短辺寸法** | $800\text{ mm} \le Y_{span} < 1100\text{ mm}$ | 荷姿スパンが許容範囲外となる候補を除外 |
 | **重なり・干渉** | 3D貫通なし（嵌合部除く） | AABB干渉判定＋Z方向嵌合許容マージン計算 |
 | **嵌合・段積み整合性** | TPモジュール嵌合 / 非TP同箱コラム | 箱の事前クラスタリング（非TPの異種積み上げをアルゴリズム構造上で排除） |
 | **支持面チェック** | 空中浮きなし | `check_support_surface` による底面接地面積 $100\%$ 検証 |

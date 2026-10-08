@@ -1,6 +1,6 @@
 {
   "name": "boundary_min_short_side",
-  "description": "短辺方向が800mm以上1000mm以下の制約を満たしているかを検証するテスト",
+  "description": "短辺方向が800mm以上1100mm未満の制約を満たしているかを検証するテスト",
   "pallet": {
     "width": 1200.0,
     "length": 1000.0,

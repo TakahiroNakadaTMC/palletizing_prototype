@@ -15,6 +15,8 @@ from collections import Counter
 from typing import List, Dict, Tuple, Optional, Any
 from algorithm_programmer.models import BoxSpec, PlacedBox, PalletSpec, PalletizeResult
 
+CORNER_HEIGHT_TOLERANCE_MM = 3.0
+
 def calculate_max_layers(height: float, fitting_depth: float, max_height: float) -> int:
     """嵌合沈み込みを考慮した最大積載段数を算出"""
     if height <= 0 or max_height < height:
@@ -154,7 +156,7 @@ class Palletizer:
             x_span = pattern["x_span"]
             y_span = pattern["y_span"]
 
-            if x_span >= self.pallet.max_x_span:
+            if not (self.pallet.min_x_span <= x_span < self.pallet.max_x_span):
                 continue
             if not (self.pallet.min_y_span <= y_span < self.pallet.max_y_span):
                 continue
@@ -906,7 +908,8 @@ class Palletizer:
         max_corner_top = max(top_c1, top_c2, top_c3, top_c4)
         overall_top = max(pb.top_z for pb in placed_boxes)
 
-        if abs(max_corner_top - min_corner_top) <= 1.0 and abs(overall_top - max_corner_top) <= 1.0:
+        if (abs(max_corner_top - min_corner_top) <= CORNER_HEIGHT_TOLERANCE_MM and
+            abs(overall_top - max_corner_top) <= CORNER_HEIGHT_TOLERANCE_MM):
             return placed_boxes, unplaced_boxes
 
         target_level = min_corner_top
@@ -914,7 +917,7 @@ class Palletizer:
         removed_count: Dict[str, int] = {}
 
         for pb in placed_boxes:
-            if pb.top_z <= target_level + 1.0:
+            if pb.top_z <= target_level + CORNER_HEIGHT_TOLERANCE_MM:
                 leveled_boxes.append(pb)
             else:
                 removed_count[pb.box_id] = removed_count.get(pb.box_id, 0) + 1
@@ -986,6 +989,8 @@ class Palletizer:
         violations = []
         if max_z > self.pallet.max_height + 1e-4:
             violations.append(f"Max height exceeded: {max_z:.1f}mm > {self.pallet.max_height}mm")
+        if x_span < self.pallet.min_x_span - 1e-4:
+            violations.append(f"Long side span too small: {x_span:.1f}mm < {self.pallet.min_x_span}mm")
         if x_span >= self.pallet.max_x_span:
             violations.append(f"Long side span exceeded: {x_span:.1f}mm >= {self.pallet.max_x_span}mm")
         if y_span >= self.pallet.max_y_span:
@@ -1005,7 +1010,10 @@ class Palletizer:
             t2 = max(b.top_z for b in c2)
             t3 = max(b.top_z for b in c3)
             t4 = max(b.top_z for b in c4)
-            if not (abs(t1 - max_z) <= 1.0 and abs(t2 - max_z) <= 1.0 and abs(t3 - max_z) <= 1.0 and abs(t4 - max_z) <= 1.0):
+            if not (abs(t1 - max_z) <= CORNER_HEIGHT_TOLERANCE_MM and
+                    abs(t2 - max_z) <= CORNER_HEIGHT_TOLERANCE_MM and
+                    abs(t3 - max_z) <= CORNER_HEIGHT_TOLERANCE_MM and
+                    abs(t4 - max_z) <= CORNER_HEIGHT_TOLERANCE_MM):
                 violations.append(f"Top 4-corners height mismatch: C1={t1:.1f}, C2={t2:.1f}, C3={t3:.1f}, C4={t4:.1f} (Max={max_z:.1f})")
 
         return {
