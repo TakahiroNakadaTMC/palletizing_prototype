@@ -143,6 +143,7 @@ class PalletSpec:
     max_x_span: float = 1360.0    # mm (長辺荷姿許容上限: <1360mm)
     min_y_span: float = 800.0     # mm (短辺荷姿最小幅: >=800mm)
     max_y_span: float = 1100.0    # mm (短辺荷姿最大幅: <1100mm)
+    max_small_edge_overhang_mm: float = 30.0
 
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> "PalletSpec":
@@ -153,7 +154,8 @@ class PalletSpec:
             min_x_span=float(d.get("min_x_span", 800.0)),
             max_x_span=float(d.get("max_x_span", 1360.0)),
             min_y_span=float(d.get("min_y_span", 800.0)),
-            max_y_span=float(d.get("max_y_span", 1100.0))
+            max_y_span=float(d.get("max_y_span", 1100.0)),
+            max_small_edge_overhang_mm=float(d.get("max_small_edge_overhang_mm", 30.0))
         )
 
 @dataclass

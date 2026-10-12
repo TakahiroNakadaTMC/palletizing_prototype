@@ -89,6 +89,9 @@
 - `width` (float): パレット幅 [mm]
 - `length` (float): パレット奥行き [mm]
 - `max_height` (float): 最大積載高さ（パレット上面からの高さ） [mm]
+- `max_small_edge_overhang_mm` (float, 任意): 最下段の335 mm以下の底面辺に適用する片側はみ出し上限 [mm]。既定値は30 mmで、30 mm以上は禁止。
+
+配置結果の箱・蓋外形を囲む外接矩形は、各方向でパレット中心に合わせます（中心誤差0.01 mm以内）。
 
 ### (3) パレタイズ結果データ仕様 (`palletize_result`)
 配置される各箱のリスト：

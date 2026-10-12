@@ -28,6 +28,8 @@ MIN_X_SPAN = 800.0         # mm (長辺荷姿最小幅: >=800mm)
 MAX_X_SPAN = 1360.0        # mm (長辺荷姿許容上限: <1360mm)
 MIN_Y_SPAN = 800.0         # mm (短辺荷姿最小幅: >=800mm)
 MAX_Y_SPAN = 1100.0        # mm (短辺荷姿許容上限: <1100mm)
+SMALL_EDGE_MAX_LENGTH = 335.0
+DEFAULT_SMALL_EDGE_OVERHANG_LIMIT = 30.0
 MIN_SUPPORT_RATIO = 0.85   # 底面支持面積比率の下限 (85%)
 CORNER_HEIGHT_TOLERANCE = 3.0  # mm (最高層四隅高さの許容誤差)
 EPS = 1e-3                 # 浮動小数点誤差マージン
@@ -126,6 +128,13 @@ class PalletizeValidator:
         y_span = max_y - min_y
 
         max_z = max(b["position"]["z"] + b["dimensions"]["height"] for b in boxes)
+        pallet_data = data.get("pallet", {})
+        pallet_width = float(pallet_data.get("width", 1200.0))
+        pallet_length = float(pallet_data.get("length", 1000.0))
+        small_edge_overhang_limit = float(pallet_data.get(
+            "max_small_edge_overhang_mm", DEFAULT_SMALL_EDGE_OVERHANG_LIMIT
+        ))
+        bottom_z = min(float(b["position"]["z"]) for b in boxes)
 
         # (1) 最大積載高
         if max_z > MAX_HEIGHT + EPS:
@@ -142,6 +151,34 @@ class PalletizeValidator:
             violations.append(f"短辺荷姿幅不足: {y_span:.1f}mm < {MIN_Y_SPAN}mm (安定性不足)")
         if y_span >= MAX_Y_SPAN:
             violations.append(f"短辺荷姿幅超過: {y_span:.1f}mm >= {MAX_Y_SPAN}mm (短辺オーバーハング許容枠超過)")
+
+        center_x = (min_x + max_x) / 2.0
+        center_y = (min_y + max_y) / 2.0
+        if (abs(center_x - pallet_width / 2.0) > 0.01 or
+                abs(center_y - pallet_length / 2.0) > 0.01):
+            violations.append(
+                f"荷姿センタリング違反: 中心 ({center_x:.2f}, {center_y:.2f})mm, "
+                f"パレット中心 ({pallet_width / 2.0:.2f}, {pallet_length / 2.0:.2f})mm"
+            )
+
+        for box, bounds in zip(boxes, footprint_bounds):
+            if float(box["position"]["z"]) > bottom_z + EPS:
+                continue
+            dimensions = box["dimensions"]
+            x_overhang = max(0.0, -bounds[0], bounds[2] - pallet_width)
+            y_overhang = max(0.0, -bounds[1], bounds[3] - pallet_length)
+            if float(dimensions["width"]) <= SMALL_EDGE_MAX_LENGTH:
+                if x_overhang >= small_edge_overhang_limit - EPS:
+                    violations.append(
+                        f"最下段小辺はみ出し違反: Order #{box['order']} ({box['box_id']}) "
+                        f"X方向 {x_overhang:.1f}mm >= {small_edge_overhang_limit:.1f}mm"
+                    )
+            if float(dimensions["length"]) <= SMALL_EDGE_MAX_LENGTH:
+                if y_overhang >= small_edge_overhang_limit - EPS:
+                    violations.append(
+                        f"最下段小辺はみ出し違反: Order #{box['order']} ({box['box_id']}) "
+                        f"Y方向 {y_overhang:.1f}mm >= {small_edge_overhang_limit:.1f}mm"
+                    )
 
         # -------------------------------------------------------------
         # 2. 各箱の幾何・回転・天地固定・嵌合寸法の検証

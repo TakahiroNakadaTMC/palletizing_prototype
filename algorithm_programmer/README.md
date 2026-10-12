@@ -2,7 +2,7 @@
 
 **文書番号:** AP-DOC-2026-001  
 **作成日:** 2026-08-19  
-**最終更新日:** 2026-09-23（混載エンジン MSP-EPハイブリッド化・下段オーバーサイズ制約追加）  
+**最終更新日:** 2026-10-12（最下段小辺はみ出し制約追加）
 **担当エージェント:** `algorithm-programmer`  
 **対象読者:** `orchestrator`, `tester`, `visualizer`, `supervisor`  
 
@@ -32,6 +32,7 @@ algorithm_programmer/
    - 0度/90度グリッドおよびスプリット（レンガ）分割パターンを自動生成・比較。
   - 長辺荷姿幅 $800\text{mm} \le X_{span} < 1360\text{mm}$、短辺荷姿幅 $800\text{mm} \le Y_{span} < 1100\text{mm}$ の境界フィルタリング。
    - パレット中央への自動センタリングオフセット計算。
+  - 最下段箱の回転後底面辺が335 mm以下の場合、蓋を含む外形の片側はみ出しを `PalletSpec.max_small_edge_overhang_mm` 未満に制限（既定30 mm）。
    - 勘合深さ `fitting_depth` を考慮した最大段数・Z座標計算。
    - 偶数/奇数段の反転によるインターロッキング（荷崩れ防止）。
 
@@ -49,6 +50,7 @@ algorithm_programmer/
      （Module-Aware Strip Packing）。
    - **Phase C - Extreme Points補完 (`_ep_fill_layer`)**: 行詰めで埋まらない残渣スペースは、既配置箱の
      右端・下端から動的に候補座標を生成して追加充填。
+   - 最下段の335 mm以下の辺に対するパレット端はみ出し制限は、候補追加時と配置位置調整時に適用する。
    - **配置可否判定 (`_try_place_at`)**: 境界チェック・2D重なりチェックに加え、2層目以降は以下を必須とする:
      - 支持面判定: 直下段箱との接地面積比率85%以上（空中浮きの完全排除、`_support_ratio`）。
      - **下段オーバーサイズ制約 (`_is_oversized_support` / `_has_oversized_support`)**:
@@ -78,6 +80,10 @@ python3 algorithm_programmer/cli.py test_programmer/test_cases/mixed_tp_same_hei
 ---
 
 ## 5. 変更履歴
+
+### 2026-10-12
+- 最下段箱の回転後底面幅または奥行きが335 mm以下の場合、対応するパレット端から30 mm以上はみ出す配置を禁止。外嵌め蓋の突出も判定対象とし、上限は `PalletSpec.max_small_edge_overhang_mm` で変更可能。
+- 単載・混載アルゴリズムとSupervisorに制約を実装し、境界・回転・蓋・段位置テストおよび既存26ケースでPASSを確認。
 
 ### 2026-09-23
 - **混載エンジン全面書き換え（MSP-EPハイブリッド）**: `boundary_min_short_side`（TP-342×16+TP-332×16=32個）が
