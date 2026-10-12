@@ -16,6 +16,7 @@ from typing import List, Dict, Tuple, Optional, Any
 from algorithm_programmer.models import BoxSpec, PlacedBox, PalletSpec, PalletizeResult
 
 CORNER_HEIGHT_TOLERANCE_MM = 3.0
+TOP_CORNER_MARGIN_MM = 35.0
 SMALL_EDGE_MAX_LENGTH_MM = 335.0
 GEOMETRY_EPS_MM = 1e-3
 POSITION_SERIALIZATION_MARGIN_MM = 0.02
@@ -465,14 +466,40 @@ class Palletizer:
         while box_pool and current_z < self.pallet.max_height:
             # 高さが異なる箱が同一層に混在すると、層の上面が四隅で不揃いになる
             # ため、この層で使う代表高さ(layer_h)を選び、同じ高さの箱だけを
-            # この層のパッキング対象とする（異なる高さの箱は後続の層に持ち越す）。
-            layer_h = self._choose_layer_height(box_pool)
-            layer_pool = [b for b in box_pool if abs(b.height + b.lid_thickness - layer_h) <= 1.0]
-            carry_over_pool = [b for b in box_pool if abs(b.height + b.lid_thickness - layer_h) > 1.0]
+            # この層のパッキング対象とする。現在の高さに収まらない箱種は残し、
+            # 高さ制約を満たす箱種だけで代表高さを選ぶ。
+            height_eligible_pool = [
+                b for b in box_pool
+                if current_z + b.height + b.lid_thickness <= self.pallet.max_height + 1e-4
+            ]
+            if not height_eligible_pool:
+                stop_reason = "残箱を積むには最大積載高さを超えます"
+                break
 
-            layer_placed, remaining_layer_pool = self._pack_mixed_layer(
-                layer_pool, current_z, layer_idx, placed_boxes, envelope
-            )
+            layer_placed: List[PlacedBox] = []
+            remaining_layer_pool: List[BoxSpec] = []
+            selected_layer_pool: List[BoxSpec] = []
+            best_layer_score = None
+            candidate_pool = list(height_eligible_pool)
+            while candidate_pool:
+                layer_h = self._choose_layer_height(candidate_pool)
+                layer_pool = [b for b in candidate_pool if abs(b.height + b.lid_thickness - layer_h) <= 1.0]
+                candidate_placed, candidate_remaining = self._pack_mixed_layer(
+                    layer_pool, current_z, layer_idx, placed_boxes, envelope
+                )
+                if candidate_placed and max(pb.top_z for pb in candidate_placed) <= self.pallet.max_height + 1e-4:
+                    candidate_score = self._mixed_layer_candidate_score(placed_boxes, candidate_placed)
+                    if best_layer_score is None or candidate_score > best_layer_score:
+                        layer_placed = candidate_placed
+                        remaining_layer_pool = candidate_remaining
+                        selected_layer_pool = layer_pool
+                        best_layer_score = candidate_score
+                candidate_pool = [
+                    b for b in candidate_pool
+                    if abs(b.height + b.lid_thickness - layer_h) > 1.0
+                ]
+
+            carry_over_pool = [b for b in box_pool if b not in selected_layer_pool]
             if not layer_placed:
                 # これ以上どの箱も配置できない（デッドロック回避）
                 stop_reason = "配置スペース、支持率、箱の向きなどの制約を満たす場所がありません"
@@ -514,7 +541,7 @@ class Palletizer:
         `level_top_four_corners` の判定基準（最上段のみ四隅一致）を崩す
         原因になるため、層ごとに単一の高さグループのみを対象とする。
         代表高さは残数（総個数）が最も多い高さを優先し、同数の場合は
-        底面積が最大の箱の高さを優先する。
+        低い箱を優先して高さの余裕を残す。
         """
         counts: Dict[float, int] = {}
         best_area: Dict[float, float] = {}
@@ -525,7 +552,41 @@ class Palletizer:
             if area > best_area.get(h, -1.0):
                 best_area[h] = area
 
-        return max(counts.keys(), key=lambda h: (counts[h], best_area[h]))
+        return max(counts.keys(), key=lambda h: (counts[h], -h, best_area[h]))
+
+    def _mixed_layer_candidate_score(self, placed_boxes: List[PlacedBox],
+                                    candidate_boxes: List[PlacedBox]
+                                    ) -> Tuple[int, int, float, int, float]:
+        """四隅の高さを崩さず、配置数と次段の高さ余裕も考慮して層候補を評価する。"""
+        boxes = placed_boxes + candidate_boxes
+        min_x = min(box.footprint_min_x for box in boxes)
+        max_x = max(box.max_x for box in boxes)
+        min_y = min(box.footprint_min_y for box in boxes)
+        max_y = max(box.max_y for box in boxes)
+
+        corners = [
+            [box for box in boxes if box.footprint_min_x <= min_x + TOP_CORNER_MARGIN_MM and
+             box.footprint_min_y <= min_y + TOP_CORNER_MARGIN_MM],
+            [box for box in boxes if box.max_x >= max_x - TOP_CORNER_MARGIN_MM and
+             box.footprint_min_y <= min_y + TOP_CORNER_MARGIN_MM],
+            [box for box in boxes if box.footprint_min_x <= min_x + TOP_CORNER_MARGIN_MM and
+             box.max_y >= max_y - TOP_CORNER_MARGIN_MM],
+            [box for box in boxes if box.max_x >= max_x - TOP_CORNER_MARGIN_MM and
+             box.max_y >= max_y - TOP_CORNER_MARGIN_MM]
+        ]
+        corner_tops = [max(box.top_z for box in corner) for corner in corners if corner]
+        corner_coverage = len(corner_tops)
+        corner_spread = max(corner_tops) - min(corner_tops) if corner_coverage == 4 else float("inf")
+        balanced_corners = int(corner_coverage == 4 and corner_spread <= CORNER_HEIGHT_TOLERANCE_MM)
+        candidate_top = max(box.top_z for box in candidate_boxes)
+
+        return (
+            balanced_corners,
+            corner_coverage,
+            -corner_spread,
+            len(candidate_boxes),
+            -candidate_top
+        )
 
     def _determine_mixed_envelope(self, pool: List[BoxSpec]) -> Dict[str, float]:
         """投入箱構成から全層共通のX/Y作業エンベロープを決定する。
@@ -857,7 +918,7 @@ class Palletizer:
                           ) -> Tuple[List[PlacedBox], List[BoxSpec]]:
         """1つの層（レイヤー）をMSP-EPハイブリッドでパッキングする。
 
-        Phase A: 四隅アンカー配置（最上段の四隅高さ揃え要件を満たしやすくする）
+        Phase A: 廃止（四隅への先置きは行わない）
         Phase B: Module-Aware Strip Packing（行分割 + 行内FFD詰め）
         Phase C: Extreme Points法による残渣充填
         """
@@ -981,8 +1042,7 @@ class Palletizer:
         min_y = min(pb.footprint_min_y for pb in placed_boxes)
         max_y = max(pb.max_y for pb in placed_boxes)
 
-        margin = 35.0
-
+        margin = TOP_CORNER_MARGIN_MM
         c1_boxes = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.footprint_min_y <= min_y + margin]
         c2_boxes = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.footprint_min_y <= min_y + margin]
         c3_boxes = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.max_y >= max_y - margin]
@@ -1100,7 +1160,7 @@ class Palletizer:
             violations.append("Bottom-layer small-edge overhang is at least the configured limit")
 
         # 四隅高さチェック
-        margin = 35.0
+        margin = TOP_CORNER_MARGIN_MM
         c1 = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.footprint_min_y <= min_y + margin]
         c2 = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.footprint_min_y <= min_y + margin]
         c3 = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.max_y >= max_y - margin]
