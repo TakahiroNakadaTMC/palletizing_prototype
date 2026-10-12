@@ -103,6 +103,9 @@ scratch/
 tmp/
 temp/
 
+# Generated palletizing results (recreate with tester/run_tests.py)
+/tester/results/result_*.json
+
 # Individual generated HTML viewers in visualizer (keep index.html & viewer_template)
 visualizer/viewer_*.html
 visualizer/viewer.html
