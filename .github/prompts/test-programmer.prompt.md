@@ -35,7 +35,7 @@ argument-hint: 追加するテストパターンや特定シナリオの要件
 {
   "test_name": "single_tp131",
   "description": "TP-131コンテナを単一で積み上げるテスト",
-  "pallet": {"width": 1200, "length": 1000, "max_height": 1200},
+  "pallet": {"length": 1200, "width": 1000, "max_height": 1200},
   "box_list": [
     {"box_id": "TP-131", "count": 20}
   ]
@@ -56,7 +56,7 @@ argument-hint: 追加するテストパターンや特定シナリオの要件
 {
   "test_name": "mixed_tp_330_and_460",
   "description": "TP-330系とTP-460系の混載テスト",
-  "pallet": {"width": 1200, "length": 1000, "max_height": 1200},
+  "pallet": {"length": 1200, "width": 1000, "max_height": 1200},
   "box_list": [
     {"box_id": "TP-331", "count": 10},
     {"box_id": "TP-461", "count": 8}
@@ -78,7 +78,7 @@ argument-hint: 追加するテストパターンや特定シナリオの要件
 {
   "test_name": "boundary_height_limit",
   "description": "積載高さ1200mm上限付近のテスト",
-  "pallet": {"width": 1200, "length": 1000, "max_height": 1200},
+  "pallet": {"length": 1200, "width": 1000, "max_height": 1200},
   "box_list": [
     {"box_id": "TP-331", "count": 5},
     {"box_id": "TP-131", "count": 5}
@@ -143,7 +143,7 @@ def generate_test_cases(box_db_path, output_dir):
             test_case = {
                 'test_name': f"single_{box['id'].lower().replace('-', '')}",
                 'description': f"{box['name']} を単一で積み上げるテスト",
-                'pallet': {'width': 1200, 'length': 1000, 'max_height': 1200},
+                'pallet': {'length': 1200, 'width': 1000, 'max_height': 1200},
                 'box_list': [{'box_id': box['id'], 'count': 20}]
             }
             test_cases.append(test_case)
@@ -154,7 +154,7 @@ def generate_test_cases(box_db_path, output_dir):
         test_case = {
             'test_name': 'mixed_tp_different_heights',
             'description': 'TP規格箱複数型番の混載テスト',
-            'pallet': {'width': 1200, 'length': 1000, 'max_height': 1200},
+            'pallet': {'length': 1200, 'width': 1000, 'max_height': 1200},
             'box_list': [
                 {'box_id': tp_boxes[0]['id'], 'count': 10},
                 {'box_id': tp_boxes[1]['id'], 'count': 8}
@@ -186,8 +186,8 @@ if __name__ == '__main__':
   "test_name": "テスト名（小文字、アンダースコア区切り）",
   "description": "テストの説明",
   "pallet": {
-    "width": 1200,
-    "length": 1000,
+    "length": 1200,
+    "width": 1000,
     "max_height": 1200
   },
   "box_list": [

@@ -26,8 +26,8 @@
   "placed_box_count": 20,
   "placement_rate": 100.0,
   "pallet_dimensions": {
-    "width": 1200,
-    "length": 1000,
+    "length": 1200,
+    "width": 1000,
     "height": 540
   },
   "execution_time_ms": 250,

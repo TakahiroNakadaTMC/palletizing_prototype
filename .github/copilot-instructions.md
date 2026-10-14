@@ -152,6 +152,8 @@ tester/results/result_*.json
 
 ## Key Conventions & Patterns
 
+寸法の表示・記載順は **L × W × H（長手方向 × 短手方向 × 高さ）** に統一する。箱・蓋DBでは `length` がL、`width` がW。配置結果の `width` / `length` は回転後のX/Y寸法であり、表示時に長辺をL、短辺をWとする。既存キーと座標の意味、保存値は変更しない。
+
 ### Data Schemas
 
 #### Box Database (`box_research/box_db.json`)
@@ -163,8 +165,8 @@ tester/results/result_*.json
       "id": "TP-332",
       "name": "TP-330系 (335×335×195)",
       "type": "TP",
-      "width": 335,
       "length": 335,
+      "width": 335,
       "height": 195,
       "fitting_depth": 10,
       "rib_thickness": 22,
@@ -180,7 +182,7 @@ tester/results/result_*.json
 ```json
 {
   "test_name": "single_tp332",
-  "pallet": {"width": 1200, "length": 1000, "max_height": 1200},
+  "pallet": {"length": 1200, "width": 1000, "max_height": 1200},
   "input_boxes": [...],
   "result": [
     {

@@ -206,8 +206,8 @@
 
     // Pallet Default Specification
     const PALLET_SPEC = {
-      width: 1200.0,
-      length: 1000.0,
+      length: 1200.0,
+      width: 1000.0,
       max_height: 1200.0,
       max_x_span: 1360.0,
       min_y_span: 800.0,
@@ -298,7 +298,7 @@
       const lid = lidDB[lidId];
       const lidStatus = !lid ? '蓋情報不明' : lid.type === 'NONE'
         ? '蓋なし' : `蓋あり・${lid.fit_type || '嵌め方未設定'}`;
-      const dimensions = box.width ? `${box.width}x${box.length}x${box.height} mm` : '箱寸法不明';
+      const dimensions = box.width ? `${box.length}x${box.width}x${box.height} mm` : '箱寸法不明';
       const badge = document.createElement('span');
       badge.className = 'box-breakdown inline-flex flex-wrap items-center gap-1.5 max-w-full px-2 py-1 bg-indigo-50/80 border border-indigo-100 text-indigo-900 rounded-md text-xs font-mono break-words';
       badge.title = `${dimensions}\n蓋ID: ${lidId || '未指定'}\n蓋名称: ${lid?.name || '不明'}\n${lidStatus}`;
@@ -428,7 +428,7 @@
 
           <!-- Card Footer Actions -->
           <div class="flex items-center justify-between border-t border-slate-100 pt-3 mt-4 text-xs">
-            <span class="text-slate-400 text-[11px]">パレット: 1200x1000 (高1200)</span>
+            <span class="text-slate-400 text-[11px]">パレット (L×W): 1200×1000 (高1200)</span>
             <div class="flex items-center gap-1">
               <button type="button" data-name="${name}" class="edit-tc-btn p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition cursor-pointer" title="このテストケースの構成を変更">
                 <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -585,7 +585,7 @@
 
       const boxOptions = Object.keys(masterBoxDB).map(id => {
         const b = masterBoxDB[id];
-        return `<option value="${id}" ${id === selectedId ? 'selected' : ''}>${id} (${b.width}x${b.length}x${b.height}) - ${b.name}</option>`;
+        return `<option value="${id}" ${id === selectedId ? 'selected' : ''}>${id} (${b.length}x${b.width}x${b.height}) - ${b.name}</option>`;
       }).join('');
 
       // 選択された箱の対応蓋リストを取得

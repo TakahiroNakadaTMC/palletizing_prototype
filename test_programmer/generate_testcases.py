@@ -20,8 +20,8 @@ LID_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "lid_db.json")
 OUTPUT_DIR = os.path.join(BASE_DIR, "test_cases")
 
 PALLET_SPEC = {
-    "width": 1200.0,
-    "length": 1000.0,
+    "length": 1200.0,
+    "width": 1000.0,
     "max_height": 1200.0,
     "max_x_span": 1360.0,
     "min_y_span": 800.0,

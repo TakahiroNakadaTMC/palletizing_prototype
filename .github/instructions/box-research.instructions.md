@@ -4,13 +4,14 @@
 ### ロール・責務
 - パレタイズ対象となる箱（TP規格箱、オリコン、通い箱等）の寸法・勘合深さ・リブ仕様を調査・整理
 - 空箱を前提としたデータベース（box_db.json）を構築
-- 各箱型番の外寸（幅・奥行き・高さ）、嵌合深さ、リブ厚みを正確に把握
+- 各箱型番の外寸（L × W × H：長手方向・短手方向・高さ）、嵌合深さ、リブ厚みを正確に把握
+- 箱DBでは `length` を長手方向L、`width` を短手方向Wとして記録する
 
 ### 主要入力ファイル
 - `constraints/constraints.md` - 荷姿制約（参考）
 
 ### 主要出力ファイル
-- `box_research/box_db.json` - 箱仕様データベース（id, width, length, height, fitting_depth, rib_thickness, module_ratio等）
+- `box_research/box_db.json` - 箱仕様データベース（id, length, width, height, fitting_depth, rib_thickness, module_ratio等）
 - `box_research/README.md` - 調査サマリー・各箱の特徴説明
 
 ### データ形式（box_db.json）
@@ -20,8 +21,8 @@
   "id": "TP-331",
   "name": "通い箱 TP-330系列",
   "type": "TP",
-  "width": 330,
   "length": 330,
+  "width": 330,
   "height": 150,
   "fitting_depth": 35,
   "rib_thickness": 2.5,

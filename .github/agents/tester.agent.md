@@ -206,7 +206,7 @@ tester/
 ```json
 {
   "test_name": "single_tp131",
-  "pallet": {"width": 1200, "length": 1000, "max_height": 1200},
+    "pallet": {"length": 1200, "width": 1000, "max_height": 1200},
   "result": [
     {
       "order": 1,

@@ -139,8 +139,12 @@ class PalletizeValidator:
 
         max_z = max(b["position"]["z"] + b["dimensions"]["height"] for b in boxes)
         pallet_data = data.get("pallet", {})
-        pallet_width = float(pallet_data.get("width", 1200.0))
-        pallet_length = float(pallet_data.get("length", 1000.0))
+        pallet_length = float(pallet_data.get("length", 1200.0))
+        pallet_width = float(pallet_data.get("width", 1000.0))
+        if pallet_width > pallet_length:
+            pallet_length, pallet_width = pallet_width, pallet_length
+        pallet_x_length = pallet_length
+        pallet_y_width = pallet_width
         small_edge_overhang_limit = float(pallet_data.get(
             "max_small_edge_overhang_mm", DEFAULT_SMALL_EDGE_OVERHANG_LIMIT
         ))
@@ -164,19 +168,19 @@ class PalletizeValidator:
 
         center_x = (min_x + max_x) / 2.0
         center_y = (min_y + max_y) / 2.0
-        if (abs(center_x - pallet_width / 2.0) > 0.01 or
-                abs(center_y - pallet_length / 2.0) > 0.01):
+        if (abs(center_x - pallet_x_length / 2.0) > 0.01 or
+            abs(center_y - pallet_y_width / 2.0) > 0.01):
             violations.append(
                 f"荷姿センタリング違反: 中心 ({center_x:.2f}, {center_y:.2f})mm, "
-                f"パレット中心 ({pallet_width / 2.0:.2f}, {pallet_length / 2.0:.2f})mm"
+            f"パレット中心 ({pallet_x_length / 2.0:.2f}, {pallet_y_width / 2.0:.2f})mm"
             )
 
         for box, bounds in zip(boxes, footprint_bounds):
             if float(box["position"]["z"]) > bottom_z + EPS:
                 continue
             dimensions = box["dimensions"]
-            x_overhang = max(0.0, -bounds[0], bounds[2] - pallet_width)
-            y_overhang = max(0.0, -bounds[1], bounds[3] - pallet_length)
+            x_overhang = max(0.0, -bounds[0], bounds[2] - pallet_x_length)
+            y_overhang = max(0.0, -bounds[1], bounds[3] - pallet_y_width)
             if float(dimensions["width"]) <= SMALL_EDGE_MAX_LENGTH:
                 if x_overhang >= small_edge_overhang_limit - EPS:
                     violations.append(

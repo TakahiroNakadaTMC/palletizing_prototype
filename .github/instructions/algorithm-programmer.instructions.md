@@ -21,7 +21,7 @@
 ```json
 {
   "test_name": "test_case_name",
-  "pallet": {"width": 1200, "length": 1000, "max_height": 1200},
+  "pallet": {"length": 1200, "width": 1000, "max_height": 1200},
   "box_list": [
     {"box_id": "TP-331", "count": 20},
     {"box_id": "TP-460", "count": 15}

@@ -65,7 +65,7 @@ argument-hint: 次のタスクや確認したい進捗状況
 【要件】
 - TP規格コンテナ（TP-131, TP-331, TP-461等）の外寸・勘合深さ・リブ厚みを調査
 - 非TP規格箱の寸法も含める（存在する場合）
-- JSON形式で以下のフィールドを含むこと: id, name, type, width, length, height, fitting_depth, rib_thickness, module_ratio
+- JSON形式で以下のフィールドを含むこと: id, name, type, length, width, height, fitting_depth, rib_thickness, module_ratio
 【フォーマット】.github/copilot-instructions.md の 3.1 を参照
 ```
 

@@ -32,7 +32,7 @@ model: gpt-5.3-codex
 {
   "test_name": "single_tp131",
   "description": "TP-131コンテナを単一で積み上げるテスト",
-  "pallet": {"width": 1200, "length": 1000, "max_height": 1200},
+    "pallet": {"length": 1200, "width": 1000, "max_height": 1200},
   "box_list": [
     {"box_id": "TP-131", "count": 20}
   ]
@@ -47,7 +47,7 @@ model: gpt-5.3-codex
 ```json
 {
   "test_name": "single_tp131",
-  "pallet": {"width": 1200, "length": 1000, "max_height": 1200},
+    "pallet": {"length": 1200, "width": 1000, "max_height": 1200},
   "result": [
     {
       "order": 1,
@@ -273,9 +273,9 @@ class Box:
 
 class Pallet:
     """パレットモデル"""
-    def __init__(self, width=1200, length=1000, max_height=1200):
-        self.width = width
+    def __init__(self, length=1200, width=1000, max_height=1200):
         self.length = length
+        self.width = width
         self.max_height = max_height
 
 class PalletizationEngine:

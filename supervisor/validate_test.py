@@ -51,8 +51,8 @@ class SmallEdgeOverhangTests(unittest.TestCase):
         data = {
             "test_name": "small_edge_overhang_test",
             "pallet": {
-                "width": 1200.0,
-                "length": 1000.0,
+                "length": 1200.0,
+                "width": 1000.0,
                 "max_small_edge_overhang_mm": overhang_limit
             },
             "boxes": boxes

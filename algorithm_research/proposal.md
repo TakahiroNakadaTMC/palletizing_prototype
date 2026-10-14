@@ -349,8 +349,8 @@ from typing import List, Optional, Tuple, Dict
 @dataclass
 class BoxSpec:
     id: str
-    width: float          # mm (外寸幅)
-    length: float         # mm (外寸奥行き)
+    width: float          # mm (箱DB上の短手方向 W)
+    length: float         # mm (箱DB上の長手方向 L)
     height: float         # mm (外寸高さ)
     fitting_depth: float  # mm (嵌合沈み込み深さ)
     rib_thickness: float  # mm (リブ厚み)
@@ -363,8 +363,8 @@ class PlacedBox:
     x: float
     y: float
     z: float
-    width: float
-    length: float
+    width: float          # mm (配置後のX方向寸法。L/Wとは限らない)
+    length: float         # mm (配置後のY方向寸法。L/Wとは限らない)
     height: float
     fitting_depth: float
     rotation: int         # 0 or 90
@@ -372,8 +372,8 @@ class PlacedBox:
 
 @dataclass
 class PalletSpec:
-    width: float = 1200.0       # mm (X軸 長辺)
-    length: float = 1000.0      # mm (Y軸 短辺)
+    length: float = 1200.0      # mm (X軸 長辺 L)
+    width: float = 1000.0       # mm (Y軸 短辺 W)
     max_height: float = 1200.0  # mm (Z軸 最大積載高)
     min_x_span: float = 800.0   # mm (長辺荷姿最小幅: >=800mm)
     max_x_span: float = 1360.0  # mm (長辺荷姿許容上限: <1360mm)

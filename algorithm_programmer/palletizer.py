@@ -112,12 +112,12 @@ class Palletizer:
             if box.width <= SMALL_EDGE_MAX_LENGTH_MM:
                 min_x = box.footprint_min_x + shift_x
                 max_x = box.max_x + shift_x
-                if min_x < -limit or max_x > self.pallet.width + limit:
+                if min_x < -limit or max_x > self.pallet.length + limit:
                     return False
             if box.length <= SMALL_EDGE_MAX_LENGTH_MM:
                 min_y = box.footprint_min_y + shift_y
                 max_y = box.max_y + shift_y
-                if min_y < -limit or max_y > self.pallet.length + limit:
+                if min_y < -limit or max_y > self.pallet.width + limit:
                     return False
         return True
 
@@ -127,8 +127,8 @@ class Palletizer:
         min_y = min(box.footprint_min_y for box in boxes)
         max_y = max(box.max_y for box in boxes)
         return (
-            (self.pallet.width - (max_x - min_x)) / 2.0 - min_x,
-            (self.pallet.length - (max_y - min_y)) / 2.0 - min_y
+            (self.pallet.length - (max_x - min_x)) / 2.0 - min_x,
+            (self.pallet.width - (max_y - min_y)) / 2.0 - min_y
         )
 
     def _centered_small_edges_are_valid(self, boxes: List[PlacedBox]) -> bool:
@@ -290,8 +290,8 @@ class Palletizer:
             if not (self.pallet.min_y_span <= y_span < self.pallet.max_y_span):
                 continue
 
-            centered_x = (self.pallet.width - x_span) / 2.0
-            centered_y = (self.pallet.length - y_span) / 2.0
+            centered_x = (self.pallet.length - x_span) / 2.0
+            centered_y = (self.pallet.width - y_span) / 2.0
             if not self._small_edges_within_overhang(pattern_boxes, centered_x, centered_y):
                 continue
 
@@ -310,8 +310,8 @@ class Palletizer:
 
         x_span = best_pattern["x_span"]
         y_span = best_pattern["y_span"]
-        offset_x = (self.pallet.width - x_span) / 2.0
-        offset_y = (self.pallet.length - y_span) / 2.0
+        offset_x = (self.pallet.length - x_span) / 2.0
+        offset_y = (self.pallet.width - y_span) / 2.0
         unplaced_reason = "最大積載高さの上限に達しました"
 
         for layer in range(max_layers):
@@ -1199,8 +1199,8 @@ class Palletizer:
 
         center_x = (min_x + max_x) / 2.0
         center_y = (min_y + max_y) / 2.0
-        if (abs(center_x - self.pallet.width / 2.0) > 0.01 or
-                abs(center_y - self.pallet.length / 2.0) > 0.01):
+        if (abs(center_x - self.pallet.length / 2.0) > 0.01 or
+            abs(center_y - self.pallet.width / 2.0) > 0.01):
             violations.append("Palletized load is not centered on the pallet")
 
         if not self._small_edges_within_overhang(placed_boxes):

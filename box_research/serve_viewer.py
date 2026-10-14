@@ -24,6 +24,23 @@ LID_VIEWER_HTML_PATH = os.path.join(BASE_DIR, "lid_db_viewer.html")
 # グローバル変数：どのビューアを開くか指定
 VIEWER_MODE = "box"  # "box" または "lid"
 
+
+def _length_first_box_fields(box_db):
+    for box_id, box in box_db.items():
+        if not isinstance(box, dict) or "length" not in box or "width" not in box:
+            continue
+
+        ordered_box = {}
+        for key, value in box.items():
+            if key == "width":
+                continue
+            ordered_box[key] = value
+            if key == "length":
+                ordered_box["width"] = box["width"]
+        box_db[box_id] = ordered_box
+    return box_db
+
+
 class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
@@ -112,7 +129,7 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
             content_len = int(self.headers.get("Content-Length", 0))
             post_body = self.rfile.read(content_len)
             try:
-                data = json.loads(post_body.decode("utf-8"))
+                data = _length_first_box_fields(json.loads(post_body.decode("utf-8")))
                 with open(BOX_DB_PATH, "w", encoding="utf-8") as f:
                     json.dump(data, f, ensure_ascii=False, indent=2)
                 

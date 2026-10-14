@@ -55,10 +55,12 @@
 
 ※空箱を前提とするため重量パラメータは扱いません。
 
+寸法を人向けに表示・記載する順序は **L × W × H（長手方向 × 短手方向 × 高さ）** に統一します。箱・蓋DBでは `length` が長手方向L、`width` が短手方向Wです。パレタイズ結果の `width` / `length` は回転後のX/Y方向寸法なので、表示時は長い辺をL、短い辺をWとして扱います。既存キーや保存値の入れ替えは行いません。
+
 ### (1) 箱データベース仕様 (`box_db`)
 - `id` (string): 箱の識別子 / 型番
-- `width` (float): 外寸幅 [mm]
-- `length` (float): 外寸奥行き [mm]
+- `length` (float): 外寸長手方向 L [mm]
+- `width` (float): 外寸短手方向 W [mm]
 - `height` (float): 外寸高さ [mm]
 - `fitting_depth` (float): 上下に積み重ねたときの勘合（はまり込み）深さ [mm]
 - `rib_thickness` (float): 外周リブや底面リブの厚み [mm]
@@ -68,8 +70,8 @@
 - `id` (string): 蓋の識別子 / 蓋ID
 - `name` (string): 蓋の名称（例: 「クリア蓋 TP-330系用」）
 - `type` (string): 蓋の規格タイプ（例: `"TP"`, `"NONE"`, `"OTHER"`）
-- `width` (float): 蓋の幅 [mm]
-- `length` (float): 蓋の長さ [mm]
+- `width` (float): 蓋の短手方向 W [mm]
+- `length` (float): 蓋の長手方向 L [mm]
 - `thickness` (float): 蓋の厚み [mm]
 - `fit_type` (string): 蓋の嵌め方
   - `"外嵌め"`: 箱外側面と蓋で位置決め（最も一般的）
@@ -86,10 +88,12 @@
 - パレタイズ結果に蓋情報を付加（将来拡張）
 
 ### (2) パレット仕様 (`pallet_spec`)
-- `width` (float): パレット幅 [mm]
-- `length` (float): パレット奥行き [mm]
+- `length` (float): パレットX方向寸法 [mm]（標準パレットの長辺 L）
+- `width` (float): パレットY方向寸法 [mm]（標準パレットの短辺 W）
 - `max_height` (float): 最大積載高さ（パレット上面からの高さ） [mm]
 - `max_small_edge_overhang_mm` (float, 任意): 最下段の335 mm以下の底面辺に適用する片側はみ出し上限 [mm]。既定値は30 mmで、30 mm以上は禁止。
+
+パレットの寸法は `length` = X方向の長辺L、`width` = Y方向の短辺Wとします。テストケース、結果JSON、表示もこの意味に統一します。
 
 配置結果の箱・蓋外形を囲む外接矩形は、各方向でパレット中心に合わせます（中心誤差0.01 mm以内）。
 

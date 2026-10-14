@@ -33,8 +33,8 @@
   "test_name": "single_tp331_20pcs",
   "description": "TP-331型を20個投入",
   "pallet": {
-    "width": 1200,
-    "length": 1000,
+    "length": 1200,
+    "width": 1000,
     "max_height": 1200
   },
   "box_list": [

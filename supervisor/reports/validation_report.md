@@ -2,8 +2,8 @@
 
 **作成日:** 2026-08-19  
 **検証エージェント:** `supervisor`  
-**検証対象:** 採用済み結果JSON (26 件)
-**総合判定:** ✅ **全ケース合格 (100% PASS)**  
+**検証対象:** 採用済み結果JSON (27 件)
+**総合判定:** ❌ **制約違反あり (要修正)**
 
 ---
 
@@ -17,14 +17,15 @@
 | **`boundary_min_short_side_with_lids`** | ✅ PASS | 28 箱 | 1341 × 1005 × 604 | 58.4% | 制約項目全クリア |
 | **`boundary_overhang_long_side`** | ✅ PASS | 30 箱 | 1340 × 1005 × 1121 | 108.6% | 制約項目全クリア |
 | **`boundary_overhang_long_side_with_lids`** | ✅ PASS | 30 箱 | 1340 × 1005 × 1186 | 114.7% | 制約項目全クリア |
-| **`mixed_tp_different_heights`** | ✅ PASS | 12 箱 | 1173 × 1005 × 103 | 8.4% | 制約項目全クリア |
-| **`mixed_tp_different_heights_with_lids`** | ✅ PASS | 12 箱 | 1173 × 1005 × 116 | 9.5% | 制約項目全クリア |
-| **`mixed_tp_large_volume`** | ✅ PASS | 20 箱 | 1341 × 1005 × 936 | 90.4% | 制約項目全クリア |
-| **`mixed_tp_large_volume_with_lids`** | ✅ PASS | 20 箱 | 1341 × 1005 × 988 | 95.3% | 制約項目全クリア |
-| **`mixed_tp_modular_stack`** | ✅ PASS | 15 箱 | 1341 × 1005 × 565 | 54.7% | 制約項目全クリア |
-| **`mixed_tp_modular_stack_with_lids`** | ✅ PASS | 15 箱 | 1341 × 1005 × 604 | 58.4% | 制約項目全クリア |
+| **`mixed_tp_different_heights`** | ✅ PASS | 24 箱 | 1173 × 1005 × 566 | 48.0% | 制約項目全クリア |
+| **`mixed_tp_different_heights_with_lids`** | ✅ PASS | 24 箱 | 1173 × 1005 × 605 | 51.2% | 制約項目全クリア |
+| **`mixed_tp_large_volume`** | ✅ PASS | 53 箱 | 1341 × 1005 × 1029 | 101.9% | 制約項目全クリア |
+| **`mixed_tp_large_volume_with_lids`** | ✅ PASS | 53 箱 | 1341 × 1005 × 1120 | 110.4% | 制約項目全クリア |
+| **`mixed_tp_modular_stack`** | ✅ PASS | 41 箱 | 1006 × 1005 × 1121 | 82.9% | 制約項目全クリア |
+| **`mixed_tp_modular_stack_with_lids`** | ✅ PASS | 35 箱 | 1006 × 1005 × 1014 | 74.7% | 制約項目全クリア |
 | **`mixed_tp_same_height`** | ✅ PASS | 10 箱 | 1341 × 1005 × 380 | 36.5% | 制約項目全クリア |
 | **`mixed_tp_same_height_with_lids`** | ✅ PASS | 10 箱 | 1341 × 1005 × 406 | 38.9% | 制約項目全クリア |
+| **`outer_cover_test`** | ❌ FAIL | 16 箱 | 1024 × 690 × 618 | 30.3% | 短辺荷姿幅不足: 690.0mm < 800.0mm (安定性不足) |
 | **`single_tp131`** | ✅ PASS | 105 箱 | 1173 × 1008 × 483 | 42.3% | 制約項目全クリア |
 | **`single_tp131_with_lids`** | ✅ PASS | 105 箱 | 1173 × 1008 × 548 | 47.6% | 制約項目全クリア |
 | **`single_tp331`** | ✅ PASS | 72 箱 | 1005 × 1005 × 754 | 57.8% | 制約項目全クリア |

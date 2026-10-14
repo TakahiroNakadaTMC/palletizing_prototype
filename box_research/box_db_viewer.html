@@ -659,13 +659,24 @@
 };
 
     function normalizeDimensionOrder(db) {
-      Object.values(db).forEach(box => {
+      Object.entries(db).forEach(([boxId, box]) => {
         const width = Number(box.width);
         const length = Number(box.length);
         if (Number.isFinite(width) && Number.isFinite(length) && width > length) {
           box.width = length;
           box.length = width;
         }
+
+        if (!Object.prototype.hasOwnProperty.call(box, 'length') ||
+            !Object.prototype.hasOwnProperty.call(box, 'width')) return;
+
+        const orderedBox = {};
+        Object.entries(box).forEach(([key, value]) => {
+          if (key === 'width') return;
+          orderedBox[key] = value;
+          if (key === 'length') orderedBox.width = box.width;
+        });
+        db[boxId] = orderedBox;
       });
       return db;
     }
@@ -1080,8 +1091,8 @@
         id: id,
         name: name,
         type: type,
-        width: width,
         length: length,
+        width: width,
         height: height,
         fitting_depth: fittingDepth,
         rib_thickness: ribThickness,

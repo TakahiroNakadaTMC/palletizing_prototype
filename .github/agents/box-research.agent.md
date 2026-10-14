@@ -37,7 +37,7 @@ model: gpt-5.4-mini
 
 ### 2.3 調査データ項目
 各箱について、以下の情報を取得：
-- **外寸**: 幅(width) × 奥行き(length) × 高さ(height) [mm]
+- **外寸の表示順**: 長手方向(length) × 短手方向(width) × 高さ(height) [mm]（L × W × H）。DBキー名と計算上の意味は既存仕様を維持する。
 - **勘合深さ**: fitting_depth [mm]（上下に積み重ねた時の沈み込み量）
 - **リブ厚み**: rib_thickness [mm]（外周・底面リブの厚さ）
 - **モジュール情報**: TP規格の場合、module_ratio（例: "1x1", "2x1"）
@@ -62,8 +62,8 @@ box_research/
       "id": "TP-131",
       "name": "TP-131コンテナ",
       "type": "TP",
-      "width": 300,
       "length": 400,
+      "width": 300,
       "height": 165,
       "fitting_depth": 35,
       "rib_thickness": 2.5,
@@ -74,8 +74,8 @@ box_research/
       "id": "TP-331",
       "name": "TP-331コンテナ",
       "type": "TP",
-      "width": 600,
       "length": 400,
+      "width": 600,
       "height": 230,
       "fitting_depth": 50,
       "rib_thickness": 2.5,
@@ -86,8 +86,8 @@ box_research/
       "id": "TP-461",
       "name": "TP-461コンテナ",
       "type": "TP",
-      "width": 600,
       "length": 800,
+      "width": 600,
       "height": 230,
       "fitting_depth": 50,
       "rib_thickness": 2.5,
@@ -130,7 +130,7 @@ box_research/
 
 ### 4.3 検証チェック
 ```
-✓ すべての箱が id, name, type, width, length, height, fitting_depth, rib_thickness を持つ
+✓ すべての箱が id, name, type, length, width, height, fitting_depth, rib_thickness を持つ
 ✓ 数値フィールド（width 等）がすべて float型
 ✓ type が "TP" または "NON_TP"
 ✓ TP規格箱に module_ratio が存在

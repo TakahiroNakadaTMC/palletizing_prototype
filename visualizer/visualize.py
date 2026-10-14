@@ -357,8 +357,8 @@ def generate_html(result_data: dict, output_html_path: str):
     }}
 
     function project3D(x, y, z) {{
-      const pW = currentData?.pallet?.width || 1200;
-      const pL = currentData?.pallet?.length || 1000;
+      const pW = currentData?.pallet?.length || 1200;
+      const pL = currentData?.pallet?.width || 1000;
       const cx = x - pW / 2;
       const cy = y - pL / 2;
       const cz = z;
@@ -402,8 +402,8 @@ def generate_html(result_data: dict, output_html_path: str):
     }}
 
     function drawGridAndPallet() {{
-      const pW = currentData.pallet?.width || 1200;
-      const pL = currentData.pallet?.length || 1000;
+      const pW = currentData.pallet?.length || 1200;
+      const pL = currentData.pallet?.width || 1000;
       const pH = 144;
 
       ctx.strokeStyle = 'rgba(51, 65, 85, 0.4)';
@@ -431,8 +431,8 @@ def generate_html(result_data: dict, output_html_path: str):
     }}
 
     function drawGuides() {{
-      const pW = currentData.pallet?.width || 1200;
-      const pL = currentData.pallet?.length || 1000;
+      const pW = currentData.pallet?.length || 1200;
+      const pL = currentData.pallet?.width || 1000;
       const maxH = currentData.pallet?.max_height || 1200;
       const maxSpanX = currentData.pallet?.max_x_span || 1360;
       const maxSpanY = currentData.pallet?.max_y_span || 1100;
@@ -692,14 +692,14 @@ def generate_html(result_data: dict, output_html_path: str):
           </div>
           <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
             <div><span class="text-slate-500">配置座標:</span><br><span class="font-mono text-slate-200">(${{b.position.x}}, ${{b.position.y}}, ${{b.position.z}})</span></div>
-            <div><span class="text-slate-500">外寸寸法:</span><br><span class="font-mono text-slate-200">${{b.dimensions.width}}×${{b.dimensions.length}}×${{b.dimensions.height}}</span></div>
+            <div><span class="text-slate-500">外寸寸法 (L×W×H):</span><br><span class="font-mono text-slate-200">${{Math.max(b.dimensions.width, b.dimensions.length)}}×${{Math.min(b.dimensions.width, b.dimensions.length)}}×${{b.dimensions.height}}</span></div>
             <div><span class="text-slate-500">回転角:</span><br><span class="font-mono text-slate-200">${{b.rotation}}°</span></div>
             <div><span class="text-slate-500">勘合深さ:</span><br><span class="font-mono text-indigo-400 font-bold">${{b.fitting_depth}} mm</span></div>
           </div>
           <div class="pt-2 border-t border-slate-700 text-[11px]">
             <span class="text-slate-500">蓋:</span>
             <span class="font-mono text-amber-300 font-bold">${{b.lid_id || 'LID-010'}}</span>
-            <span class="text-slate-400">${{lid ? `${{lid.width}}×${{lid.length}}×${{lid.thickness}} mm` : 'なし'}}</span>
+            <span class="text-slate-400">${{lid ? `${{Math.max(lid.width, lid.length)}}×${{Math.min(lid.width, lid.length)}}×${{lid.thickness}} mm` : 'なし'}}</span>
             ${{b.lid_fit_type && b.lid_fit_type !== 'なし' ? `<span class="ml-1 text-slate-500">(${{b.lid_fit_type}})</span>` : ''}}
           </div>
           ${{b.supported_by && b.supported_by.length > 0 ? `

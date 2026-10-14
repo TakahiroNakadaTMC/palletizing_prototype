@@ -10,8 +10,8 @@ class BoxSpec:
     id: str
     name: str
     type: str                     # "TP" or "NON_TP"
-    width: float                  # mm (外寸幅)
-    length: float                 # mm (外寸奥行)
+    width: float                  # mm (箱DB上の短手方向 W)
+    length: float                 # mm (箱DB上の長手方向 L)
     height: float                 # mm (外寸高さ)
     fitting_depth: float          # mm (嵌合沈み込み深さ)
     rib_thickness: float          # mm (側面リブ厚み)
@@ -73,8 +73,8 @@ class PlacedBox:
     x: float                      # mm
     y: float                      # mm
     z: float                      # mm (底面Z座標)
-    width: float                  # mm (配置後のX方向寸法)
-    length: float                 # mm (配置後のY方向寸法)
+    width: float                  # mm (配置後のX方向寸法。L/Wとは限らない)
+    length: float                 # mm (配置後のY方向寸法。L/Wとは限らない)
     height: float                 # mm (配置後のZ方向寸法、蓋含む)
     fitting_depth: float          # mm
     rib_thickness: float          # mm
@@ -144,8 +144,8 @@ class PlacedBox:
 
 @dataclass
 class PalletSpec:
-    width: float = 1200.0         # mm (X軸 長辺)
-    length: float = 1000.0        # mm (Y軸 短辺)
+    length: float = 1200.0        # mm (X軸 長辺 L)
+    width: float = 1000.0         # mm (Y軸 短辺 W)
     max_height: float = 1200.0    # mm (Z軸 最大積載高)
     min_x_span: float = 800.0     # mm (長辺荷姿最小幅: >=800mm)
     max_x_span: float = 1360.0    # mm (長辺荷姿許容上限: <1360mm)
@@ -155,9 +155,13 @@ class PalletSpec:
 
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> "PalletSpec":
+        length = float(d.get("length", 1200.0))
+        width = float(d.get("width", 1000.0))
+        if width > length:
+            length, width = width, length
         return cls(
-            width=float(d.get("width", 1200.0)),
-            length=float(d.get("length", 1000.0)),
+            length=length,
+            width=width,
             max_height=float(d.get("max_height", 1200.0)),
             min_x_span=float(d.get("min_x_span", 800.0)),
             max_x_span=float(d.get("max_x_span", 1360.0)),
