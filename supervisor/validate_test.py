@@ -2,9 +2,12 @@ import json
 import os
 import tempfile
 import unittest
+from collections import Counter
+from dataclasses import replace
+from unittest.mock import mock_open, patch
 
 from algorithm_programmer.models import BoxSpec, PalletSpec
-from algorithm_programmer.palletizer import Palletizer
+from algorithm_programmer.palletizer import MIXED_LAYER_SEARCH_WIDTH, Palletizer
 from supervisor.validate import PalletizeValidator, load_box_db, load_lid_db
 
 
@@ -188,6 +191,88 @@ class SmallEdgeOverhangTests(unittest.TestCase):
         ], self.lid_db)
 
         self.assertFalse(any(box.box_id == "TP-332" and box.z > 0.0 for box in result.boxes))
+
+
+class MixedLayerSearchTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.box_db = load_box_db()
+        cls.lid_db = load_lid_db()
+        testcase_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                                     "test_programmer", "test_cases", "outer_cover_test.json")
+        with open(testcase_path, encoding="utf-8") as source:
+            cls.testcase = json.load(source)
+        cls.validator = PalletizeValidator(cls.box_db, cls.lid_db)
+
+    def make_engine_and_pool(self):
+        engine = Palletizer(
+            {box_id: BoxSpec.from_dict(data) for box_id, data in self.box_db.items()},
+            PalletSpec.from_dict(self.testcase["pallet"])
+        )
+        pool = []
+        for entry in self.testcase["box_list"]:
+            lid = self.lid_db[entry["lid_id"]]
+            spec = replace(engine.box_db[entry["box_id"]],
+                           lid_id=entry["lid_id"], lid_width=lid["width"],
+                           lid_length=lid["length"], lid_thickness=lid["thickness"],
+                           lid_fit_type=lid["fit_type"])
+            pool.extend([spec] * entry["count"])
+        return engine, pool
+
+    def test_mixed_depth_combination_is_retained(self):
+        engine, pool = self.make_engine_and_pool()
+        envelope = engine._determine_mixed_envelope(pool)
+        self.assertGreaterEqual(envelope["y_span"], 1034.0)
+        layer_pool = [box for box in pool if box.height + box.lid_thickness == 116.0]
+        candidates = engine._mixed_layer_candidates(layer_pool, 0.0, 0, [], envelope)
+        proposed = [boxes for boxes, _ in candidates
+                    if Counter(box.box_id for box in boxes) == {"TP-341": 4, "TP-331": 3}]
+        self.assertTrue(proposed)
+        for boxes in proposed:
+            self.assertAlmostEqual(max(box.max_x for box in boxes)
+                                   - min(box.footprint_min_x for box in boxes), 1032.0)
+            self.assertAlmostEqual(max(box.max_y for box in boxes)
+                                   - min(box.footprint_min_y for box in boxes), 1034.0)
+
+    def test_candidate_limit_inventory_and_input_are_preserved(self):
+        engine, pool = self.make_engine_and_pool()
+        layer_pool = [box for box in pool if box.height + box.lid_thickness == 116.0]
+        original_specs = [dict(box.__dict__) for box in layer_pool]
+        original_counts = Counter(box.pool_key for box in layer_pool)
+        candidates = engine._mixed_layer_candidates(
+            layer_pool, 0.0, 0, [], engine._determine_mixed_envelope(pool)
+        )
+        self.assertLessEqual(len(candidates), MIXED_LAYER_SEARCH_WIDTH)
+        for boxes, remaining in candidates:
+            counts = Counter((box.box_id, box.lid_id) for box in boxes)
+            counts.update(box.pool_key for box in remaining)
+            self.assertEqual(counts, original_counts)
+        self.assertEqual([dict(box.__dict__) for box in layer_pool], original_specs)
+
+    def test_tighter_depth_limit_is_respected(self):
+        engine, pool = self.make_engine_and_pool()
+        engine.pallet.max_y_span = 1034.0
+        envelope = engine._determine_mixed_envelope(pool)
+        layer_pool = [box for box in pool if box.height + box.lid_thickness == 116.0]
+        candidates = engine._mixed_layer_candidates(layer_pool, 0.0, 0, [], envelope)
+        self.assertTrue(candidates)
+        for boxes, _ in candidates:
+            self.assertLessEqual(max(box.max_y for box in boxes), envelope["y_span"] + 1e-3)
+
+    def test_final_layout_improves_loading_and_passes_validation(self):
+        engine, _ = self.make_engine_and_pool()
+        result = engine.run(self.testcase["name"], self.testcase["box_list"], self.lid_db)
+        self.assertGreaterEqual(len(result.boxes), 48)
+        bottom_ids = {box.box_id for box in result.boxes if box.z == 0.0}
+        self.assertEqual(bottom_ids, {"TP-331", "TP-341"})
+        counts = Counter(box.box_id for box in result.boxes)
+        for entry in result.unplaced_boxes:
+            counts[entry["box_id"]] += entry["count"]
+        self.assertEqual(counts, Counter({entry["box_id"]: entry["count"]
+                                         for entry in self.testcase["box_list"]}))
+        with patch("builtins.open", mock_open(read_data=json.dumps(result.to_dict()))):
+            validation = self.validator.validate_case("outer_cover_test.json")
+        self.assertTrue(validation["is_pass"], validation["violations"])
 
 
 if __name__ == "__main__":

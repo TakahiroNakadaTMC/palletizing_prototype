@@ -20,6 +20,7 @@ TOP_CORNER_MARGIN_MM = 35.0
 SMALL_EDGE_MAX_LENGTH_MM = 335.0
 GEOMETRY_EPS_MM = 1e-3
 POSITION_SERIALIZATION_MARGIN_MM = 0.02
+MIXED_LAYER_SEARCH_WIDTH = 16
 
 def calculate_max_layers(height: float, fitting_depth: float, max_height: float) -> int:
     """嵌合沈み込みを考慮した最大積載段数を算出"""
@@ -497,14 +498,58 @@ class Palletizer:
             reverse=True
         )
 
-        # 荷姿エンベロープ（全層で共通のX/Y作業範囲）を投入箱構成から一度だけ決定する。
-        # 同じエンベロープを全層で使い回すことで、上段箱が常に下段箱の上に
-        # 高い支持率で乗るようにし（構造的な支持率確保）、最上段の四隅も
-        # 揃いやすくする。
         envelope = self._determine_mixed_envelope(box_pool)
+        first_layers = []
+        candidate_pool = [box for box in box_pool
+                          if box.height + box.lid_thickness <= self.pallet.max_height + 1e-4]
+        while candidate_pool:
+            layer_height = self._choose_layer_height(candidate_pool)
+            height_pool = [box for box in candidate_pool
+                           if abs(box.height + box.lid_thickness - layer_height) <= 1.0]
+            first_layers.extend(candidate[0] for candidate in self._mixed_layer_candidates(
+                height_pool, 0.0, 0, [], envelope
+            ))
+            candidate_pool = [box for box in candidate_pool
+                              if abs(box.height + box.lid_thickness - layer_height) > 1.0]
+        first_layers.sort(key=lambda layer: self._mixed_layer_candidate_score([], layer), reverse=True)
 
-        current_z = 0.0
-        layer_idx = 0
+        layouts = [self._palletize_mixed_layout(box_pool, envelope)]
+        for first_layer in first_layers[:MIXED_LAYER_SEARCH_WIDTH]:
+            layouts.append(self._palletize_mixed_layout(box_pool, envelope, first_layer))
+
+        best_layout = layouts[0]
+        best_score = None
+        for placed, unplaced in layouts:
+            placed, unplaced = self.level_top_four_corners(placed, unplaced)
+            self._align_pallet_bounds(placed)
+            summary = self.calculate_summary(placed)
+            balanced = bool(placed) and self._mixed_layer_candidate_score([], placed)[0] == 1
+            score = (int(summary["is_valid"] and balanced), len(placed),
+                     -max((box.top_z for box in placed), default=0.0))
+            if best_score is None or score > best_score:
+                best_layout = placed, unplaced
+                best_score = score
+        return best_layout
+
+    def _palletize_mixed_layout(self, pool: List[BoxSpec], envelope: Dict[str, float],
+                                first_layer: Optional[List[PlacedBox]] = None
+                                ) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
+        """最下段候補を起点に上段まで配置し、残箱を記録する。"""
+        placed_boxes = [copy.copy(box) for box in first_layer] if first_layer else []
+        box_pool = list(pool)
+        if first_layer:
+            consumed = Counter((box.box_id, box.lid_id) for box in first_layer)
+            box_pool = []
+            for box in pool:
+                if consumed[box.pool_key] > 0:
+                    consumed[box.pool_key] -= 1
+                else:
+                    box_pool.append(box)
+
+        current_z = max(box.top_z for box in placed_boxes) - placed_boxes[0].fitting_depth if placed_boxes else 0.0
+        if placed_boxes and current_z <= 0.0:
+            current_z = max(box.top_z for box in placed_boxes)
+        layer_idx = 1 if placed_boxes else 0
         stop_reason = None
 
         while box_pool and current_z < self.pallet.max_height:
@@ -633,37 +678,10 @@ class Palletizer:
         )
 
     def _determine_mixed_envelope(self, pool: List[BoxSpec]) -> Dict[str, float]:
-        """投入箱構成から全層共通のX/Y作業エンベロープを決定する。
-
-        短辺方向 (Y) は、箱の代表寸法のうち短辺許容範囲 [min_y_span, max_y_span)
-        に収まる最小のモジュール単位を選び、その整数倍を採用する。
-        これにより異なる箱サイズが混在してもモジュール嵌合しやすい行分割が
-        可能になる。
-        """
-        dims = set()
-        for b in pool:
-            dims.add(round(b.footprint_width, 1))
-            dims.add(round(b.footprint_length, 1))
-
-        max_depth_allowed = self.pallet.max_y_span - 1.0
-        candidates = []
-        for d in sorted(dims):
-            if d <= 0 or d > max_depth_allowed:
-                continue
-            n = int(max_depth_allowed // d)
-            span = n * d
-            if self.pallet.min_y_span <= span < self.pallet.max_y_span:
-                candidates.append((d, span))
-
-        if candidates:
-            # 最も細かいモジュール単位（複数箱種を混在させやすい）を優先
-            _, best_span = min(candidates, key=lambda t: t[0])
-        else:
-            best_span = max_depth_allowed
-
+        """異なる箱寸法の行も組み合わせられる全層共通の探索範囲を返す。"""
         return {
             "x_span": self.pallet.max_x_span - 1.0,
-            "y_span": best_span
+            "y_span": self.pallet.max_y_span - 1.0
         }
 
     def _support_ratio(self, x: float, y: float, w: float, l: float,
@@ -767,7 +785,7 @@ class Palletizer:
     def _fill_row_intervals(self, intervals: List[Tuple[float, float]], row_y: float,
                            row_depth: float, pool_counter: Counter, id_to_spec: Dict[Tuple[str, str], BoxSpec],
                            base_z: float, layer_idx: int, lower_boxes: List[PlacedBox],
-                           tol: float = 1e-3) -> List[PlacedBox]:
+                           tol: float = 1e-3, row_match_tol: float = 1.0) -> List[PlacedBox]:
         """行の空きX区間を、在庫箱でFFD(First-Fit-Decreasing)的に詰める"""
         placed: List[PlacedBox] = []
 
@@ -776,7 +794,7 @@ class Palletizer:
             progress = True
             while progress and x_cursor < e - tol:
                 progress = False
-                eligible = self._eligible_row_items(pool_counter, id_to_spec, row_depth)
+                eligible = self._eligible_row_items(pool_counter, id_to_spec, row_depth, row_match_tol)
                 for spec, rot, w, l in eligible:
                     if pool_counter[spec.pool_key] <= 0:
                         continue
@@ -963,6 +981,98 @@ class Palletizer:
     def _pack_mixed_layer(self, pool: List[BoxSpec], base_z: float, layer_idx: int,
                           placed_so_far: List[PlacedBox], envelope: Dict[str, float]
                           ) -> Tuple[List[PlacedBox], List[BoxSpec]]:
+        """複数の行組み合わせから四隅と配置数が良い層を選ぶ。"""
+        candidates = self._mixed_layer_candidates(pool, base_z, layer_idx, placed_so_far, envelope)
+        if not candidates:
+            return [], pool
+        return max(candidates, key=lambda candidate: self._mixed_layer_candidate_score(
+            placed_so_far, candidate[0]
+        ))
+
+    def _mixed_layer_candidates(self, pool: List[BoxSpec], base_z: float, layer_idx: int,
+                                placed_so_far: List[PlacedBox], envelope: Dict[str, float]
+                                ) -> List[Tuple[List[PlacedBox], List[BoxSpec]]]:
+        """残数を候補ごとに管理し、上限付きで行の組み合わせを探索する。"""
+        if not pool:
+            return []
+        max_row_width = envelope["x_span"]
+        max_total_depth = envelope["y_span"]
+        id_to_spec = {box.pool_key: box for box in pool}
+        lower_boxes = [box for box in placed_so_far if box.z < base_z - 1e-3] if layer_idx > 0 else []
+        states = [(0.0, [], Counter(box.pool_key for box in pool))]
+        completed = []
+
+        while states:
+            next_states = []
+            for row_y, layer_boxes, remaining in states:
+                depths = sorted({
+                    round(dimension, 1)
+                    for pool_key, count in remaining.items() if count > 0
+                    for dimension in (id_to_spec[pool_key].footprint_width,
+                                      id_to_spec[pool_key].footprint_length)
+                    if 0 < dimension <= max_total_depth - row_y + 1e-3
+                }, reverse=True)
+                extended = False
+                for depth in depths:
+                    trial_counter = Counter(remaining)
+                    intervals = self._row_free_intervals(layer_boxes, row_y, depth, max_row_width)
+                    row_boxes = self._fill_row_intervals(
+                        intervals, row_y, depth, trial_counter, id_to_spec,
+                        base_z, layer_idx, lower_boxes, row_match_tol=GEOMETRY_EPS_MM
+                    )
+                    if not row_boxes:
+                        continue
+                    self._reorder_small_edges_within_rows(row_boxes)
+                    candidate_boxes = layer_boxes + row_boxes
+                    next_y = max(box.max_y for box in candidate_boxes)
+                    if next_y > max_total_depth + 1e-3:
+                        continue
+                    if not self._centered_small_edges_are_valid(candidate_boxes):
+                        continue
+                    next_states.append((next_y, candidate_boxes, trial_counter))
+                    extended = True
+                if not extended and layer_boxes:
+                    completed.append((row_y, layer_boxes, remaining))
+            next_states.sort(key=lambda state: (
+                len(state[1]),
+                sum((box.max_x - box.footprint_min_x) * (box.max_y - box.footprint_min_y)
+                    for box in state[1]),
+                -state[0]
+            ), reverse=True)
+            states = next_states[:MIXED_LAYER_SEARCH_WIDTH]
+
+        candidates = []
+        signatures = set()
+        greedy_boxes, greedy_remaining = self._pack_mixed_layer_greedy(
+            pool, base_z, layer_idx, placed_so_far, envelope
+        )
+        if greedy_boxes:
+            candidates.append((greedy_boxes, greedy_remaining))
+        for _, layer_boxes, remaining in completed:
+            layer_boxes = [copy.copy(box) for box in layer_boxes]
+            trial_counter = Counter(remaining)
+            self._ep_fill_layer(layer_boxes, trial_counter, id_to_spec, max_row_width,
+                                max_total_depth, base_z, layer_idx, lower_boxes)
+            signature = tuple((box.box_id, box.lid_id, box.x, box.y, box.rotation)
+                              for box in layer_boxes)
+            if signature in signatures:
+                continue
+            signatures.add(signature)
+            counts_left = Counter(trial_counter)
+            remaining_pool = []
+            for box in pool:
+                if counts_left[box.pool_key] > 0:
+                    remaining_pool.append(box)
+                    counts_left[box.pool_key] -= 1
+            candidates.append((layer_boxes, remaining_pool))
+        candidates.sort(key=lambda candidate: self._mixed_layer_candidate_score(
+            placed_so_far, candidate[0]
+        ), reverse=True)
+        return candidates[:MIXED_LAYER_SEARCH_WIDTH]
+
+    def _pack_mixed_layer_greedy(self, pool: List[BoxSpec], base_z: float, layer_idx: int,
+                                 placed_so_far: List[PlacedBox], envelope: Dict[str, float]
+                                 ) -> Tuple[List[PlacedBox], List[BoxSpec]]:
         """1つの層（レイヤー）をMSP-EPハイブリッドでパッキングする。
 
         Phase A: 廃止（四隅への先置きは行わない）
