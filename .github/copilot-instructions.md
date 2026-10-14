@@ -256,6 +256,7 @@ tester/results/result_*.json
 - **Z座標計算**: `Z_upper = Z_lower + H_lower - fitting_depth`
 - **嵌合沈み込み許容**: 3D衝突判定時に `fitting_depth` ぶん沈み込んだ状態を正常と判定
 - **TP規格**: モジュール倍数関係にある箱同士の嵌合段積みが許可される
+- **外嵌め蓋付きTP箱**: 積み方の判定上はコラム積み限定。同一蓋IDで箱・蓋外形の位置と範囲を揃えれば、箱IDが異なるTP箱同士も積載可能
 - **非TP規格**: 同一型番のコラム積みのみ許可
 
 #### 📏 Boundary Rules

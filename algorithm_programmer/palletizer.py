@@ -59,6 +59,50 @@ class Palletizer:
         self.box_db = box_db
         self.pallet = pallet or PalletSpec()
 
+    def _column_stack_group(self, box_id: str, lid_id: str,
+                            lid_fit_type: str) -> Optional[Tuple[str, str]]:
+        spec = self.box_db.get(box_id)
+        if spec is None:
+            return None
+        if spec.is_tp and lid_fit_type == "外嵌め":
+            return "TP_EXTERNAL_LID", lid_id
+        if not spec.is_tp:
+            return "NON_TP", box_id
+        return None
+
+    def _column_stack_is_allowed(self, upper_spec: BoxSpec, upper: PlacedBox,
+                                 lower_boxes: List[PlacedBox]) -> bool:
+        upper_group = upper_spec.column_stack_group
+        lower_direct = [
+            lower for lower in lower_boxes
+            if abs(lower.top_z - (upper.z + upper.fitting_depth)) <= 1.0
+            and intersects_2d(
+                upper.footprint_min_x, upper.footprint_min_y,
+                upper.max_x - upper.footprint_min_x, upper.max_y - upper.footprint_min_y,
+                lower.footprint_min_x, lower.footprint_min_y,
+                lower.max_x - lower.footprint_min_x, lower.max_y - lower.footprint_min_y
+            )
+        ]
+        lower_groups = {
+            id(lower): self._column_stack_group(
+                lower.box_id, lower.lid_id, lower.lid_fit_type
+            )
+            for lower in lower_direct
+        }
+
+        if upper_group is None:
+            return not any(group is not None for group in lower_groups.values())
+
+        matching = [
+            lower for lower in lower_direct
+            if lower_groups[id(lower)] == upper_group
+            and abs(lower.footprint_min_x - upper.footprint_min_x) <= 0.01
+            and abs(lower.footprint_min_y - upper.footprint_min_y) <= 0.01
+            and abs(lower.max_x - upper.max_x) <= 0.01
+            and abs(lower.max_y - upper.max_y) <= 0.01
+        ]
+        return len(matching) == 1 and len(lower_direct) == 1
+
     def _small_edges_within_overhang(self, boxes: List[PlacedBox], shift_x: float = 0.0,
                                      shift_y: float = 0.0) -> bool:
         limit = self.pallet.max_small_edge_overhang_mm - POSITION_SERIALIZATION_MARGIN_MM
@@ -741,12 +785,6 @@ class Palletizer:
                     box_w, box_l = (spec.width, spec.length) if rot == 0 else (spec.length, spec.width)
                     box_x = x_cursor + (w - box_w) / 2.0
                     box_y = row_y + (l - box_l) / 2.0
-                    if layer_idx > 0:
-                        ratio = self._support_ratio(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes)
-                        if ratio < 0.85 - 1e-6:
-                            continue
-                        if self._has_oversized_support(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes):
-                            continue
                     lid_w, lid_l = (spec.lid_width, spec.lid_length) if rot == 0 else (spec.lid_length, spec.lid_width)
                     pb = PlacedBox(
                         order=0,
@@ -767,6 +805,14 @@ class Palletizer:
                         lid_length=lid_l,
                         lid_fit_type=spec.lid_fit_type
                     )
+                    if layer_idx > 0:
+                        ratio = self._support_ratio(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes)
+                        if ratio < 0.85 - 1e-6:
+                            continue
+                        if self._has_oversized_support(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes):
+                            continue
+                        if not self._column_stack_is_allowed(spec, pb, lower_boxes):
+                            continue
                     placed.append(pb)
                     pool_counter[spec.pool_key] -= 1
                     x_cursor += w
@@ -796,13 +842,6 @@ class Palletizer:
 
         box_x = x + (footprint_w - box_w) / 2.0
         box_y = y + (footprint_l - box_l) / 2.0
-        if layer_idx > 0:
-            ratio = self._support_ratio(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes)
-            if ratio < 0.85 - 1e-6:
-                return None
-            if self._has_oversized_support(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes):
-                return None
-
         placed_box = PlacedBox(
             order=0,
             box_id=spec.id,
@@ -822,6 +861,14 @@ class Palletizer:
             lid_length=lid_l,
             lid_fit_type=spec.lid_fit_type
         )
+        if layer_idx > 0:
+            ratio = self._support_ratio(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes)
+            if ratio < 0.85 - 1e-6:
+                return None
+            if self._has_oversized_support(box_x, box_y, box_w, box_l, base_z, spec.fitting_depth, lower_boxes):
+                return None
+            if not self._column_stack_is_allowed(spec, placed_box, lower_boxes):
+                return None
         return placed_box
 
     # [廃止] Anchor Corners メソッド

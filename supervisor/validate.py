@@ -94,6 +94,16 @@ class PalletizeValidator:
             "LID-010"
         )
 
+    def _column_stack_group(self, box: Dict[str, Any]) -> Any:
+        master = self.box_db.get(box.get("box_id"), {})
+        lid_id = box.get("lid_id", self.default_lid_id)
+        lid = self.lid_db.get(lid_id, {})
+        if master.get("type") == "TP" and lid.get("fit_type") == "外嵌め":
+            return "TP_EXTERNAL_LID", lid_id
+        if master and master.get("type") != "TP":
+            return "NON_TP", box.get("box_id")
+        return None
+
     def validate_case(self, result_path: str) -> Dict[str, Any]:
         with open(result_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -205,6 +215,8 @@ class PalletizeValidator:
                 compatible_lids = master.get("compatible_lids", [])
                 if lid.get("type") != "NONE" and compatible_lids and lid_id not in compatible_lids:
                     violations.append(f"Order #{order} ({bid}): 蓋 '{lid_id}' は箱と互換性がありません")
+                if b.get("lid_fit_type", "なし") != lid.get("fit_type", "なし"):
+                    violations.append(f"Order #{order} ({bid}): 蓋の嵌め方が蓋DBと一致しません")
                 if abs(lid_thickness - float(lid.get("thickness", 0.0))) > EPS:
                     violations.append(f"Order #{order} ({bid}): 蓋厚データが蓋DBと一致しません")
                 output_lid_dims = b.get("lid_dimensions", {})
@@ -292,6 +304,27 @@ class PalletizeValidator:
             if not supporting_boxes:
                 violations.append(f"Order #{order} ({b['box_id']}): 空中浮遊エラー（下段に支持する箱が存在しません）")
                 continue
+
+            upper_group = self._column_stack_group(b)
+            lower_column_boxes = [
+                sb for sb in supporting_boxes
+                if self._column_stack_group(sb) is not None
+            ]
+            aligned_column_supports = [
+                sb for sb in supporting_boxes
+                if self._column_stack_group(sb) == upper_group
+                and all(abs(a - c) <= 0.01 for a, c in zip(get_footprint_bounds(sb), get_footprint_bounds(b)))
+            ]
+            column_rule_failed = (
+                (upper_group is None and bool(lower_column_boxes))
+                or (upper_group is not None and
+                    (len(supporting_boxes) != 1 or len(aligned_column_supports) != 1))
+            )
+            if column_rule_failed:
+                violations.append(
+                    f"Order #{order} ({b['box_id']}): コラム積み条件違反 "
+                    "（対象群・蓋ID・箱蓋外形位置を揃えた単一支持が必要です）"
+                )
 
             # 支持面積比率の算出
             total_support_area = 0.0

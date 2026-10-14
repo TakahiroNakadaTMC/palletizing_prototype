@@ -43,6 +43,14 @@ class BoxSpec:
     def is_tp(self) -> bool:
         return self.type == "TP"
 
+    @property
+    def column_stack_group(self) -> Optional[Tuple[str, str]]:
+        if self.is_tp and self.lid_fit_type == "外嵌め":
+            return "TP_EXTERNAL_LID", self.lid_id
+        if not self.is_tp:
+            return "NON_TP", self.id
+        return None
+
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> "BoxSpec":
         return cls(
