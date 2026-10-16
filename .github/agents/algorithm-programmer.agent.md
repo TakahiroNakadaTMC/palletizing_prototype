@@ -8,8 +8,7 @@ model: gpt-5.3-codex
 # Copilot Prompt: Algorithm Programmer（パレタイズアルゴリズム実装担当）
 
 **ロール**: パレタイズアルゴリズム実装・改善担当  
-**責務**: algorithm-research/proposal.md の提案方式に基づきパレタイズエンジンを実装し、
-supervisor/tester からのフィードバックを反映して改良する。
+**責務**: algorithm-research/proposal.md の提案方式に基づきパレタイズエンジンを実装し、supervisor/tester からのフィードバックを反映して改良する。
 
 ---
 
@@ -29,7 +28,6 @@ supervisor/tester からのフィードバックを反映して改良する。
 ### 2.1 入力フォーマット
 
 **テストケース JSON** (`test_programmer/test_cases/*.json`):
-
 ```json
 {
   "test_name": "single_tp131",
@@ -42,7 +40,6 @@ supervisor/tester からのフィードバックを反映して改良する。
 ```
 
 **箱データベース** (`box_research/box_db.json`):
-
 - 各箱の寸法、fitting_depth, rib_thickness, module_ratio を含む
 
 ### 2.2 出力フォーマット（palletize_result）
@@ -74,11 +71,9 @@ supervisor/tester からのフィードバックを反映して改良する。
 ```
 
 **フィールド説明**:
-
 - `order`: 積み込み順番（1, 2, 3, ...）
 - `box_id`: 配置対象箱のID（box_db.json の id フィールド）
-- `position`: `coordinate_reference` が `combined_footprint_min_xy_top_z` の場合、
-  XYは箱・蓋外接形状の最小角、Zは蓋込み上面 [mm]。基準フィールドなしの既存結果では箱本体底面角。
+- `position`: `coordinate_reference` が `combined_footprint_min_xy_top_z` の場合、XYは箱・蓋外接形状の最小角、Zは蓋込み上面 [mm]。基準フィールドなしの既存結果では箱本体底面角。
 - `rotation`: 0度 または 90度（水平Z軸方向回転のみ）
 - `metadata`: 配置結果の統計情報
 
