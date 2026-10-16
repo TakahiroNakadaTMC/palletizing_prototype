@@ -8,7 +8,13 @@ from unittest.mock import mock_open, patch
 
 from algorithm_programmer.models import BoxSpec, PalletSpec
 from algorithm_programmer.palletizer import MIXED_LAYER_SEARCH_WIDTH, Palletizer
-from supervisor.validate import PalletizeValidator, load_box_db, load_lid_db
+from supervisor.validate import (
+    PalletizeValidator,
+    get_footprint_bounds,
+    load_box_db,
+    load_lid_db,
+    normalize_result_coordinates
+)
 
 
 class SmallEdgeOverhangTests(unittest.TestCase):
@@ -117,6 +123,32 @@ class SmallEdgeOverhangTests(unittest.TestCase):
 
         self.assertTrue(any("荷姿センタリング違反" in v for v in result["violations"]))
 
+    def test_new_position_reference_normalizes_xy_and_top_z(self):
+        data = {
+            "coordinate_reference": "combined_footprint_min_xy_top_z",
+            "boxes": [{
+                "position": {"x": 10.0, "y": 20.0, "z": 120.0},
+                "dimensions": {"width": 100.0, "length": 200.0, "height": 120.0},
+                "lid_dimensions": {"width": 140.0, "length": 220.0},
+                "lid_fit_type": "外嵌め"
+            }]
+        }
+
+        normalized = normalize_result_coordinates(data)
+        box = normalized["boxes"][0]
+
+        self.assertEqual(box["position"], {"x": 30.0, "y": 30.0, "z": 0.0})
+        self.assertEqual(get_footprint_bounds(box), (10.0, 20.0, 150.0, 240.0))
+        self.assertEqual(data["boxes"][0]["position"]["z"], 120.0)
+
+    def test_legacy_position_reference_is_left_unchanged(self):
+        data = {"boxes": [{"position": {"x": 10.0, "y": 20.0, "z": 30.0}}]}
+
+        normalized = normalize_result_coordinates(data)
+
+        self.assertIs(normalized, data)
+        self.assertEqual(normalized["boxes"][0]["position"]["z"], 30.0)
+
     def test_external_lid_tp_column_allows_different_box_ids(self):
         result = self.validate_boxes([
             {"box_id": "TP-331", "x": 428.0, "y": 328.0,
@@ -157,6 +189,14 @@ class SmallEdgeOverhangTests(unittest.TestCase):
             {"box_id": "TP-331", "count": 9, "lid_id": "サンボックス330フタ"},
             {"box_id": "TP-332", "count": 9, "lid_id": "サンボックス330フタ"}
         ], self.lid_db)
+
+        result_data = result.to_dict()
+        self.assertEqual(result_data["coordinate_reference"],
+                         "combined_footprint_min_xy_top_z")
+        for placed_box, result_box in zip(result.boxes, result_data["boxes"]):
+            self.assertAlmostEqual(result_box["position"]["x"], placed_box.footprint_min_x)
+            self.assertAlmostEqual(result_box["position"]["y"], placed_box.footprint_min_y)
+            self.assertAlmostEqual(result_box["position"]["z"], placed_box.top_z)
 
         bottom_boxes = [box for box in result.boxes if box.box_id == "TP-331"]
         upper_boxes = [box for box in result.boxes if box.box_id == "TP-332" and box.z > 0.0]

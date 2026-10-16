@@ -1,14 +1,16 @@
 # パレタイズアルゴリズム試作 (GitHub Copilot 版)
 
 > **プロジェクト移行**: Antigravity 2.0 → GitHub Copilot
-> 
+>
 > このプロジェクトは、GitHub Copilot を活用したループエンジニアリングで箱パレタイズ（嵌合・リブ付き空箱のパレタイズ）アルゴリズムおよび評価基盤を開発する。
 
 ---
 
 ## 1. GitHub Copilot エージェント構成と役割
 
-以下の8ロールでループエンジニアリングを実行します。各ロールのサブエージェント定義は `.github/agents/` ディレクトリに `*.agent.md` として格納されており、GitHub Copilot CLI から `/agent <name>` または `@<name>` で直接呼び出せます。
+以下の8ロールでループエンジニアリングを実行します。
+各ロールのサブエージェント定義は `.github/agents/` ディレクトリに `*.agent.md` として格納されており、
+GitHub Copilot CLI から `/agent <name>` または `@<name>` で直接呼び出せます。
 
 - **`orchestrator`** (`.github/agents/orchestrator.agent.md`)
   - 全体進行管理。ユーザーからの要望に応じて計画を立案し、作業指示を行い、プロジェクト全体の進行と整合性を管理する。
@@ -42,12 +44,19 @@
 本リポジトリには目的の異なる3種類のロール定義ファイル群があり、混同しないよう役割を整理する。
 
 | ディレクトリ | 位置づけ | 読み込まれ方 |
-|---|---|---|
-| **`.github/agents/*.agent.md`** | **サブエージェント定義（正）**。各ロールの詳細な行動指針を保持する | GitHub Copilot CLI から `/agent <name>` や `@<name>` で明示的に呼び出す |
-| `.github/instructions/*.instructions.md` | 各ロールの要約版。常時参照させたい要点のみを保持する | GitHub Copilot CLI/VS Code に**常時自動読込**される（呼び出し不要） |
-| `.github/prompts/*.prompt.md` | VS Code Copilot Chat 用スラッシュコマンド（`.github/agents/` と同内容＋`argument-hint`） | VS Code で `/<name>` を入力して呼び出す（VS Code利用時の代替手段） |
+| --- | --- | --- |
+| **`.github/agents/*.agent.md`** | **詳細な行動指針（正）** | CLIで明示呼出 |
+| `.github/instructions/*.instructions.md` | 常時参照する要点の要約 | CLI/VS Codeに常時自動読込 |
+| `.github/prompts/*.prompt.md` | VS Code Chat用 | スラッシュコマンドで呼出 |
 
-ロールの行動指針を変更・追加する場合は **`.github/agents/*.agent.md` を正として更新**し、必要に応じて `.github/prompts/*.prompt.md`（VS Code用）と `.github/instructions/*.instructions.md`（常時読込の要約）にも反映する。
+エージェント定義はCLIの `/agent <name>` や `@<name>` で呼び出す。
+要約版のinstructionsは呼び出し不要で常時自動読込される。
+promptsはagentsと同内容に `argument-hint` を加えたVS Code利用時の代替手段で、
+`/<name>` を入力して呼び出す。
+
+ロールの行動指針を変更・追加する場合は **`.github/agents/*.agent.md` を正として更新**し、
+必要に応じて `.github/prompts/*.prompt.md`（VS Code用）と
+`.github/instructions/*.instructions.md`（常時読込の要約）にも反映する。
 
 ---
 
@@ -55,9 +64,13 @@
 
 ※空箱を前提とするため重量パラメータは扱いません。
 
-寸法を人向けに表示・記載する順序は **L × W × H（長手方向 × 短手方向 × 高さ）** に統一します。箱・蓋DBでは `length` が長手方向L、`width` が短手方向Wです。パレタイズ結果の `width` / `length` は回転後のX/Y方向寸法なので、表示時は長い辺をL、短い辺をWとして扱います。既存キーや保存値の入れ替えは行いません。
+寸法を人向けに表示・記載する順序は **L × W × H（長手方向 × 短手方向 × 高さ）** に統一します。
+箱・蓋DBでは `length` が長手方向L、`width` が短手方向Wです。
+パレタイズ結果の `width` / `length` は回転後のX/Y方向寸法なので、
+表示時は長い辺をL、短い辺をWとして扱います。既存キーや保存値の入れ替えは行いません。
 
 ### (1) 箱データベース仕様 (`box_db`)
+
 - `id` (string): 箱の識別子 / 型番
 - `length` (float): 外寸長手方向 L [mm]
 - `width` (float): 外寸短手方向 W [mm]
@@ -67,6 +80,7 @@
 - `compatible_lids` (array): 箱に対応する実蓋IDリスト（例: `["LID-001", "LID-002"]`）。無蓋は全箱共通の選択肢として扱い、この配列には含めない。
 
 ### (1.5) 蓋データベース仕様 (`lid_db`) **[NEW: Phase 2]**
+
 - `id` (string): 蓋の識別子 / 蓋ID
 - `name` (string): 蓋の名称（例: 「クリア蓋 TP-330系用」）
 - `type` (string): 蓋の規格タイプ（例: `"TP"`, `"NONE"`, `"OTHER"`）
@@ -81,6 +95,7 @@
 - `color` (string, 任意): 色名（例: `"黒"`, `"青"`, `"透明"`）。未設定は `""`、旧データの項目省略も可。蓋DB画面で編集・保存する仕様情報であり、配置計算・制約検証・3D描画には使用しない。
 
 **蓋DBの用途**:
+
 - 箱データ（`box_db`）の `compatible_lids` フィールドで箱と蓋の互換性を管理
 - テストケース生成時に蓋選択肢を提供
 - テストケース作成・編集画面の蓋選択肢に `fit_type`（外嵌め・内嵌め・なし）を表示。保存値は従来の `lid_id` を維持。
@@ -88,20 +103,27 @@
 - パレタイズ結果に蓋情報を付加（将来拡張）
 
 ### (2) パレット仕様 (`pallet_spec`)
+
 - `length` (float): パレットX方向寸法 [mm]（標準パレットの長辺 L）
 - `width` (float): パレットY方向寸法 [mm]（標準パレットの短辺 W）
 - `max_height` (float): 最大積載高さ（パレット上面からの高さ） [mm]
-- `max_small_edge_overhang_mm` (float, 任意): 最下段の335 mm以下の底面辺に適用する片側はみ出し上限 [mm]。既定値は30 mmで、30 mm以上は禁止。
+- `max_small_edge_overhang_mm` (float, 任意):
+  最下段の335 mm以下の底面辺に適用する片側はみ出し上限 [mm]。既定値は30 mmで、30 mm以上は禁止。
 
 パレットの寸法は `length` = X方向の長辺L、`width` = Y方向の短辺Wとします。テストケース、結果JSON、表示もこの意味に統一します。
 
 配置結果の箱・蓋外形を囲む外接矩形は、各方向でパレット中心に合わせます（中心誤差0.01 mm以内）。
 
 ### (3) パレタイズ結果データ仕様 (`palletize_result`)
+
 配置される各箱のリスト：
+
 - `order` (int): 積み込み順番（1, 2, 3, ...）
 - `box_id` (string): 配置対象の箱ID
-- `position`: 配置座標 `(x, y, z)` [mm]
+- `position`: `coordinate_reference` に従う配置座標 [mm]
+- `coordinate_reference`: `combined_footprint_min_xy_top_z` の場合、XYは箱・蓋外接形状の最小X・最小Y角、Zは蓋込み上面。フィールドなしの既存結果は従来の箱本体底面角。
+- `dimensions.width/length`: 回転後の箱本体のX/Y寸法。
+  `dimensions.height` は蓋厚込み。蓋寸法は `lid_dimensions` に別記。
 - `rotation`: 箱の回転向き `r` (例: 0度, 90度)
 
 ---
@@ -169,12 +191,14 @@ flowchart TD
 `.github/agents/*.agent.md` に定義されたサブエージェントは、CLI から以下のいずれかの方法で直接呼び出せます：
 
 1. **`/agent` コマンドで選択**
-   ```
+
+   ```text
    /agent orchestrator
    ```
 
 2. **`@<name>` によるメンション呼び出し**
-   ```
+
+   ```text
    @orchestrator [タスク説明]
    ```
 
@@ -183,18 +207,21 @@ flowchart TD
 VS Code の Copilot Chat で作業する場合は、`.github/prompts/*.prompt.md` をスラッシュコマンドとして利用できます：
 
 1. **スラッシュコマンド呼び出し** (推奨)
-   ```
+
+   ```text
    /orchestrator [タスク説明]
    ```
 
 2. **ファイル参照による呼び出し**
-   ```
+
+   ```text
    @codebase
    .github/prompts/orchestrator.prompt.md の指示に基づいて [タスク] を実行してください。
    ```
 
 3. **直接的な指示**
-   ```
+
+   ```text
    orchestrator として以下を実行してください：
    [タスク説明]
    ```
@@ -218,7 +245,7 @@ palletizing_prototype/feature/
 ├── README.md                  # 【このファイル】プロジェクト構成・GitHub Copilot 実行ガイド
 ├── .github/
 │   ├── copilot-instructions.md # GitHub Copilot グローバル指示書（v2.0）
-│   ├── agents/                # 【正】GitHub Copilot CLI サブエージェント定義（/agent, @<name> で呼び出し）
+│   ├── agents/                # 【正】CLIサブエージェント定義（/agent, @<name>）
 │   │   ├── orchestrator.agent.md
 │   │   ├── box-research.agent.md
 │   │   ├── algorithm-research.agent.md
@@ -291,7 +318,8 @@ palletizing_prototype/feature/
 - 途中の並べ方を最大16通り残し、最下段候補も最大16通り上段まで試して、四隅調整後の合否と最終箱数で選ぶ。
 - `outer_cover_test` は16箱・短辺寸法不足から48箱・合格に改善。全27ケースをメモリ上で検証し、配置数減少なし、合計1062箱から1258箱。
 - 計算時間の合計は約0.15秒から約3.4秒へ増加（環境依存）。探索数を限定しており、最適配置の保証はない。
-- 回帰テスト: `python -m unittest supervisor.validate_test -v`（15テスト合格）。詳細は [アルゴリズム説明](algorithm_programmer/README.md) を参照。
+- 回帰テスト: `python -m unittest supervisor.validate_test -v`（15テスト合格）。
+  詳細は [アルゴリズム説明](algorithm_programmer/README.md) を参照。
 - 保存結果は今回の `outer_cover_test` を更新。全件の結果ファイルと既存の検証レポートは、このメモリ上の検証では更新していない。
 
 ---

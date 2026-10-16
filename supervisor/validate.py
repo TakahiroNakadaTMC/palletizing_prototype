@@ -33,6 +33,7 @@ DEFAULT_SMALL_EDGE_OVERHANG_LIMIT = 30.0
 MIN_SUPPORT_RATIO = 0.85   # 底面支持面積比率の下限 (85%)
 CORNER_HEIGHT_TOLERANCE = 3.0  # mm (最高層四隅高さの許容誤差)
 EPS = 1e-3                 # 浮動小数点誤差マージン
+POSITION_REFERENCE = "combined_footprint_min_xy_top_z"
 
 def load_box_db() -> Dict[str, Any]:
     with open(BOX_DB_PATH, "r", encoding="utf-8") as f:
@@ -64,13 +65,42 @@ def get_footprint_bounds(box: Dict[str, Any]) -> Tuple[float, float, float, floa
     x, y = pos["x"], pos["y"]
     width, length = dims["width"], dims["length"]
 
-    if box.get("lid_fit_type") == "外嵌め":
+    if box.get("lid_fit_type") in ("外嵌め", "内嵌め"):
         width = max(width, lid_dims.get("width", 0.0))
         length = max(length, lid_dims.get("length", 0.0))
         x -= (width - dims["width"]) / 2.0
         y -= (length - dims["length"]) / 2.0
 
     return x, y, x + width, y + length
+
+
+def normalize_result_coordinates(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Convert the current result coordinate reference to legacy internal coordinates."""
+    if data.get("coordinate_reference") != POSITION_REFERENCE:
+        return data
+
+    normalized = dict(data)
+    normalized_boxes = []
+    for source_box in data.get("boxes", []):
+        box = dict(source_box)
+        position = dict(source_box["position"])
+        dimensions = source_box["dimensions"]
+        lid_dimensions = source_box.get("lid_dimensions", {})
+        if box.get("lid_fit_type") in ("外嵌め", "内嵌め"):
+            footprint_width = max(dimensions["width"], lid_dimensions.get("width", 0.0))
+            footprint_length = max(dimensions["length"], lid_dimensions.get("length", 0.0))
+        else:
+            footprint_width = dimensions["width"]
+            footprint_length = dimensions["length"]
+
+        position["x"] += (footprint_width - dimensions["width"]) / 2.0
+        position["y"] += (footprint_length - dimensions["length"]) / 2.0
+        position["z"] -= dimensions["height"]
+        box["position"] = position
+        normalized_boxes.append(box)
+
+    normalized["boxes"] = normalized_boxes
+    return normalized
 
 def intersects_2d_rect(x1, y1, w1, l1, x2, y2, w2, l2, eps=EPS):
     return not (x1 + w1 <= x2 + eps or x2 + w2 <= x1 + eps or
@@ -107,6 +137,7 @@ class PalletizeValidator:
     def validate_case(self, result_path: str) -> Dict[str, Any]:
         with open(result_path, "r", encoding="utf-8") as f:
             data = json.load(f)
+        data = normalize_result_coordinates(data)
 
         test_name = data.get("test_name", os.path.basename(result_path))
         boxes = data.get("boxes", [])

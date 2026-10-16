@@ -10,7 +10,9 @@
 
 ## 1. 概要
 
-本ディレクトリは、[`constraints/constraints.md`](file:///home/tmc1475337/Workspaces/palletizing_prototype/constraints/constraints.md) に定義された荷姿制約に基づき、パレタイズ結果が物理的・幾何学的にすべての制約を満たしているかを客観的・機械的にバリデーションし、検証レポートを発行するスーパーバイザー機能を管理します。
+本ディレクトリは、[荷姿制約](../constraints/constraints.md) に基づき、
+パレタイズ結果が物理的・幾何学的にすべての制約を満たしているかを客観的・機械的にバリデーションし、
+検証レポートを発行するスーパーバイザー機能を管理します。
 
 ---
 
@@ -26,6 +28,8 @@ supervisor/
 ---
 
 ## 3. 検証項目（バリデーション基準）
+
+結果JSONの `coordinate_reference` が `combined_footprint_min_xy_top_z` の場合、検証前にXYを箱本体基準へ復元し、上面Zから底面Zを求めます。フィールドのない既存結果は従来の底面基準として扱います。
 
 1. **最大積載高さ制約** ($\le 1200\text{ mm}$)
 2. **長辺荷姿スパン制約** ($800\text{ mm} \le X < 1360\text{ mm}$)
@@ -47,4 +51,6 @@ supervisor/
 ```bash
 python3 supervisor/validate.py
 ```
-実行すると、ターミナルに各ケースの合否サマリーが表示され、[`supervisor/reports/validation_report.md`](file:///home/tmc1475337/Workspaces/palletizing_prototype/supervisor/reports/validation_report.md) に詳細レポートが出力されます。
+
+実行すると、ターミナルに各ケースの合否サマリーが表示され、
+[検証レポート](reports/validation_report.md) に詳細レポートが出力されます。

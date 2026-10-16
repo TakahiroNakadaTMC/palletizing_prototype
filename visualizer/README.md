@@ -9,7 +9,9 @@
 
 ## 1. 概要
 
-本ディレクトリは、パレタイズアルゴリズムが出力した荷姿結果データ（配置座標、回転、積み順、支持関係）を Web ブラウザ上で直感的に確認・検証できる **Three.js ベースの3Dインタラクティブ可視化ツール** を提供します。
+本ディレクトリは、パレタイズアルゴリズムが出力した荷姿結果データ（配置座標、回転、積み順、支持関係）を
+Web ブラウザ上で直感的に確認・検証できる
+**Three.js ベースの3Dインタラクティブ可視化ツール** を提供します。
 
 ---
 
@@ -28,7 +30,8 @@ visualizer/
 ## 3. 主な機能と特徴
 
 1. **リアルタイム 3D レンダリング**:
-   - パレット（$1200 \times 1000 \times 144\text{ mm}$）およびガイドライン枠（最大積載高 $1200\text{ mm}$、長辺許容幅 $1360\text{ mm}$ 点線）の描画。
+   - パレット（$1200 \times 1000 \times 144\text{ mm}$）およびガイドライン枠
+     （最大積載高 $1200\text{ mm}$、長辺許容幅 $1360\text{ mm}$ 点線）の描画。
    - 箱型番ごとの自動カラーパレット色分け、エッジワイヤーフレーム強調。
    - 積み順番号と型番の 3D スプライトラベル表示。
 
@@ -41,7 +44,9 @@ visualizer/
    - ワンクリック視点切替（俯瞰 ISO、上面 Top、正面 Front、側面 Side）。
 
 4. **箱詳細インスペクタ**:
-   - 3D 空間上の任意の箱をクリックすると、型番、配置座標 $(X, Y, Z)$、外寸、回転角、勘合深さ、および **下段支持箱の Order 番号（`supported_by`）** を即座に表示。
+   - 3D 空間上の任意の箱をクリックすると、型番、配置座標 $(X, Y, Z)$、外寸、回転角、勘合深さ、
+     および **下段支持箱の Order 番号（`supported_by`）** を即座に表示。
+   - `coordinate_reference: "combined_footprint_min_xy_top_z"` の結果は、箱・蓋外接形状の最小XY角と蓋込み上面Zを表示し、描画内部では箱本体座標に変換する。基準情報のない旧結果は従来座標として表示する。
 5. **蓋の可視化**:
    - 蓋厚を箱本体の高さから分離し、蓋を黄系の薄いスラブとして描画。
    - 外嵌め蓋の幅・奥行きと箱中央位置を描画に反映し、箱をクリックすると蓋ID・寸法・厚さ・嵌め方を表示。
@@ -62,11 +67,14 @@ visualizer/
 ```bash
 python3 visualizer/serve_3d_viewer.py
 ```
+
 ブラウザで `http://localhost:8082` を開くと、`tester/results/` にある全テスト結果をプルダウンで切り替えて 3D 荷姿を確認できます。
 
 ### (2) スタンドアロン HTML の個別生成
 
 ```bash
-python3 visualizer/visualize.py tester/results/result_mixed_tp_same_height.json -o visualizer/viewer.html
+python3 visualizer/visualize.py \
+  tester/results/result_mixed_tp_same_height.json -o visualizer/viewer.html
 ```
+
 生成された `visualizer/viewer.html` をブラウザで直接開いて確認できます。

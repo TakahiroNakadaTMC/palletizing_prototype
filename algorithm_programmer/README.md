@@ -10,7 +10,8 @@
 
 ## 1. 概要
 
-本ディレクトリは、[`algorithm_research/proposal.md`](file:///home/tmc1475337/Workspaces/palletizing_prototype/algorithm_research/proposal.md) の提案方式および [`constraints/constraints.md`](file:///home/tmc1475337/Workspaces/palletizing_prototype/constraints/constraints.md) の荷姿制約に基づき実装されたパレタイズ計算エンジンを管理します。
+本ディレクトリは、[アルゴリズム提案](../algorithm_research/proposal.md) の提案方式および
+[荷姿制約](../constraints/constraints.md) に基づき実装されたパレタイズ計算エンジンを管理します。
 
 ---
 
@@ -30,9 +31,12 @@ algorithm_programmer/
 
 1. **単載エンジン (`palletize_single`)**:
    - 0度/90度グリッドおよびスプリット（レンガ）分割パターンを自動生成・比較。
-  - 長辺荷姿幅 $800\text{mm} \le X_{span} < 1360\text{mm}$、短辺荷姿幅 $800\text{mm} \le Y_{span} < 1100\text{mm}$ の境界フィルタリング。
+
+   - 長辺荷姿幅 $800\text{mm} \le X_{span} < 1360\text{mm}$、
+     短辺荷姿幅 $800\text{mm} \le Y_{span} < 1100\text{mm}$ の境界フィルタリング。
    - パレット中央への自動センタリングオフセット計算。
-  - 最下段箱の回転後底面辺が335 mm以下の場合、蓋を含む外形の片側はみ出しを `PalletSpec.max_small_edge_overhang_mm` 未満に制限（既定30 mm）。
+   - 最下段箱の回転後底面辺が335 mm以下の場合、蓋を含む外形の片側はみ出しを
+     `PalletSpec.max_small_edge_overhang_mm` 未満に制限（既定30 mm）。
    - 勘合深さ `fitting_depth` を考慮した最大段数・Z座標計算。
    - 偶数/奇数段の反転によるインターロッキング（荷崩れ防止）。
 
@@ -68,19 +72,32 @@ algorithm_programmer/
    - 回転（0°/90°）の一致を強制する制約は設けていない（自由に選択可）。
 
 3. **積み順決定 (`assign_loading_orders`)**:
-   - トポロジカルソート $(Z_{base} \text{昇順} \to Y_{base} \text{昇順} \to X_{base} \text{昇順})$ により、下段優先・干渉フリーな積載順序 `order` (1..N) を付番。
+   - トポロジカルソート
+     $(Z_{base} \text{昇順} \to Y_{base} \text{昇順} \to X_{base} \text{昇順})$
+     により、下段優先・干渉フリーな積載順序 `order` (1..N) を付番。
    - 支持している下段箱の `order` リスト（`supported_by`）を記録。
 
 ---
 
 ## 4. 実行方法 (CLI)
 
+### 配置結果の座標基準
+
+結果JSONは `coordinate_reference: "combined_footprint_min_xy_top_z"` を記録します。
+`position.x/y` は回転後の箱本体と蓋を合わせた外接形状の最小角、`position.z` は蓋込み上面です。
+箱本体寸法は従来どおり `dimensions.width/length`、蓋込み高さは `dimensions.height` に保持します。
+内部のパレタイズ計算では箱本体底面基準を使用し、シリアライズ時に結果座標へ変換します。
+
+`coordinate_reference` のない既存結果は、従来の箱本体底面角の座標として扱います。
+
 ```bash
 # 単一テストケースの実行
 python3 algorithm_programmer/cli.py test_programmer/test_cases/mixed_tp_same_height.json
 
 # 結果をJSONファイルに出力
-python3 algorithm_programmer/cli.py test_programmer/test_cases/mixed_tp_same_height.json -o tester/results/result_mixed_tp_same_height.json
+python3 algorithm_programmer/cli.py \
+  test_programmer/test_cases/mixed_tp_same_height.json \
+  -o tester/results/result_mixed_tp_same_height.json
 ```
 
 ---
@@ -88,19 +105,24 @@ python3 algorithm_programmer/cli.py test_programmer/test_cases/mixed_tp_same_hei
 ## 5. 変更履歴
 
 ### 2026-10-14
+
 - 混載Y探索範囲の固定を解除し、複数の行の組み合わせと最下段から上段までの試行を追加。物理的な積載制約は変更していない。
-- `outer_cover_test` は修正前16箱・短辺寸法不足から、48箱・Supervisor合格に改善。最下段はTP-331が6箱、90度回転のTP-341が2箱で、荷姿は1032 x 1033 x 922 mm。
+- `outer_cover_test` は修正前16箱・短辺寸法不足から、48箱・Supervisor合格に改善。
+  最下段はTP-331が6箱、90度回転のTP-341が2箱で、荷姿は1032 x 1033 x 922 mm。
 - 提案されたTP-341が4箱、TP-331が3箱の1032 x 1034 mm配置も候補に残ることを回帰テストで確認。
 - 全27ケースをメモリ上で再実行し、Supervisor全件合格、配置数減少なし、合計1062箱から1258箱に改善。
 - 配置計算の合計時間は約0.15秒から約3.4秒へ増加。`outer_cover_test` は約0.42秒、最も重いケースは約0.8秒（この環境での参考値）。
 - `python -m unittest supervisor.validate_test -v` で、混在奥行き・候補上限・残数保存・奥行き上限・最終荷姿を含む15テストが合格。
 
 ### 2026-10-12
-- 最下段箱の回転後底面幅または奥行きが335 mm以下の場合、対応するパレット端から30 mm以上はみ出す配置を禁止。外嵌め蓋の突出も判定対象とし、上限は `PalletSpec.max_small_edge_overhang_mm` で変更可能。
+
+- 最下段箱の回転後底面幅または奥行きが335 mm以下の場合、対応するパレット端から30 mm以上はみ出す配置を禁止。
+  外嵌め蓋の突出も判定対象とし、上限は `PalletSpec.max_small_edge_overhang_mm` で変更可能。
 - 単載・混載アルゴリズムとSupervisorに制約を実装し、境界・回転・蓋・段位置テストおよび既存26ケースでPASSを確認。
 - 混載では残数最多の高さ群だけでなく、積載可能な高さ群を候補として比較し、四隅の高さ・配置数・次段の余裕を評価する方式に変更。26ケースで配置合計が98箱増え、配置数減少なし、Supervisor全件PASSを確認。
 
 ### 2026-09-23
+
 - **混載エンジン全面書き換え（MSP-EPハイブリッド）**: `boundary_min_short_side`（TP-342×16+TP-332×16=32個）が
   固定グリッド方式の隙間により6/32個しか配置できなかった問題を修正。Module-Aware Strip Packing
   （行分割＋FFD詰め）を主アルゴリズムとし、Extreme Points法で残渣充填する方式に変更。結果、32/32個を配置し
@@ -112,4 +134,3 @@ python3 algorithm_programmer/cli.py test_programmer/test_cases/mixed_tp_same_hei
   `supervisor/validate.py` にも同等の独立検証項目を追加。
 - 向き（回転）の一致を強制する制約は要件により追加していない。
 - 上記変更後、全13テストケース（`tester/run_tests.py` / `supervisor/validate.py`）で回帰なし・全件PASSを確認。
-

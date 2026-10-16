@@ -284,12 +284,37 @@
       try {
         const res = await fetch(`/api/result/${filename}`);
         if (res.ok) {
-          currentData = await res.json();
+          currentData = normalizePositionReference(await res.json());
           processData(currentData);
         }
       } catch (e) {
         console.error("Failed to load result data", e);
       }
+    }
+
+    function normalizePositionReference(data) {
+      if (data.coordinate_reference !== 'combined_footprint_min_xy_top_z') return data;
+      return {
+        ...data,
+        boxes: (data.boxes || []).map(box => {
+          const bodyWidth = Number(box.dimensions.width);
+          const bodyLength = Number(box.dimensions.length);
+          const lidDimensions = box.lid_dimensions || {};
+          const hasLid = ['外嵌め', '内嵌め'].includes(box.lid_fit_type);
+          const footprintWidth = hasLid ? Math.max(bodyWidth, Number(lidDimensions.width || 0)) : bodyWidth;
+          const footprintLength = hasLid ? Math.max(bodyLength, Number(lidDimensions.length || 0)) : bodyLength;
+          const coordinatePosition = { ...box.position };
+          return {
+            ...box,
+            coordinate_position: coordinatePosition,
+            position: {
+              x: coordinatePosition.x + (footprintWidth - bodyWidth) / 2,
+              y: coordinatePosition.y + (footprintLength - bodyLength) / 2,
+              z: coordinatePosition.z - Number(box.dimensions.height)
+            }
+          };
+        })
+      };
     }
 
     function processData(data) {
@@ -798,6 +823,8 @@
     function inspectBox(b) {
       const content = document.getElementById('inspector-content');
       const lid = getLidGeometry(b);
+      const shownPosition = b.coordinate_position || b.position;
+      const positionLabel = b.coordinate_position ? '配置座標 (外接角XY・上面Z):' : '配置座標:';
       content.innerHTML = `
         <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 space-y-2">
           <div class="flex items-center justify-between">
@@ -805,7 +832,7 @@
             <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Order #${b.order}</span>
           </div>
           <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
-            <div><span class="text-slate-500">配置座標:</span><br><span class="font-mono text-slate-200">(${b.position.x}, ${b.position.y}, ${b.position.z})</span></div>
+            <div><span class="text-slate-500">${positionLabel}</span><br><span class="font-mono text-slate-200">(${shownPosition.x}, ${shownPosition.y}, ${shownPosition.z})</span></div>
             <div><span class="text-slate-500">外寸寸法 (L×W×H):</span><br><span class="font-mono text-slate-200">${Math.max(b.dimensions.width, b.dimensions.length)}×${Math.min(b.dimensions.width, b.dimensions.length)}×${b.dimensions.height}</span></div>
             <div><span class="text-slate-500">回転角:</span><br><span class="font-mono text-slate-200">${b.rotation}°</span></div>
             <div><span class="text-slate-500">勘合深さ:</span><br><span class="font-mono text-indigo-400 font-bold">${b.fitting_depth} mm</span></div>

@@ -5,6 +5,8 @@
 from dataclasses import dataclass, field, asdict
 from typing import List, Dict, Optional, Tuple, Any
 
+POSITION_REFERENCE = "combined_footprint_min_xy_top_z"
+
 @dataclass
 class BoxSpec:
     id: str
@@ -29,13 +31,13 @@ class BoxSpec:
 
     @property
     def footprint_width(self) -> float:
-        if self.lid_fit_type == "外嵌め":
+        if self.lid_fit_type in ("外嵌め", "内嵌め"):
             return max(self.width, self.lid_width)
         return self.width
 
     @property
     def footprint_length(self) -> float:
-        if self.lid_fit_type == "外嵌め":
+        if self.lid_fit_type in ("外嵌め", "内嵌め"):
             return max(self.length, self.lid_length)
         return self.length
 
@@ -70,9 +72,9 @@ class BoxSpec:
 class PlacedBox:
     order: int                    # 積載順序 (1, 2, 3, ...)
     box_id: str                   # 箱型番
-    x: float                      # mm
-    y: float                      # mm
-    z: float                      # mm (底面Z座標)
+    x: float                      # 内部計算用の箱本体最小X座標 [mm]
+    y: float                      # 内部計算用の箱本体最小Y座標 [mm]
+    z: float                      # 内部計算用の箱本体底面Z座標 [mm]
     width: float                  # mm (配置後のX方向寸法。L/Wとは限らない)
     length: float                 # mm (配置後のY方向寸法。L/Wとは限らない)
     height: float                 # mm (配置後のZ方向寸法、蓋含む)
@@ -88,16 +90,26 @@ class PlacedBox:
     lid_fit_type: str = "なし"
 
     @property
+    def footprint_width(self) -> float:
+        if self.lid_fit_type in ("外嵌め", "内嵌め"):
+            return max(self.width, self.lid_width)
+        return self.width
+
+    @property
+    def footprint_length(self) -> float:
+        if self.lid_fit_type in ("外嵌め", "内嵌め"):
+            return max(self.length, self.lid_length)
+        return self.length
+
+    @property
     def footprint_min_x(self) -> float:
-        if self.lid_fit_type == "外嵌め":
-            return self.x - max(0.0, self.lid_width - self.width) / 2.0
-        return self.x
+        footprint_width = self.footprint_width
+        return self.x - (footprint_width - self.width) / 2.0
 
     @property
     def footprint_min_y(self) -> float:
-        if self.lid_fit_type == "外嵌め":
-            return self.y - max(0.0, self.lid_length - self.length) / 2.0
-        return self.y
+        footprint_length = self.footprint_length
+        return self.y - (footprint_length - self.length) / 2.0
 
     @property
     def top_z(self) -> float:
@@ -105,24 +117,21 @@ class PlacedBox:
 
     @property
     def max_x(self) -> float:
-        if self.lid_fit_type == "外嵌め":
-            return self.footprint_min_x + max(self.width, self.lid_width)
-        return self.x + self.width
+        return self.footprint_min_x + self.footprint_width
 
     @property
     def max_y(self) -> float:
-        if self.lid_fit_type == "外嵌め":
-            return self.footprint_min_y + max(self.length, self.lid_length)
-        return self.y + self.length
+        return self.footprint_min_y + self.footprint_length
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialize using the combined footprint minimum and top-surface reference."""
         return {
             "order": self.order,
             "box_id": self.box_id,
             "position": {
-                "x": round(self.x, 2),
-                "y": round(self.y, 2),
-                "z": round(self.z, 2)
+                "x": round(self.footprint_min_x, 2),
+                "y": round(self.footprint_min_y, 2),
+                "z": round(self.top_z, 2)
             },
             "dimensions": {
                 "width": round(self.width, 2),
@@ -191,6 +200,7 @@ class PalletizeResult:
         placed_count = len(self.boxes)
         return {
             "test_name": self.test_name,
+            "coordinate_reference": POSITION_REFERENCE,
             "pallet": asdict(self.pallet),
             "input_boxes_count": self.input_boxes_count,
             "placed_boxes_count": placed_count,
