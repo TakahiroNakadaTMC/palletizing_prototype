@@ -13,6 +13,16 @@
 
 構築されたデータベースは [`box_research/box_db.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/box_research/box_db.json) に格納されています。
 
+### 箱DBビューアの読み込み・保存
+
+- [箱DBビューア](box_db_viewer.html) は [box_db.json](box_db.json) を唯一のマスタとし、起動時に `GET /api/boxes` からキャッシュを使わず取得します。localStorageやHTML内の固定データは使用しません。
+- `python box_research/serve_viewer.py` を起動し、`http://localhost:8081/box_db_viewer.html` を開いてください。HTMLファイルの直接表示には対応しません。
+- 編集・追加・削除・採用状態は画面内だけで保持します。「box_db.json に保存」で、採用中の箱のみを `POST /api/save` でマスタに上書きします。不採用の箱は保存対象から除外されます。
+- ページを離れると未保存の変更は失われます。「box_db.json から再読み込み」でも未保存の変更を破棄し、現在のマスタを全件採用の状態で読み直します。
+- 取得失敗時はエラーを表示し、初回取得が成功するまで編集・保存を無効にします。保存失敗時もエラーを表示し、自動ダウンロードで保存成功の代わりにはしません。JSONコピー・ダウンロードは専用ボタンで引き続き利用できます。
+
+回帰テスト（Node.js 18以降、追加パッケージ不要）: `node --test box_research/box_db_viewer_test.cjs`
+
 ---
 
 ## 2. TP規格コンテナの体系とモジュール仕様

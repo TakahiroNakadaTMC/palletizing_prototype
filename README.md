@@ -66,6 +66,8 @@
 - `rib_thickness` (float): 外周リブや底面リブの厚み [mm]
 - `compatible_lids` (array): 箱に対応する実蓋IDリスト（例: `["LID-001", "LID-002"]`）。無蓋は全箱共通の選択肢として扱い、この配列には含めない。
 
+[箱DBビューア](box_research/box_db_viewer.html) は [box_db.json](box_research/box_db.json) を唯一のマスタとしてAPIから取得し、localStorageは使用しません。画面内の変更は「box_db.json に保存」で採用中の箱のみをマスタに反映します。未保存の変更はページを離れると失われます。起動・保存方法は [箱DBビューアの説明](box_research/README.md#箱dbビューアの読み込み保存) を参照してください。
+
 ### (1.5) 蓋データベース仕様 (`lid_db`) **[NEW: Phase 2]**
 - `id` (string): 蓋の識別子 / 蓋ID
 - `name` (string): 蓋の名称（例: 「クリア蓋 TP-330系用」）

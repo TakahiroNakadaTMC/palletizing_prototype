@@ -28,6 +28,7 @@
           <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-medium border border-indigo-200">box_db.json</span>
         </div>
         <p class="text-xs text-slate-500 mt-1">パレタイズ対象箱の個別承認・数値編集・新規追加を行い、承認済みデータベースを出力・保存できます。</p>
+        <p id="db-status" class="text-xs text-indigo-700 mt-1" role="status">box_db.json を読み込み中です。</p>
       </div>
 
       <!-- Action Buttons -->
@@ -66,7 +67,7 @@
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
         <div>
           <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">総登録箱数</p>
-          <p id="stat-total" class="text-2xl font-black text-slate-900 mt-1">29</p>
+          <p id="stat-total" class="text-2xl font-black text-slate-900 mt-1">0</p>
         </div>
         <div class="p-3 bg-slate-100 text-slate-600 rounded-lg">
           <i data-lucide="boxes" class="w-5 h-5"></i>
@@ -78,8 +79,8 @@
         <div>
           <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">採用（承認済）</p>
           <div class="flex items-baseline gap-1 mt-1">
-            <p id="stat-approved" class="text-2xl font-black text-emerald-600">29</p>
-            <span id="stat-approved-total-sub" class="text-xs text-slate-500">/ 29 箱</span>
+            <p id="stat-approved" class="text-2xl font-black text-emerald-600">0</p>
+            <span id="stat-approved-total-sub" class="text-xs text-slate-500">/ 0 箱</span>
           </div>
         </div>
         <div class="p-3 bg-emerald-100 text-emerald-700 rounded-lg">
@@ -91,7 +92,7 @@
       <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm flex items-center justify-between bg-blue-50/30">
         <div>
           <p class="text-xs font-semibold text-blue-700 uppercase tracking-wider">採用中 TP規格箱</p>
-          <p id="stat-approved-tp" class="text-2xl font-black text-blue-600 mt-1">19</p>
+          <p id="stat-approved-tp" class="text-2xl font-black text-blue-600 mt-1">0</p>
         </div>
         <div class="p-3 bg-blue-100 text-blue-700 rounded-lg">
           <i data-lucide="layout-grid" class="w-5 h-5"></i>
@@ -102,7 +103,7 @@
       <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-sm flex items-center justify-between bg-amber-50/30">
         <div>
           <p class="text-xs font-semibold text-amber-700 uppercase tracking-wider">採用中 非TP規格箱</p>
-          <p id="stat-approved-nontp" class="text-2xl font-black text-amber-600 mt-1">10</p>
+          <p id="stat-approved-nontp" class="text-2xl font-black text-amber-600 mt-1">0</p>
         </div>
         <div class="p-3 bg-amber-100 text-amber-700 rounded-lg">
           <i data-lucide="archive" class="w-5 h-5"></i>
@@ -177,7 +178,7 @@
       </div>
       <div>
         <button id="btn-reset-db" class="text-xs text-slate-500 hover:text-rose-600 hover:underline flex items-center gap-1 whitespace-nowrap">
-          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 初期マスターデータにリセット
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> box_db.json から再読み込み
         </button>
       </div>
     </div>
@@ -291,7 +292,7 @@
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
           <button type="button" id="btn-cancel-modal" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition">キャンセル</button>
           <button type="submit" id="modal-submit-btn" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow flex items-center gap-1.5">
-            <i data-lucide="check" class="w-4 h-4"></i> 保存する
+            <i data-lucide="check" class="w-4 h-4"></i> 変更を反映
           </button>
         </div>
 
@@ -306,358 +307,6 @@
   </div>
 
   <script>
-    // Initial Master Data
-    const defaultBoxDB = {
-  "TP-111": {
-    "id": "TP-111",
-    "name": "TP規格コンテナ TP-111",
-    "type": "TP",
-    "width": 168.0,
-    "length": 168.0,
-    "height": 103.0,
-    "fitting_depth": 8.0,
-    "rib_thickness": 22.5,
-    "module_ratio": "0.5x0.5",
-    "description": "TP-110系 1型 極小モジュール (内寸133x133/有効内寸123x123, 側面厚22.5mm)"
-  },
-  "TP-131": {
-    "id": "TP-131",
-    "name": "TP規格コンテナ TP-131",
-    "type": "TP",
-    "width": 335.0,
-    "length": 168.0,
-    "height": 103.0,
-    "fitting_depth": 8.0,
-    "rib_thickness": 22.0,
-    "module_ratio": "1x0.5",
-    "description": "TP-130系 1型 ハーフモジュール (有効内寸291x123, 側面厚22.0mm)"
-  },
-  "TP-132": {
-    "id": "TP-132",
-    "name": "TP規格コンテナ TP-132",
-    "type": "TP",
-    "width": 335.0,
-    "length": 168.0,
-    "height": 195.0,
-    "fitting_depth": 8.0,
-    "rib_thickness": 22.0,
-    "module_ratio": "1x0.5",
-    "description": "TP-130系 2型 ハーフモジュール深型 (有効内寸291x123, 側面厚22.0mm)"
-  },
-  "TP-331": {
-    "id": "TP-331",
-    "name": "TP規格コンテナ TP-331",
-    "type": "TP",
-    "width": 335.0,
-    "length": 335.0,
-    "height": 103.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.0,
-    "module_ratio": "1x1",
-    "description": "TP-330系 1型 基準モジュール浅型 (内寸300x300/有効内寸291x291, 側面厚22.0mm)"
-  },
-  "TP-331.5": {
-    "id": "TP-331.5",
-    "name": "TP規格コンテナ TP-331.5",
-    "type": "TP",
-    "width": 335.0,
-    "length": 335.0,
-    "height": 149.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.0,
-    "module_ratio": "1x1",
-    "description": "TP-330系 1.5型 基準モジュール中浅型 (有効内寸291x291, 側面厚22.0mm)"
-  },
-  "TP-332": {
-    "id": "TP-332",
-    "name": "TP規格コンテナ TP-332",
-    "type": "TP",
-    "width": 335.0,
-    "length": 335.0,
-    "height": 195.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.0,
-    "module_ratio": "1x1",
-    "description": "TP-330系 2型 基準モジュール標準型 (内寸300x300/有効内寸291x291, 側面厚22.0mm)"
-  },
-  "TP-333": {
-    "id": "TP-333",
-    "name": "TP規格コンテナ TP-333",
-    "type": "TP",
-    "width": 335.0,
-    "length": 335.0,
-    "height": 288.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.0,
-    "module_ratio": "1x1",
-    "description": "TP-330系 3型 基準モジュール深型 (有効内寸291x291, 側面厚22.0mm)"
-  },
-  "TP-341": {
-    "id": "TP-341",
-    "name": "TP規格コンテナ TP-341",
-    "type": "TP",
-    "width": 503.0,
-    "length": 335.0,
-    "height": 103.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.5,
-    "module_ratio": "1.5x1",
-    "description": "TP-340系 1型 1.5モジュール浅型 (内寸468x300/有効内寸458x290, 側面厚22.5mm)"
-  },
-  "TP-341.5": {
-    "id": "TP-341.5",
-    "name": "TP規格コンテナ TP-341.5",
-    "type": "TP",
-    "width": 503.0,
-    "length": 335.0,
-    "height": 149.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.5,
-    "module_ratio": "1.5x1",
-    "description": "TP-340系 1.5型 1.5モジュール中浅型 (有効内寸458x290, 側面厚22.5mm)"
-  },
-  "TP-342": {
-    "id": "TP-342",
-    "name": "TP規格コンテナ TP-342",
-    "type": "TP",
-    "width": 503.0,
-    "length": 335.0,
-    "height": 195.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.5,
-    "module_ratio": "1.5x1",
-    "description": "TP-340系 2型 1.5モジュール標準型 (内寸468x300/有効内寸458x290, 側面厚22.5mm)"
-  },
-  "TP-343": {
-    "id": "TP-343",
-    "name": "TP規格コンテナ TP-343",
-    "type": "TP",
-    "width": 503.0,
-    "length": 335.0,
-    "height": 288.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.5,
-    "module_ratio": "1.5x1",
-    "description": "TP-340系 3型 1.5モジュール深型 (有効内寸458x290, 側面厚22.5mm)"
-  },
-  "TP-361": {
-    "id": "TP-361",
-    "name": "TP規格コンテナ TP-361",
-    "type": "TP",
-    "width": 670.0,
-    "length": 335.0,
-    "height": 103.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.5,
-    "module_ratio": "2x1",
-    "description": "TP-360系 1型 2倍モジュール浅型 (内寸635x300/有効内寸625x290, 側面厚22.5mm)"
-  },
-  "TP-362": {
-    "id": "TP-362",
-    "name": "TP規格コンテナ TP-362",
-    "type": "TP",
-    "width": 670.0,
-    "length": 335.0,
-    "height": 195.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.5,
-    "module_ratio": "2x1",
-    "description": "TP-360系 2型 2倍モジュール標準型 (内寸635x300/有効内寸625x290, 側面厚22.5mm)"
-  },
-  "TP-363": {
-    "id": "TP-363",
-    "name": "TP規格コンテナ TP-363",
-    "type": "TP",
-    "width": 670.0,
-    "length": 335.0,
-    "height": 288.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.5,
-    "module_ratio": "2x1",
-    "description": "TP-360系 3型 2倍モジュール深型 (有効内寸625x290, 側面厚22.5mm)"
-  },
-  "TP-461": {
-    "id": "TP-461",
-    "name": "TP規格コンテナ TP-461",
-    "type": "TP",
-    "width": 670.0,
-    "length": 503.0,
-    "height": 103.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.0,
-    "module_ratio": "2x1.5",
-    "description": "TP-460系 1型 大型モジュール浅型 (内寸635x468/有効内寸626x458, 側面厚22.0mm)"
-  },
-  "TP-462": {
-    "id": "TP-462",
-    "name": "TP規格コンテナ TP-462",
-    "type": "TP",
-    "width": 670.0,
-    "length": 503.0,
-    "height": 195.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.0,
-    "module_ratio": "2x1.5",
-    "description": "TP-460系 2型 大型モジュール標準型 (内寸635x468/有効内寸626x458, 側面厚22.0mm)"
-  },
-  "TP-463": {
-    "id": "TP-463",
-    "name": "TP規格コンテナ TP-463",
-    "type": "TP",
-    "width": 670.0,
-    "length": 503.0,
-    "height": 288.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.0,
-    "module_ratio": "2x1.5",
-    "description": "TP-460系 3型 大型モジュール深型 (有効内寸626x458, 側面厚22.0mm)"
-  },
-  "TP-482": {
-    "id": "TP-482",
-    "name": "TP規格コンテナ TP-482",
-    "type": "TP",
-    "width": 838.0,
-    "length": 503.0,
-    "height": 195.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.0,
-    "module_ratio": "2.5x1.5",
-    "description": "TP-480系 特大モジュール (内寸803x468/有効内寸794x459, 側面厚22.0mm)"
-  },
-  "TP-492": {
-    "id": "TP-492",
-    "name": "TP規格コンテナ TP-492",
-    "type": "TP",
-    "width": 1005.0,
-    "length": 503.0,
-    "height": 195.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 22.0,
-    "module_ratio": "3x1.5",
-    "description": "TP-490系 超特大モジュール (内寸970x468/有効内寸961x459, 側面厚22.0mm)"
-  },
-  "OC-50L": {
-    "id": "OC-50L",
-    "name": "折りたたみコンテナ 50L (CB-S51NR/オリコン50B)",
-    "type": "NON_TP",
-    "width": 530.0,
-    "length": 366.0,
-    "height": 325.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 18.5,
-    "module_ratio": null,
-    "description": "標準折りたたみコンテナ 50L (内寸493x335/有効内寸493x335, 側面厚18.5mm)"
-  },
-  "OC-40L": {
-    "id": "OC-40L",
-    "name": "折りたたみコンテナ 40L",
-    "type": "NON_TP",
-    "width": 530.0,
-    "length": 366.0,
-    "height": 272.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 18.5,
-    "module_ratio": null,
-    "description": "標準折りたたみコンテナ 40L 中型 (側面厚18.5mm)"
-  },
-  "OC-75L": {
-    "id": "OC-75L",
-    "name": "折りたたみコンテナ 75L",
-    "type": "NON_TP",
-    "width": 650.0,
-    "length": 440.0,
-    "height": 327.0,
-    "fitting_depth": 12.0,
-    "rib_thickness": 20.0,
-    "module_ratio": null,
-    "description": "大型折りたたみコンテナ 75L (内寸600x405, 側面厚20.0mm)"
-  },
-  "OC-20L": {
-    "id": "OC-20L",
-    "name": "折りたたみコンテナ 20L",
-    "type": "NON_TP",
-    "width": 380.0,
-    "length": 305.0,
-    "height": 237.0,
-    "fitting_depth": 8.0,
-    "rib_thickness": 16.5,
-    "module_ratio": null,
-    "description": "小型折りたたみコンテナ 20L (内寸346x274, 側面厚16.5mm)"
-  },
-  "BOX-STD-24B": {
-    "id": "BOX-STD-24B",
-    "name": "サンボックス 24B",
-    "type": "NON_TP",
-    "width": 438.0,
-    "length": 328.0,
-    "height": 260.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 18.0,
-    "module_ratio": null,
-    "description": "一般汎用ベタ目コンテナ 24B型 (内寸402x292, 側面厚18.0mm)"
-  },
-  "BOX-STD-36-2": {
-    "id": "BOX-STD-36-2",
-    "name": "サンボックス 36-2",
-    "type": "NON_TP",
-    "width": 593.0,
-    "length": 393.0,
-    "height": 206.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 25.0,
-    "module_ratio": null,
-    "description": "一般汎用ベタ目コンテナ 36-2型 (内寸543x343, 側面厚25.0mm)"
-  },
-  "BOX-BANJU-A": {
-    "id": "BOX-BANJU-A",
-    "name": "サンコー 番重A型",
-    "type": "NON_TP",
-    "width": 574.0,
-    "length": 388.0,
-    "height": 105.0,
-    "fitting_depth": 8.0,
-    "rib_thickness": 20.0,
-    "module_ratio": null,
-    "description": "食品・部品搬送用 標準番重 A型浅型 (内寸534x348, 側面厚20.0mm)"
-  },
-  "BOX-CUSTOM-S": {
-    "id": "BOX-CUSTOM-S",
-    "name": "独自通い箱 Sサイズ",
-    "type": "NON_TP",
-    "width": 400.0,
-    "length": 300.0,
-    "height": 200.0,
-    "fitting_depth": 8.0,
-    "rib_thickness": 20.0,
-    "module_ratio": null,
-    "description": "独自フットプリント通い箱 S型 (内寸360x260想定, 側面厚20.0mm)"
-  },
-  "BOX-CUSTOM-M": {
-    "id": "BOX-CUSTOM-M",
-    "name": "独自通い箱 Mサイズ",
-    "type": "NON_TP",
-    "width": 500.0,
-    "length": 400.0,
-    "height": 250.0,
-    "fitting_depth": 10.0,
-    "rib_thickness": 20.0,
-    "module_ratio": null,
-    "description": "独自フットプリント通い箱 M型 (内寸460x360想定, 側面厚20.0mm)"
-  },
-  "BOX-CUSTOM-L": {
-    "id": "BOX-CUSTOM-L",
-    "name": "独自通い箱 Lサイズ",
-    "type": "NON_TP",
-    "width": 600.0,
-    "length": 400.0,
-    "height": 300.0,
-    "fitting_depth": 12.0,
-    "rib_thickness": 25.0,
-    "module_ratio": null,
-    "description": "独自フットプリント通い箱 L型 (内寸550x350想定, 側面厚25.0mm)"
-  }
-};
-
     function normalizeDimensionOrder(db) {
       Object.entries(db).forEach(([boxId, box]) => {
         const width = Number(box.width);
@@ -694,47 +343,46 @@
     }
 
     // Current Working DB
-    let currentBoxDB = normalizeDimensionOrder(JSON.parse(JSON.stringify(defaultBoxDB)));
+    let currentBoxDB = {};
+    let databaseLoaded = false;
 
     // State: box approval status mapping (id -> boolean)
-    const STORAGE_KEY_APPROVAL = 'palletize_box_approval_v3';
-    const STORAGE_KEY_CUSTOM_DB = 'palletize_box_db_v3';
     let approvalState = {};
     let editTargetId = null; // null: 新規追加モード, string: 編集モード
 
-    // Load data from LocalStorage
-    function loadState() {
-      const savedDB = localStorage.getItem(STORAGE_KEY_CUSTOM_DB);
-      if (savedDB) {
-        try {
-          currentBoxDB = normalizeDimensionOrder(JSON.parse(savedDB));
-        } catch (e) {
-          console.error("Failed to parse custom DB", e);
-        }
-      }
-
-      const savedApproval = localStorage.getItem(STORAGE_KEY_APPROVAL);
-      if (savedApproval) {
-        try {
-          approvalState = JSON.parse(savedApproval);
-        } catch (e) {
-          console.error("Failed to parse approval state", e);
-        }
-      }
-
-      // Default approved for all boxes
-      Object.keys(currentBoxDB).forEach(id => {
-        if (approvalState[id] === undefined) {
-          approvalState[id] = true;
-        }
+    async function loadBoxDB() {
+      const status = document.getElementById('db-status');
+      document.querySelectorAll('button, input, select, textarea').forEach(control => {
+        control.disabled = true;
       });
-      saveState();
-    }
-
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY_CUSTOM_DB, JSON.stringify(currentBoxDB));
-      localStorage.setItem(STORAGE_KEY_APPROVAL, JSON.stringify(approvalState));
-      updateStats();
+      status.textContent = 'box_db.json を読み込み中です。';
+      try {
+        await loadLids();
+        const response = await fetch('/api/boxes', { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const remoteDB = await response.json();
+        if (!remoteDB || typeof remoteDB !== 'object' || Array.isArray(remoteDB) ||
+            Object.values(remoteDB).some(box => !box || typeof box !== 'object' || Array.isArray(box))) {
+          throw new Error('箱データベースの形式が不正です。');
+        }
+        currentBoxDB = normalizeCompatibleLids(normalizeDimensionOrder(remoteDB));
+        approvalState = {};
+        Object.keys(currentBoxDB).forEach(id => approvalState[id] = true);
+        databaseLoaded = true;
+        updateStats();
+        renderTable();
+        status.textContent = '編集・採用状態は画面内のみで保持します。「box_db.json に保存」で採用中の箱をマスタに反映してください。ページを離れると未保存の変更は失われます。';
+      } catch (error) {
+        console.error('Failed to load box_db.json', error);
+        status.textContent = `box_db.json の読み込みに失敗しました: ${error.message}。serve_viewer.py を起動し、HTTP経由で開いてから再読み込みしてください。`;
+      } finally {
+        document.querySelectorAll('button, input, select, textarea').forEach(control => {
+          control.disabled = !databaseLoaded;
+        });
+        document.getElementById('btn-reset-db').disabled = false;
+      }
     }
 
     // Filter & Search State
@@ -824,7 +472,7 @@
         cb.addEventListener('change', (e) => {
           const id = e.target.getAttribute('data-id');
           approvalState[id] = e.target.checked;
-          saveState();
+          updateStats();
           renderTable();
         });
       });
@@ -833,7 +481,7 @@
         btn.addEventListener('click', (e) => {
           const id = btn.getAttribute('data-id');
           approvalState[id] = !approvalState[id];
-          saveState();
+          updateStats();
           renderTable();
         });
       });
@@ -851,7 +499,7 @@
           if (confirm(`型番 "${id}" をデータベースから削除しますか？`)) {
             delete currentBoxDB[id];
             delete approvalState[id];
-            saveState();
+            updateStats();
             renderTable();
             showToast(`型番 "${id}" を削除しました`);
           }
@@ -998,7 +646,7 @@
         const box = currentBoxDB[boxId];
         modalTitle.textContent = `箱仕様の編集 (${box.id})`;
         modalSub.textContent = `寸法、勘合深さ、リブ厚み等のパラメータを変更します`;
-        modalBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> 更新して保存`;
+        modalBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> 変更を反映`;
         modalBtn.className = "px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow flex items-center gap-1.5";
         modalIconBg.className = "p-2 bg-indigo-100 text-indigo-700 rounded-lg";
         
@@ -1104,7 +752,7 @@
       if (editTargetId) {
         // Update existing box
         currentBoxDB[editTargetId] = boxObj;
-        saveState();
+        updateStats();
         renderTable();
         closeModal();
         showToast(`型番 "${editTargetId}" の仕様を変更しました`);
@@ -1117,36 +765,30 @@
         }
         currentBoxDB[id] = boxObj;
         approvalState[id] = true; // Automatically approved
-        saveState();
+        updateStats();
         renderTable();
         closeModal();
         showToast(`新しい箱 "${id}" を登録し、採用に設定しました`);
       }
     });
 
-    // Reset Master Data
-    document.getElementById('btn-reset-db').addEventListener('click', () => {
-      if (confirm("全ての箱データを初期マスター値に戻しますか？（追加・編集した内容はリセットされます）")) {
-        currentBoxDB = normalizeCompatibleLids(normalizeDimensionOrder(JSON.parse(JSON.stringify(defaultBoxDB))));
-        approvalState = {};
-        Object.keys(currentBoxDB).forEach(id => approvalState[id] = true);
-        saveState();
-        renderTable();
-        showToast("初期マスターデータにリセットしました");
+    document.getElementById('btn-reset-db').addEventListener('click', async () => {
+      if (confirm("box_db.json から再読み込みしますか？（未保存の追加・編集・採用状態は破棄されます）")) {
+        await loadBoxDB();
       }
     });
 
     // Header Button Event Handlers
     document.getElementById('btn-select-all').addEventListener('click', () => {
       Object.keys(currentBoxDB).forEach(id => approvalState[id] = true);
-      saveState();
+      updateStats();
       renderTable();
       showToast("全ての箱を採用に設定しました");
     });
 
     document.getElementById('btn-deselect-all').addEventListener('click', () => {
       Object.keys(currentBoxDB).forEach(id => approvalState[id] = false);
-      saveState();
+      updateStats();
       renderTable();
       showToast("全ての箱の選択を解除しました");
     });
@@ -1155,7 +797,7 @@
       Object.keys(currentBoxDB).forEach(id => {
         approvalState[id] = (currentBoxDB[id].type === 'TP');
       });
-      saveState();
+      updateStats();
       renderTable();
       showToast("TP規格箱のみを採用に設定しました");
     });
@@ -1183,7 +825,7 @@
       showToast("承認済み box_db.json をダウンロードしました");
     });
 
-    // Direct Save to box_db.json (via local API) with fallback to Download
+    // Direct Save to box_db.json (via local API)
     document.getElementById('btn-direct-save').addEventListener('click', async () => {
       const approvedDB = {};
       Object.keys(currentBoxDB).forEach(id => {
@@ -1198,27 +840,18 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(approvedDB, null, 2)
         });
-        if (res.ok) {
-          const data = await res.json();
-          showToast(`box_db.json に直接保存しました (${Object.keys(approvedDB).length} 箱)`);
-          return;
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
         }
+        const data = await res.json();
+        if (data.status !== 'ok') {
+          throw new Error(data.message || '保存APIがエラーを返しました。');
+        }
+        showToast(`box_db.json に直接保存しました (${Object.keys(approvedDB).length} 箱)`);
       } catch (err) {
-        console.warn("Local API not reachable, falling back to download", err);
+        console.error('Failed to save box_db.json', err);
+        alert(`box_db.json への保存に失敗しました: ${err.message}。編集内容は画面内に残っています。サーバーを確認して再試行してください。`);
       }
-
-      // Fallback: download file
-      const jsonStr = JSON.stringify(approvedDB, null, 2);
-      const blob = new Blob([jsonStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'box_db.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast(`box_db.json をダウンロードしました (${Object.keys(approvedDB).length} 箱)`);
     });
 
     // Search Input
@@ -1241,32 +874,7 @@
       });
     });
 
-    // Initialize & Fetch from API if available
-    async function init() {
-      loadState();
-      await loadLids();  // 修正3: 蓋DBを読み込み、完了するまで待つ ← await を追加！
-      currentBoxDB = normalizeCompatibleLids(currentBoxDB);
-      saveState();
-      updateStats();
-      renderTable();
-
-      try {
-        const res = await fetch('/api/boxes');
-        if (res.ok) {
-          const remoteDB = await res.json();
-          currentBoxDB = remoteDB;
-          loadState();
-          currentBoxDB = normalizeCompatibleLids(currentBoxDB);
-          saveState();
-          updateStats();
-          renderTable();
-        }
-      } catch (e) {
-        // standalone mode without backend server
-      }
-    }
-
-    init();
+    loadBoxDB();
   </script>
 </body>
 </html>
