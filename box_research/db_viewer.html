@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>箱・蓋データベース統合ビューア</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="./db_viewer.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3">
+    <div class="bg-white border border-slate-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <nav class="flex items-center gap-1 text-xs font-medium" aria-label="DB tabs" role="tablist">
+        <button id="tab-boxes" class="px-3 py-1.5 rounded-md bg-indigo-600 text-white" type="button" role="tab" aria-selected="true" aria-controls="panel-boxes">箱DB</button>
+        <button id="tab-lids" class="px-3 py-1.5 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200" type="button" role="tab" aria-selected="false" aria-controls="panel-lids">蓋DB</button>
+      </nav>
+      <span id="global-dirty" class="text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">状態: 読み込み中</span>
+    </div>
+    <section id="error-banner" class="hidden mt-3 p-3 rounded-lg border border-rose-300 bg-rose-50 text-rose-800 text-xs" role="alert">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="font-bold">初期データ読み込みに失敗しました。</p>
+          <p id="error-text">API接続を確認してください。</p>
+        </div>
+        <button id="btn-retry-load" type="button" class="px-3 py-1.5 rounded-md border border-rose-300 bg-white hover:bg-rose-100">再試行</button>
+      </div>
+    </section>
+    <section id="save-feedback" class="hidden mt-3 p-3 rounded-lg border text-xs" role="status" aria-live="polite"></section>
+  </div>
+
+  <section id="panel-boxes" role="tabpanel" aria-labelledby="tab-boxes">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm mt-3">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="p-2 bg-indigo-600 text-white rounded-lg shadow-sm">
+              <i data-lucide="package-check" class="w-5 h-5"></i>
+            </span>
+            <h1 class="text-xl font-bold text-slate-900">箱仕様 採用・編集 承認ビューア</h1>
+            <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-medium border border-indigo-200">box_db.json</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">パレタイズ対象箱の個別承認・数値編集・新規追加を行い、承認済みデータベースを出力・保存できます。</p>
+          <p id="box-status" class="text-xs text-indigo-700 mt-1" role="status">box_db.json を読み込み中です。</p>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-2">
+          <button id="btn-box-add" class="px-3.5 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition shadow-sm flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> 新しい箱を追加
+          </button>
+          <button id="btn-select-all" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-md transition shadow-sm flex items-center gap-1.5">
+            <i data-lucide="check-square" class="w-3.5 h-3.5 text-slate-500"></i> 全て採用
+          </button>
+          <button id="btn-deselect-all" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-md transition shadow-sm flex items-center gap-1.5">
+            <i data-lucide="square" class="w-3.5 h-3.5 text-slate-500"></i> 全て解除
+          </button>
+          <button id="btn-select-tp-only" class="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-md transition shadow-sm flex items-center gap-1.5">
+            <i data-lucide="layers" class="w-3.5 h-3.5 text-blue-600"></i> TP規格のみ
+          </button>
+          <button id="btn-copy-json" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-md transition shadow-sm flex items-center gap-1.5">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i> JSONコピー
+          </button>
+          <button id="btn-download-json" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-md transition shadow-sm flex items-center gap-1.5">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-slate-500"></i> ダウンロード
+          </button>
+          <button id="btn-box-save" class="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md transition shadow flex items-center gap-1.5">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i> box_db.json に保存
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">総登録箱数</p>
+            <p id="stat-total" class="text-2xl font-black text-slate-900 mt-1">0</p>
+          </div>
+          <div class="p-3 bg-slate-100 text-slate-600 rounded-lg"><i data-lucide="boxes" class="w-5 h-5"></i></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm flex items-center justify-between bg-emerald-50/30">
+          <div>
+            <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">採用（承認済）</p>
+            <div class="flex items-baseline gap-1 mt-1">
+              <p id="stat-approved" class="text-2xl font-black text-emerald-600">0</p>
+              <span id="stat-approved-total-sub" class="text-xs text-slate-500">/ 0 箱</span>
+            </div>
+          </div>
+          <div class="p-3 bg-emerald-100 text-emerald-700 rounded-lg"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm flex items-center justify-between bg-blue-50/30">
+          <div>
+            <p class="text-xs font-semibold text-blue-700 uppercase tracking-wider">採用中 TP規格箱</p>
+            <p id="stat-approved-tp" class="text-2xl font-black text-blue-600 mt-1">0</p>
+          </div>
+          <div class="p-3 bg-blue-100 text-blue-700 rounded-lg"><i data-lucide="layout-grid" class="w-5 h-5"></i></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-sm flex items-center justify-between bg-amber-50/30">
+          <div>
+            <p class="text-xs font-semibold text-amber-700 uppercase tracking-wider">採用中 非TP規格箱</p>
+            <p id="stat-approved-nontp" class="text-2xl font-black text-amber-600 mt-1">0</p>
+          </div>
+          <div class="p-3 bg-amber-100 text-amber-700 rounded-lg"><i data-lucide="archive" class="w-5 h-5"></i></div>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input type="text" id="box-search" placeholder="型番、箱名称、説明、module_ratioで検索..." class="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50/50">
+        </div>
+        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-medium text-slate-600 flex-wrap">
+          <button class="filter-tab px-3 py-1.5 rounded-md transition active-tab bg-white text-slate-900 shadow-sm" data-filter="all">すべて</button>
+          <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900" data-filter="TP">TP規格のみ</button>
+          <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900" data-filter="NON_TP">非TPのみ</button>
+          <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900" data-filter="approved">採用中のみ</button>
+          <button class="filter-tab px-3 py-1.5 rounded-md transition text-slate-600 hover:text-slate-900" data-filter="rejected">不採用のみ</button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold tracking-wider">
+                <th class="py-3.5 px-4 w-12 text-center"><span class="sr-only">選択</span></th>
+                <th class="py-3.5 px-4">状態</th>
+                <th class="py-3.5 px-4">型番 (ID)</th>
+                <th class="py-3.5 px-4">名称 / シリーズ</th>
+                <th class="py-3.5 px-3">種別</th>
+                <th class="py-3.5 px-3 text-right">長さ L (mm)</th>
+                <th class="py-3.5 px-3 text-right">幅 W (mm)</th>
+                <th class="py-3.5 px-3 text-right">高さ H (mm)</th>
+                <th class="py-3.5 px-3 text-right">勘合深さ (mm)</th>
+                <th class="py-3.5 px-3 text-right">上縁幅 (mm)</th>
+                <th class="py-3.5 px-3 text-center">モジュール比</th>
+                <th class="py-3.5 px-4">説明 / 寸法・段積みメモ</th>
+                <th class="py-3.5 px-3 text-center w-20">操作</th>
+              </tr>
+            </thead>
+            <tbody id="boxes-body" class="divide-y divide-slate-100 font-normal text-slate-700"></tbody>
+          </table>
+        </div>
+        <div id="box-no-results" class="hidden py-12 text-center text-slate-400">
+          <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+          <p>該当する箱が見つかりませんでした。</p>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-100/70 border border-slate-200 rounded-xl p-4 text-xs text-slate-600">
+        <div class="space-y-1">
+          <div class="flex items-center gap-1.5 font-bold text-slate-800">
+            <i data-lucide="info" class="w-4 h-4 text-indigo-600"></i>
+            <span>パレタイズ制約に関する注意事項（constraints/constraints.md より）</span>
+          </div>
+          <p class="text-slate-500">
+            ・<strong>TP規格箱:</strong> 基準寸法(335x335)の倍数・分数比率により相互段積み（嵌合沈み込み: <code>fitting_depth</code>）可能。<br>
+            ・<strong>非TP箱:</strong> 同一型番（同一フットプリント）のコラム積みに限定されます。<br>
+            ・<strong>上縁幅:</strong> 上面で外周上縁から開口までの幅です（底面内寸から自動算出しません）。
+          </p>
+        </div>
+        <div>
+          <button id="btn-reload-all" class="text-xs text-slate-500 hover:text-rose-600 hover:underline flex items-center gap-1 whitespace-nowrap">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> box_db.json から再読み込み
+          </button>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <section id="panel-lids" class="hidden" role="tabpanel" aria-labelledby="tab-lids">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm mt-3">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="p-2 bg-indigo-600 text-white rounded-lg shadow-sm"><i data-lucide="package-check" class="w-5 h-5"></i></span>
+            <h1 class="text-xl font-bold text-slate-900">蓋仕様 採用・編集 承認ビューア</h1>
+            <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-medium border border-indigo-200">lid_db.json</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">パレタイズ用蓋仕様の寸法編集・登録・保存を行います。</p>
+          <p id="lid-status" class="text-xs text-indigo-700 mt-1">lid_db.json を読み込み中です。</p>
+        </div>
+        <div class="flex items-center flex-wrap gap-2">
+          <button id="btn-lid-add" class="px-3.5 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition shadow-sm flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> 新しい蓋を追加
+          </button>
+          <button id="btn-lid-save" class="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md transition shadow flex items-center gap-1.5">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i> lid_db.json に保存
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div><p class="text-xs font-semibold text-slate-500">登録蓋数</p><p class="text-2xl font-black text-slate-900 mt-1" id="stat-lid-count">0</p></div>
+          <div class="p-3 bg-slate-100 text-slate-600 rounded-lg"><i data-lucide="layers" class="w-5 h-5"></i></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm flex items-center justify-between bg-blue-50/30">
+          <div><p class="text-xs font-semibold text-blue-700">外嵌め蓋</p><p class="text-2xl font-black text-blue-600 mt-1" id="stat-outer-fit">0</p></div>
+          <div class="p-3 bg-blue-100 text-blue-700 rounded-lg"><i data-lucide="box" class="w-5 h-5"></i></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm flex items-center justify-between bg-emerald-50/30">
+          <div><p class="text-xs font-semibold text-emerald-700">内嵌め蓋</p><p class="text-2xl font-black text-emerald-600 mt-1" id="stat-inner-fit">0</p></div>
+          <div class="p-3 bg-emerald-100 text-emerald-700 rounded-lg"><i data-lucide="box" class="w-5 h-5"></i></div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[1100px] text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-semibold">
+                <th class="py-3.5 px-4">蓋ID</th>
+                <th class="py-3.5 px-4">蓋名称</th>
+                <th class="py-3.5 px-3">種別</th>
+                <th class="py-3.5 px-3">色</th>
+                <th class="py-3.5 px-3 text-right">長さ L (mm)</th>
+                <th class="py-3.5 px-3 text-right">幅 W (mm)</th>
+                <th class="py-3.5 px-3 text-right">蓋装着時の高さ増加量 (mm)</th>
+                <th class="py-3.5 px-3">嵌め方</th>
+                <th class="py-3.5 px-4">説明</th>
+                <th class="py-3.5 px-3 text-center w-24">操作</th>
+              </tr>
+            </thead>
+            <tbody id="lids-body" class="divide-y divide-slate-100 font-normal text-slate-700"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <div id="box-dialog" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200 p-4">
+    <div id="box-dialog-container" class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-5 transform transition-transform duration-200 scale-95">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div id="box-modal-icon-bg" class="p-2 bg-indigo-100 text-indigo-700 rounded-lg"><i data-lucide="edit-3" class="w-5 h-5"></i></div>
+          <div>
+            <h2 id="box-form-title" class="text-base font-bold text-slate-900">箱仕様の編集</h2>
+            <p id="box-modal-subtitle" class="text-xs text-slate-500">各寸法パラメータを変更します</p>
+          </div>
+        </div>
+        <button id="btn-close-box-modal" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="box-form" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="block text-xs font-bold text-slate-700 mb-1">型番 (ID) <span class="text-rose-500">*</span></label><input id="box-id" required placeholder="例: TP-334, BOX-CUSTOM-01" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg"></div>
+          <div><label class="block text-xs font-bold text-slate-700 mb-1">箱名称 / シリーズ <span class="text-rose-500">*</span></label><input id="box-name" required placeholder="例: TP規格コンテナ TP-334" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div><label class="block text-xs font-bold text-slate-700 mb-1">規格種別 <span class="text-rose-500">*</span></label><select id="box-type" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg bg-white"><option value="TP">TP規格 (相互嵌合可能)</option><option value="NON_TP">非TP規格 (同箱コラム積み)</option></select></div>
+          <div><label class="block text-xs font-bold text-slate-700 mb-1">モジュール比 (TP時)</label><input id="box-module" placeholder="例: 1x1, 1.5x1, 2x1" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg"></div>
+          <div><label class="block text-xs font-bold text-slate-700 mb-1">勘合深さ (mm) <span class="text-rose-500">*</span></label><input type="number" step="0.1" id="box-fitting" required value="10.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg text-indigo-600 font-bold"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div><label class="block text-xs font-bold text-slate-700 mb-1">外寸長さ L (mm) <span class="text-rose-500">*</span></label><input type="number" step="0.1" id="box-length" required placeholder="例: 335.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg"></div>
+          <div><label class="block text-xs font-bold text-slate-700 mb-1">外寸幅 W (mm) <span class="text-rose-500">*</span></label><input type="number" step="0.1" id="box-width" required placeholder="例: 335.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg"></div>
+          <div><label class="block text-xs font-bold text-slate-700 mb-1">外寸高さ H (mm) <span class="text-rose-500">*</span></label><input type="number" step="0.1" id="box-height" required placeholder="例: 195.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div><label class="block text-xs font-bold text-slate-700 mb-1">上縁幅 (mm)</label><input type="number" step="0.1" id="box-rib" value="22.0" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg"></div>
+          <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-700 mb-1">説明 / 特徴・内寸メモ</label><input id="box-description" placeholder="例: 内寸300x300, 上縁幅22.0mm" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg"></div>
+        </div>
+        <div class="border-t border-slate-100 pt-4">
+          <label class="block text-xs font-bold text-slate-700 mb-2">対応可能な蓋 (互換蓋)</label>
+          <div id="box-compatible-lids" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" id="box-cancel" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition">キャンセル</button>
+          <button type="submit" id="box-submit" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4"></i><span id="box-submit-label">変更を反映</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="lid-dialog" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200 p-4">
+    <div id="lid-dialog-container" class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 space-y-5 transform transition-transform duration-200 scale-95">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="p-2 bg-indigo-100 text-indigo-700 rounded-lg"><i data-lucide="edit-3" class="w-5 h-5"></i></div>
+          <div>
+            <h2 id="lid-form-title" class="text-base font-bold text-slate-900">蓋の追加</h2>
+            <p id="lid-modal-subtitle" class="text-xs text-slate-500 mt-1">新しい蓋仕様をデータベースに登録します</p>
+          </div>
+        </div>
+        <button id="btn-close-lid-modal" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="lid-form" class="space-y-4">
+        <div><label class="block text-xs font-bold text-slate-700 mb-1">蓋ID (例: LID-001)</label><input id="lid-id" placeholder="LID-001" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg"></div>
+        <div><label class="block text-xs font-bold text-slate-700 mb-1">蓋名称</label><input id="lid-name" placeholder="クリア蓋 TP-330系用" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg"></div>
+        <div><label class="block text-xs font-bold text-slate-700 mb-1">タイプ</label><select id="lid-type" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg"><option value="TP">TP規格</option><option value="NONE">無蓋</option><option value="OTHER">その他</option></select></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="block text-xs font-bold text-slate-700 mb-1">長さ L (mm)</label><input type="number" id="lid-length" step="0.1" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg"></div>
+          <div><label class="block text-xs font-bold text-slate-700 mb-1">幅 W (mm)</label><input type="number" id="lid-width" step="0.1" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg"></div>
+        </div>
+        <div><label class="block text-xs font-bold text-slate-700 mb-1">蓋装着時の高さ増加量 (mm)</label><input type="number" id="lid-thickness" step="0.1" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg"></div>
+        <div><label class="block text-xs font-bold text-slate-700 mb-1">嵌め方</label><select id="lid-fit-type" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg"><option value="外嵌め">外嵌め（箱外側面と蓋で位置決め）</option><option value="内嵌め">内嵌め（箱内壁面と蓋で位置決め）</option><option value="なし">なし（無蓋の場合）</option></select></div>
+        <div><label class="block text-xs font-bold text-slate-700 mb-1">色（任意）</label><input id="lid-color" placeholder="例: 黒、青、透明" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg"></div>
+        <div><label class="block text-xs font-bold text-slate-700 mb-1">説明 / 特徴</label><input id="lid-description" placeholder="対応規格や用途の説明" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg"></div>
+        <div class="flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
+          <button type="button" id="lid-cancel" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition">キャンセル</button>
+          <button type="submit" id="lid-submit" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4"></i><span id="lid-submit-label">保存する</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-medium transform transition-all duration-300 opacity-0 translate-y-4 pointer-events-none flex items-center gap-2 z-50">
+    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toast-msg">通知メッセージ</span>
+  </div>
+
+  <script src="./db_viewer.js"></script>
+</body>
+</html>

@@ -63,10 +63,10 @@
 - `width` (float): 外寸短手方向 W [mm]
 - `height` (float): 外寸高さ [mm]
 - `fitting_depth` (float): 上下に積み重ねたときの勘合（はまり込み）深さ [mm]
-- `rib_thickness` (float): 外周リブや底面リブの厚み [mm]
+- `rib_thickness` (float): 上面から見た箱の上縁幅 [mm]。底面や側壁の肉厚ではなく、外側の縁から開口部側の縁までの幅。テーパー等があるため外寸・内寸からは自動計算しない。
 - `compatible_lids` (array): 箱に対応する実蓋IDリスト（例: `["LID-001", "LID-002"]`）。無蓋は全箱共通の選択肢として扱い、この配列には含めない。
 
-[箱DBビューア](box_research/box_db_viewer.html) は [box_db.json](box_research/box_db.json) を唯一のマスタとしてAPIから取得し、localStorageは使用しません。画面内の変更は「box_db.json に保存」で採用中の箱のみをマスタに反映します。未保存の変更はページを離れると失われます。起動・保存方法は [箱DBビューアの説明](box_research/README.md#箱dbビューアの読み込み保存) を参照してください。
+[箱・蓋DB統合ビューア](box_research/db_viewer.html) は `python box_research/serve_viewer.py` で起動し、`http://localhost:8081/` で利用します。起動時の選択入力は不要です。箱DB・蓋DBそれぞれの従来の画面構成・一覧項目・集計・操作を維持し、タブで切り替えても未保存の編集を保持します。保存は明示操作で行い、箱は採用中のものだけを保存します。蓋のID変更・削除等で両DBを保存する必要がある場合は保存範囲を確認します。テストケースで使用中の箱は削除・ID変更・採用解除を禁止し、保存時にもサーバーで参照を再検査します。既存の箱・蓋ビューアURLは統合画面の該当タブへ転送します。説明図は全点を見直すため現在は表示せず、図案と配置の確認後に追加します。詳細は [読み込み・保存の説明](box_research/README.md#箱dbビューアの読み込み保存) を参照してください。
 
 ### (1.5) 蓋データベース仕様 (`lid_db`) **[NEW: Phase 2]**
 - `id` (string): 蓋の識別子 / 蓋ID
@@ -74,7 +74,7 @@
 - `type` (string): 蓋の規格タイプ（例: `"TP"`, `"NONE"`, `"OTHER"`）
 - `width` (float): 蓋の短手方向 W [mm]
 - `length` (float): 蓋の長手方向 L [mm]
-- `thickness` (float): 蓋の厚み [mm]
+- `thickness` (float): 蓋装着時の高さ増加量 [mm]（蓋ありの箱の高さ − 蓋なしの箱の高さ）。蓋単体の全高や天板の肉厚ではない。
 - `fit_type` (string): 蓋の嵌め方
   - `"外嵌め"`: 箱外側面と蓋で位置決め（最も一般的）
   - `"内嵌め"`: 箱内壁面と蓋で位置決め

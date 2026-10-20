@@ -1,0 +1,9 @@
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+.badge-tp { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+.badge-nontp { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.fade-in { animation: fadeIn 0.25s ease-in; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+#save-feedback.info { border-color: #93c5fd; background: #eff6ff; color: #1e3a8a; }
+#save-feedback.success { border-color: #86efac; background: #f0fdf4; color: #166534; }
+#save-feedback.warning { border-color: #fca5a5; background: #fef2f2; color: #991b1b; }
