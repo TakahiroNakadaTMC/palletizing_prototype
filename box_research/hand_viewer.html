@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ハンド設定・形状確認</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f1f5f9; color: #172536; font: 14px system-ui, sans-serif; }
+    header { padding: 16px 24px; background: #18364b; color: white; }
+    h1 { margin: 0 0 8px; font-size: 22px; }
+    a { color: #bce6ff; margin-right: 18px; }
+    main { display: grid; grid-template-columns: 370px minmax(0, 1fr); gap: 16px; padding: 16px; }
+    section { background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px; }
+    h2 { font-size: 17px; margin: 0 0 12px; }
+    label { display: block; margin: 7px 0; }
+    input:not([type=checkbox]), select { width: 100%; padding: 6px; border: 1px solid #9aabb9; border-radius: 4px; }
+    button { padding: 7px 12px; margin: 4px 4px 4px 0; cursor: pointer; }
+    button:disabled { cursor: not-allowed; }
+    .fields { display: grid; grid-template-columns: 1fr 100px; gap: 6px; align-items: center; }
+    .fields label { margin: 0; }
+    .note { background: #fff4d3; padding: 12px; border-left: 4px solid #d99a00; }
+    .muted { color: #526577; font-size: 12px; }
+    #status { white-space: pre-wrap; padding: 10px; background: #e8f1fa; }
+    #status.error { background: #ffe4e4; color: #951515; }
+    #preview { width: 100%; height: 520px; background: #f8fafc; border: 1px solid #d3dde6; }
+    .options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #edf2f7; padding: 12px; }
+    .legend span { margin-right: 16px; }
+    @media(max-width: 900px) { main { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>ハンド設定・形状確認 — 第1段階</h1>
+  <a href="box_db_viewer.html">箱DB</a><a href="lid_db_viewer.html">蓋DB</a>
+</header>
+<main>
+  <div>
+    <section>
+      <h2>① 設備共通の設定（保存対象）</h2>
+      <p>1設備につき1つのハンド設定です。箱ごとの設定・登録はありません。</p>
+      <label>設備選択<select id="profiles"></select></label>
+      <label>設備ID<input id="profileId" required></label>
+      <label>設備名<input id="profileName" required></label>
+      <button id="copy">複製して追加</button><button id="remove">削除</button>
+      <button id="save">設備設定を保存</button><button id="reload">保存内容を再読込</button>
+      <p id="dirty" class="muted"></p>
+      <div id="status" role="status" aria-live="polite">読込中…</div>
+    </section>
+    <section>
+      <h2>L字本体・爪の形状 [mm]</h2>
+      <p class="muted">把持角を原点に、隣接する辺の内側へU/V軸を取ります。爪位置は反対端から爪中心までの距離です。
+        爪は入力した固定寸法の干渉形状として扱い、開閉による寸法変化は計算しません。</p>
+      <div id="shapeFields" class="fields"></div>
+    </section>
+    <section>
+      <h2>追加の干渉余裕 [mm]</h2>
+      <p class="muted">本体・爪の固定形状に対して、全方向へ追加する余裕です。爪の開閉量ではありません。</p>
+      <div id="envelopeFields" class="fields"></div>
+    </section>
+  </div>
+  <div>
+    <section class="note">
+      <strong>設備共通の干渉形状を確認する画面です。干渉判定・配置順探索は未実装です。</strong><br>
+      初期値は仮寸法です。実機仕様・可動範囲・安全性を保証するものではありません。
+      保存しても既存のパレタイズ結果や計算は変更しません。
+    </section>
+    <section>
+      <h2>② 表示確認用プレビュー（保存対象外）</h2>
+      <p>箱・蓋は表示例です。サイズを切り替えても設備設定は変わらず、同じルールから爪位置を自動計算します。</p>
+      <div class="options">
+        <label>表示例の箱<select id="box"></select></label>
+        <label>表示例の蓋<select id="lid"></select></label>
+        <label>箱の回転<select id="rotation"><option value="0">0°</option><option value="90">90°</option></select></label>
+        <label>把持角<select id="corner"></select></label>
+        <label>視点<select id="view"><option value="iso">立体</option><option value="top">上面 XY</option>
+          <option value="xz">側面 XZ</option><option value="yz">側面 YZ</option></select></label>
+      </div>
+      <p class="muted">オレンジは本体・爪の固定寸法の干渉形状、点線は追加の干渉余裕です。
+        移動経路・動作ステップの設定や表示はありません。</p>
+      <div class="legend"><span style="color:#3976ac">■ 箱</span><span style="color:#13a6b5">■ 蓋込み外形</span>
+        <span style="color:#d08220">■ ハンド干渉範囲</span><span style="color:#d92828">● 把持基準角</span>
+        <span style="color:#2c8b42">U軸</span><span style="color:#286ad0">V軸</span></div>
+      <svg id="preview" viewBox="0 0 900 520" role="img" aria-label="箱とハンドの形状プレビュー"></svg>
+      <pre id="details">プレビュー待機中</pre>
+    </section>
+  </div>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const corners = ["X_MIN_Y_MIN", "X_MAX_Y_MIN", "X_MAX_Y_MAX", "X_MIN_Y_MAX"];
+const fields = [
+  ["body_u_length", "本体のU方向の固定長さ", "shape", 0.1],
+  ["body_v_length", "本体のV方向の固定長さ", "shape", 0.1],
+  ["body_thickness", "本体の辺方向に直交する厚み", "shape", 0.1],
+  ["body_height", "本体の高さ", "shape", 0.1],
+  ["body_bottom", "本体下面の位置（上面Z＝0）", "shape"],
+  ["finger_length", "爪の辺に沿う長さ", "shape", 0.1],
+  ["finger_thickness", "爪の外側への厚み", "shape", 0.1],
+  ["finger_depth", "爪の上面から下への長さ", "shape", 0.1],
+  ["u_end_distance", "U辺：反対端から爪中心", "shape", 0],
+  ["v_end_distance", "V辺：反対端から爪中心", "shape", 0],
+  ["clearance", "追加の干渉余裕（全方向）", "envelope", 0]
+];
+let store, boxes, lids, current = 0, dirty = false, geometry = null;
+let timer, generation = 0;
+
+function status(message, error = false) {
+  $("status").textContent = message;
+  $("status").className = error ? "error" : "";
+}
+function markDirty() {
+  dirty = true;
+  $("dirty").textContent = "未保存の変更があります";
+}
+async function api(path, data) {
+  const response = await fetch(path, data === undefined ? {} : {
+    method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(data)
+  });
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.error || `HTTP ${response.status}`);
+  return body;
+}
+function option(select, value, text) {
+  const item = document.createElement("option");
+  item.value = value; item.textContent = text; select.append(item);
+}
+function readForm() {
+  if (!store) return;
+  const profile = store.profiles[current];
+  profile.id = $("profileId").value;
+  profile.name = $("profileName").value;
+  for (const [key] of fields) {
+    profile.parameters[key] = $("p_" + key).value === "" ? null : Number($("p_" + key).value);
+  }
+}
+function renderProfile() {
+  $("profiles").replaceChildren();
+  store.profiles.forEach((p, i) => option($("profiles"), i, p.name));
+  $("profiles").value = String(current);
+  const p = store.profiles[current];
+  $("profileId").value = p.id; $("profileName").value = p.name;
+  for (const [key] of fields) $("p_" + key).value = p.parameters[key];
+  renderCorners();
+  queuePreview();
+}
+function renderCorners() {
+  const previous = $("corner").value;
+  $("corner").replaceChildren();
+  for (const c of corners) option($("corner"), c, c);
+  if (corners.includes(previous)) $("corner").value = previous;
+}
+function renderLids() {
+  $("lid").replaceChildren();
+  option($("lid"), "", "蓋なし");
+  for (const id of boxes[$("box").value].compatible_lids || []) {
+    if (lids[id] && lids[id].type !== "NONE") option($("lid"), id, `${id} (${lids[id].fit_type})`);
+  }
+}
+function queuePreview() {
+  generation++;
+  geometry = null;
+  $("preview").replaceChildren();
+  $("details").textContent = "更新中…";
+  clearTimeout(timer);
+  timer = setTimeout(updatePreview, 160);
+}
+async function updatePreview() {
+  const ticket = generation;
+  try {
+    const result = await api("/api/hand_preview", {
+      profile: store.profiles[current], box_id: $("box").value, lid_id: $("lid").value,
+      rotation: Number($("rotation").value), corner: $("corner").value
+    });
+    if (ticket !== generation) return;
+    geometry = result;
+    draw();
+    status(dirty ? "プレビュー更新済み。変更は未保存です。" : "保存済み設定のプレビューです。");
+  } catch (error) {
+    if (ticket !== generation) return;
+    geometry = null;
+    $("details").textContent = "設定エラーのため表示できません。";
+    status(error.message, true);
+  }
+}
+function svg(tag, attrs, text) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+  if (text !== undefined) node.textContent = text;
+  $("preview").append(node);
+  return node;
+}
+function vertices(part, offset = [0, 0, 0], margin = 0) {
+  const points = [];
+  for (let x = 0; x < 2; x++) for (let y = 0; y < 2; y++) for (let z = 0; z < 2; z++) {
+    points.push([x, y, z].map((v, i) =>
+      part[v ? "max" : "min"][i] + offset[i] + (v ? margin : -margin)));
+  }
+  return points;
+}
+function project([x, y, z]) {
+  if ($("view").value === "top") return [x, -y];
+  if ($("view").value === "xz") return [x, -z];
+  if ($("view").value === "yz") return [y, -z];
+  return [(x - y) * 0.866, (x + y) * 0.5 - z];
+}
+function draw() {
+  if (!geometry) return;
+  const g = geometry, size = g.box_size, box = boxes[$("box").value], lid = lids[$("lid").value];
+  const boxX = Number($("rotation").value) ? box.length : box.width;
+  const boxY = Number($("rotation").value) ? box.width : box.length;
+  const lidThickness = lid ? lid.thickness : 0;
+  const body = {min: [(size[0]-boxX)/2, (size[1]-boxY)/2, -size[2]],
+    max: [(size[0]+boxX)/2, (size[1]+boxY)/2, -lidThickness]};
+  const combined = {min: [0, 0, -size[2]], max: [size[0], size[1], 0]};
+  const origin = g.reference_position;
+  const bounds = vertices(combined);
+  for (const part of g.envelope) bounds.push(...vertices(part, [0, 0, 0], g.clearance));
+  const projected = bounds.map(project);
+  const minX = Math.min(...projected.map(p => p[0])), maxX = Math.max(...projected.map(p => p[0]));
+  const minY = Math.min(...projected.map(p => p[1])), maxY = Math.max(...projected.map(p => p[1]));
+  const scale = Math.min(790 / Math.max(1, maxX-minX), 410 / Math.max(1, maxY-minY));
+  const screen = p => {
+    const q = project(p);
+    return [450 + (q[0]-(minX+maxX)/2)*scale, 260+(q[1]-(minY+maxY)/2)*scale];
+  };
+  const points = ps => ps.map(p => screen(p).join(",")).join(" ");
+  $("preview").replaceChildren();
+  function part(part, color, offset = [0, 0, 0], margin = 0, dashed = false) {
+    const v = vertices(part, offset, margin);
+    for (const face of [[0, 2, 6, 4], [0, 1, 5, 4], [0, 1, 3, 2], [1, 3, 7, 5], [4, 5, 7, 6], [2, 3, 7, 6]]) {
+      svg("polygon", {points: points(face.map(i => v[i])), fill: dashed ? "none" : color,
+        "fill-opacity": 0.2, stroke: color, "stroke-width": 1.2,
+        "stroke-dasharray": dashed ? "5 4" : ""});
+    }
+  }
+  part(body, "#3976ac");
+  part(combined, "#13a6b5", [0, 0, 0], 0, true);
+  if (lid) part({min: [0, 0, -lidThickness], max: [size[0], size[1], 0]}, "#13a6b5");
+  for (const p of g.envelope) {
+    part(p, "#d08220");
+    if (g.clearance) part(p, "#d08220", [0, 0, 0], g.clearance, true);
+  }
+  for (const [axis, color] of [["u", "#2c8b42"], ["v", "#286ad0"]]) {
+    svg("polyline", {points: points([origin, g.axes[axis]]), fill: "none", stroke: color, "stroke-width": 3});
+    const [x, y] = screen(g.axes[axis]);
+    svg("text", {x, y: y-6, fill: color, "font-size": 16}, axis.toUpperCase());
+  }
+  const [x, y] = screen(origin);
+  svg("circle", {cx: x, cy: y, r: 5, fill: "#d92828"});
+  const format = p => p.map(v => Number(v.toFixed(2))).join(", ");
+  $("details").textContent =
+    `蓋込み L × W × H：${Math.max(size[0],size[1])} × ${Math.min(size[0],size[1])} × ${size[2]} mm\n` +
+    `表示上の X × Y：${size[0]} × ${size[1]} mm\n` +
+    `把持角：${g.corner_id} ／ ハンド向き：${g.hand_yaw_deg}°\n` +
+    `基準角 XYZ：(${format(origin)}) mm\n` +
+    "座標原点：最終配置の蓋込み最小XY・上面Z。パレット上の実配置座標は未指定。\n" +
+    "角IDは回転前の箱基準。箱ローカルX＝DBのW、Y＝DBのL。\n" +
+    "ハンド0°：U＝＋X、V＝＋Y。上から見て反時計回りが正。\n" +
+    "箱・蓋・回転・把持角は表示確認用で、設備設定には保存されません。\n" +
+    "表示は干渉形状の確認のみです。干渉・配置可否・移動経路は未判定です。";
+}
+async function load() {
+  generation++;
+  clearTimeout(timer);
+  geometry = null;
+  $("preview").replaceChildren();
+  $("details").textContent = "読込中…";
+  const controls = [...document.querySelectorAll("input, select, button")];
+  controls.forEach(control => { control.disabled = true; });
+  try {
+    const results = await Promise.all([api("/api/hand_profiles"), api("/api/boxes"), api("/api/lids")]);
+    [store, boxes, lids] = results;
+    current = 0;
+    $("box").replaceChildren();
+    for (const [id, b] of Object.entries(boxes)) option($("box"), id, `${id} (${b.length} × ${b.width} × ${b.height})`);
+    if (boxes["TP-332"]) $("box").value = "TP-332";
+    renderLids(); renderProfile();
+    dirty = false; $("dirty").textContent = "保存済み";
+  } finally {
+    controls.forEach(control => { control.disabled = !store && control.id !== "reload"; });
+  }
+}
+for (const [key, title, group, min] of fields) {
+  const label = document.createElement("label"); label.htmlFor = "p_" + key; label.textContent = title;
+  const input = document.createElement("input");
+  input.id = "p_" + key; input.type = "number"; input.step = "any"; input.required = true;
+  if (min !== undefined) input.min = min;
+  input.addEventListener("input", () => { readForm(); markDirty(); queuePreview(); });
+  $(group + "Fields").append(label, input);
+}
+for (const id of ["profileId", "profileName"]) $(id).addEventListener("input", () => {
+  readForm();
+  $("profiles").options[current].textContent = store.profiles[current].name;
+  markDirty(); queuePreview();
+});
+$("profiles").addEventListener("change", () => { readForm(); current = Number($("profiles").value); renderProfile(); });
+$("box").addEventListener("change", () => { renderLids(); queuePreview(); });
+for (const id of ["lid", "rotation", "corner"]) $(id).addEventListener("change", queuePreview);
+$("view").addEventListener("change", draw);
+$("copy").addEventListener("click", () => {
+  if (!store) return;
+  readForm();
+  const copy = JSON.parse(JSON.stringify(store.profiles[current]));
+  const base = copy.id || "hand";
+  let n = 1;
+  while (store.profiles.some(p => p.id === `${base}-copy-${n}`)) n++;
+  copy.id = `${base}-copy-${n}`; copy.name += "（複製）";
+  store.profiles.push(copy); current = store.profiles.length - 1; markDirty(); renderProfile();
+});
+$("remove").addEventListener("click", () => {
+  if (!store) return;
+  if (store.profiles.length === 1) { status("最後の設備は削除できません。", true); return; }
+  if (!confirm("選択した設備を削除しますか？ 保存するまではファイルへ反映されません。")) return;
+  store.profiles.splice(current, 1); current = 0; markDirty(); renderProfile();
+});
+$("save").addEventListener("click", async () => {
+  if (!store) return;
+  readForm(); $("save").disabled = true;
+  const snapshot = JSON.stringify(store);
+  try {
+    await api("/api/hand_profiles/save", JSON.parse(snapshot));
+    if (JSON.stringify(store) === snapshot) {
+      dirty = false; $("dirty").textContent = "保存済み";
+      status("全設備をサーバーへ保存しました。");
+    } else status("保存完了。その後の編集は未保存です。");
+  } catch (error) { status(error.message, true); }
+  finally { $("save").disabled = false; }
+});
+$("reload").addEventListener("click", () => {
+  if (dirty && !confirm("未保存の変更を破棄して再読込しますか？")) return;
+  load().catch(error => status(error.message, true));
+});
+window.addEventListener("beforeunload", event => {
+  if (dirty) { event.preventDefault(); event.returnValue = ""; }
+});
+load().catch(error => status(error.message, true));
+</script>
+</body>
+</html>

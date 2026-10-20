@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "profiles": [
+    {
+      "id": "sample-l-hand",
+      "name": "サンプルL字ハンド（仮寸法・実機未検証）",
+      "parameters": {
+        "body_u_length": 700,
+        "body_v_length": 700,
+        "body_thickness": 20,
+        "body_height": 100,
+        "body_bottom": 100,
+        "finger_length": 180,
+        "finger_thickness": 180,
+        "finger_depth": 80,
+        "u_end_distance": 100,
+        "v_end_distance": 100,
+        "clearance": 2
+      }
+    }
+  ]
+}

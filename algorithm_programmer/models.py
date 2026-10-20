@@ -88,6 +88,7 @@ class PlacedBox:
     lid_width: float = 0.0
     lid_length: float = 0.0
     lid_fit_type: str = "なし"
+    hand_grasp: Optional[Dict[str, Any]] = None
 
     @property
     def footprint_width(self) -> float:
@@ -125,7 +126,7 @@ class PlacedBox:
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize using the combined footprint minimum and top-surface reference."""
-        return {
+        data = {
             "order": self.order,
             "box_id": self.box_id,
             "position": {
@@ -150,6 +151,9 @@ class PlacedBox:
             },
             "lid_fit_type": self.lid_fit_type
         }
+        if self.hand_grasp is not None:
+            data["hand_grasp"] = self.hand_grasp
+        return data
 
 @dataclass
 class PalletSpec:
@@ -195,10 +199,11 @@ class PalletizeResult:
     summary: Dict[str, Any]
     unplaced_boxes: List[Dict[str, Any]] = field(default_factory=list)
     input_boxes_count: int = 0
+    hand_sequence: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         placed_count = len(self.boxes)
-        return {
+        data = {
             "test_name": self.test_name,
             "coordinate_reference": POSITION_REFERENCE,
             "pallet": asdict(self.pallet),
@@ -209,3 +214,6 @@ class PalletizeResult:
             "unplaced_boxes": self.unplaced_boxes,
             "summary": self.summary
         }
+        if self.hand_sequence is not None:
+            data["hand_sequence"] = self.hand_sequence
+        return data

@@ -10,6 +10,7 @@ import sys
 import glob
 import json
 import subprocess
+import argparse
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
@@ -39,7 +40,7 @@ def select_approved_cases(test_case_paths, approval_state):
         if approval_state.get(os.path.basename(path)[:-5]) is True
     ]
 
-def run_all_tests():
+def run_all_tests(hand_profiles=None, hand_profile_id=None):
     os.makedirs(RESULTS_DIR, exist_ok=True)
     all_tc_files = sorted(glob.glob(os.path.join(TEST_CASES_DIR, "*.json")))
 
@@ -58,6 +59,7 @@ def run_all_tests():
     print(f"🧪 {len(tc_files)} 件の採用済みテストケースを実行します（除外: {skipped_count} 件）...\n")
 
     summary_list = []
+    failure_count = 0
 
     for tc_path in tc_files:
         tc_name = os.path.basename(tc_path).replace(".json", "")
@@ -70,9 +72,14 @@ def run_all_tests():
             "-o",
             out_path
         ]
+        if hand_profiles is not None:
+            cmd.extend(["--hand-profiles", hand_profiles])
+        if hand_profile_id is not None:
+            cmd.extend(["--hand-profile-id", hand_profile_id])
 
         res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
         if res.returncode != 0:
+            failure_count += 1
             print(f"❌ エラー ({tc_name}): {res.stderr}")
             continue
 
@@ -95,6 +102,7 @@ def run_all_tests():
             })
             print(f"  {status} [{tc_name}]: {len(rdata.get('boxes', []))}箱, 充填率 {s.get('volume_efficiency_percent', 0.0):.1f}%, X={bbox.get('x_span', 0.0):.0f} Y={bbox.get('y_span', 0.0):.0f} Z={bbox.get('max_z', 0.0):.0f}")
         except Exception as e:
+            failure_count += 1
             print(f"❌ 結果読み込み失敗 ({tc_name}): {e}")
 
     print("\n" + "="*80)
@@ -106,7 +114,13 @@ def run_all_tests():
         dims = f"{row['x_span']:.0f} × {row['y_span']:.0f} × {row['z_max']:.0f}"
         print(f"{row['name']:<30} | {row['status']:<6} | {row['boxes']:<4} | {row['layers']:<3} | {row['vol']:>5.1f}% | {dims}")
     print("="*80)
-    return 0
+    if failure_count:
+        print(f"❌ 実行・結果読み込みエラー: {failure_count} 件。過去の結果ファイルは今回の成功結果ではありません。")
+    return 1 if failure_count else 0
 
 if __name__ == "__main__":
-    sys.exit(run_all_tests())
+    parser = argparse.ArgumentParser(description="採用済みテストケースを一括実行")
+    parser.add_argument("--hand-profiles", default=None, help="設備共通ハンド設定JSONのパス")
+    parser.add_argument("--hand-profile-id", default=None, help="使用するハンドの設備ID")
+    args = parser.parse_args()
+    sys.exit(run_all_tests(args.hand_profiles, args.hand_profile_id))

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-箱・蓋データベース承認ビューワ起動スクリプト (serve_viewer.py)
-ローカルHTTPサーバーを起動し、ブラウザで box_db_viewer.html または lid_db_viewer.html を表示します。
+箱・蓋DBおよびハンド設定ビューワ起動スクリプト (serve_viewer.py)
+ローカルHTTPサーバーを起動し、選択したビューアをブラウザで表示します。
 ブラウザからの直接保存API (/api/save) にも対応しています。
 """
 
@@ -12,6 +12,11 @@ import os
 import webbrowser
 import urllib.parse
 import sys
+import tempfile
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from algorithm_programmer.hand_profile import build_preview, validate_store
+from algorithm_programmer.models import BoxSpec
 
 PORT = 8081
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -20,9 +25,10 @@ LID_DB_PATH = os.path.join(BASE_DIR, "lid_db.json")
 TEST_CASES_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "test_programmer", "test_cases"))
 BOX_VIEWER_HTML_PATH = os.path.join(BASE_DIR, "box_db_viewer.html")
 LID_VIEWER_HTML_PATH = os.path.join(BASE_DIR, "lid_db_viewer.html")
+HAND_PROFILES_PATH = os.path.join(BASE_DIR, "..", "algorithm_programmer", "hand_profiles.json")
 
 # グローバル変数：どのビューアを開くか指定
-VIEWER_MODE = "box"  # "box" または "lid"
+VIEWER_MODE = "box"  # "box", "lid", "hand"
 
 
 def _length_first_box_fields(box_db):
@@ -47,9 +53,23 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path == "/api/hand_profiles":
+            try:
+                with open(HAND_PROFILES_PATH, encoding="utf-8") as f:
+                    data = json.load(f)
+                validate_store(data)
+                self._hand_json(200, data)
+            except (OSError, ValueError) as error:
+                self.log_error("Hand settings read failed: %s", error)
+                self._hand_json(500, {"error": str(error)})
+            return
         if parsed.path == "/" or parsed.path == "/index.html":
             # ルートアクセス時は、VIEWER_MODE に応じて適切なHTMLを返す
-            viewer_file = BOX_VIEWER_HTML_PATH if VIEWER_MODE == "box" else LID_VIEWER_HTML_PATH
+            viewer_file = {
+                "box": BOX_VIEWER_HTML_PATH,
+                "lid": LID_VIEWER_HTML_PATH,
+                "hand": os.path.join(BASE_DIR, "hand_viewer.html"),
+            }[VIEWER_MODE]
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
@@ -125,6 +145,9 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path in ("/api/hand_profiles/save", "/api/hand_preview"):
+            self._hand_post(parsed.path)
+            return
         if parsed.path == "/api/save":
             content_len = int(self.headers.get("Content-Length", 0))
             post_body = self.rfile.read(content_len)
@@ -167,6 +190,74 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
         super().do_POST()
 
+    def _hand_json(self, status, data):
+        body = json.dumps(data, ensure_ascii=False, allow_nan=False).encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _hand_post(self, path):
+        temporary_path = None
+        try:
+            origin = self.headers.get("Origin")
+            if origin and urllib.parse.urlparse(origin).netloc != self.headers.get("Host"):
+                self._hand_json(403, {"error": "別サイトからの操作は許可されていません"})
+                return
+            length = int(self.headers.get("Content-Length", "0"))
+            if not 0 < length <= 1024 * 1024:
+                raise ValueError("リクエストは1MB以下のJSONで指定してください")
+            data = json.loads(self.rfile.read(length).decode("utf-8"))
+            if path == "/api/hand_profiles/save":
+                validate_store(data)
+                with tempfile.NamedTemporaryFile(
+                        mode="w", encoding="utf-8", dir=os.path.dirname(HAND_PROFILES_PATH),
+                        suffix=".tmp", delete=False) as f:
+                    temporary_path = f.name
+                    json.dump(data, f, ensure_ascii=False, indent=2, allow_nan=False)
+                    f.write("\n")
+                os.replace(temporary_path, HAND_PROFILES_PATH)
+                temporary_path = None
+                self._hand_json(200, {"status": "ok"})
+                return
+            if not isinstance(data, dict):
+                raise ValueError("プレビュー条件はオブジェクトで指定してください")
+            with open(BOX_DB_PATH, encoding="utf-8") as f:
+                boxes = json.load(f)
+            box_id = data.get("box_id")
+            if not isinstance(box_id, str) or box_id not in boxes:
+                raise ValueError("箱を選択してください")
+            box = BoxSpec.from_dict(boxes[box_id])
+            lid_id = data.get("lid_id", "")
+            if not isinstance(lid_id, str):
+                raise ValueError("蓋IDは文字列で指定してください")
+            if lid_id:
+                if lid_id not in boxes[box_id].get("compatible_lids", []):
+                    raise ValueError("箱に対応していない蓋です")
+                with open(LID_DB_PATH, encoding="utf-8") as f:
+                    lids = json.load(f)
+                if lid_id not in lids:
+                    raise ValueError("蓋がDBに存在しません")
+                lid = lids[lid_id]
+                box.lid_width = float(lid["width"])
+                box.lid_length = float(lid["length"])
+                box.lid_thickness = float(lid["thickness"])
+                box.lid_fit_type = lid["fit_type"]
+            preview = build_preview(data.get("profile"), box, data.get("rotation"),
+                                    data.get("corner"))
+            self._hand_json(200, preview)
+        except (ValueError, TypeError, KeyError) as error:
+            self.log_error("Hand settings request rejected: %s", error)
+            self._hand_json(400, {"error": str(error)})
+        except OSError as error:
+            self.log_error("Hand settings IO failed: %s", error)
+            self._hand_json(500, {"error": str(error)})
+        finally:
+            if temporary_path is not None:
+                os.unlink(temporary_path)
+
 def main():
     global VIEWER_MODE
     
@@ -177,11 +268,15 @@ def main():
     print("どのビューアを開きますか？")
     print("  [1] 箱DB ビューア（デフォルト）")
     print("  [2] 蓋DB ビューア")
+    print("  [3] ハンド設定・形状確認（第1段階）")
     print("=" * 60)
     
-    choice = input("選択（1 or 2）[1]: ").strip() or "1"
+    choice = input("選択（1 / 2 / 3）[1]: ").strip() or "1"
     
-    if choice == "2":
+    if choice == "3":
+        VIEWER_MODE = "hand"
+        viewer_name = "ハンド設定"
+    elif choice == "2":
         VIEWER_MODE = "lid"
         viewer_name = "蓋DB"
     else:

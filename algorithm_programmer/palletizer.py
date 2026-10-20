@@ -6,14 +6,18 @@ HM-Palletizer:
 2. TP規格モジュール嵌合段積み & 非TPコラム積み
 3. 長辺<1360mm / 短辺800-1100mm 許容対応
 4. 最高層四隅高さ一致 (Top 4-Corner Leveling)
-5. トポロジカル積み順付番 (Order)
+5. ハンド静的干渉を考慮した層固定の逆順積み順付番 (Order)
 """
 
 import math
 import copy
 from collections import Counter
 from typing import List, Dict, Tuple, Optional, Any
-from algorithm_programmer.models import BoxSpec, PlacedBox, PalletSpec, PalletizeResult
+from algorithm_programmer.models import BoxSpec, PlacedBox, PalletSpec, PalletizeResult, POSITION_REFERENCE
+from algorithm_programmer.hand_profile import load_profile, validate_profile
+from algorithm_programmer.hand_sequence import (
+    HandSequenceError, LAYER_POLICY, SEQUENCE_PRIORITY, generate_hand_sequence,
+)
 
 CORNER_HEIGHT_TOLERANCE_MM = 3.0
 TOP_CORNER_MARGIN_MM = 35.0
@@ -56,9 +60,12 @@ def check_collision_3d(b1: PlacedBox, x2: float, y2: float, z2: float,
     return not (b1_top <= z2 + eps or box2_top <= b1.z + eps)
 
 class Palletizer:
-    def __init__(self, box_db: Dict[str, BoxSpec], pallet: Optional[PalletSpec] = None):
+    def __init__(self, box_db: Dict[str, BoxSpec], pallet: Optional[PalletSpec] = None,
+                 hand_profile: Optional[Dict[str, Any]] = None):
         self.box_db = box_db
         self.pallet = pallet or PalletSpec()
+        self.hand_profile = copy.deepcopy(load_profile() if hand_profile is None else hand_profile)
+        validate_profile(self.hand_profile)
 
     def _column_stack_group(self, box_id: str, lid_id: str,
                             lid_fit_type: str) -> Optional[Tuple[str, str]]:
@@ -235,7 +242,7 @@ class Palletizer:
         # 最高層四隅高さ揃え処理
         placed, unplaced_boxes = self.level_top_four_corners(placed, unplaced_boxes)
 
-        # トポロジカルソートで積み順 order を付番
+        # version: hand-order integration; verified reverse sequence is the official order.
         placed = self.assign_loading_orders(placed)
 
         # 荷姿サマリーの算出
@@ -247,7 +254,12 @@ class Palletizer:
             boxes=placed,
             summary=summary,
             unplaced_boxes=unplaced_boxes,
-            input_boxes_count=input_boxes_count
+            input_boxes_count=input_boxes_count,
+            hand_sequence={
+                "profile": copy.deepcopy(self.hand_profile),
+                "priority": SEQUENCE_PRIORITY, "layer_policy": LAYER_POLICY,
+                "reverse_verified": True, "trajectory_checked": False,
+            }
         )
 
     # -------------------------------------------------------------------------
@@ -1254,22 +1266,36 @@ class Palletizer:
             key=lambda b: (round(b.z, 2), round(b.y, 2), round(b.x, 2))
         )
 
+        sources = []
         for idx, pb in enumerate(sorted_boxes, start=1):
-            pb.order = idx
-            supporting_orders = []
-            if pb.z > 1e-4:
-                for other in sorted_boxes:
-                    if other.order >= pb.order:
-                        break
-                    if intersects_2d(pb.footprint_min_x, pb.footprint_min_y,
-                                     pb.max_x - pb.footprint_min_x, pb.max_y - pb.footprint_min_y,
-                                     other.footprint_min_x, other.footprint_min_y,
-                                     other.max_x - other.footprint_min_x, other.max_y - other.footprint_min_y):
-                        if abs(other.top_z - (pb.z + pb.fitting_depth)) <= 1.0:
-                            supporting_orders.append(other.order)
-            pb.supported_by = supporting_orders
+            source = pb.to_dict()
+            source["order"] = idx
+            source["supported_by"] = None
+            sources.append(source)
+        sequence = generate_hand_sequence({
+            "coordinate_reference": POSITION_REFERENCE,
+            "pallet": {"length": self.pallet.length, "width": self.pallet.width},
+            "boxes": sources,
+        }, self.hand_profile)
+        if sequence["status"] != "complete":
+            raise HandSequenceError(sequence)
 
-        return sorted_boxes
+        ordered = []
+        for entry in sequence["palletizing"]:
+            pb = sorted_boxes[entry["original_order"] - 1]
+            pb.order = entry["step"]
+            pb.supported_by = entry["supported_by"]
+            check = entry["selected"]
+            pb.hand_grasp = {
+                "corner_id": check["corner_id"],
+                "reference_position": list(check["reference_position"]),
+                "hand_yaw_deg": check["hand_yaw_deg"],
+                "envelope": copy.deepcopy(check["envelope"]),
+                "clearance": check["clearance"],
+                "static_verified": True,
+            }
+            ordered.append(pb)
+        return ordered
 
     def calculate_summary(self, placed_boxes: List[PlacedBox]) -> Dict[str, Any]:
         if not placed_boxes:

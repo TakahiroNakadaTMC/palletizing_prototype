@@ -18,12 +18,15 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from algorithm_programmer.models import BoxSpec, PalletSpec
 from algorithm_programmer.palletizer import Palletizer
+from algorithm_programmer.hand_profile import load_profile
 
 def main():
     parser = argparse.ArgumentParser(description="パレタイザー実行CLI")
     parser.add_argument("testcase", help="実行するテストケースJSONのパス")
     parser.add_argument("--box-db", default=os.path.join(PROJECT_ROOT, "box_research", "box_db.json"), help="箱DBのJSONパス")
     parser.add_argument("--output", "-o", default=None, help="結果を出力するJSONパス")
+    parser.add_argument("--hand-profiles", default=None, help="設備共通ハンド設定JSONのパス")
+    parser.add_argument("--hand-profile-id", default=None, help="使用するハンドの設備ID（複数設備時は必須）")
     args = parser.parse_args()
 
     # 1. 箱DBのロード
@@ -45,7 +48,8 @@ def main():
     box_list = tc_data.get("box_list", [])
 
     # 3. パレタイズの実行
-    palletizer = Palletizer(box_db, pallet_spec)
+    hand_profile = load_profile(args.hand_profiles, args.hand_profile_id)
+    palletizer = Palletizer(box_db, pallet_spec, hand_profile=hand_profile)
     result = palletizer.run(test_name, box_list, lid_db)  # 【NEW】lid_db を追加
 
     result_dict = result.to_dict()

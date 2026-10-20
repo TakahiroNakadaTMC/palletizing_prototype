@@ -8,9 +8,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Three.js (Optional for WebGL) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <style>
     body { margin: 0; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #0f172a; }
     #viewport-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 0; }
@@ -18,6 +15,17 @@
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: rgba(30, 41, 59, 0.5); }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+    #hand-panel { position: absolute; left: 16px; top: 400px; bottom: 112px; width: 285px;
+      z-index: 25; overflow-y: auto; padding: 12px; color: #e2e8f0; background: rgba(15,23,42,.96);
+      border: 1px solid #475569; border-radius: 12px; font-size: 12px; }
+    #hand-panel label { display: block; margin: 7px 0; }
+    #hand-panel select, #hand-panel button { background: #1e293b; color: #f8fafc;
+      border: 1px solid #64748b; border-radius: 4px; padding: 4px; max-width: 100%; }
+    #hand-panel select { width: 100%; }
+    #hand-status { white-space: pre-wrap; margin-top: 8px; }
+    #hand-status[data-error="true"] { color: #fda4af; }
+    #hand-collisions { padding-left: 18px; color: #fda4af; }
+    #hand-result-summary { white-space: pre-wrap; margin: 8px 0; }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 select-none overflow-hidden">
@@ -116,6 +124,28 @@
         <i data-lucide="maximize" class="w-4 h-4"></i>
       </button>
     </div>
+  </aside>
+
+  <aside id="hand-panel">
+    <h2>配置結果・把持角の確認</h2>
+    <p>配置位置のみを確認します。経路・進入・退避は未判定。配置位置・順番は変更しません。</p>
+    <details>
+    <summary>別の設備・把持角で再確認（手動）</summary>
+    <p>保存済みの配置順や把持角は変更しません。</p>
+    <label>再確認に使う設備設定<select id="hand-profile"></select></label>
+    <button id="hand-reload" type="button">設備設定を再読込</button>
+    <label>確認する箱<select id="hand-order"></select></label>
+    <label>把持角（箱ローカル）<select id="hand-corner">
+      <option>X_MIN_Y_MIN</option><option>X_MAX_Y_MIN</option>
+      <option>X_MAX_Y_MAX</option><option>X_MIN_Y_MAX</option>
+    </select></label>
+    <button id="hand-check" type="button">配置時点の干渉を確認</button>
+    <button id="hand-clear" type="button">手動判定表示を解除</button>
+    </details>
+    <div id="hand-result-summary" role="status" aria-live="polite">結果を読込んでください。</div>
+    <div id="hand-status" role="status" aria-live="polite">確認する箱・把持角を選んでください。</div>
+    <ul id="hand-collisions"></ul>
+    <p>橙：ハンド／赤：干渉相手・重なり範囲／紫：把持角。対象箱への接触は許容し、実際の食込みは別途報告します。</p>
   </aside>
 
   <!-- Right Detail Inspector Panel -->
@@ -227,6 +257,10 @@
     let isDragging = false;
     let lastMouseX = 0, lastMouseY = 0;
     let selectedBoxOrder = null;
+    let handResult = null;
+    let handGeneration = 0;
+    let loadedFilename = null;
+    let resultGeneration = 0;
 
     // Options
     let showGuides = true;
@@ -242,6 +276,7 @@
       setupInteractions();
       setupUIEvents();
       loadResultsList();
+      loadHandProfiles();
 
       requestAnimationFrame(renderLoop);
     }
@@ -281,15 +316,203 @@
 
     async function loadResultFile(filename) {
       if (isPlaying) togglePlay();
+      const generation = ++resultGeneration;
+      document.getElementById('hand-result-summary').textContent = '結果を読込中です。';
+      clearHandCheck('結果を読込中です。');
+      loadedFilename = null;
       try {
         const res = await fetch(`/api/result/${filename}`);
-        if (res.ok) {
-          currentData = normalizePositionReference(await res.json());
+        if (!res.ok) throw new Error(`結果の読込に失敗しました: HTTP ${res.status}`);
+        const data = await res.json();
+        if (generation === resultGeneration) {
+          currentData = normalizePositionReference(data);
+          loadedFilename = filename;
           processData(currentData);
+          if (data.hand_sequence?.reverse_verified) {
+            document.getElementById('hand-result-summary').textContent =
+              `正式な配置順：ハンド静的干渉・支持関係の逆順再検証済み。\n設備：${data.hand_sequence.profile.name} (${data.hand_sequence.profile.id})\n再生成せず下部ステップで確認できます。経路未判定。`;
+          } else {
+            document.getElementById('hand-result-summary').textContent =
+              '保存済み把持情報のない旧結果です。配置エンジンを再実行してください。';
+          }
         }
       } catch (e) {
         console.error("Failed to load result data", e);
+        if (generation === resultGeneration) {
+          document.getElementById('hand-result-summary').textContent = e.message;
+          clearHandCheck(e.message, true);
+        }
       }
+    }
+
+    function clearHandCheck(message, error = false) {
+      handGeneration++;
+      handResult = null;
+      document.getElementById('hand-check').disabled = false;
+      document.getElementById('hand-status').textContent = message;
+      document.getElementById('hand-status').dataset.error = String(error);
+      document.getElementById('hand-collisions').replaceChildren();
+    }
+
+    function sequenceMaxStep() {
+      return currentData?.boxes?.length || 0;
+    }
+
+    function visibleSceneBoxes() {
+      const boxes = currentData?.boxes || [];
+      if (handResult) {
+        const ids = new Set([...handResult.checked_orders, handResult.order]);
+        return boxes.filter(box => ids.has(box.order));
+      }
+      return boxes.slice(0, currentStep);
+    }
+
+    async function loadHandProfiles() {
+      clearHandCheck('設備設定を読込中です。');
+      const select = document.getElementById('hand-profile');
+      const previous = select.value;
+      select.replaceChildren();
+      document.getElementById('hand-reload').disabled = true;
+      try {
+        const response = await fetch('/api/hand_profiles');
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+        for (const profile of data.profiles) {
+          const option = document.createElement('option');
+          option.value = profile.id;
+          option.textContent = profile.name;
+          select.append(option);
+        }
+        if (data.profiles.some(profile => profile.id === previous)) select.value = previous;
+        clearHandCheck('設備設定を読込みました。箱・把持角を選んで確認してください。');
+      } catch (error) {
+        clearHandCheck(`設備設定エラー: ${error.message}`, true);
+      } finally {
+        document.getElementById('hand-reload').disabled = false;
+      }
+    }
+
+    async function runHandCheck() {
+      if (isPlaying) togglePlay();
+      clearHandCheck('配置位置の干渉を確認中です。');
+      if (!loadedFilename || !currentData || !document.getElementById('hand-profile').value) {
+        clearHandCheck('配置結果と設備設定を読込んでください。', true);
+        return;
+      }
+      const generation = handGeneration;
+      const order = Number(document.getElementById('hand-order').value);
+      const box = currentData.boxes.find(box => box.order === order);
+      if (!box) {
+        clearHandCheck('確認する箱を選んでください。', true);
+        return;
+      }
+      document.getElementById('hand-check').disabled = true;
+      try {
+        const response = await fetch('/api/hand_check', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            filename: loadedFilename, profile_id: document.getElementById('hand-profile').value,
+            order, corner: document.getElementById('hand-corner').value
+          })
+        });
+        const result = await response.json();
+        if (generation !== handGeneration) return;
+        if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
+        displayHandCheck(result);
+      } catch (error) {
+        if (generation === handGeneration) clearHandCheck(`判定できません: ${error.message}`, true);
+      } finally {
+        if (generation === handGeneration) document.getElementById('hand-check').disabled = false;
+      }
+    }
+
+    function displayHandCheck(result) {
+        const order = result.order;
+        const box = currentData.boxes.find(box => box.order === order);
+        setStep(currentData.boxes.filter(b => b.order <= order).length, true);
+        handResult = result;
+        selectedBoxOrder = order;
+        inspectBox(box);
+        const position = result.reference_position.map(v => Number(v.toFixed(2))).join(', ');
+        const status = document.getElementById('hand-status');
+        status.dataset.error = String(result.has_interference);
+        status.textContent =
+          `#${order} ${result.box_id}\n${result.has_interference ? '配置位置で干渉あり' : '配置位置で干渉なし（経路は未判定）'}\n` +
+          `把持角: ${result.corner_id}\nハンド向き: ${result.hand_yaw_deg}°\n` +
+          `基準角 XYZ: (${position}) mm\n` +
+          `先行箱 ${result.checked_orders.length}箱とパレットを確認。\n` +
+          `対象箱との接触: ${result.target_contacts.length}件（接触のみは許容）。`;
+        for (const hit of result.collisions) {
+          const obstacle = hit.obstacle;
+          const label = obstacle.kind === 'pallet' ? 'パレット' :
+            `${obstacle.kind.startsWith('target_') ? '把持対象への食込み' : '先行箱'} #${obstacle.order} ${obstacle.box_id} (${obstacle.kind})`;
+          const item = document.createElement('li');
+          item.textContent = `${hit.hand_part} → ${label}${hit.clearance_only ? '：余裕不足' : '：形状重なり'}`;
+          document.getElementById('hand-collisions').append(item);
+        }
+    }
+
+    function drawHandCheck() {
+      if (!handResult) {
+        const box = savedGraspBox();
+        if (box) {
+          const grasp = box.hand_grasp;
+          const drawBounds = (bounds, color, alpha) => {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            drawSolidBox(...bounds.min, ...bounds.max.map((v, i) => v - bounds.min[i]),
+              {fill: color, top: color, side: color, stroke: color});
+            ctx.restore();
+          };
+          for (const part of grasp.envelope || []) {
+            if (grasp.clearance) {
+              drawBounds({
+                min: part.min.map(value => value - grasp.clearance),
+                max: part.max.map(value => value + grasp.clearance)
+              }, '#fbbf24', 0.1);
+            }
+            drawBounds(part, '#fb923c', 0.5);
+          }
+          drawGraspMarker(grasp, `#${box.order} 保存済みハンド`);
+        }
+        return;
+      }
+      const drawBounds = (bounds, color, alpha) => {
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        drawSolidBox(...bounds.min, ...bounds.max.map((v, i) => v - bounds.min[i]),
+          {fill: color, top: color, side: color, stroke: color});
+        ctx.restore();
+      };
+      for (const part of handResult.envelope) {
+        if (handResult.clearance) {
+          drawBounds({
+            min: part.min.map(v => v - handResult.clearance),
+            max: part.max.map(v => v + handResult.clearance)
+          }, '#fbbf24', 0.12);
+        }
+        drawBounds(part, '#fb923c', 0.45);
+      }
+      for (const hit of handResult.collisions) drawBounds(hit.overlap, '#ff1744', 0.8);
+      drawGraspMarker(handResult, '把持角');
+    }
+
+    function savedGraspBox() {
+      if (!currentData || currentStep === 0) return null;
+      const visible = currentData.boxes.slice(0, currentStep);
+      const box = visible.find(item => item.order === selectedBoxOrder) || visible[visible.length - 1];
+      return box?.hand_grasp ? box : null;
+    }
+
+    function drawGraspMarker(grasp, label) {
+      const point = project3D(...grasp.reference_position);
+      ctx.save();
+      ctx.fillStyle = '#e879f9';
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      drawBadge(point.x, point.y - 18, `${label} ${grasp.hand_yaw_deg}°`);
     }
 
     function normalizePositionReference(data) {
@@ -354,6 +577,15 @@
       legendList.appendChild(lidLegend);
 
       selectedBoxOrder = null;
+      const handOrder = document.getElementById('hand-order');
+      handOrder.replaceChildren();
+      [...boxes].sort((a, b) => a.order - b.order).forEach(box => {
+        const option = document.createElement('option');
+        option.value = box.order;
+        option.textContent = `#${box.order} ${box.box_id}`;
+        handOrder.append(option);
+      });
+      clearHandCheck('確認する箱・把持角を選び、「配置時点の干渉を確認」を押してください。');
       resetViewTransform();
       lucide.createIcons();
     }
@@ -495,6 +727,7 @@
         drawGridAndPallet();
         if (showGuides) drawGuides();
         drawBoxes();
+        drawHandCheck();
       }
 
       requestAnimationFrame(renderLoop);
@@ -584,7 +817,7 @@
     // Draw Boxes sorted by painter's depth
     function drawBoxes() {
       const boxes = currentData.boxes || [];
-      const visibleBoxes = boxes.slice(0, currentStep);
+      const visibleBoxes = visibleSceneBoxes();
 
       // Calculate center depth for sorting
       const renderList = visibleBoxes.map(b => {
@@ -608,7 +841,10 @@
         const isSelected = (b.order === selectedBoxOrder);
         const lid = getLidGeometry(b);
 
-        const customColors = isSelected ? {
+        const colliding = handResult?.collisions.some(hit => hit.obstacle.order === b.order);
+        const customColors = colliding ? {
+          fill: '#be123c', top: '#fb7185', side: '#9f1239', stroke: '#fecdd3'
+        } : isSelected ? {
           fill: '#0284c7', top: '#38bdf8', side: '#0369a1', stroke: '#ffffff'
         } : colors;
 
@@ -621,7 +857,9 @@
         );
 
         if (lid) {
-          drawSolidBox(lid.x, lid.y, lid.z, lid.width, lid.length, lid.thickness, {
+          drawSolidBox(lid.x, lid.y, lid.z, lid.width, lid.length, lid.thickness, colliding ? {
+            fill: '#be123c', top: '#fb7185', side: '#9f1239', stroke: '#fecdd3'
+          } : {
             fill: '#f59e0b', top: '#fbbf24', side: '#b45309', stroke: '#fef3c7'
           });
           if (showLabels) {
@@ -744,6 +982,7 @@
     // -----------------------------------------------------------------------
     function setupInteractions() {
       window.addEventListener('mousedown', (e) => {
+        if (e.target !== canvas) return;
         if (e.clientY < 80 || e.clientY > window.innerHeight - 100 || e.clientX < 140 || e.clientX > window.innerWidth - 300) return;
         isDragging = true;
         lastMouseX = e.clientX;
@@ -776,6 +1015,7 @@
       window.addEventListener('contextmenu', (e) => e.preventDefault());
 
       window.addEventListener('wheel', (e) => {
+        if (e.target !== canvas) return;
         e.preventDefault();
         const factor = e.deltaY < 0 ? 1.1 : 0.9;
         zoom = Math.max(0.1, Math.min(3.0, zoom * factor));
@@ -783,6 +1023,7 @@
 
       // Click to Inspect
       window.addEventListener('click', (e) => {
+        if (e.target !== canvas) return;
         if (e.clientY < 80 || e.clientY > window.innerHeight - 100 || e.clientX < 140 || e.clientX > window.innerWidth - 300) return;
         handleBoxClick(e.clientX, e.clientY);
       });
@@ -790,7 +1031,7 @@
 
     function handleBoxClick(mouseX, mouseY) {
       if (!currentData || !currentData.boxes) return;
-      const visibleBoxes = currentData.boxes.slice(0, currentStep);
+      const visibleBoxes = visibleSceneBoxes();
 
       // Hit test (simple bounding box in screen coordinates)
       for (let i = visibleBoxes.length - 1; i >= 0; i--) {
@@ -813,6 +1054,7 @@
         const maxScreenY = Math.max(...projected.map(p => p.y)) + 20;
 
         if (mouseX >= minX && mouseX <= maxScreenX && mouseY >= minY && mouseY <= maxScreenY) {
+          clearHandCheck('箱の選択が変わりました。把持角を選んで干渉を再確認してください。');
           selectedBoxOrder = b.order;
           inspectBox(b);
           return;
@@ -821,6 +1063,7 @@
     }
 
     function inspectBox(b) {
+      document.getElementById('hand-order').value = String(b.order);
       const content = document.getElementById('inspector-content');
       const lid = getLidGeometry(b);
       const shownPosition = b.coordinate_position || b.position;
@@ -851,12 +1094,27 @@
           ` : '<div class="pt-1 text-[11px] text-slate-500">パレット直置き</div>'}
         </div>
       `;
+      if (b.hand_grasp) {
+        const grasp = document.createElement('p');
+        grasp.className = 'text-xs text-amber-300 mt-2';
+        grasp.textContent = `保存済み把持角：${b.hand_grasp.corner_id} / XYZ (${b.hand_grasp.reference_position.join(', ')}) mm / ハンド姿勢 ${b.hand_grasp.hand_yaw_deg}°（静的判定・経路未判定）`;
+        content.append(grasp);
+      }
     }
 
     // -----------------------------------------------------------------------
     // UI Event Handlers
     // -----------------------------------------------------------------------
     function setupUIEvents() {
+      document.getElementById('hand-reload').addEventListener('click', loadHandProfiles);
+      document.getElementById('hand-check').addEventListener('click', runHandCheck);
+      document.getElementById('hand-clear').addEventListener('click', () =>
+        clearHandCheck('干渉表示を解除しました。配置結果は変更していません。'));
+      for (const id of ['hand-profile', 'hand-order', 'hand-corner']) {
+        document.getElementById(id).addEventListener('change', () => {
+          clearHandCheck('条件が変わりました。再度「配置時点の干渉を確認」を押してください。');
+        });
+      }
       // Test Case Select
       document.getElementById('select-test-case').addEventListener('change', (e) => {
         if (e.target.value) loadResultFile(e.target.value);
@@ -919,7 +1177,7 @@
           if (isPlaying) {
             clearInterval(playInterval);
             playInterval = setInterval(() => {
-              const maxBoxes = currentData?.boxes?.length || 0;
+              const maxBoxes = sequenceMaxStep();
               if (currentStep < maxBoxes) setStep(currentStep + 1);
               else togglePlay();
             }, playSpeed);
@@ -928,18 +1186,30 @@
       });
     }
 
-    function setStep(step) {
-      const maxBoxes = currentData?.boxes?.length || 0;
+    function setStep(step, preserveHandRequest = false) {
+      if (!preserveHandRequest) clearHandCheck('表示ステップが変わりました。干渉を再確認してください。');
+      const maxBoxes = sequenceMaxStep();
       currentStep = Math.max(0, Math.min(step, maxBoxes));
       document.getElementById('step-current').textContent = currentStep;
       document.getElementById('step-slider').value = currentStep;
+      if (!preserveHandRequest && currentStep > 0) {
+        selectedBoxOrder = currentData.boxes[currentStep - 1].order;
+        const box = savedGraspBox();
+        if (box) {
+          inspectBox(box);
+          document.getElementById('hand-status').textContent =
+            `#${box.order} 保存済み把持角：${box.hand_grasp.corner_id}\n` +
+            `基準角XYZ：(${box.hand_grasp.reference_position.join(', ')}) mm\n` +
+            `ハンド向き：${box.hand_grasp.hand_yaw_deg}°\n紫の点は保存済み基準点です。経路未判定・現在の設備では再判定していません。`;
+        }
+      }
     }
 
     function togglePlay() {
       isPlaying = !isPlaying;
       const playIcon = document.getElementById('play-icon');
       const playLabel = document.getElementById('play-label');
-      const maxBoxes = currentData?.boxes?.length || 0;
+      const maxBoxes = sequenceMaxStep();
 
       if (isPlaying) {
         playLabel.textContent = "停止";
