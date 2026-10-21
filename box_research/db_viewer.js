@@ -6,7 +6,6 @@
     activeTab: 'boxes',
     draft: { boxes: {}, lids: {} },
     persisted: { boxes: {}, lids: {} },
-    approval: {},
     lidReferences: {},
     lidReferencesLoaded: false,
     boxReferences: {},
@@ -36,9 +35,6 @@
     boxesBody: byId('boxes-body'),
     lidsBody: byId('lids-body'),
     boxNoResults: byId('box-no-results'),
-    selectAll: byId('btn-select-all'),
-    deselectAll: byId('btn-deselect-all'),
-    selectTpOnly: byId('btn-select-tp-only'),
     copyJson: byId('btn-copy-json'),
     downloadJson: byId('btn-download-json'),
     reloadAll: byId('btn-reload-all'),
@@ -47,10 +43,8 @@
     lidAdd: byId('btn-lid-add'),
     lidSave: byId('btn-lid-save'),
     statTotal: byId('stat-total'),
-    statApproved: byId('stat-approved'),
-    statApprovedSub: byId('stat-approved-total-sub'),
-    statApprovedTp: byId('stat-approved-tp'),
-    statApprovedNonTp: byId('stat-approved-nontp'),
+    statTp: byId('stat-tp'),
+    statNonTp: byId('stat-nontp'),
     statLidCount: byId('stat-lid-count'),
     statOuterFit: byId('stat-outer-fit'),
     statInnerFit: byId('stat-inner-fit'),
@@ -165,9 +159,8 @@
   }
 
   function computeDirty() {
-    const approvedDraftBoxes = getApprovedBoxes();
     return {
-      boxesDirty: JSON.stringify(approvedDraftBoxes) !== JSON.stringify(state.persisted.boxes),
+      boxesDirty: JSON.stringify(state.draft.boxes) !== JSON.stringify(state.persisted.boxes),
       lidsDirty: JSON.stringify(state.draft.lids) !== JSON.stringify(state.persisted.lids),
     };
   }
@@ -201,7 +194,7 @@
   function setEditable(enabled) {
     const controls = [
       el.tabBoxes, el.tabLids, el.boxSearch, el.lidSearch,
-      el.selectAll, el.deselectAll, el.selectTpOnly, el.copyJson, el.downloadJson, el.reloadAll,
+      el.copyJson, el.downloadJson, el.reloadAll,
       el.boxAdd, el.boxSave, el.lidAdd, el.lidSave,
       ...qsa('.filter-tab'),
     ];
@@ -275,8 +268,6 @@
       state.persisted.lids = clone(lids);
       state.draft.boxes = clone(boxes);
       state.draft.lids = clone(lids);
-      state.approval = {};
-      Object.keys(state.draft.boxes).forEach(id => { state.approval[id] = true; });
       state.lidReferences = refs;
       state.lidReferencesLoaded = true;
       state.boxReferences = boxRefs;
@@ -295,23 +286,11 @@
   }
 
   function updateStats() {
-    const allIds = Object.keys(state.draft.boxes);
-    const total = allIds.length;
-    let approved = 0;
-    let approvedTp = 0;
-    let approvedNonTp = 0;
-    allIds.forEach(id => {
-      if (state.approval[id] !== false) {
-        approved += 1;
-        if (state.draft.boxes[id].type === 'TP') approvedTp += 1;
-        else approvedNonTp += 1;
-      }
-    });
-    el.statTotal.textContent = String(total);
-    el.statApproved.textContent = String(approved);
-    el.statApprovedSub.textContent = `/ ${total} 箱`;
-    el.statApprovedTp.textContent = String(approvedTp);
-    el.statApprovedNonTp.textContent = String(approvedNonTp);
+    const boxes = Object.values(state.draft.boxes);
+    const tpCount = boxes.filter(box => box.type === 'TP').length;
+    el.statTotal.textContent = String(boxes.length);
+    el.statTp.textContent = String(tpCount);
+    el.statNonTp.textContent = String(boxes.length - tpCount);
 
     const lids = Object.values(state.draft.lids);
     el.statLidCount.textContent = String(lids.length);
@@ -320,8 +299,7 @@
   }
 
   function refreshStatusLines() {
-    const approvedCount = Object.values(state.approval).filter(Boolean).length;
-    el.boxStatus.textContent = `編集・採用状態は画面内のみで保持します。「box_db.json に保存」で採用中の箱をマスタに反映してください。承認済み: ${approvedCount}件`;
+    el.boxStatus.textContent = `編集状態は画面内のみで保持します。「box_db.json に保存」で登録箱すべてをマスタに反映してください。登録数: ${Object.keys(state.draft.boxes).length}件`;
     el.lidStatus.textContent = `編集状態は画面内のみで保持します。「lid_db.json に保存」でマスタに反映してください。登録数: ${Object.keys(state.draft.lids).length}件`;
   }
 
@@ -339,31 +317,18 @@
     tbody.innerHTML = '';
     const q = state.boxSearch.trim().toLowerCase();
     const rows = Object.values(state.draft.boxes).filter(box => {
-      const approved = state.approval[box.id] !== false;
       if (state.boxFilter === 'TP' && box.type !== 'TP') return false;
       if (state.boxFilter === 'NON_TP' && box.type !== 'NON_TP') return false;
-      if (state.boxFilter === 'approved' && !approved) return false;
-      if (state.boxFilter === 'rejected' && approved) return false;
       if (!q) return true;
       const target = `${box.id} ${box.name || ''} ${box.description || ''} ${box.module_ratio || ''}`.toLowerCase();
       return target.includes(q);
     });
 
     rows.forEach(box => {
-      const isApproved = state.approval[box.id] !== false;
       const tr = document.createElement('tr');
-      tr.className = `hover:bg-slate-50 transition border-b border-slate-100 ${isApproved ? '' : 'bg-slate-50/60 opacity-60'}`;
+      tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
       const typeBadge = box.type === 'TP' ? 'badge-tp' : 'badge-nontp';
       tr.innerHTML = `
-        <td class="py-3 px-4 text-center">
-          <input type="checkbox" data-approve-id="${escapeHtml(box.id)}" class="box-checkbox w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer" ${isApproved ? 'checked' : ''}>
-        </td>
-        <td class="py-3 px-4">
-          <button type="button" data-toggle-status data-id="${escapeHtml(box.id)}" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold cursor-pointer transition ${isApproved ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-rose-100 text-rose-800 hover:bg-rose-200'}">
-            <i data-lucide="${isApproved ? 'check' : 'x'}" class="w-3 h-3"></i>
-            <span>${isApproved ? '採用' : '不採用'}</span>
-          </button>
-        </td>
         <td class="py-3 px-4 font-mono font-bold text-slate-900">${escapeHtml(box.id)}</td>
         <td class="py-3 px-4 font-medium text-slate-800">${escapeHtml(box.name || '')}</td>
         <td class="py-3 px-3"><span class="inline-block px-2 py-0.5 rounded text-[11px] font-bold ${typeBadge}">${box.type === 'TP' ? 'TP規格' : '非TP'}</span></td>
@@ -389,21 +354,6 @@
 
     el.boxNoResults.classList.toggle('hidden', rows.length > 0);
 
-    tbody.querySelectorAll('[data-approve-id]').forEach(node => {
-      node.addEventListener('change', () => {
-        if (!guardEditable()) return;
-        setBoxApproval(node.getAttribute('data-approve-id'), !!node.checked);
-        renderAll();
-      });
-    });
-    tbody.querySelectorAll('[data-toggle-status]').forEach(node => {
-      node.addEventListener('click', () => {
-        if (!guardEditable()) return;
-        const id = node.getAttribute('data-id');
-        setBoxApproval(id, !(state.approval[id] !== false));
-        renderAll();
-      });
-    });
     tbody.querySelectorAll('[data-box-edit]').forEach(node => {
       node.addEventListener('click', () => {
         if (!guardEditable()) return;
@@ -568,7 +518,7 @@
     } else {
       el.boxFormTitle.textContent = '新しい箱の仕様を登録';
       el.boxModalSubtitle.textContent = 'パレタイズ対象として箱データベースに追加します';
-      el.boxSubmitLabel.textContent = '登録して採用';
+      el.boxSubmitLabel.textContent = '登録する';
       el.boxModalIconBg.className = 'p-2 bg-emerald-100 text-emerald-700 rounded-lg';
       el.boxForm.reset();
       el.boxId.disabled = false;
@@ -621,10 +571,8 @@
       if (!guardBoxRemoval([state.editingBoxId], 'ID変更')) return;
       if (state.draft.boxes[id]) return alert(`箱ID "${id}" は既に存在します`);
       delete state.draft.boxes[state.editingBoxId];
-      delete state.approval[state.editingBoxId];
     }
     state.draft.boxes[id] = next;
-    if (!Object.prototype.hasOwnProperty.call(state.approval, id)) state.approval[id] = true;
     state.formDirty.box = false;
     closeOverlay(el.boxDialog, el.boxDialogContainer);
     renderAll();
@@ -744,14 +692,6 @@
     renderAll();
   }
 
-  function getApprovedBoxes() {
-    const approved = {};
-    Object.entries(state.draft.boxes).forEach(([id, box]) => {
-      if (state.approval[id] !== false) approved[id] = box;
-    });
-    return approved;
-  }
-
   function guardBoxRemoval(ids, action) {
     if (!state.boxReferencesLoaded) {
       alert(`箱参照を取得できないため${action}できません。再読み込みしてください。`);
@@ -768,23 +708,17 @@
     if (!guardEditable() || !guardBoxRemoval([id], '削除')) return;
     if (!confirm(`型番 "${id}" をデータベースから削除しますか？`)) return;
     delete state.draft.boxes[id];
-    delete state.approval[id];
     renderAll();
   }
 
-  function setBoxApproval(id, approved) {
-    if (!approved && !guardBoxRemoval([id], '採用解除')) return;
-    state.approval[id] = approved;
+  function getBoxJSON(pretty) {
+    return JSON.stringify(state.draft.boxes, null, pretty ? 2 : 0);
   }
 
-  function getApprovedJSON(pretty) {
-    return JSON.stringify(getApprovedBoxes(), null, pretty ? 2 : 0);
-  }
-
-  function lidDependencyForBoxSave(approvedBoxes) {
+  function lidDependencyForBoxSave(boxes) {
     const persistedLidIds = new Set(Object.keys(state.persisted.lids));
     const missingInPersisted = new Set();
-    Object.values(approvedBoxes).forEach(box => {
+    Object.values(boxes).forEach(box => {
       (box.compatible_lids || []).forEach(lidId => {
         if (!persistedLidIds.has(lidId)) missingInPersisted.add(lidId);
       });
@@ -797,12 +731,7 @@
     const dirty = computeDirty();
     if (!dirty.lidsDirty) return false;
     if (state.boxLidSyncTouched) return true;
-    const approved = getApprovedBoxes();
-    const persistedApproved = {};
-    Object.entries(state.persisted.boxes).forEach(([id, box]) => {
-      if (state.approval[id] !== false) persistedApproved[id] = box;
-    });
-    return JSON.stringify(approved) !== JSON.stringify(persistedApproved);
+    return dirty.boxesDirty;
   }
 
   async function saveDatasets(payload) {
@@ -829,11 +758,6 @@
       if (!result || result.status !== 'ok') throw new Error((result && result.message) || '保存に失敗しました');
       if (payload.boxes) state.persisted.boxes = clone(payload.boxes);
       if (payload.lids) state.persisted.lids = clone(payload.lids);
-      if (payload.boxes && !payload.lids) {
-        Object.keys(state.approval).forEach(id => {
-          if (!Object.prototype.hasOwnProperty.call(payload.boxes, id)) state.approval[id] = false;
-        });
-      }
       if (payload.lids) state.boxLidSyncTouched = false;
       renderAll();
       setFeedback('success', '保存が完了しました。');
@@ -852,43 +776,43 @@
 
   async function saveBoxes() {
     if (!guardEditable()) return;
-    const approvedBoxes = getApprovedBoxes();
-    const dep = lidDependencyForBoxSave(approvedBoxes);
+    const boxes = state.draft.boxes;
+    const dep = lidDependencyForBoxSave(boxes);
     if (dep.needJointSave || (dep.lidsDirty && state.boxLidSyncTouched)) {
       const msg = [
         '箱保存には未保存の蓋変更を同時保存する必要があります。',
         dep.needJointSave
-          ? `理由: 承認済み箱が参照する蓋ID [${dep.missingIds.join(', ')}] は、現行保存済み lid_db に存在しません。`
+          ? `理由: 登録箱が参照する蓋ID [${dep.missingIds.join(', ')}] は、現行保存済み lid_db に存在しません。`
           : '理由: 蓋の削除/改名に伴う互換蓋同期が未保存です。',
         '',
         `同時保存対象:`,
-        `- 箱DB: 現在の承認済み ${Object.keys(approvedBoxes).length} 件（不採用は除外）`,
+        `- 箱DB: 現在の登録箱すべて ${Object.keys(boxes).length} 件`,
         `- 蓋DB: 現在のドラフト ${Object.keys(state.draft.lids).length} 件`,
         '',
-        '未保存の箱編集・不採用設定もこの保存に含まれます。続行しますか？',
+        '未保存の箱の追加・編集・削除もこの保存に含まれます。続行しますか？',
       ].join('\n');
       if (!confirm(msg)) return;
-      return saveDatasets({ boxes: approvedBoxes, lids: state.draft.lids });
+      return saveDatasets({ boxes, lids: state.draft.lids });
     }
-    return saveDatasets({ boxes: approvedBoxes });
+    return saveDatasets({ boxes });
   }
 
   async function saveLids() {
     if (!guardEditable()) return;
     if (Object.values(state.draft.lids).filter(lid => lid.type === 'NONE').length < 1) return alert('type=NONE の蓋が1件以上必要です');
     if (needsJointSaveFromLidSave()) {
-      const approvedBoxes = getApprovedBoxes();
+      const boxes = state.draft.boxes;
       const msg = [
         '蓋保存に伴い箱DBの整合更新も必要なため、箱DBも同時保存します。',
         '',
         `同時保存対象:`,
         `- 蓋DB: 現在のドラフト ${Object.keys(state.draft.lids).length} 件`,
-        `- 箱DB: 承認済み ${Object.keys(approvedBoxes).length} 件（不採用は除外）`,
+        `- 箱DB: 現在の登録箱すべて ${Object.keys(boxes).length} 件`,
         '',
-        '他の未保存箱編集・不採用設定も含めて保存します。続行しますか？',
+        '他の未保存の箱の追加・編集・削除も含めて保存します。続行しますか？',
       ].join('\n');
       if (!confirm(msg)) return;
-      return saveDatasets({ boxes: approvedBoxes, lids: state.draft.lids });
+      return saveDatasets({ boxes, lids: state.draft.lids });
     }
     return saveDatasets({ lids: state.draft.lids });
   }
@@ -954,37 +878,19 @@
         refreshIcons();
       });
     });
-    el.selectAll.addEventListener('click', () => {
-      if (!guardEditable()) return;
-      Object.keys(state.draft.boxes).forEach(id => { state.approval[id] = true; });
-      renderAll();
-    });
-    el.deselectAll.addEventListener('click', () => {
-      if (!guardEditable()) return;
-      if (!guardBoxRemoval(Object.keys(state.draft.boxes), '採用解除')) return;
-      Object.keys(state.draft.boxes).forEach(id => { state.approval[id] = false; });
-      renderAll();
-    });
-    el.selectTpOnly.addEventListener('click', () => {
-      if (!guardEditable()) return;
-      const excluded = Object.keys(state.draft.boxes).filter(id => state.draft.boxes[id].type !== 'TP');
-      if (!guardBoxRemoval(excluded, '採用解除')) return;
-      Object.entries(state.draft.boxes).forEach(([id, box]) => { state.approval[id] = box.type === 'TP'; });
-      renderAll();
-    });
     el.copyJson.addEventListener('click', async () => {
       if (!guardEditable()) return;
       try {
         if (!navigator || !navigator.clipboard || !navigator.clipboard.writeText) throw new Error('clipboard API が利用できません');
-        await navigator.clipboard.writeText(getApprovedJSON(true));
-        showToast('承認済みJSONをクリップボードにコピーしました');
+        await navigator.clipboard.writeText(getBoxJSON(true));
+        showToast('箱DBのJSONをクリップボードにコピーしました');
       } catch (error) {
         alert(`JSONコピーに失敗しました: ${error.message}`);
       }
     });
     el.downloadJson.addEventListener('click', () => {
       if (!guardEditable()) return;
-      const blob = new Blob([getApprovedJSON(true)], { type: 'application/json' });
+      const blob = new Blob([getBoxJSON(true)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -997,12 +903,12 @@
         a.click();
       }
       URL.revokeObjectURL(url);
-      showToast('承認済み box_db.json をダウンロードしました');
+      showToast('box_db.json をダウンロードしました');
     });
     el.reloadAll.addEventListener('click', async () => {
       if (!guardEditable()) return;
       if (hasUnsavedChanges()) {
-        const ok = confirm('箱・蓋の未保存の追加/編集/採用状態/フォーム入力をすべて破棄して再読み込みします。よろしいですか？');
+        const ok = confirm('箱・蓋の未保存の追加/編集/削除/フォーム入力をすべて破棄して再読み込みします。よろしいですか？');
         if (!ok) return;
       }
       closeBoxDialog();
@@ -1060,13 +966,11 @@
     saveBoxes,
     saveLids,
     computeDirty,
-    getApprovedBoxes,
     lidDependencyForBoxSave,
     submitBoxForm,
     submitLidForm,
     deleteLid,
     deleteBox,
-    setBoxApproval,
     openBoxDialog,
     closeBoxDialog,
     openLidDialog,
