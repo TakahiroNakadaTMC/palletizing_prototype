@@ -251,10 +251,10 @@ class Palletizer:
         )
 
     # -------------------------------------------------------------------------
-    # 1. 単載パレタイズ (Mono-load Palletizer)
+    # 1. 単載パレタイズ (Mono-load Palletizer) — v2026-10-22: 全段同一パターン
     # -------------------------------------------------------------------------
     def palletize_single(self, boxes: List[BoxSpec], lids: List[Dict[str, Any]] = None) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
-        """単一の箱型番・蓋組み合わせをパレットに配置する。"""
+        """単一の箱型番・蓋組み合わせを全段同一の平面配置で積む。"""
         sample_box = boxes[0]
         w, l, h = sample_box.width, sample_box.length, sample_box.height
         depth = sample_box.fitting_depth
@@ -322,17 +322,6 @@ class Palletizer:
                 break
 
             layer_pattern = best_pattern["boxes"]
-            if layer % 2 == 1 and best_pattern.get("invertible", False):
-                layer_pattern = [
-                    {
-                        "x": x_span - (b["x"] + b["w"]),
-                        "y": y_span - (b["y"] + b["l"]),
-                        "w": b["w"],
-                        "l": b["l"],
-                        "rot": b["rot"]
-                    }
-                    for b in layer_pattern
-                ]
 
             boxes_in_layer = len(layer_pattern)
             # 四隅が揃う完全な層のみを積む
@@ -399,8 +388,7 @@ class Palletizer:
                     "type": "grid_0",
                     "boxes": boxes0,
                     "x_span": count_x * w,
-                    "y_span": count_y * l,
-                    "invertible": True
+                    "y_span": count_y * l
                 })
 
         nx2 = int(max_x // l)
@@ -415,8 +403,7 @@ class Palletizer:
                     "type": "grid_90",
                     "boxes": boxes90,
                     "x_span": count_x * l,
-                    "y_span": count_y * w,
-                    "invertible": True
+                    "y_span": count_y * w
                 })
 
         for split_nx_0 in range(1, nx1 + 1):
@@ -437,8 +424,7 @@ class Palletizer:
                     "type": "split_x",
                     "boxes": boxes_split,
                     "x_span": x_span_split,
-                    "y_span": y_span_split,
-                    "invertible": True
+                    "y_span": y_span_split
                 })
 
         for split_ny_0 in range(1, ny1 + 1):
@@ -459,8 +445,7 @@ class Palletizer:
                     "type": "split_y",
                     "boxes": boxes_split_y,
                     "x_span": x_span_split_y,
-                    "y_span": y_span_split_y,
-                    "invertible": True
+                    "y_span": y_span_split_y
                 })
 
         patterns.sort(key=lambda p: (len(p["boxes"]), p["y_span"]), reverse=True)

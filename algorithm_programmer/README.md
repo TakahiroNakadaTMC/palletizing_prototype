@@ -2,7 +2,7 @@
 
 **文書番号:** AP-DOC-2026-001  
 **作成日:** 2026-08-19  
-**最終更新日:** 2026-10-14（混載配置の探索改善）
+**最終更新日:** 2026-10-22（単載の全段同一配置）
 **担当エージェント:** `algorithm-programmer`  
 **対象読者:** `orchestrator`, `tester`, `visualizer`, `supervisor`  
 
@@ -38,7 +38,10 @@ algorithm_programmer/
    - 最下段箱の回転後底面辺が335 mm以下の場合、蓋を含む外形の片側はみ出しを
      `PalletSpec.max_small_edge_overhang_mm` 未満に制限（既定30 mm）。
    - 勘合深さ `fitting_depth` を考慮した最大段数・Z座標計算。
-   - 偶数/奇数段の反転によるインターロッキング（荷崩れ防止）。
+   - 全段で同じX/Y位置・回転角度のパターンを反復し、段ごとの配置反転は行わない。
+   - 2段目以降の端数段は作らず、残箱を未配置として返す。
+     投入数が1段分未満の場合の最下段への部分配置は従来どおり維持する
+     （共通後処理・制約検証は引き続き適用）。
 
 2. **混載エンジン (`palletize_mixed`)** — MSP-EPハイブリッド方式（2026-09-23改訂）:
    - **探索範囲 (`_determine_mixed_envelope`)**: X/Yの許容上限から既存の1 mmの余裕を引いた範囲を使う。
@@ -103,6 +106,20 @@ python3 algorithm_programmer/cli.py \
 ---
 
 ## 5. 変更履歴
+
+### 2026-10-22
+
+- 単載の段ごとの反転と内部の `invertible` フラグを削除し、全段のX/Y位置・回転角度を統一。
+- パターン選定・高さ計算・端数処理・混載処理は変更していない。
+- 既存の単載テストケース12件を変更前のエンジンと比較し、配置数・未配置情報・サマリーが一致することを確認。
+  変更後は全段同一配置で、12件すべてSupervisor合格。保存済みの結果JSONは上書きしていない。
+- `python -m unittest algorithm_programmer.palletizer_test -v` で6テスト合格。
+  非対称スプリットの3段反復、グリッド、非TP・蓋付き、端数、最下段の部分配置、高さ上限を検証。
+  非対称スプリットと非TP・蓋付きケースはSupervisorの制約検証も実施。
+- 既存の `supervisor.validate_test` は17件中15件合格。
+  `test_mixed_depth_combination_is_retained` と
+  `test_tighter_depth_limit_is_respected` の2件は変更前のエンジンでも同様に不合格であり、
+  今回の変更範囲外として未修正。
 
 ### 2026-10-14
 
