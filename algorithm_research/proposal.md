@@ -189,7 +189,7 @@ graph TD
 
     subgraph Layer2["Layer 2: パレット幾何配置エンジン (Placement Engine)"]
         TP_BLK & NTP_COL --> MODE{単載 or 混載?}
-        MODE -->|単載| MONO[単載パターンオプティマイザ<br>- 5大基本パターン生成<br>- 長短辺制約フィルタ<br>- 充填率最大化]
+        MODE -->|単載| MONO[単載パターンオプティマイザ<br>- グリッド・分割候補生成<br>- 荷姿制約フィルタ<br>- 総配置個数最大・同数なら低高さ]
         MODE -->|混載| MIX[混載 Extreme Points パッカー<br>- 2Dフットプリント配置<br>- 境界制約スコアリング]
     end
 
@@ -205,7 +205,8 @@ graph TD
 
 ### 4.2 単載（Mono-load）処理ロジック
 
-単一種類の箱のみを積載する場合、決定論的に最適なパターンを高速探索する。
+同一箱型番・同一蓋の単載では、生成候補内で総配置個数が最大、同数なら荷姿高さが最小の案を選ぶ。
+任意の配置や段ごとに異なる配置まで含めた大域最適性は保証しない。
 
 #### (1) 2Dレイヤーパターンの自動探索
 
@@ -213,7 +214,10 @@ graph TD
 
 1. **ブロックパターン (Block Pattern)**: 全て同一向き（$n_x \times n_y$ 個）。
 2. **スプリット / レンガ積み (Brick / Split Pattern)**: 領域を2分割し、一方を縦向き、他方を横向き。
-3. **ピンウィール / 風車積み (Pinwheel Pattern)**: 中央にスペースまたは芯を置き、周囲に風車状に4ブロック配置。
+3. **ピンウィール / 風車積み (Pinwheel Pattern、将来候補・現行未実装)**: 中央にスペースまたは芯を置き、周囲に風車状に4ブロック配置。
+
+現行実装はグリッドと分割配置を対象とし、分割領域の列数・行数を減らした候補も生成する。
+位置・寸法・回転が一致する候補は重複除去する。
 
 **段間の配置方針（2026-10-22改訂）**:
 単載は選定したパターンを全段で同じX/Y位置・回転角度で繰り返す。
@@ -238,7 +242,10 @@ graph TD
 生成された各候補パターンについて：
 
 1. 長辺幅 $800\text{ mm} \le X_{span} < 1360\text{ mm}$ かつ 短辺幅 $800\text{ mm} \le Y_{span} < 1100\text{ mm}$ をチェック。
-2. 合格したパターンのうち、1層あたりの箱数 $K$ が最大のものを選択。
+2. 最下段の小辺はみ出しと四隅の箱の存在を確認する。
+   投入個数を $B$、1層の箱数を $K$ として、$N = \min(\lfloor B/K \rfloor, N_{max})$ を計算する。
+   完全層を作れる候補のうち、総配置個数 $KN$ が最大、同数なら高さ $H+(N-1)(H-d)$ が最小の案を選ぶ。
+   両者が同じ場合は候補順を維持する。例えばTP341・15個・蓋なしでは7個×2段でなく5個×3段を選ぶ。
 3. パレット中心へのセンタリング（オフセット配置）:
    $$x_{offset} = \frac{1200 - X_{span}}{2}, \quad y_{offset} = \frac{1000 - Y_{span}}{2}$$
     （幅の合否は $Y_{span}$ で判定し、短辺側のオーバーハングを禁止しない。）
@@ -421,32 +428,37 @@ class PalletSpec:
 
 #### (1) 単載パレタイズエンジン (`palletize_single`)
 
+以下は完全層候補の選定を示す疑似コード。補助関数名は説明用であり、公開APIではない。
+実装では完全な層を作れない少数投入に対する従来の部分配置、未配置理由の返却、共通後処理も行う。
+
 ```python
-def palletize_single(box: BoxSpec, pallet: PalletSpec) -> List[PlacedBox]:
+def palletize_single(box: BoxSpec, count: int, pallet: PalletSpec) -> List[PlacedBox]:
     best_layout = []
-    max_box_count = 0
-    
-    # 0度・90度および複合パターンのグリッド探索
+    best_score = None
+    height = box.height + box.lid_thickness
+    max_layers = calculate_max_layers(height, box.fitting_depth, pallet.max_height)
     patterns = generate_candidate_patterns(box, pallet)
-    
+
     for pattern in patterns:
-        # パターンの幅・奥行きスパン検証
-        x_span = pattern.width_span
-        y_span = pattern.length_span
-        
-        if not (pallet.min_x_span <= x_span < pallet.max_x_span):
-            continue  # 長辺制約違反
-        if not (pallet.min_y_span <= y_span < pallet.max_y_span):
-            continue  # 短辺制約違反
-            
-        # 段数の計算 (fitting_depth 考慮)
-        layers = calculate_max_layers(box.height, box.fitting_depth, pallet.max_height)
+        if not (pallet.min_x_span <= pattern.width_span < pallet.max_x_span):
+            continue
+        if not (pallet.min_y_span <= pattern.length_span < pallet.max_y_span):
+            continue
+        if not centered_small_edges_are_valid(pattern, box, pallet):
+            continue
+        if not has_all_four_corners(pattern):
+            continue
+
+        layers = min(count // len(pattern.base_boxes), max_layers)
+        if layers == 0:
+            continue
         total_boxes = len(pattern.base_boxes) * layers
-        
-        if total_boxes > max_box_count:
-            max_box_count = total_boxes
+        load_height = height + (layers - 1) * (height - box.fitting_depth)
+        score = (total_boxes, -load_height)
+        if best_score is None or score > best_score:
+            best_score = score
             best_layout = build_3d_single_layout(pattern, box, layers, pallet)
-            
+
     return assign_loading_orders(best_layout)
 
 def calculate_max_layers(height: float, fitting_depth: float, max_h: float) -> int:

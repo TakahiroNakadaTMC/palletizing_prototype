@@ -251,7 +251,7 @@ class Palletizer:
         )
 
     # -------------------------------------------------------------------------
-    # 1. 単載パレタイズ (Mono-load Palletizer) — v2026-10-22: 全段同一パターン
+    # 1. 単載パレタイズ (Mono-load Palletizer) — v2026-10-22: 総配置数優先・同数なら低い荷山
     # -------------------------------------------------------------------------
     def palletize_single(self, boxes: List[BoxSpec], lids: List[Dict[str, Any]] = None) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
         """単一の箱型番・蓋組み合わせを全段同一の平面配置で積む。"""
@@ -267,7 +267,8 @@ class Palletizer:
         candidate_patterns = self._generate_single_2d_patterns(footprint_w, footprint_l)
 
         best_pattern = None
-        best_count_per_layer = 0
+        best_score = None
+        fallback_pattern = None
 
         for pattern in candidate_patterns:
             x_span = pattern["x_span"]
@@ -297,13 +298,32 @@ class Palletizer:
                 continue
 
             count_in_layer = len(pattern["boxes"])
-            if count_in_layer > best_count_per_layer:
-                best_count_per_layer = count_in_layer
+            # 完全な層を作れない少数投入では、従来の最大パターンの先頭部分を使う。
+            if fallback_pattern is None and (len(boxes) < count_in_layer or max_layers == 0):
+                fallback_pattern = pattern
+
+            margin = TOP_CORNER_MARGIN_MM
+            if not all(any(
+                (pb.footprint_min_x <= margin if left else pb.max_x >= x_span - margin)
+                and (pb.footprint_min_y <= margin if front else pb.max_y >= y_span - margin)
+                for pb in pattern_boxes
+            ) for left in (True, False) for front in (True, False)):
+                continue
+
+            layers = min(len(boxes) // count_in_layer, max_layers)
+            if layers == 0:
+                continue
+            load_height = effective_height + (layers - 1) * (effective_height - depth)
+            score = (count_in_layer * layers, -load_height)
+            if best_score is None or score > best_score:
+                best_score = score
                 best_pattern = pattern
 
+        if best_pattern is None:
+            best_pattern = fallback_pattern
         if not best_pattern:
             return [], [{"box_id": sample_box.id, "count": len(boxes),
-                         "reason": f"最下段の335mm以下の辺をパレット端から{self.pallet.max_small_edge_overhang_mm:g}mm未満に収められる配置がありません"}]
+                         "reason": "荷姿寸法・最下段の小辺はみ出し・四隅の条件を満たす配置がありません"}]
 
         placed_boxes: List[PlacedBox] = []
         total_needed = len(boxes)
@@ -406,48 +426,56 @@ class Palletizer:
                     "y_span": count_y * w
                 })
 
+        reduced_patterns = []
         for split_nx_0 in range(1, nx1 + 1):
             width_used_0 = split_nx_0 * w
-            rem_width = max_x - width_used_0
-            split_nx_90 = int(rem_width // l)
-            if split_nx_90 > 0 and ny2 > 0:
-                boxes_split = []
-                for ix in range(split_nx_0):
-                    for iy in range(ny1):
-                        boxes_split.append({"x": ix * w, "y": iy * l, "w": w, "l": l, "rot": 0})
-                for ix in range(split_nx_90):
-                    for iy in range(ny2):
-                        boxes_split.append({"x": width_used_0 + ix * l, "y": iy * w, "w": l, "l": w, "rot": 90})
-                x_span_split = width_used_0 + split_nx_90 * l
-                y_span_split = max(ny1 * l, ny2 * w)
-                patterns.append({
-                    "type": "split_x",
-                    "boxes": boxes_split,
-                    "x_span": x_span_split,
-                    "y_span": y_span_split
-                })
+            max_nx_90 = int((max_x - width_used_0) // l)
+            for split_nx_90 in range(max_nx_90, 0, -1):
+                for count_y_0 in range(ny1, 0, -1):
+                    for count_y_90 in range(ny2, 0, -1):
+                        boxes_split = [
+                            {"x": ix * w, "y": iy * l, "w": w, "l": l, "rot": 0}
+                            for ix in range(split_nx_0) for iy in range(count_y_0)
+                        ] + [
+                            {"x": width_used_0 + ix * l, "y": iy * w, "w": l, "l": w, "rot": 90}
+                            for ix in range(split_nx_90) for iy in range(count_y_90)
+                        ]
+                        target = patterns if (split_nx_90 == max_nx_90
+                                              and count_y_0 == ny1 and count_y_90 == ny2) else reduced_patterns
+                        target.append({
+                            "type": "split_x", "boxes": boxes_split,
+                            "x_span": width_used_0 + split_nx_90 * l,
+                            "y_span": max(count_y_0 * l, count_y_90 * w)
+                        })
 
         for split_ny_0 in range(1, ny1 + 1):
             len_used_0 = split_ny_0 * l
-            rem_len = max_y - len_used_0
-            split_ny_90 = int(rem_len // w)
-            if split_ny_90 > 0 and nx2 > 0:
-                boxes_split_y = []
-                for ix in range(nx1):
-                    for iy in range(split_ny_0):
-                        boxes_split_y.append({"x": ix * w, "y": iy * l, "w": w, "l": l, "rot": 0})
-                for ix in range(nx2):
-                    for iy in range(split_ny_90):
-                        boxes_split_y.append({"x": ix * l, "y": len_used_0 + iy * w, "w": l, "l": w, "rot": 90})
-                x_span_split_y = max(nx1 * w, nx2 * l)
-                y_span_split_y = len_used_0 + split_ny_90 * w
-                patterns.append({
-                    "type": "split_y",
-                    "boxes": boxes_split_y,
-                    "x_span": x_span_split_y,
-                    "y_span": y_span_split_y
-                })
+            max_ny_90 = int((max_y - len_used_0) // w)
+            for split_ny_90 in range(max_ny_90, 0, -1):
+                for count_x_0 in range(nx1, 0, -1):
+                    for count_x_90 in range(nx2, 0, -1):
+                        boxes_split = [
+                            {"x": ix * w, "y": iy * l, "w": w, "l": l, "rot": 0}
+                            for ix in range(count_x_0) for iy in range(split_ny_0)
+                        ] + [
+                            {"x": ix * l, "y": len_used_0 + iy * w, "w": l, "l": w, "rot": 90}
+                            for ix in range(count_x_90) for iy in range(split_ny_90)
+                        ]
+                        target = patterns if (split_ny_90 == max_ny_90
+                                              and count_x_0 == nx1 and count_x_90 == nx2) else reduced_patterns
+                        target.append({
+                            "type": "split_y", "boxes": boxes_split,
+                            "x_span": max(count_x_0 * w, count_x_90 * l),
+                            "y_span": len_used_0 + split_ny_90 * w
+                        })
 
+        # 同点では従来の候補順を保ち、新しい小さな分割候補は後ろに追加する。
+        unique_patterns = {}
+        for pattern in patterns + reduced_patterns:
+            key = tuple(sorted((b["x"], b["y"], b["w"], b["l"], b["rot"])
+                               for b in pattern["boxes"]))
+            unique_patterns.setdefault(key, pattern)
+        patterns = list(unique_patterns.values())
         patterns.sort(key=lambda p: (len(p["boxes"]), p["y_span"]), reverse=True)
         return patterns
 
