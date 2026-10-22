@@ -1,6 +1,6 @@
 {
   "name": "single_tp131_with_lids",
-  "description": "TP-131 (335x168x103) ハーフモジュール浅型の単載テスト（各箱に対応する標準蓋を使用）",
+  "description": "TP-131 (335x167.5x102.5) ハーフモジュール浅型の単載テスト（各箱に対応する標準蓋を使用）",
   "pallet": {
     "length": 1200,
     "width": 1000,

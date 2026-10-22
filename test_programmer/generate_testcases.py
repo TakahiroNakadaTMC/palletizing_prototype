@@ -66,11 +66,11 @@ def generate_test_cases():
             ]
         }
 
-    # (2) TP-342 1.5モジュール標準型 (503x335x195)
+    # (2) TP-342 1.5モジュール標準型 (502.5x335x195)
     if "TP-342" in box_db:
         test_cases["single_tp342"] = {
             "name": "single_tp342",
-            "description": "TP-342 (503x335x195) 1.5モジュール標準型の単載テスト",
+            "description": "TP-342 (502.5x335x195) 1.5モジュール標準型の単載テスト",
             "pallet": PALLET_SPEC,
             "box_list": [
                 {"box_id": "TP-342", "count": 40, "lid_id": no_lid_id}
@@ -88,33 +88,33 @@ def generate_test_cases():
             ]
         }
 
-    # (4) TP-462 大型モジュール標準型 (670x503x195)
+    # (4) TP-462 大型モジュール標準型 (670x502.5x195)
     if "TP-462" in box_db:
         test_cases["single_tp462"] = {
             "name": "single_tp462",
-            "description": "TP-462 (670x503x195) 大型モジュール標準型の単載テスト",
+            "description": "TP-462 (670x502.5x195) 大型モジュール標準型の単載テスト",
             "pallet": PALLET_SPEC,
             "box_list": [
                 {"box_id": "TP-462", "count": 24, "lid_id": no_lid_id}
             ]
         }
 
-    # (5) TP-131 ハーフモジュール浅型 (335x168x103)
+    # (5) TP-131 ハーフモジュール浅型 (335x167.5x102.5)
     if "TP-131" in box_db:
         test_cases["single_tp131"] = {
             "name": "single_tp131",
-            "description": "TP-131 (335x168x103) ハーフモジュール浅型の単載テスト",
+            "description": "TP-131 (335x167.5x102.5) ハーフモジュール浅型の単載テスト",
             "pallet": PALLET_SPEC,
             "box_list": [
                 {"box_id": "TP-131", "count": 120, "lid_id": no_lid_id}
             ]
         }
 
-    # (6) TP-331 基準モジュール浅型 (335x335x103)
+    # (6) TP-331 基準モジュール浅型 (335x335x102.5)
     if "TP-331" in box_db:
         test_cases["single_tp331"] = {
             "name": "single_tp331",
-            "description": "TP-331 (335x335x103) 基準モジュール浅型の単載テスト",
+            "description": "TP-331 (335x335x102.5) 基準モジュール浅型の単載テスト",
             "pallet": PALLET_SPEC,
             "box_list": [
                 {"box_id": "TP-331", "count": 80, "lid_id": no_lid_id}
@@ -150,7 +150,7 @@ def generate_test_cases():
             "box_list": modular_stack_boxes
         }
 
-    # (9) mixed_tp_different_heights: 異高混載 (103, 149, 195, 288mm)
+    # (9) mixed_tp_different_heights: 異高混載 (102.5, 148.75, 195, 287.5mm)
     diff_h_boxes = []
     for bid, cnt in [
         ("TP-131", 16), ("TP-331", 12), ("TP-331.5", 12),
@@ -162,7 +162,7 @@ def generate_test_cases():
     if diff_h_boxes:
         test_cases["mixed_tp_different_heights"] = {
             "name": "mixed_tp_different_heights",
-            "description": "4種類の高さ（103, 149, 195, 288mm）が混在する高度な混載テスト",
+            "description": "4種類の高さ（102.5, 148.75, 195, 287.5mm）が混在する高度な混載テスト",
             "pallet": PALLET_SPEC,
             "box_list": diff_h_boxes
         }
@@ -181,8 +181,8 @@ def generate_test_cases():
     # -------------------------------------------------------------
     # 3. 境界値・制約検証テストケース (Boundary & Constraint test cases)
     # -------------------------------------------------------------
-    # (11) boundary_height_limit: 深型（H=288mm）による積載高さ1200mm境界値テスト
-    # 288 + 3*(288-10) = 288 + 834 = 1122mm <= 1200mm (4段積載可能)
+    # (11) boundary_height_limit: 深型（H=287.5mm）による積載高さ1200mm境界値テスト
+    # 287.5 + 3*(287.5-10) = 1120mm <= 1200mm (4段積載可能)
     deep_boxes = []
     for bid in ["TP-333", "TP-343", "TP-363", "TP-463"]:
         if bid in box_db:
@@ -190,7 +190,7 @@ def generate_test_cases():
     if deep_boxes:
         test_cases["boundary_height_limit"] = {
             "name": "boundary_height_limit",
-            "description": "深型（H=288mm）のみで4段積載（総高1122mm）を行う高さ制約境界値テスト",
+            "description": "深型（H=287.5mm）のみで4段積載（総高1120mm）を行う高さ制約境界値テスト",
             "pallet": PALLET_SPEC,
             "box_list": deep_boxes
         }

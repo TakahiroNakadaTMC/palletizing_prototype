@@ -1,6 +1,6 @@
 {
   "name": "single_tp331",
-  "description": "TP-331 (335x335x103) 基準モジュール浅型の単載テスト",
+  "description": "TP-331 (335x335x102.5) 基準モジュール浅型の単載テスト",
   "pallet": {
     "length": 1200,
     "width": 1000,

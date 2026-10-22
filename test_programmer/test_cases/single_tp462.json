@@ -1,6 +1,6 @@
 {
   "name": "single_tp462",
-  "description": "TP-462 (670x503x195) 大型モジュール標準型の単載テスト",
+  "description": "TP-462 (670x502.5x195) 大型モジュール標準型の単載テスト",
   "pallet": {
     "length": 1200,
     "width": 1000,

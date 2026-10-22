@@ -1,6 +1,6 @@
 {
   "name": "single_tp342",
-  "description": "TP-342 (503x335x195) 1.5モジュール標準型の単載テスト",
+  "description": "TP-342 (502.5x335x195) 1.5モジュール標準型の単載テスト",
   "pallet": {
     "length": 1200,
     "width": 1000,

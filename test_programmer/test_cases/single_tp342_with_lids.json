@@ -1,6 +1,6 @@
 {
   "name": "single_tp342_with_lids",
-  "description": "TP-342 (503x335x195) 1.5モジュール標準型の単載テスト（各箱に対応する標準蓋を使用）",
+  "description": "TP-342 (502.5x335x195) 1.5モジュール標準型の単載テスト（各箱に対応する標準蓋を使用）",
   "pallet": {
     "length": 1200,
     "width": 1000,

@@ -9,6 +9,7 @@ import os
 import sys
 import glob
 import json
+from datetime import date
 from typing import List, Dict, Tuple, Any
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -497,10 +498,10 @@ def run_supervisor_validation():
     os.makedirs(os.path.dirname(REPORT_PATH), exist_ok=True)
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
         f.write("# 荷姿制約 総合検証レポート (validation_report.md)\n\n")
-        f.write(f"**作成日:** 2026-08-19  \n")
-        f.write(f"**検証エージェント:** `supervisor`  \n")
-        f.write(f"**検証対象:** 採用済み結果JSON ({len(reports)} 件)\n")
-        f.write(f"**総合判定:** {'✅ **全ケース合格 (100% PASS)**' if fail_count == 0 else '❌ **制約違反あり (要修正)**'}  \n\n")
+        f.write(f"- **作成日:** {date.today().isoformat()}\n")
+        f.write("- **検証エージェント:** `supervisor`\n")
+        f.write(f"- **検証対象:** 採用済み結果JSON ({len(reports)} 件)\n")
+        f.write(f"- **総合判定:** {'✅ **全ケース合格 (100% PASS)**' if fail_count == 0 else '❌ **制約違反あり (要修正)**'}\n\n")
         f.write("---\n\n")
         f.write("## 1. 検証結果サマリー\n\n")
         f.write("| テストケース名 | 判定 | 配置箱数 | 荷姿寸法 (X × Y × Z mm) | 体積充填率 | 備考・検証詳細 |\n")

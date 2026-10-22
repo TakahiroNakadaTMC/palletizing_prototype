@@ -20,16 +20,16 @@
 | 分類 | テストケース名 | 対象箱型番 | 箱数 | 主な検証目的 |
 | :--- | :--- | :--- | :---: | :--- |
 | **単載** | [`single_tp332.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp332.json) | TP-332 (335x335x195) | 60 | 基準モジュール単載パターンの最大充填（ブロック/レンガ） |
-| **単載** | [`single_tp342.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp342.json) | TP-342 (503x335x195) | 40 | 1.5モジュール単載パターンの探索 |
+| **単載** | [`single_tp342.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp342.json) | TP-342 (502.5x335x195) | 40 | 1.5モジュール単載パターンの探索 |
 | **単載** | [`single_tp362.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp362.json) | TP-362 (670x335x195) | 30 | 2倍モジュール単載（長辺1340mmフィット＆短辺制約） |
-| **単載** | [`single_tp462.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp462.json) | TP-462 (670x503x195) | 24 | 大型モジュール単載パターンの安定配置 |
-| **単載** | [`single_tp131.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp131.json) | TP-131 (335x168x103) | 120 | ハーフモジュール小箱の大量充填 |
-| **単載** | [`single_tp331.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp331.json) | TP-331 (335x335x103) | 80 | 浅型基準箱の多段積載（最大11段） |
+| **単載** | [`single_tp462.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp462.json) | TP-462 (670x502.5x195) | 24 | 大型モジュール単載パターンの安定配置 |
+| **単載** | [`single_tp131.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp131.json) | TP-131 (335x167.5x102.5) | 120 | ハーフモジュール小箱の大量充填 |
+| **単載** | [`single_tp331.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp331.json) | TP-331 (335x335x102.5) | 80 | 浅型基準箱の多段積載 |
 | **混載** | [`mixed_tp_same_height.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_same_height.json) | TP-332, 342, 362, 462 | 42 | 同一高さ（H=195mm）のモジュール平面組み合わせ混載 |
 | **混載** | [`mixed_tp_modular_stack.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_modular_stack.json) | TP-331, 332, 362, 462 | 58 | TP-330系2個の上にTP-360系を載せる跨ぎ嵌合段積み |
-| **混載** | [`mixed_tp_different_heights.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_different_heights.json) | 9種類のTP箱 (高103/149/195/288) | 74 | 4段階の異高が混在する高度な混載・嵌合Z追従 |
+| **混載** | [`mixed_tp_different_heights.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_different_heights.json) | 9種類のTP箱 (高102.5/148.75/195/287.5) | 74 | 4段階の異高が混在する高度な混載・嵌合Z追従 |
 | **混載** | [`mixed_tp_large_volume.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_large_volume.json) | 全13種類のTP箱 (各10個) | 130 | 大量投入によるパレット最大積載高1200mm上限充填 |
-| **境界値** | [`boundary_height_limit.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_height_limit.json) | TP-333, 343, 363, 463 (高288) | 48 | 深型のみで4段積載（総高1122mm <= 1200mm）の境界値 |
+| **境界値** | [`boundary_height_limit.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_height_limit.json) | TP-333, 343, 363, 463 (高287.5) | 48 | 深型のみで4段積載（総高1120mm <= 1200mm）の境界値 |
 | **境界値** | [`boundary_overhang_long_side.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_overhang_long_side.json) | TP-362, 363 (長辺670) | 30 | 長辺荷姿1340mm（<1360mm許容枠）の境界値 |
 | **境界値** | [`boundary_min_short_side.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_min_short_side.json) | TP-342, 332 | 32 | 短辺荷姿が800mm以上1100mm未満の制約を満たすかの検証 |
 
@@ -52,6 +52,7 @@ python3 test_programmer/generate_testcases.py
 ```bash
 python3 test_programmer/serve_testcase_viewer.py
 ```
+
 ブラウザで `http://localhost:8083` を開いてご利用いただけます。
 
 採否状態は `test_case_approval.json` に共有保存され、初期登録済みケースは採用、新規ケースは未採用になります。ビューアで採否を変更した後、「テストケース一括保存」を押すとケースと採否状態が保存されます。テストランナーは採用ケースだけを実行します。ビューアでケースを削除して一括保存すると、対応するケースJSONも削除されますが、過去の実行結果JSONは履歴として残ります。
@@ -75,6 +76,7 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 すべてのテストケースJSONで、`box_list` 配列内の **各箱に** `"lid_id"` フィールドが追加されました：
 
 #### 変更前（Phase 3）
+
 ```json
 {
   "name": "single_tp332",
@@ -88,6 +90,7 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 ```
 
 #### 変更後（Phase 3-1）✅
+
 ```json
 {
   "name": "single_tp332",
@@ -104,6 +107,7 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 ```
 
 #### 混載テストケースの例
+
 ```json
 {
   "name": "mixed_tp_same_height",
@@ -120,9 +124,10 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 
 #### testcase_viewer.html: 修正内容
 
-**追加: 各箱行に蓋選択ドロップダウン**
+#### 各箱行に蓋選択ドロップダウン
 
 モーダル内の投入箱リストが、各箱ごとに4列で表示されます：
+
 1. **箱型番セレクト** （例: TP-332）
 2. **投入数量** （例: 60）
 3. **蓋選択ドロップダウン（NEW）** （例: 蓋なし / LID-001 / LID-002 / ...）
@@ -159,11 +164,13 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 ##### `addBoxRow(selectedId, count, lidId)` (修正)
 
 **パラメータ**:
+
 - `selectedId` (string, default: `''`): 箱型番（例: `'TP-332'`）
 - `count` (number, default: `10`): 投入数量
 - `lidId` (string, default: `'LID-010'`): 蓋ID
 
 **処理内容**:
+
 - Box行に **3番目の列** として蓋セレクトボックスを追加
 - **選択された箱の `compatible_lids` に含まれる実蓋** と、全箱共通の無蓋を表示
 - 箱型番が変更されたら、蓋ドロップダウンも自動更新
@@ -171,6 +178,7 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 **重要**: 各箱型番の対応蓋は `box_research/box_db.json` の `"compatible_lids"` フィールドで管理されています：
 
 例:
+
 ```json
 "TP-332": {
   "id": "TP-332",
@@ -180,6 +188,7 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 ```
 
 **UI動作**:
+
 1. 最初に箱を選択 → その箱の対応蓋のみドロップダウンに表示
 2. 箱型番を変更 → 新しい箱の対応蓋に自動更新
 
@@ -261,11 +270,13 @@ document.getElementById('form-testcase').addEventListener('submit', (e) => {
 蓋データベースをJSON形式で返却します。
 
 **リクエスト**:
-```
+
+```http
 GET /api/lids HTTP/1.1
 ```
 
 **レスポンス**:
+
 ```json
 {
   "LID-001": {
@@ -288,6 +299,7 @@ GET /api/lids HTTP/1.1
 ```
 
 **実装** (`serve_testcase_viewer.py`):
+
 - `box_research/lid_db.json` をサーバーから読み込んで返す
 - ファイルが存在しない場合は空オブジェクト `{}` を返す
 
@@ -296,6 +308,7 @@ GET /api/lids HTTP/1.1
 #### 既存テストケース（自動更新）
 
 `test_programmer/test_cases/` の全13ファイル:
+
 - `single_tp*.json` (6ファイル)
 - `mixed_tp_*.json` (4ファイル)
 - `boundary_*.json` (3ファイル)
@@ -311,7 +324,8 @@ python3 test_programmer/generate_testcases.py
 ```
 
 結果例（既存13件＋標準蓋付き派生13件）:
-```
+
+```text
 ✓ 生成: single_tp332.json ...
 ✓ 生成: mixed_tp_modular_stack.json ...
 ...
@@ -325,6 +339,7 @@ python3 test_programmer/generate_testcases.py
 testcase_viewer.html で編集モーダルを開き、**各箱行の蓋ドロップダウン** から別の蓋を選択することで、箱ごとに蓋を変更できます。
 
 手順:
+
 1. カード編集アイコンをクリック
 2. 修正モーダルが開く
 3. 各箱行の **蓋ドロップダウン** から選択
@@ -337,7 +352,7 @@ testcase_viewer.html で編集モーダルを開き、**各箱行の蓋ドロッ
 
 ### 5.7 ファイル構成（Phase 3-1更新）
 
-```
+```text
 test_programmer/
 ├── testcase_viewer.html           # ← addBoxRow() に lidId パラメータ追加
 ├── serve_testcase_viewer.py       # ← 既存、/api/lids エンドポイント使用
@@ -362,14 +377,16 @@ test_programmer/
 ### 5.8 使用方法
 
 1. **サーバー起動**:
-   ```bash
-   python3 test_programmer/serve_testcase_viewer.py
-   ```
+
+    ```bash
+    python3 test_programmer/serve_testcase_viewer.py
+    ```
 
 2. **ブラウザでアクセス**:
-   ```
-   http://localhost:8083
-   ```
+
+    ```text
+    http://localhost:8083
+    ```
 
 3. **テストケース作成（新規）**:
    - 「新規テストパターン」ボタンをクリック

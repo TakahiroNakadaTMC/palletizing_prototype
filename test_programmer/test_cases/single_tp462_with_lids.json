@@ -1,6 +1,6 @@
 {
   "name": "single_tp462_with_lids",
-  "description": "TP-462 (670x503x195) 大型モジュール標準型の単載テスト（各箱に対応する標準蓋を使用）",
+  "description": "TP-462 (670x502.5x195) 大型モジュール標準型の単載テスト（各箱に対応する標準蓋を使用）",
   "pallet": {
     "length": 1200,
     "width": 1000,

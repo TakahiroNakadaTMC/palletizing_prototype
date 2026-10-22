@@ -1,6 +1,6 @@
 {
   "name": "boundary_height_limit",
-  "description": "深型（H=288mm）のみで4段積載（総高1122mm）を行う高さ制約境界値テスト",
+  "description": "深型（H=287.5mm）のみで4段積載（総高1120mm）を行う高さ制約境界値テスト",
   "pallet": {
     "length": 1200,
     "width": 1000,
