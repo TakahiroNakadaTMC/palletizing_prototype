@@ -1,6 +1,6 @@
 {
   "name": "boundary_overhang_long_side_with_lids",
-  "description": "長辺670mm箱を2列配置し、長辺荷姿1340mm（<1360mm許容枠）を検証するテスト（各箱に対応する標準蓋を使用）",
+  "description": "670mm辺を持つ箱の混載でも単載例外を使わず、通常の片側20mm以下を守るテスト（各箱に対応する標準蓋を使用）",
   "pallet": {
     "length": 1200,
     "width": 1000,

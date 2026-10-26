@@ -1,5 +1,7 @@
 # テストケース仕様書 (test_programmer/)
 
+<!-- markdownlint-configure-file { "MD013": { "tables": false } } -->
+
 **文書番号:** TP-DOC-2026-001  
 **作成日:** 2026-08-19  
 **担当エージェント:** `test-programmer`  
@@ -11,7 +13,10 @@
 
 本ディレクトリは、パレタイズアルゴリズムの評価・シミュレーションに使用するテストデータ生成スクリプトおよびテストケースJSON群を管理します。
 
-[`box_research/box_db.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/box_research/box_db.json) で承認された13種類のTP規格箱（基準335系、1.5倍340系、2倍360系、大型460系、ハーフ131系、および浅型/標準/深型の各高さ体系）をもとに、単載・同高混載・異高モジュール混載・境界値テストを設計しています。既存13件の蓋なしケースを維持し、同じ構成の標準蓋付き派生ケース13件を加え、生成後は計26件になります。
+[`box_research/box_db.json`](../box_research/box_db.json) で承認された13種類のTP規格箱
+（基準335系、1.5倍340系、2倍360系、大型460系、ハーフ131系、および浅型/標準/深型の各高さ体系）をもとに、
+単載・同高混載・異高モジュール混載・境界値テストを設計しています。
+既存13件の蓋なしケースを維持し、同じ構成の標準蓋付き派生ケース13件を加え、生成後は計26件になります。
 
 ---
 
@@ -30,7 +35,7 @@
 | **混載** | [`mixed_tp_different_heights.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_different_heights.json) | 9種類のTP箱 (高102.5/148.75/195/287.5) | 74 | 4段階の異高が混在する高度な混載・嵌合Z追従 |
 | **混載** | [`mixed_tp_large_volume.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_large_volume.json) | 全13種類のTP箱 (各10個) | 130 | 大量投入によるパレット最大積載高1200mm上限充填 |
 | **境界値** | [`boundary_height_limit.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_height_limit.json) | TP-333, 343, 363, 463 (高287.5) | 48 | 深型のみで4段積載（総高1120mm <= 1200mm）の境界値 |
-| **境界値** | [`boundary_overhang_long_side.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_overhang_long_side.json) | TP-362, 363 (長辺670) | 30 | 長辺荷姿1340mm（<1360mm許容枠）の境界値 |
+| **境界値** | [`boundary_overhang_long_side.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_overhang_long_side.json) | TP-362, 363 (長辺670) | 30 | 長辺670系を含む混載で通常許容（片側20mm）を前提に、例外条件を満たさない場合の境界挙動を確認 |
 | **境界値** | [`boundary_min_short_side.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_min_short_side.json) | TP-342, 332 | 32 | 短辺荷姿が800mm以上1100mm未満の制約を満たすかの検証 |
 
 ---
@@ -57,13 +62,25 @@ python3 test_programmer/serve_testcase_viewer.py
 
 採否状態は `test_case_approval.json` に共有保存され、初期登録済みケースは採用、新規ケースは未採用になります。ビューアで採否を変更した後、「テストケース一括保存」を押すとケースと採否状態が保存されます。テストランナーは採用ケースだけを実行します。ビューアでケースを削除して一括保存すると、対応するケースJSONも削除されますが、過去の実行結果JSONは履歴として残ります。
 
+2026-10更新: 作成/編集モーダルで
+`max_overhang_x_mm` / `max_overhang_y_mm`（片側許容mm）を入力可能になりました。
+既存ケース編集時は既存 `pallet` を保持し、未設定時は各20 mmを表示します。
+旧 `max_small_edge_overhang_mm` は保存時に削除して新設定へ移行します。
+
 ---
 
 ## 5. Phase 3: 蓋選択機能 (Lid Selection Feature)
 
-一覧の「投入箱内訳」には、箱型番・数量とともに「蓋なし」「蓋あり・内嵌め」「蓋あり・外嵌め」などを同じスタイルの文字で表示します。各投入行を個別に表示し、ツールチップには寸法・蓋ID・蓋名称を併記します。蓋ID省略時は既定の無蓋を参照し、未知の蓋IDや蓋DB未取得の場合は「蓋情報不明」、嵌め方未登録の場合は「蓋あり・嵌め方未設定」と表示します。蓋の実際の色情報は使用しません。
+一覧の「投入箱内訳」には、箱型番・数量とともに
+「蓋なし」「蓋あり・内嵌め」「蓋あり・外嵌め」などを同じスタイルの文字で表示します。
+各投入行を個別に表示し、ツールチップには寸法・蓋ID・蓋名称を併記します。
+蓋ID省略時は既定の無蓋を参照し、未知の蓋IDや蓋DB未取得の場合は「蓋情報不明」、
+嵌め方未登録の場合は「蓋あり・嵌め方未設定」と表示します。蓋の実際の色情報は使用しません。
 
-作成・編集画面の蓋選択肢は「蓋名称（外嵌め／内嵌め／なし）」形式で表示します。嵌め方は蓋DBの `fit_type` を参照し、未登録の場合は「嵌め方未設定」と表示します。箱型番を変更した場合も同じ表記で更新します。保存される値は従来どおり `lid_id` のみで、テストケース形式や配置計算は変更しません。
+作成・編集画面の蓋選択肢は「蓋名称（外嵌め／内嵌め／なし）」形式で表示します。
+嵌め方は蓋DBの `fit_type` を参照し、未登録の場合は「嵌め方未設定」と表示します。
+箱型番を変更した場合も同じ表記で更新します。
+保存される値は従来どおり `lid_id` のみで、テストケース形式や配置計算は変更しません。
 
 ### 5.1 概要
 

@@ -5,6 +5,7 @@ constraints/constraints.md の全制約項目に基づき、
 tester/results/ 配下の全パレタイズ結果データを独立・厳格に検証します。
 """
 
+import math
 import os
 import sys
 import glob
@@ -29,8 +30,15 @@ MIN_X_SPAN = 800.0         # mm (長辺荷姿最小幅: >=800mm)
 MAX_X_SPAN = 1360.0        # mm (長辺荷姿許容上限: <1360mm)
 MIN_Y_SPAN = 800.0         # mm (短辺荷姿最小幅: >=800mm)
 MAX_Y_SPAN = 1100.0        # mm (短辺荷姿許容上限: <1100mm)
-SMALL_EDGE_MAX_LENGTH = 335.0
-DEFAULT_SMALL_EDGE_OVERHANG_LIMIT = 30.0
+# オーバーハング制約 (旧 max_small_edge_overhang_mm / 335mm最下段限定ルールは廃止)
+DEFAULT_OVERHANG_X_MM = 20.0   # mm (pallet.max_overhang_x_mm 既定値)
+DEFAULT_OVERHANG_Y_MM = 20.0   # mm (pallet.max_overhang_y_mm 既定値)
+# 例外: INPUTが単一荷姿種別(box_id+lid_id)のみで構成され、かつ回転後の箱本体寸法が
+# 670mm以上となる軸に限り、当該軸のオーバーハング上限チェックを免除する。
+OVERHANG_EXCEPTION_BODY_THRESHOLD_MM = 670.0
+# オーバーハング関連の比較は浮動小数点の丸め誤差のみを許容する極小許容差を用いる
+# (669.999mm や 20.0001mm のような僅かな超過を誤って許容しないため、EPS=1e-3は使わない)
+OVERHANG_FLOAT_EPS = 1e-9
 MIN_SUPPORT_RATIO = 0.85   # 底面支持面積比率の下限 (85%)
 CORNER_HEIGHT_TOLERANCE = 3.0  # mm (最高層四隅高さの許容誤差)
 EPS = 1e-3                 # 浮動小数点誤差マージン
@@ -177,10 +185,6 @@ class PalletizeValidator:
             pallet_length, pallet_width = pallet_width, pallet_length
         pallet_x_length = pallet_length
         pallet_y_width = pallet_width
-        small_edge_overhang_limit = float(pallet_data.get(
-            "max_small_edge_overhang_mm", DEFAULT_SMALL_EDGE_OVERHANG_LIMIT
-        ))
-        bottom_z = min(float(b["position"]["z"]) for b in boxes)
 
         # (1) 最大積載高
         if max_z > MAX_HEIGHT + EPS:
@@ -207,24 +211,83 @@ class PalletizeValidator:
             f"パレット中心 ({pallet_x_length / 2.0:.2f}, {pallet_y_width / 2.0:.2f})mm"
             )
 
+        # (4) オーバーハング制約 (全段対象、箱/蓋の結合外形を使用)
+        if "max_small_edge_overhang_mm" in pallet_data:
+            violations.append(
+                "設定エラー: pallet.max_small_edge_overhang_mm は廃止されました。"
+                "max_overhang_x_mm / max_overhang_y_mm (既定値は各20mm) を指定してください"
+            )
+
+        def _resolve_overhang_limit(key: str, default: float) -> float:
+            if key not in pallet_data:
+                return default
+            raw_value = pallet_data.get(key)
+            try:
+                value = float(raw_value)
+            except (TypeError, ValueError):
+                violations.append(
+                    f"設定エラー: pallet.{key} が数値として解釈できません ({raw_value!r})。"
+                    f"既定値 {default:.1f}mm を使用します"
+                )
+                return default
+            if not math.isfinite(value) or value < 0.0:
+                violations.append(
+                    f"設定エラー: pallet.{key} は0以上の有限数値で指定してください ({value})。"
+                    f"既定値 {default:.1f}mm を使用します"
+                )
+                return default
+            return value
+
+        overhang_x_limit = _resolve_overhang_limit("max_overhang_x_mm", DEFAULT_OVERHANG_X_MM)
+        overhang_y_limit = _resolve_overhang_limit("max_overhang_y_mm", DEFAULT_OVERHANG_Y_MM)
+
+        # 例外適用可否の判定: INPUTが単一荷姿種別(box_id+lid_id)のみで構成されている場合のみ、
+        # かつその唯一の荷姿種別と一致する箱に限り、回転後の本体寸法が670mm以上の軸について
+        # オーバーハング上限チェックを免除する。
+        # input_box_variants が存在しない（旧形式の結果）場合は、配置済み箱から推測せず、
+        # 常に例外を適用しない（安全側）。
+        raw_input_variants = data.get("input_box_variants")
+        sole_input_variant = None
+        if isinstance(raw_input_variants, list) and all(
+                isinstance(v, dict) and isinstance(v.get("box_id"), str)
+                and bool(v["box_id"]) and isinstance(v.get("lid_id"), str)
+                for v in raw_input_variants):
+            unique_variants = {(v["box_id"], v["lid_id"]) for v in raw_input_variants}
+            if len(unique_variants) == 1:
+                sole_input_variant = next(iter(unique_variants))
+
         for box, bounds in zip(boxes, footprint_bounds):
-            if float(box["position"]["z"]) > bottom_z + EPS:
-                continue
             dimensions = box["dimensions"]
             x_overhang = max(0.0, -bounds[0], bounds[2] - pallet_x_length)
             y_overhang = max(0.0, -bounds[1], bounds[3] - pallet_y_width)
-            if float(dimensions["width"]) <= SMALL_EDGE_MAX_LENGTH:
-                if x_overhang >= small_edge_overhang_limit - EPS:
-                    violations.append(
-                        f"最下段小辺はみ出し違反: Order #{box['order']} ({box['box_id']}) "
-                        f"X方向 {x_overhang:.1f}mm >= {small_edge_overhang_limit:.1f}mm"
-                    )
-            if float(dimensions["length"]) <= SMALL_EDGE_MAX_LENGTH:
-                if y_overhang >= small_edge_overhang_limit - EPS:
-                    violations.append(
-                        f"最下段小辺はみ出し違反: Order #{box['order']} ({box['box_id']}) "
-                        f"Y方向 {y_overhang:.1f}mm >= {small_edge_overhang_limit:.1f}mm"
-                    )
+
+            box_identity = (box.get("box_id"), box.get("lid_id", self.default_lid_id))
+            identity_matches_sole_variant = (
+                sole_input_variant is not None and box_identity == sole_input_variant
+            )
+
+            body_width = float(dimensions["width"])
+            body_length = float(dimensions["length"])
+
+            x_exception = (
+                identity_matches_sole_variant
+                and body_width >= OVERHANG_EXCEPTION_BODY_THRESHOLD_MM
+            )
+            y_exception = (
+                identity_matches_sole_variant
+                and body_length >= OVERHANG_EXCEPTION_BODY_THRESHOLD_MM
+            )
+
+            if x_overhang > overhang_x_limit + OVERHANG_FLOAT_EPS and not x_exception:
+                violations.append(
+                    f"オーバーハング違反: Order #{box['order']} ({box['box_id']}) "
+                    f"X方向 {x_overhang:.1f}mm > {overhang_x_limit:.1f}mm"
+                )
+            if y_overhang > overhang_y_limit + OVERHANG_FLOAT_EPS and not y_exception:
+                violations.append(
+                    f"オーバーハング違反: Order #{box['order']} ({box['box_id']}) "
+                    f"Y方向 {y_overhang:.1f}mm > {overhang_y_limit:.1f}mm"
+                )
 
         # -------------------------------------------------------------
         # 2. 各箱の幾何・回転・天地固定・嵌合寸法の検証
@@ -498,6 +561,7 @@ def run_supervisor_validation():
     os.makedirs(os.path.dirname(REPORT_PATH), exist_ok=True)
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
         f.write("# 荷姿制約 総合検証レポート (validation_report.md)\n\n")
+        f.write('<!-- markdownlint-configure-file { "MD013": { "tables": false } } -->\n\n')
         f.write(f"- **作成日:** {date.today().isoformat()}\n")
         f.write("- **検証エージェント:** `supervisor`\n")
         f.write(f"- **検証対象:** 採用済み結果JSON ({len(reports)} 件)\n")
@@ -520,8 +584,10 @@ def run_supervisor_validation():
         f.write(r"5. **嵌合沈み込み計算**: 段積み時の上段箱の底面Z座標が `下段上面Z - fitting_depth` と正確に一致していること。" + "\n")
         f.write(r"6. **空中配置禁止・底面支持率** ($\ge 85\%$): 底面積の85%以上が下段箱またはパレットによって支持されていること。" + "\n")
         f.write(r"7. **3D幾何衝突の完全排除**: 箱同士の不正な空間食い込み（嵌合深さを超える干渉）が0件であること。" + "\n")
-        f.write(r"8. **積み込み順序（Order）の物理的整合性**: 支持関係にある箱について、下段箱が上段箱より必ず先に積載されていること ($order_{lower} < order_{upper}$)。" + "\n")
-        f.write(r"9. **最高層四隅高さ一致制約 (Top 4-Corner Leveling)**: 四隅それぞれの上面高さが荷山の最高到達点 $Z_{max}$ と 3.0mm 以内で一致すること。" + "\n")
+        f.write("8. **積み込み順序（Order）の物理的整合性**: 支持関係にある箱について、\n")
+        f.write(r"   下段箱が上段箱より必ず先に積載されていること ($order_{lower} < order_{upper}$)。" + "\n")
+        f.write("9. **最高層四隅高さ一致制約 (Top 4-Corner Leveling)**:\n")
+        f.write(r"   四隅それぞれの上面高さが荷山の最高到達点 $Z_{max}$ と 3.0mm 以内で一致すること。" + "\n")
         f.write(r"10. **下段支持箱サイズ制限**: 直接支持する下段箱の幅・奥行きが、上段箱より両方とも 1.0mm を超えて大きくないこと。" + "\n")
 
     print(f"📄 総合検証レポートを出力しました: {REPORT_PATH}")

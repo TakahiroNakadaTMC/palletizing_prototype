@@ -25,7 +25,9 @@ PALLET_SPEC = {
     "max_height": 1200.0,
     "max_x_span": 1360.0,
     "min_y_span": 800.0,
-    "max_y_span": 1100.0
+    "max_y_span": 1100.0,
+    "max_overhang_x_mm": 20.0,
+    "max_overhang_y_mm": 20.0
 }
 
 def load_box_db():
@@ -195,11 +197,11 @@ def generate_test_cases():
             "box_list": deep_boxes
         }
 
-    # (12) boundary_overhang_long_side: TP-362/363(長辺670)を2列並べて1340mmのオーバーハングを検証
+    # (12) 670mm辺を持つ箱でも、混載では通常の方向別許容差を適用する。
     if "TP-362" in box_db and "TP-363" in box_db:
         test_cases["boundary_overhang_long_side"] = {
             "name": "boundary_overhang_long_side",
-            "description": "長辺670mm箱を2列配置し、長辺荷姿1340mm（<1360mm許容枠）を検証するテスト",
+            "description": "670mm辺を持つ箱の混載でも単載例外を使わず、通常の片側20mm以下を守るテスト",
             "pallet": PALLET_SPEC,
             "box_list": [
                 {"box_id": "TP-362", "count": 18, "lid_id": no_lid_id},

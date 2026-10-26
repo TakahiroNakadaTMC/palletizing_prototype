@@ -71,7 +71,7 @@ def generate_html(result_data: dict, output_html_path: str):
       </div>
       <div class="w-px h-6 bg-slate-700"></div>
       <div>
-        <span class="text-[10px] text-slate-400 block font-medium">荷姿寸法 (X×Y×Z)</span>
+        <span class="text-[10px] text-slate-400 block font-medium">荷姿寸法 (全層・箱+蓋 外接 X×Y×Z)</span>
         <span class="font-bold font-mono text-indigo-300 text-xs" id="metric-dims">0 × 0 × 0 mm</span>
       </div>
       <div class="w-px h-6 bg-slate-700"></div>
@@ -148,6 +148,7 @@ def generate_html(result_data: dict, output_html_path: str):
     <div class="border-t border-slate-800 pt-2">
       <p class="text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">箱種別カラー凡例</p>
       <div id="legend-list" class="space-y-1 max-h-28 overflow-y-auto pr-1 text-[11px] custom-scrollbar"></div>
+      <div id="guide-legend" class="mt-2 space-y-1 text-[10px] text-slate-400"></div>
     </div>
   </aside>
 
@@ -311,10 +312,138 @@ def generate_html(result_data: dict, output_html_path: str):
       lidLegend.className = 'flex items-center gap-2 text-slate-300';
       lidLegend.innerHTML = '<span class="w-3 h-3 rounded-sm inline-block" style="background:#f59e0b;border:1px solid #fef3c7"></span><span>蓋</span>';
       legendList.appendChild(lidLegend);
+      updateGuideLegend(data);
 
       selectedBoxOrder = null;
       resetViewTransform();
       lucide.createIcons();
+    }}
+
+
+    function hasOwn(obj, key) {{
+      return Object.prototype.hasOwnProperty.call(obj || {{}}, key);
+    }}
+
+    function getSoleInputVariant(data) {{
+      if (!Array.isArray(data?.input_box_variants)) return null;
+      if (data.input_box_variants.length !== 1) return null;
+      const only = data.input_box_variants[0] || {{}};
+      if (!hasOwn(only, 'box_id') || !hasOwn(only, 'lid_id')) return null;
+      if (typeof only.box_id !== 'string' || only.box_id.length === 0) return null;
+      if (typeof only.lid_id !== 'string') return null;
+      return {{ box_id: only.box_id, lid_id: only.lid_id }};
+    }}
+
+    function hasCompleteBoxIdentity(box) {{
+      return hasOwn(box, 'box_id') && hasOwn(box, 'lid_id')
+        && typeof box.box_id === 'string' && box.box_id.length > 0
+        && typeof box.lid_id === 'string';
+    }}
+
+    function resolveGuideConfig(data) {{
+      const pallet = data?.pallet || {{}};
+      const pW = Number(pallet.length || 1200);
+      const pL = Number(pallet.width || 1000);
+      const maxH = Number(pallet.max_height || 1200);
+
+      const normalOverhangX = Number(pallet.max_overhang_x_mm ?? 20);
+      const normalOverhangY = Number(pallet.max_overhang_y_mm ?? 20);
+      const saneOverhangX = Number.isFinite(normalOverhangX) && normalOverhangX >= 0 ? normalOverhangX : 20;
+      const saneOverhangY = Number.isFinite(normalOverhangY) && normalOverhangY >= 0 ? normalOverhangY : 20;
+
+      const capSpanXRaw = Number(pallet.max_x_span ?? 1360);
+      const capSpanYRaw = Number(pallet.max_y_span ?? 1100);
+      const capSpanX = Number.isFinite(capSpanXRaw) && capSpanXRaw > 0 ? capSpanXRaw : 1360;
+      const capSpanY = Number.isFinite(capSpanYRaw) && capSpanYRaw > 0 ? capSpanYRaw : 1100;
+      const capMinX = (pW - capSpanX) / 2;
+      const capMaxX = capMinX + capSpanX;
+      const capMinY = (pL - capSpanY) / 2;
+      const capMaxY = capMinY + capSpanY;
+
+      const rawNormalMinX = -saneOverhangX;
+      const rawNormalMaxX = pW + saneOverhangX;
+      const rawNormalMinY = -saneOverhangY;
+      const rawNormalMaxY = pL + saneOverhangY;
+
+      const normalMinX = Math.max(rawNormalMinX, capMinX);
+      const normalMaxX = Math.min(rawNormalMaxX, capMaxX);
+      const normalMinY = Math.max(rawNormalMinY, capMinY);
+      const normalMaxY = Math.min(rawNormalMaxY, capMaxY);
+
+      const boxes = Array.isArray(data?.boxes) ? data.boxes : [];
+      const soleVariant = getSoleInputVariant(data);
+      const metadataReady = Boolean(soleVariant);
+      const identityComplete = metadataReady && boxes.length > 0 && boxes.every(hasCompleteBoxIdentity);
+      const identityMatched = identityComplete && boxes.every(b => b.box_id === soleVariant.box_id && b.lid_id === soleVariant.lid_id);
+      const exceptionEligibleBoxes = identityMatched ? boxes : [];
+
+      const exceptionAxisX = exceptionEligibleBoxes.some(b => Number(b?.dimensions?.width || 0) >= 670);
+      const exceptionAxisY = exceptionEligibleBoxes.some(b => Number(b?.dimensions?.length || 0) >= 670);
+
+      return {{
+        pW, pL, maxH,
+        normalOverhangX: saneOverhangX,
+        normalOverhangY: saneOverhangY,
+        rawNormalMinX, rawNormalMaxX, rawNormalMinY, rawNormalMaxY,
+        normalMinX, normalMaxX, normalMinY, normalMaxY,
+        capSpanX, capSpanY, capMinX, capMaxX, capMinY, capMaxY,
+        metadataReady,
+        identityComplete,
+        identityMatched,
+        exceptionAxisX,
+        exceptionAxisY
+      }};
+    }}
+
+    function updateGuideLegend(data) {{
+      const container = document.getElementById('guide-legend');
+      if (!container) return;
+      const cfg = resolveGuideConfig(data);
+      const metadataNote = !cfg.metadataReady
+        ? '入力variant: 不足/不正（例外判定なし）'
+        : (!cfg.identityComplete
+          ? '配置箱のidentity不足（例外判定なし）'
+          : (cfg.identityMatched ? '単一入力identity一致（例外判定可能）' : '単一入力だがidentity不一致（例外判定なし）'));
+
+      container.innerHTML = `
+        <div class="text-slate-300 font-semibold">制約ガイド凡例（全層・箱+蓋 外接判定）</div>
+        <div class="flex items-center gap-2"><span class="w-3 h-[2px] inline-block bg-yellow-300"></span><span>通常許容ガイド: ±${{cfg.normalOverhangX}}mm(X) / ±${{cfg.normalOverhangY}}mm(Y) ※表示はCAP内にクリップ</span></div>
+        <div class="flex items-center gap-2"><span class="w-3 h-[2px] inline-block bg-rose-400"></span><span>例外CAPガイド: X<${{cfg.capSpanX}} / Y<${{cfg.capSpanY}}（単一inputの対象箱の該当方向のみ）</span></div>
+        <div class="text-slate-500">${{metadataNote}}</div>
+        <div class="text-slate-500">例外有効軸: X=${{cfg.exceptionAxisX ? 'ON' : 'OFF'}}, Y=${{cfg.exceptionAxisY ? 'ON' : 'OFF'}}</div>
+        <div class="text-slate-500">※ ガイド表示は制約PASSを保証しません</div>
+      `;
+    }}
+
+    function computeBoxOuterBounds(box) {{
+      const lid = getLidGeometry(box);
+      const minX = lid ? Math.min(Number(box.position.x), Number(lid.x)) : Number(box.position.x);
+      const minY = lid ? Math.min(Number(box.position.y), Number(lid.y)) : Number(box.position.y);
+      const maxX = lid
+        ? Math.max(Number(box.position.x) + Number(box.dimensions.width), Number(lid.x) + Number(lid.width))
+        : Number(box.position.x) + Number(box.dimensions.width);
+      const maxY = lid
+        ? Math.max(Number(box.position.y) + Number(box.dimensions.length), Number(lid.y) + Number(lid.length))
+        : Number(box.position.y) + Number(box.dimensions.length);
+      const maxZ = Number(box.position.z) + Number(box.dimensions.height);
+      return {{ minX, maxX, minY, maxY, maxZ }};
+    }}
+
+    function computeOverallBounds(boxes) {{
+      if (!Array.isArray(boxes) || boxes.length === 0) {{
+        return {{ x_span: 0, y_span: 0, max_z: 0 }};
+      }}
+      const bounds = boxes.map(computeBoxOuterBounds);
+      const minX = Math.min(...bounds.map(b => b.minX));
+      const maxX = Math.max(...bounds.map(b => b.maxX));
+      const minY = Math.min(...bounds.map(b => b.minY));
+      const maxY = Math.max(...bounds.map(b => b.maxY));
+      const maxZ = Math.max(...bounds.map(b => b.maxZ));
+      return {{
+        x_span: Math.round((maxX - minX) * 10) / 10,
+        y_span: Math.round((maxY - minY) * 10) / 10,
+        max_z: Math.round(maxZ * 10) / 10
+      }};
     }}
 
     function updateUIMetrics(data) {{
@@ -338,7 +467,8 @@ def generate_html(result_data: dict, output_html_path: str):
       document.getElementById('metric-boxes').textContent = `${{placedCount}} / ${{inputCount}} 箱`;
       document.getElementById('metric-unplaced').textContent = `未配置 ${{unplacedCount}} 箱`;
       document.getElementById('metric-layers').textContent = `${{summary.total_layers || 0}} 段`;
-      document.getElementById('metric-dims').textContent = `${{bbox.x_span || 0}} × ${{bbox.y_span || 0}} × ${{bbox.max_z || 0}} mm`;
+            const overallBounds = computeOverallBounds(boxes);
+      document.getElementById('metric-dims').textContent = `${{overallBounds.x_span}} × ${{overallBounds.y_span}} × ${{overallBounds.max_z}} mm`;
       document.getElementById('metric-vol').textContent = `${{summary.volume_efficiency_percent || 0}} %`;
 
       const unplacedSummary = document.getElementById('unplaced-summary');
@@ -456,13 +586,7 @@ def generate_html(result_data: dict, output_html_path: str):
     }}
 
     function drawGuides() {{
-      const pW = currentData.pallet?.length || 1200;
-      const pL = currentData.pallet?.width || 1000;
-      const maxH = currentData.pallet?.max_height || 1200;
-      const maxSpanX = currentData.pallet?.max_x_span || 1360;
-      const maxSpanY = currentData.pallet?.max_y_span || 1100;
-      const ovhX = (maxSpanX - pW) / 2;
-      const ovhY = (maxSpanY - pL) / 2;
+      const cfg = resolveGuideConfig(currentData);
 
       ctx.save();
       ctx.setLineDash([8, 6]);
@@ -470,8 +594,8 @@ def generate_html(result_data: dict, output_html_path: str):
       ctx.strokeStyle = '#ef4444';
       ctx.lineWidth = 1.5;
       const hPts = [
-        project3D(0, 0, maxH), project3D(pW, 0, maxH),
-        project3D(pW, pL, maxH), project3D(0, pL, maxH)
+        project3D(0, 0, cfg.maxH), project3D(cfg.pW, 0, cfg.maxH),
+        project3D(cfg.pW, cfg.pL, cfg.maxH), project3D(0, cfg.pL, cfg.maxH)
       ];
       ctx.beginPath();
       ctx.moveTo(hPts[0].x, hPts[0].y);
@@ -479,15 +603,46 @@ def generate_html(result_data: dict, output_html_path: str):
       ctx.closePath();
       ctx.stroke();
 
-      ctx.strokeStyle = '#f59e0b';
-      ctx.lineWidth = 1.5;
-      const ovhPts = [
-        project3D(-ovhX, -ovhY, 0), project3D(pW + ovhX, -ovhY, 0),
-        project3D(pW + ovhX, pL + ovhY, 0), project3D(-ovhX, pL + ovhY, 0)
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 1.8;
+      const normalPts = [
+        project3D(cfg.normalMinX, cfg.normalMinY, 0), project3D(cfg.normalMaxX, cfg.normalMinY, 0),
+        project3D(cfg.normalMaxX, cfg.normalMaxY, 0), project3D(cfg.normalMinX, cfg.normalMaxY, 0)
       ];
       ctx.beginPath();
-      ctx.moveTo(ovhPts[0].x, ovhPts[0].y);
-      for (let i = 1; i < ovhPts.length; i++) ctx.lineTo(ovhPts[i].x, ovhPts[i].y);
+      ctx.moveTo(normalPts[0].x, normalPts[0].y);
+      for (let i = 1; i < normalPts.length; i++) ctx.lineTo(normalPts[i].x, normalPts[i].y);
+      ctx.closePath();
+      ctx.stroke();
+
+      if (cfg.exceptionAxisX || cfg.exceptionAxisY) {{
+        const exMinX = cfg.exceptionAxisX ? cfg.capMinX : cfg.normalMinX;
+        const exMaxX = cfg.exceptionAxisX ? cfg.capMaxX : cfg.normalMaxX;
+        const exMinY = cfg.exceptionAxisY ? cfg.capMinY : cfg.normalMinY;
+        const exMaxY = cfg.exceptionAxisY ? cfg.capMaxY : cfg.normalMaxY;
+        ctx.strokeStyle = '#fb7185';
+        ctx.lineWidth = 2;
+        const capPts = [
+          project3D(exMinX, exMinY, 0), project3D(exMaxX, exMinY, 0),
+          project3D(exMaxX, exMaxY, 0), project3D(exMinX, exMaxY, 0)
+        ];
+        ctx.beginPath();
+        ctx.moveTo(capPts[0].x, capPts[0].y);
+        for (let i = 1; i < capPts.length; i++) ctx.lineTo(capPts[i].x, capPts[i].y);
+        ctx.closePath();
+        ctx.stroke();
+      }}
+
+      ctx.setLineDash([]);
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 2.2;
+      const palletPts = [
+        project3D(0, 0, 0), project3D(cfg.pW, 0, 0),
+        project3D(cfg.pW, cfg.pL, 0), project3D(0, cfg.pL, 0)
+      ];
+      ctx.beginPath();
+      ctx.moveTo(palletPts[0].x, palletPts[0].y);
+      for (let i = 1; i < palletPts.length; i++) ctx.lineTo(palletPts[i].x, palletPts[i].y);
       ctx.closePath();
       ctx.stroke();
 
@@ -844,7 +999,7 @@ def generate_html(result_data: dict, output_html_path: str):
     os.makedirs(os.path.dirname(os.path.abspath(output_html_path)), exist_ok=True)
     with open(output_html_path, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"✨ 荷姿可視化HTMLを生成しました: {output_html_path}")
+    print(f"荷姿可視化HTMLを生成しました: {output_html_path}")
 
 def main():
     parser = argparse.ArgumentParser(description="荷姿可視化ジェネレータ")

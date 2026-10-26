@@ -2,6 +2,7 @@
 パレタイズデータモデル定義 (models.py)
 """
 
+import math
 from dataclasses import dataclass, field, asdict
 from typing import List, Dict, Optional, Tuple, Any
 
@@ -160,10 +161,22 @@ class PalletSpec:
     max_x_span: float = 1360.0    # mm (長辺荷姿許容上限: <1360mm)
     min_y_span: float = 800.0     # mm (短辺荷姿最小幅: >=800mm)
     max_y_span: float = 1100.0    # mm (短辺荷姿最大幅: <1100mm)
-    max_small_edge_overhang_mm: float = 30.0
+    max_overhang_x_mm: float = 20.0
+    max_overhang_y_mm: float = 20.0
+
+    def __post_init__(self) -> None:
+        for name in ("max_overhang_x_mm", "max_overhang_y_mm"):
+            value = getattr(self, name)
+            if not math.isfinite(value) or value < 0:
+                raise ValueError(f"{name} は0以上の有限の数値で指定してください")
 
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> "PalletSpec":
+        if "max_small_edge_overhang_mm" in d:
+            raise ValueError(
+                "max_small_edge_overhang_mm は廃止されました。削除して "
+                "max_overhang_x_mm / max_overhang_y_mm を指定してください（既定値は各20mm）"
+            )
         length = float(d.get("length", 1200.0))
         width = float(d.get("width", 1000.0))
         if width > length:
@@ -176,7 +189,8 @@ class PalletSpec:
             max_x_span=float(d.get("max_x_span", 1360.0)),
             min_y_span=float(d.get("min_y_span", 800.0)),
             max_y_span=float(d.get("max_y_span", 1100.0)),
-            max_small_edge_overhang_mm=float(d.get("max_small_edge_overhang_mm", 30.0))
+            max_overhang_x_mm=float(d.get("max_overhang_x_mm", 20.0)),
+            max_overhang_y_mm=float(d.get("max_overhang_y_mm", 20.0))
         )
 
 @dataclass
@@ -195,6 +209,7 @@ class PalletizeResult:
     summary: Dict[str, Any]
     unplaced_boxes: List[Dict[str, Any]] = field(default_factory=list)
     input_boxes_count: int = 0
+    input_box_variants: List[Dict[str, str]] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         placed_count = len(self.boxes)
@@ -203,6 +218,7 @@ class PalletizeResult:
             "coordinate_reference": POSITION_REFERENCE,
             "pallet": asdict(self.pallet),
             "input_boxes_count": self.input_boxes_count,
+            "input_box_variants": self.input_box_variants,
             "placed_boxes_count": placed_count,
             "unplaced_boxes_count": max(0, self.input_boxes_count - placed_count),
             "boxes": [b.to_dict() for b in self.boxes],

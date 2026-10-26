@@ -1,5 +1,7 @@
 # GitHub Copilot Instructions
 
+<!-- markdownlint-configure-file { "MD013": { "tables": false } } -->
+
 このドキュメントは、パレタイズアルゴリズム試作プロジェクト全体に対して GitHub Copilot が常時適用すべき開発規約、制約、ループエンジニアリング手順、およびコーディング規約を定義する。
 
 詳細な仕様・制約については [`README.md`](../README.md) を参照。
@@ -43,12 +45,14 @@ python box_research/serve_viewer.py
 ```
 
 **蓋DBビューアの機能**:
+
 - 蓋一覧表示・追加・編集・削除
 - 嵌め方（fit_type）の選択: 外嵌め / 内嵌め / なし
 - 蓋仕様（寸法・厚み等）の管理
 - サーバーへの永続化保存
 
 **箱DBビューアの新機能**:
+
 - 箱編集時に互換蓋（compatible_lids）をチェックボックスで選択
 - 蓋を箱に紐付けて保存
 
@@ -56,7 +60,9 @@ python box_research/serve_viewer.py
 
 ```bash
 # 1. 単一テストケースのパレタイズ実行
-python3 algorithm_programmer/cli.py test_programmer/test_cases/single_tp332.json -o tester/results/result_test.json
+python3 algorithm_programmer/cli.py \
+  test_programmer/test_cases/single_tp332.json \
+  -o tester/results/result_test.json
 
 # 2. 結果を可視化
 python3 visualizer/visualize.py tester/results/result_test.json -o visualizer/viewer_test.html
@@ -71,7 +77,7 @@ python3 supervisor/validate.py
 
 ### System Overview
 
-```
+```text
 【入力層】
   - box_research/box_db.json          ← 箱仕様DB（寸法・嵌合深さ・リブ）
   - test_programmer/test_cases/       ← テストケース群（投入箱リスト）
@@ -94,7 +100,7 @@ python3 supervisor/validate.py
 
 ### Data Flow: Phase 3 Loop (Run-Validate-Improve)
 
-```
+```text
 test_programmer/test_cases/*.json
   ↓
 tester/run_tests.py
@@ -117,7 +123,8 @@ tester/results/result_*.json
 
 1. **単載エンジン (`palletize_single`)**
    - 0度/90度グリッド + スプリット（レンガ）分割パターンを自動生成・比較
-    - 長辺荷姿幅 $800\text{ mm} \le X_{span} < 1360\text{ mm}$、短辺荷姿幅 $800\text{ mm} \le Y_{span} < 1100\text{ mm}$ の境界フィルタリング
+   - 長辺荷姿幅 $800\text{ mm} \le X_{span} < 1360\text{ mm}$、
+     短辺荷姿幅 $800\text{ mm} \le Y_{span} < 1100\text{ mm}$ の境界フィルタリング
    - `fitting_depth` を考慮した最大段数・Z座標計算
    - 偶数/奇数段の反転によるインターロッキング（荷崩れ防止）
 
@@ -135,10 +142,11 @@ tester/results/result_*.json
 #### **validate.py** (制約バリデータ)
 
 12個の厳格なチェック項目 (詳細は [constraints/constraints.md](../constraints/constraints.md)):
+
 1. 積載全高 ≤ 1200mm
 2. 長辺荷姿幅 $800\text{ mm} \le X_{span} < 1360\text{ mm}$
 3. 短辺荷姿幅 $800\text{ mm} \le Y_{span} < 1100\text{ mm}$
-4. 最下段小辺はみ出し（底面の辺が335mm以下の方向、蓋を含む片側はみ出し30mm未満）
+4. 方向別はみ出し（全段・蓋込みで片側20mm以下、X/Y別設定。投入単載の箱本体底面辺が670mm以上となる方向のみ例外）
 5. 最高層四隅高さ一致 (各コーナーの誤差 3.0mm以内)
 6. 3D干渉検出（嵌合沈み込みを許容）
 7. 嵌合・段積み整合性
@@ -152,7 +160,10 @@ tester/results/result_*.json
 
 ## Key Conventions & Patterns
 
-寸法の表示・記載順は **L × W × H（長手方向 × 短手方向 × 高さ）** に統一する。箱・蓋DBでは `length` がL、`width` がW。配置結果の `width` / `length` は回転後のX/Y寸法であり、表示時に長辺をL、短辺をWとする。既存キーと座標の意味、保存値は変更しない。
+寸法の表示・記載順は **L × W × H（長手方向 × 短手方向 × 高さ）** に統一する。
+箱・蓋DBでは `length` がL、`width` がW。
+配置結果の `width` / `length` は回転後のX/Y寸法であり、
+表示時に長辺をL、短辺をWとする。既存キーと座標の意味、保存値は変更しない。
 
 ### Data Schemas
 
@@ -217,8 +228,11 @@ tester/results/result_*.json
 - **型ヒント**: `from typing import List, Dict, Optional, Tuple` で明示的に記述
 - **Dataclass**: `models.py` でデータ構造を定義（`@dataclass`）
 - **ドキュメント**: Google形式 docstring の使用
+
   ```python
-  def calculate_max_layers(height: float, fitting_depth: float, max_height: float) -> int:
+  def calculate_max_layers(
+      height: float, fitting_depth: float, max_height: float
+  ) -> int:
       """嵌合沈み込みを考慮した最大積載段数を算出
       
       Args:
@@ -265,7 +279,11 @@ tester/results/result_*.json
 
 - **長辺**: 荷姿の長辺方向スパン $800\text{ mm} \le X_{span} < 1360\text{ mm}$
 - **短辺**: 荷姿の短辺方向スパン $800\text{ mm} \le Y_{span} < 1100\text{ mm}$
-- **最下段の小辺**: 回転後の底面辺が335mm以下なら、その方向の箱・蓋外形の片側はみ出しを設定値未満とする（`max_small_edge_overhang_mm`、既定30mm）
+- **方向別はみ出し**: 全段・箱と蓋の外形の片側はみ出しをX/Y別の設定値以下とする
+  （`max_overhang_x_mm` / `max_overhang_y_mm`、既定各20mm、境界値を含む）。
+  投入時に同一箱型番・同一蓋条件の単載で、回転後の箱本体底面辺が670mm以上となる方向のみ通常制限を免除する。
+  例外でも荷姿幅上限は維持する。結果の `input_box_variants` で投入種類を記録し、
+  未配置により1種類になった混載には例外を適用しない。旧30mm制限・旧設定項目は廃止。
 - **荷姿センタリング**: 箱・蓋外形の外接矩形中心をパレット中心に合わせる（各方向の誤差0.01mm以内）
 - **支持率**: 箱の底面積の85%以上がパレット/下段箱に接地（空中浮きを排除）
 
@@ -285,6 +303,7 @@ tester/results/result_*.json
 **最終更新**: 2026-09-20
 
 **主な改善点**:
+
 - ✅ Build/test/lint コマンド（全フェーズループ・個別実行）を追加
 - ✅ Single-test 実行フロー例を追加
 - ✅ 高レベルアーキテクチャと data flow を図解
