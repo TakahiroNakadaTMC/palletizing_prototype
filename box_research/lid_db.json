@@ -16,7 +16,7 @@
     "type": "TP",
     "length": 335,
     "width": 335,
-    "thickness": 13,
+    "thickness": 15,
     "fit_type": "内嵌め",
     "color": "",
     "description": "TP-330系1型対応（TP-331, TP-332, TP-333用）"
@@ -27,7 +27,7 @@
     "type": "TP",
     "length": 344,
     "width": 344,
-    "thickness": 13,
+    "thickness": 15,
     "fit_type": "外嵌め",
     "color": "",
     "description": "TP-330系1型対応（TP-331, TP-332, TP-333用）"
@@ -38,7 +38,7 @@
     "type": "TP",
     "length": 502.5,
     "width": 335,
-    "thickness": 13,
+    "thickness": 15,
     "fit_type": "内嵌め",
     "color": "",
     "description": "TP-340系1.5型対応（TP-341, TP-342, TP-343用）"
@@ -49,7 +49,7 @@
     "type": "TP",
     "length": 512,
     "width": 345,
-    "thickness": 13,
+    "thickness": 15,
     "fit_type": "外嵌め",
     "color": "",
     "description": "TP-340系1.5型対応（TP-341, TP-342, TP-343用）"
@@ -60,7 +60,7 @@
     "type": "TP",
     "length": 670,
     "width": 335,
-    "thickness": 13,
+    "thickness": 15,
     "fit_type": "内嵌め",
     "color": "",
     "description": "TP-360系2型対応（TP-362, TP-363用）"
@@ -71,7 +71,7 @@
     "type": "TP",
     "length": 679,
     "width": 344,
-    "thickness": 13,
+    "thickness": 15,
     "fit_type": "外嵌め",
     "color": "",
     "description": "TP-360系2型対応（TP-362, TP-363用）"
@@ -82,7 +82,7 @@
     "type": "TP",
     "length": 670,
     "width": 502.5,
-    "thickness": 13,
+    "thickness": 15,
     "fit_type": "内嵌め",
     "color": "",
     "description": "TP-460系大型対応（TP-462, TP-463用）"
@@ -93,7 +93,7 @@
     "type": "TP",
     "length": 679,
     "width": 512,
-    "thickness": 13,
+    "thickness": 15,
     "fit_type": "外嵌め",
     "color": "",
     "description": "TP-460系大型対応（TP-462, TP-463用）"
@@ -119,5 +119,159 @@
     "fit_type": "なし",
     "color": "",
     "description": "蓋を使用しない場合"
+  },
+  "#10-5": {
+    "id": "#10-5",
+    "name": "アイシン高丘　フライホイール2.0専用",
+    "type": "OTHER",
+    "length": 338,
+    "width": 338,
+    "thickness": 1,
+    "fit_type": "内嵌め",
+    "color": "半透明",
+    "description": ""
+  },
+  "MT-273": {
+    "id": "MT-273",
+    "name": "マツオ　クランクキャップ専用",
+    "type": "OTHER",
+    "length": 335,
+    "width": 335,
+    "thickness": 1,
+    "fit_type": "内嵌め",
+    "color": "透明",
+    "description": ""
+  },
+  "PC-7110P": {
+    "id": "PC-7110P",
+    "name": "デンソー　オイルレベルセンサー専用",
+    "type": "OTHER",
+    "length": 623,
+    "width": 380,
+    "thickness": 2,
+    "fit_type": "外嵌め",
+    "color": "半透明",
+    "description": ""
+  },
+  "RB36・23": {
+    "id": "RB36・23",
+    "name": "日本ガスケット　ヘッドガスケット専用",
+    "type": "OTHER",
+    "length": 515,
+    "width": 352,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "color": "",
+    "description": ""
+  },
+  "RB41": {
+    "id": "RB41",
+    "name": "デンソー　オイルフィルター専用",
+    "type": "OTHER",
+    "length": 632,
+    "width": 383,
+    "thickness": 10,
+    "fit_type": "外嵌め",
+    "color": "半透明",
+    "description": ""
+  },
+  "TP33蓋(IC)": {
+    "id": "TP33蓋(IC)",
+    "name": "TP33系",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "thickness": 15,
+    "fit_type": "内嵌め",
+    "color": "",
+    "description": ""
+  },
+  "TP34蓋": {
+    "id": "TP34蓋",
+    "name": "TP34系",
+    "type": "TP",
+    "length": 513,
+    "width": 344,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "color": "",
+    "description": ""
+  },
+  "TP34蓋(IC)": {
+    "id": "TP34蓋(IC)",
+    "name": "TP34系",
+    "type": "TP",
+    "length": 503,
+    "width": 335,
+    "thickness": 15,
+    "fit_type": "内嵌め",
+    "color": "",
+    "description": ""
+  },
+  "TP34蓋ロック付き": {
+    "id": "TP34蓋ロック付き",
+    "name": "TP34系",
+    "type": "TP",
+    "length": 512,
+    "width": 351,
+    "thickness": 20,
+    "fit_type": "外嵌め",
+    "color": "",
+    "description": "ロック付き"
+  },
+  "TP36蓋": {
+    "id": "TP36蓋",
+    "name": "TP36系",
+    "type": "TP",
+    "length": 679,
+    "width": 344,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "color": "",
+    "description": ""
+  },
+  "サンボックス＃14C": {
+    "id": "サンボックス＃14C",
+    "name": "日本ガスケット　EGRクーラーガスケット専用",
+    "type": "OTHER",
+    "length": 485,
+    "width": 365,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "color": "",
+    "description": ""
+  },
+  "サンボックス＃20": {
+    "id": "サンボックス＃20",
+    "name": "NP20B系",
+    "type": "OTHER",
+    "length": 477,
+    "width": 377,
+    "thickness": 15,
+    "fit_type": "外嵌め",
+    "color": "",
+    "description": ""
+  },
+  "サンボックス＃26": {
+    "id": "サンボックス＃26",
+    "name": "オティックス　ラッシュアジャスター専用",
+    "type": "OTHER",
+    "length": 529,
+    "width": 447,
+    "thickness": 20,
+    "fit_type": "外嵌め",
+    "color": "",
+    "description": ""
+  },
+  "サンボックス＃22B": {
+    "id": "サンボックス＃22B",
+    "name": "NP000008系",
+    "type": "OTHER",
+    "length": 606,
+    "width": 369,
+    "thickness": 15,
+    "fit_type": "内嵌め",
+    "color": "",
+    "description": ""
   }
 }
