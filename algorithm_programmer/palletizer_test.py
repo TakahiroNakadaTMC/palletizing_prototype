@@ -75,8 +75,15 @@ class SingleLayerPatternTests(unittest.TestCase):
                                     "thickness": 5.0, "fit_type": fit_type}}
                     item["lid_id"] = "LID"
                 result = Palletizer({box.id: box}).run("single_variant", [item], lids)
-                self.assertEqual(result.unplaced_boxes, [])
-                self.assert_identical_layers(result.boxes, 5, 3)
+                if fit_type == "内嵌め":
+                    self.assertEqual(result.unplaced_boxes, [{
+                        "box_id": box.id, "count": 10,
+                        "reason": "下段隅の被覆条件を満たせず上段に配置できません"
+                    }])
+                    self.assert_identical_layers(result.boxes, 5, 1)
+                else:
+                    self.assertEqual(result.unplaced_boxes, [])
+                    self.assert_identical_layers(result.boxes, 5, 3)
                 effective_height = 205.0 if fit_type != "なし" else 200.0
                 for placed in result.boxes:
                     self.assertEqual(placed.z, placed.layer_index * (effective_height - 10.0))

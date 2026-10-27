@@ -16,6 +16,7 @@ from typing import List, Dict, Tuple, Optional, Any
 from algorithm_programmer.models import BoxSpec, PlacedBox, PalletSpec, PalletizeResult
 
 CORNER_HEIGHT_TOLERANCE_MM = 3.0
+SUPPORT_CORNER_TOLERANCE_MM = 0.01
 TOP_CORNER_MARGIN_MM = 35.0
 OVERHANG_EXCEPTION_MIN_EDGE_MM = 670.0
 GEOMETRY_EPS_MM = 1e-3
@@ -247,6 +248,14 @@ class Palletizer:
         footprint_l = sample_box.footprint_length
 
         max_layers = calculate_max_layers(effective_height, depth, self.pallet.max_height)
+        corner_limited = (
+            sample_box.column_stack_group is None and
+            ((footprint_w - w) / 2.0 > SUPPORT_CORNER_TOLERANCE_MM + 1e-9 or
+             (footprint_l - l) / 2.0 > SUPPORT_CORNER_TOLERANCE_MM + 1e-9)
+        )
+        if corner_limited:
+            # 全段同一配置では、本体から張り出す蓋の隅に上段底面が届かない。
+            max_layers = min(max_layers, 1)
         candidate_patterns = self._generate_single_2d_patterns(footprint_w, footprint_l)
 
         best_pattern = None
@@ -316,7 +325,8 @@ class Palletizer:
         y_span = best_pattern["y_span"]
         offset_x = (self.pallet.length - x_span) / 2.0
         offset_y = (self.pallet.width - y_span) / 2.0
-        unplaced_reason = "最大積載高さの上限に達しました"
+        unplaced_reason = ("下段隅の被覆条件を満たせず上段に配置できません" if corner_limited
+                           else "最大積載高さの上限に達しました")
 
         for layer in range(max_layers):
             layer_z = layer * (effective_height - depth)
@@ -332,6 +342,8 @@ class Palletizer:
                 unplaced_reason = "最上段を一層分そろえられず、四隅高さ一致を保てません"
                 break
 
+            layer_start = box_idx
+            corner_failed = False
             for b_pos in layer_pattern:
                 if box_idx >= total_needed:
                     break
@@ -359,10 +371,16 @@ class Palletizer:
                     lid_length=lid_l,
                     lid_fit_type=box.lid_fit_type
                 )
+                if not self._support_corners_allowed(pb, placed_boxes):
+                    del placed_boxes[layer_start:]
+                    box_idx = layer_start
+                    corner_failed = True
+                    unplaced_reason = "下段隅の被覆またはコラム積み条件を満たせません"
+                    break
                 placed_boxes.append(pb)
                 box_idx += 1
 
-            if box_idx >= total_needed:
+            if corner_failed or box_idx >= total_needed:
                 break
 
         unplaced_count = total_needed - box_idx
@@ -707,6 +725,45 @@ class Palletizer:
 
         return total_support / bottom_area
 
+    # v2026-10-27: 支持箱群の被覆隅は異なるXY位置で2か所以上。適合コラム積みは免除。
+    def _covered_support_corners(self, upper: PlacedBox,
+                                 lower_boxes: List[PlacedBox]) -> List[Tuple[float, float]]:
+        """本体底面に含まれる直接支持箱の外形隅を、XY位置で重複除外する。"""
+        points: List[Tuple[float, float]] = []
+        tolerance = SUPPORT_CORNER_TOLERANCE_MM + 1e-9
+        for lower in lower_boxes:
+            if lower is upper or abs(lower.top_z - (upper.z + upper.fitting_depth)) > 1.0:
+                continue
+            if not intersects_2d(upper.x, upper.y, upper.width, upper.length,
+                                 lower.footprint_min_x, lower.footprint_min_y,
+                                 lower.max_x - lower.footprint_min_x,
+                                 lower.max_y - lower.footprint_min_y):
+                continue
+            for x in (lower.footprint_min_x, lower.max_x):
+                for y in (lower.footprint_min_y, lower.max_y):
+                    if (upper.x - tolerance <= x <= upper.x + upper.width + tolerance and
+                        upper.y - tolerance <= y <= upper.y + upper.length + tolerance):
+                        points.append((x, y))
+        unique: List[Tuple[float, float]] = []
+        for point in sorted(points):
+            if not any(abs(point[0] - other[0]) <= tolerance and
+                       abs(point[1] - other[1]) <= tolerance for other in unique):
+                unique.append(point)
+        return unique
+
+    def _support_corners_allowed(self, upper: PlacedBox,
+                                 lower_boxes: List[PlacedBox]) -> bool:
+        if upper.z <= 1e-3:
+            return True
+        if self._column_stack_group(upper.box_id, upper.lid_id, upper.lid_fit_type) is not None:
+            spec = copy.copy(self.box_db[upper.box_id])
+            spec.lid_id = upper.lid_id
+            spec.lid_fit_type = upper.lid_fit_type
+            return self._column_stack_is_allowed(
+                spec, upper, [lower for lower in lower_boxes if lower is not upper]
+            )
+        return len(self._covered_support_corners(upper, lower_boxes)) >= 2
+
     @staticmethod
     def _is_oversized_support(lower_w: float, lower_l: float, upper_w: float, upper_l: float,
                               tol: float = 1.0) -> bool:
@@ -830,6 +887,8 @@ class Palletizer:
                             continue
                         if not self._column_stack_is_allowed(spec, pb, lower_boxes):
                             continue
+                    if not self._support_corners_allowed(pb, lower_boxes):
+                        continue
                     placed.append(pb)
                     pool_counter[spec.pool_key] -= 1
                     x_cursor += w
@@ -886,6 +945,8 @@ class Palletizer:
                 return None
             if not self._column_stack_is_allowed(spec, placed_box, lower_boxes):
                 return None
+        if not self._support_corners_allowed(placed_box, lower_boxes):
+            return None
         return placed_box
 
     # [廃止] Anchor Corners メソッド
@@ -1352,6 +1413,12 @@ class Palletizer:
 
         if not self._overhang_is_valid(placed_boxes):
             violations.append("Box/lid overhang exceeds the configured X/Y limit without a single-load exception")
+
+        for box in placed_boxes:
+            if not self._support_corners_allowed(box, placed_boxes):
+                violations.append(
+                    f"Order #{box.order} ({box.box_id}): 下段隅の被覆またはコラム積み条件違反"
+                )
 
         # 四隅高さチェック
         margin = TOP_CORNER_MARGIN_MM

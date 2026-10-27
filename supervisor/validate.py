@@ -40,6 +40,7 @@ OVERHANG_EXCEPTION_BODY_THRESHOLD_MM = 670.0
 # (669.999mm や 20.0001mm のような僅かな超過を誤って許容しないため、EPS=1e-3は使わない)
 OVERHANG_FLOAT_EPS = 1e-9
 MIN_SUPPORT_RATIO = 0.85   # 底面支持面積比率の下限 (85%)
+SUPPORT_CORNER_TOLERANCE_MM = 0.01
 CORNER_HEIGHT_TOLERANCE = 3.0  # mm (最高層四隅高さの許容誤差)
 EPS = 1e-3                 # 浮動小数点誤差マージン
 POSITION_REFERENCE = "combined_footprint_min_xy_top_z"
@@ -123,6 +124,28 @@ def get_intersection_area(x1, y1, w1, l1, x2, y2, w2, l2):
     if ix_max > ix_min and iy_max > iy_min:
         return (ix_max - ix_min) * (iy_max - iy_min)
     return 0.0
+
+def covered_support_corners(
+    upper: Dict[str, Any], supports: List[Dict[str, Any]]
+) -> Tuple[List[Tuple[float, float]], List[Tuple[float, float]]]:
+    """本体底面が覆う下段外形の隅を集め、XY順の代表点で重複除外する。"""
+    x, y = upper["position"]["x"], upper["position"]["y"]
+    w, l = upper["dimensions"]["width"], upper["dimensions"]["length"]
+    tolerance = SUPPORT_CORNER_TOLERANCE_MM + 1e-9
+    covered: List[Tuple[float, float]] = []
+    for lower in supports:
+        x0, y0, x1, y1 = get_footprint_bounds(lower)
+        for point in ((x0, y0), (x1, y0), (x1, y1), (x0, y1)):
+            if (x - tolerance <= point[0] <= x + w + tolerance and
+                y - tolerance <= point[1] <= y + l + tolerance):
+                covered.append(point)
+    unique = []
+    for point in sorted(covered):
+        if not any(abs(point[0] - other[0]) <= tolerance and
+                   abs(point[1] - other[1]) <= tolerance for other in unique):
+            unique.append(point)
+    return covered, unique
+
 
 class PalletizeValidator:
     def __init__(self, box_db: Dict[str, Any], lid_db: Dict[str, Any]):
@@ -424,6 +447,17 @@ class PalletizeValidator:
                     f"Order #{order} ({b['box_id']}): コラム積み条件違反 "
                     "（対象群・蓋ID・箱蓋外形位置を揃えた単一支持が必要です）"
                 )
+
+            # v2026-10-27: 適合コラム積みだけ免除し、下段隅を位置で集計する。
+            if upper_group is None or column_rule_failed:
+                covered, unique = covered_support_corners(b, supporting_boxes)
+                if len(unique) < 2:
+                    violations.append(
+                        f"Order #{order} ({b['box_id']}): 下段隅の被覆不足 "
+                        f"(支持箱={[sb['order'] for sb in supporting_boxes]}, "
+                        f"被覆隅={covered}, 重複除外前={len(covered)}, "
+                        f"重複除外後={len(unique)} < 2, 位置={unique})"
+                    )
 
             # 支持面積比率の算出
             total_support_area = 0.0
