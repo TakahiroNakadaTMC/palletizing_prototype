@@ -1,0 +1,19 @@
+{
+  "name": "aisin_10",
+  "description": "TCC No2 コンベ",
+  "pallet": {
+    "length": 1200,
+    "width": 1000,
+    "max_height": 1200,
+    "min_y_span": 800,
+    "max_overhang_x_mm": 70,
+    "max_overhang_y_mm": 3
+  },
+  "box_list": [
+    {
+      "box_id": "SPZ36403",
+      "count": 4,
+      "lid_id": "TP360フタ"
+    }
+  ]
+}

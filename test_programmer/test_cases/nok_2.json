@@ -1,0 +1,19 @@
+{
+  "name": "nok_2",
+  "description": "ダンパープーリ",
+  "pallet": {
+    "length": 1200,
+    "width": 1000,
+    "max_height": 1200,
+    "min_y_span": 800,
+    "max_overhang_x_mm": 6,
+    "max_overhang_y_mm": 0
+  },
+  "box_list": [
+    {
+      "box_id": "NP000008",
+      "count": 31,
+      "lid_id": "サンボックス＃22B"
+    }
+  ]
+}

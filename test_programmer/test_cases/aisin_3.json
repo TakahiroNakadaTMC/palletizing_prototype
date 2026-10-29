@@ -1,0 +1,19 @@
+{
+  "name": "aisin_3",
+  "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ",
+  "pallet": {
+    "length": 1200,
+    "width": 1000,
+    "max_height": 1200,
+    "min_y_span": 800,
+    "max_overhang_x_mm": 0,
+    "max_overhang_y_mm": 3
+  },
+  "box_list": [
+    {
+      "box_id": "TP342",
+      "count": 12,
+      "lid_id": "TP34蓋(IC)"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "aisin",
+  "description": "アイシン西尾　インマニHV",
+  "pallet": {
+    "length": 1200,
+    "width": 1000,
+    "max_height": 1200,
+    "min_y_span": 800,
+    "max_overhang_x_mm": 70,
+    "max_overhang_y_mm": 3
+  },
+  "box_list": [
+    {
+      "box_id": "SPZ46405",
+      "count": 11,
+      "lid_id": "TP460フタ"
+    }
+  ]
+}

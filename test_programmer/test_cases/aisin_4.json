@@ -1,0 +1,29 @@
+{
+  "name": "aisin_4",
+  "description": "アイシン半田　混載",
+  "pallet": {
+    "length": 1200,
+    "width": 1000,
+    "max_height": 1200,
+    "min_y_span": 800,
+    "max_overhang_x_mm": 0,
+    "max_overhang_y_mm": 3
+  },
+  "box_list": [
+    {
+      "box_id": "SPG34229",
+      "count": 14,
+      "lid_id": "TP34蓋(IC)"
+    },
+    {
+      "box_id": "SPG34230",
+      "count": 14,
+      "lid_id": "TP34蓋(IC)"
+    },
+    {
+      "box_id": "SP342",
+      "count": 2,
+      "lid_id": "無蓋"
+    }
+  ]
+}

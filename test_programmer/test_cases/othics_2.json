@@ -1,0 +1,29 @@
+{
+  "name": "othics_2",
+  "description": "ローラーロッカー",
+  "pallet": {
+    "length": 1200,
+    "width": 1000,
+    "max_height": 1200,
+    "min_y_span": 800,
+    "max_overhang_x_mm": 0,
+    "max_overhang_y_mm": 18
+  },
+  "box_list": [
+    {
+      "box_id": "TP3415",
+      "count": 16,
+      "lid_id": "TP34蓋ロック付き"
+    },
+    {
+      "box_id": "NP262D",
+      "count": 8,
+      "lid_id": "サンボックス＃26"
+    },
+    {
+      "box_id": "TP331",
+      "count": 4,
+      "lid_id": "サンボックス330フタ"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "nok",
+  "description": "NOK混載",
+  "pallet": {
+    "length": 1200,
+    "width": 1000,
+    "max_height": 1200,
+    "min_y_span": 800,
+    "max_overhang_x_mm": 0,
+    "max_overhang_y_mm": 0
+  },
+  "box_list": [
+    {
+      "box_id": "NP000002",
+      "count": 3,
+      "lid_id": "無蓋"
+    },
+    {
+      "box_id": "NP000003",
+      "count": 7,
+      "lid_id": "無蓋"
+    },
+    {
+      "box_id": "TP131",
+      "count": 6,
+      "lid_id": "無蓋"
+    },
+    {
+      "box_id": "TP331",
+      "count": 17,
+      "lid_id": "無蓋"
+    }
+  ]
+}
