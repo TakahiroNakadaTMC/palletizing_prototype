@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import tempfile
 import unittest
@@ -7,25 +8,20 @@ from dataclasses import replace
 from unittest.mock import mock_open, patch
 
 from algorithm_programmer.models import BoxSpec, PalletSpec
-from algorithm_programmer.palletizer import MIXED_LAYER_SEARCH_WIDTH, Palletizer
+from algorithm_programmer.palletizer import Palletizer
 from supervisor.validate import (
     EPS,
     PalletizeValidator,
     get_footprint_bounds,
     load_box_db,
     load_lid_db,
-    normalize_result_coordinates
+    normalize_result_coordinates,
+    resolve_pallet_dims,
 )
 
 
-class OverhangTests(unittest.TestCase):
-    """pallet.max_overhang_x_mm / max_overhang_y_mm に基づくオーバーハング制約の検証。
-
-    旧 max_small_edge_overhang_mm（335mm以下の辺・最下段のみ対象）ルールは廃止され、
-    全段の箱・蓋結合外形を対象に、軸ごとの上限値（既定20mm、20mm自体は許容）で判定する。
-    例外は、INPUT が単一荷姿種別（box_id + lid_id）のみで構成され、かつ回転後の箱本体
-    寸法（蓋を除く）が670mm以上となる軸に限り適用される。
-    """
+class PalletCaseBuilderMixin:
+    """結果JSONを組み立て、一時ファイル経由で validate_case を呼び出す共通ヘルパー。"""
 
     @classmethod
     def setUpClass(cls):
@@ -34,57 +30,51 @@ class OverhangTests(unittest.TestCase):
         cls.validator = PalletizeValidator(cls.box_db, cls.lid_db)
         cls.no_lid_id = next(lid_id for lid_id, lid in cls.lid_db.items() if lid.get("type") == "NONE")
 
-    def validate_boxes(self, box_specs, overhang_x=20.0, overhang_y=20.0,
-                        input_box_variants=None, extra_pallet=None):
+    def build_box(self, spec):
+        master = self.box_db[spec["box_id"]]
+        rotation = spec.get("rotation", 0)
+        lid_id = spec.get("lid_id", self.no_lid_id)
+        lid = self.lid_db[lid_id]
+        body_width, body_length = (
+            (master["width"], master["length"])
+            if rotation == 0 else (master["length"], master["width"])
+        )
+        body_width = spec.get("body_width", body_width)
+        body_length = spec.get("body_length", body_length)
+        lid_width, lid_length = (
+            (lid["width"], lid["length"])
+            if rotation == 0 else (lid["length"], lid["width"])
+        )
+        return {
+            "order": spec.get("order", 1),
+            "box_id": spec["box_id"],
+            "position": {"x": spec["x"], "y": spec["y"], "z": spec.get("z", 0.0)},
+            "dimensions": {
+                "width": body_width,
+                "length": body_length,
+                "height": master["height"] + lid["thickness"]
+            },
+            "rotation": rotation,
+            "fitting_depth": master["fitting_depth"],
+            "lid_id": lid_id,
+            "lid_thickness": lid["thickness"],
+            "lid_dimensions": {"width": lid_width, "length": lid_length},
+            "lid_fit_type": lid["fit_type"]
+        }
+
+    def validate_boxes(self, box_specs, pallet=None, extra_pallet=None, omit_pallet=False):
         boxes = []
         for order, spec in enumerate(box_specs, start=1):
-            master = self.box_db[spec["box_id"]]
-            rotation = spec.get("rotation", 0)
-            lid_id = spec.get("lid_id", self.no_lid_id)
-            lid = self.lid_db[lid_id]
-            body_width, body_length = (
-                (master["width"], master["length"])
-                if rotation == 0 else (master["length"], master["width"])
-            )
-            body_width = spec.get("body_width", body_width)
-            body_length = spec.get("body_length", body_length)
-            lid_width, lid_length = (
-                (lid["width"], lid["length"])
-                if rotation == 0 else (lid["length"], lid["width"])
-            )
-            boxes.append({
-                "order": order,
-                "box_id": spec["box_id"],
-                "position": {"x": spec["x"], "y": spec["y"], "z": spec.get("z", 0.0)},
-                "dimensions": {
-                    "width": body_width,
-                    "length": body_length,
-                    "height": master["height"] + lid["thickness"]
-                },
-                "rotation": rotation,
-                "fitting_depth": master["fitting_depth"],
-                "lid_id": lid_id,
-                "lid_thickness": lid["thickness"],
-                "lid_dimensions": {"width": lid_width, "length": lid_length},
-                "lid_fit_type": lid["fit_type"]
-            })
+            spec = dict(spec)
+            spec.setdefault("order", order)
+            boxes.append(self.build_box(spec))
 
-        pallet = {
-            "length": 1200.0,
-            "width": 1000.0,
-            "max_overhang_x_mm": overhang_x,
-            "max_overhang_y_mm": overhang_y
-        }
-        if extra_pallet:
-            pallet.update(extra_pallet)
-
-        data = {
-            "test_name": "overhang_test",
-            "pallet": pallet,
-            "boxes": boxes
-        }
-        if input_box_variants is not None:
-            data["input_box_variants"] = input_box_variants
+        data = {"test_name": "case", "boxes": boxes}
+        if not omit_pallet:
+            pallet_data = dict(pallet) if pallet is not None else {"length": 1200.0, "width": 1000.0}
+            if extra_pallet:
+                pallet_data.update(extra_pallet)
+            data["pallet"] = pallet_data
 
         path = None
         try:
@@ -96,121 +86,187 @@ class OverhangTests(unittest.TestCase):
             if path and os.path.exists(path):
                 os.unlink(path)
 
-    @staticmethod
-    def overhang_violations(result):
-        return [v for v in result["violations"] if "オーバーハング違反" in v]
+class PalletDimensionValidationTests(PalletCaseBuilderMixin, unittest.TestCase):
+    """新パレット6項目 (length/width/height/max_x_span/max_y_span/max_height) の検証。
 
-    def test_20mm_boundary_is_inclusive_and_above_is_rejected(self):
-        at_limit = self.validate_boxes([{"box_id": "TP-331", "x": -20.0, "y": 300.0}])
-        over_limit = self.validate_boxes([{"box_id": "TP-331", "x": -20.5, "y": 300.0}])
+    下限(旧800mm)・軸別オーバーハング上限・670mm例外・旧 max_small_edge_overhang_mm は
+    すべて廃止された。各上限は inclusive (境界値そのものは合格)。
+    """
 
-        self.assertEqual(self.overhang_violations(at_limit), [])
-        self.assertEqual(len(self.overhang_violations(over_limit)), 1)
+    def test_resolve_pallet_dims_uses_six_defaults_when_omitted(self):
+        violations = []
+        resolved = resolve_pallet_dims({}, violations)
+        self.assertEqual(violations, [])
+        self.assertEqual(resolved, {
+            "length": 1200.0, "width": 1000.0, "height": 130.0,
+            "max_x_span": 1360.0, "max_y_span": 1100.0, "max_height": 1200.0
+        })
 
-    def test_20_0001mm_exceeds_the_inclusive_20mm_boundary(self):
-        # 20mm自体は許容(inclusive)だが、20.0001mmは浮動小数点丸め誤差を超える超過として拒否される
-        result = self.validate_boxes([{"box_id": "TP-331", "x": -20.0001, "y": 300.0}])
+    def test_resolve_pallet_dims_accepts_none_and_missing_pallet(self):
+        violations = []
+        resolved = resolve_pallet_dims(None, violations)
+        self.assertEqual(violations, [])
+        self.assertEqual(resolved["max_height"], 1200.0)
 
-        violations = self.overhang_violations(result)
-        self.assertEqual(len(violations), 1)
-        self.assertIn("X方向", violations[0])
+    def test_resolve_pallet_dims_rejects_non_dict_pallet(self):
+        violations = []
+        resolved = resolve_pallet_dims("bad", violations)
+        self.assertTrue(any("オブジェクト形式" in v for v in violations))
+        self.assertEqual(resolved["length"], 1200.0)
 
-    def test_overhang_is_checked_independently_per_axis(self):
-        x_only = self.validate_boxes([{"box_id": "TP-331", "x": -25.0, "y": 300.0}])
-        y_only = self.validate_boxes([{"box_id": "TP-331", "x": 400.0, "y": -25.0}])
+    def test_retired_keys_are_ignored_without_errors(self):
+        violations = []
+        resolved = resolve_pallet_dims({
+            "min_x_span": 800.0, "min_y_span": 800.0,
+            "max_overhang_x_mm": -5.0, "max_overhang_y_mm": "bad",
+            "max_small_edge_overhang_mm": 30.0
+        }, violations)
+        self.assertEqual(violations, [])
+        self.assertEqual(resolved, {
+            "length": 1200.0, "width": 1000.0, "height": 130.0,
+            "max_x_span": 1360.0, "max_y_span": 1100.0, "max_height": 1200.0
+        })
 
-        x_violations = self.overhang_violations(x_only)
-        y_violations = self.overhang_violations(y_only)
+    def test_invalid_dimension_values_are_reported_explicitly_and_fallback_applied(self):
+        for field in ("length", "width", "height", "max_x_span", "max_y_span", "max_height"):
+            for bad_value in (0, -1, float("nan"), float("inf"), "bad", True):
+                with self.subTest(field=field, value=bad_value):
+                    violations = []
+                    resolved = resolve_pallet_dims({field: bad_value}, violations)
+                    self.assertTrue(
+                        any(f"pallet.{field}" in v for v in violations),
+                        f"expected explicit violation for {field}={bad_value!r}: {violations}"
+                    )
+                    # 無効値は既定値へフォールバックするが、検証は常に明示的に報告される
+                    # (サイレントフォールバックではない)
+                    default_map = {
+                        "length": 1200.0, "width": 1000.0, "height": 130.0,
+                        "max_x_span": 1360.0, "max_y_span": 1100.0, "max_height": 1200.0
+                    }
+                    if field not in ("length", "width"):
+                        self.assertEqual(resolved[field], default_map[field])
 
-        self.assertEqual(len(x_violations), 1)
-        self.assertIn("X方向", x_violations[0])
-        self.assertEqual(len(y_violations), 1)
-        self.assertIn("Y方向", y_violations[0])
+    def test_max_y_span_cannot_exceed_max_x_span(self):
+        violations = []
+        resolve_pallet_dims({"max_x_span": 900.0, "max_y_span": 1000.0}, violations)
+        self.assertTrue(any("max_x_span" in v and "max_y_span" in v for v in violations))
 
-    def test_exception_applies_only_to_the_axis_with_670mm_rotated_body(self):
-        # TP-362 (335mm x 670mm): rotation 0 -> X=335mm(<670, not exempt), Y=670mm(exempt)
-        variants = [{"box_id": "TP-362", "lid_id": self.no_lid_id}]
+    def test_length_width_swap_is_preserved(self):
+        violations = []
+        resolved = resolve_pallet_dims({"length": 900.0, "width": 1100.0}, violations)
+        self.assertEqual((resolved["length"], resolved["width"]), (1100.0, 900.0))
+        self.assertEqual(violations, [])
+
+class PalletBoundaryIntegrationTests(PalletCaseBuilderMixin, unittest.TestCase):
+    """validate_case 全体を通した、境界値(inclusive)・下限なし・空結果の検証。"""
+
+    def test_default_pallet_centers_single_box_without_violations(self):
         result = self.validate_boxes(
-            [{"box_id": "TP-362", "x": -30.0, "y": -30.0}],
-            input_box_variants=variants
+            [{"box_id": "TP-331", "x": 432.5, "y": 332.5}], omit_pallet=True
         )
+        self.assertEqual(result["violations"], [])
 
-        violations = self.overhang_violations(result)
-        self.assertEqual(len(violations), 1)
-        self.assertIn("X方向", violations[0])
+    def test_long_side_span_boundary_is_inclusive(self):
+        at_limit = self.validate_boxes(
+            [{"box_id": "TP-331", "x": 432.5, "y": 332.5}],
+            extra_pallet={"max_x_span": 335.0, "max_y_span": 335.0}
+        )
+        over_limit = self.validate_boxes(
+            [{"box_id": "TP-331", "x": 432.5, "y": 332.5}],
+            extra_pallet={"max_x_span": 334.99, "max_y_span": 334.99}
+        )
+        self.assertEqual(at_limit["violations"], [])
+        self.assertTrue(any("長辺荷姿スパン超過" in v for v in over_limit["violations"]))
 
-    def test_body_dimension_669_99mm_does_not_qualify_for_exception(self):
-        variants = [{"box_id": "TP-362", "lid_id": self.no_lid_id}]
+    def test_short_side_span_boundary_is_inclusive(self):
+        at_limit = self.validate_boxes(
+            [{"box_id": "TP-331", "x": 432.5, "y": 332.5}],
+            extra_pallet={"max_y_span": 335.0}
+        )
+        over_limit = self.validate_boxes(
+            [{"box_id": "TP-331", "x": 432.5, "y": 332.5}],
+            extra_pallet={"max_y_span": 334.99}
+        )
+        self.assertEqual(at_limit["violations"], [])
+        self.assertTrue(any("短辺荷姿スパン超過" in v for v in over_limit["violations"]))
+
+    def test_max_height_boundary_is_inclusive(self):
+        at_limit = self.validate_boxes(
+            [{"box_id": "TP-331", "x": 432.5, "y": 332.5}],
+            extra_pallet={"max_height": 102.5}
+        )
+        over_limit = self.validate_boxes(
+            [{"box_id": "TP-331", "x": 432.5, "y": 332.5}],
+            extra_pallet={"max_height": 102.49}
+        )
+        self.assertEqual(at_limit["violations"], [])
+        self.assertTrue(any("最大積載高さ超過" in v for v in over_limit["violations"]))
+
+    def test_case_specific_max_height_is_authoritative_no_fixed_1200_cap(self):
+        # 旧実装の固定1200mmキャップは廃止。ケースごとの pallet.max_height が常に権威値。
         result = self.validate_boxes(
-            [{"box_id": "TP-362", "x": 400.0, "y": -30.0, "body_length": 669.99}],
-            input_box_variants=variants
+            [{"box_id": "TP-331", "x": 432.5, "y": 332.5, "z": 0.0}],
+            extra_pallet={"max_height": 5000.0}
         )
-
-        violations = self.overhang_violations(result)
-        self.assertEqual(len(violations), 1)
-        self.assertIn("Y方向", violations[0])
-
-    def test_body_dimension_669_999mm_does_not_qualify_for_exception(self):
-        variants = [{"box_id": "TP-362", "lid_id": self.no_lid_id}]
-        result = self.validate_boxes(
-            [{"box_id": "TP-362", "x": 400.0, "y": -30.0, "body_length": 669.999}],
-            input_box_variants=variants
+        self.assertEqual(result["violations"], [])
+        exceeding_default_only = self.validate_boxes(
+            [{"box_id": "TP-331", "x": 432.5, "y": 332.5, "z": 1150.0}],
+            extra_pallet={"max_height": 5000.0}
         )
+        # z=1150 + height(102.5) = 1252.5 > 旧固定1200mmだが、max_height=5000なので合格
+        self.assertFalse(any("最大積載高さ超過" in v for v in exceeding_default_only["violations"]))
 
-        violations = self.overhang_violations(result)
-        self.assertEqual(len(violations), 1)
-        self.assertIn("Y方向", violations[0])
+    def test_no_minimum_span_small_single_box_passes(self):
+        result = self.validate_boxes([{
+            "box_id": "TP-331", "x": 575.0, "y": 475.0,
+            "body_width": 50.0, "body_length": 50.0
+        }])
+        self.assertEqual(result["x_span"], 50.0)
+        self.assertEqual(result["y_span"], 50.0)
+        self.assertFalse(any("不足" in v for v in result["violations"]))
 
-    def test_incomplete_input_metadata_does_not_enable_exception(self):
-        valid = {"box_id": "TP-362", "lid_id": self.no_lid_id}
-        for variants in ([valid, None], [valid, {}], [{"box_id": "TP-362"}]):
-            with self.subTest(variants=variants):
-                result = self.validate_boxes(
-                    [{"box_id": "TP-362", "x": 400.0, "y": -30.0}],
-                    input_box_variants=variants
-                )
-                self.assertEqual(len(self.overhang_violations(result)), 1)
+    def test_empty_boxes_still_reports_pallet_dimension_errors_without_keyerror(self):
+        result = self.validate_boxes([], extra_pallet={"max_height": -1.0})
+        self.assertFalse(result["is_pass"])
+        self.assertEqual(result["total_boxes"], 0)
+        self.assertEqual(result["x_span"], 0.0)
+        self.assertEqual(result["y_span"], 0.0)
+        self.assertEqual(result["max_z"], 0.0)
+        self.assertEqual(result["vol_eff"], 0.0)
+        self.assertIn("overhang_mm", result)
+        self.assertTrue(any("配置箱数が0です" in v for v in result["violations"]))
+        self.assertTrue(any("pallet.max_height" in v for v in result["violations"]))
 
-    def test_exactly_670mm_qualifies_for_exception(self):
-        variants = [{"box_id": "TP-362", "lid_id": self.no_lid_id}]
-        result = self.validate_boxes(
-            [{"box_id": "TP-362", "x": 400.0, "y": -30.0, "body_length": 670.0}],
-            input_box_variants=variants
+    def test_missing_result_file_does_not_raise(self):
+        result = self.validator.validate_case(
+            os.path.join(tempfile.gettempdir(), "does-not-exist-supervisor-validate.json")
         )
+        self.assertFalse(result["is_pass"])
+        self.assertEqual(result["total_boxes"], 0)
 
-        self.assertEqual(self.overhang_violations(result), [])
+class OverhangInformationalWarningTests(PalletCaseBuilderMixin, unittest.TestCase):
+    """オーバーハングは合否に影響しない参考情報。overhang_mm (left/right/front/back) と
+    warnings に記録されるのみで、violations には現れない。
+    """
 
-    def test_overhang_limit_applies_to_all_layers_not_only_bottom(self):
-        variants = [{"box_id": "TP-362", "lid_id": self.no_lid_id}]
-        result = self.validate_boxes([
-            {"box_id": "TP-362", "x": 400.0, "y": 165.0},
-            {"box_id": "TP-362", "x": -30.0, "y": -30.0, "z": 195.0}
-        ], input_box_variants=variants)
+    def test_overhang_is_warning_not_violation(self):
+        result = self.validate_boxes([{"box_id": "TP-331", "x": -16.0, "y": 300.0}])
 
-        violations = self.overhang_violations(result)
-        self.assertEqual(len(violations), 1)
-        self.assertIn("X方向", violations[0])
+        self.assertFalse(any("オーバーハング" in v for v in result["violations"]))
+        self.assertEqual(result["overhang_mm"], {"left": 16.0, "right": 0.0, "front": 0.0, "back": 0.0})
+        self.assertTrue(any("はみ出し" in w for w in result["warnings"]))
 
-    def test_mixed_input_variants_disallow_exception_even_if_only_one_type_is_placed(self):
-        variants = [
-            {"box_id": "TP-362", "lid_id": self.no_lid_id},
-            {"box_id": "TP-331", "lid_id": self.no_lid_id}
-        ]
-        result = self.validate_boxes(
-            [{"box_id": "TP-362", "x": 400.0, "y": -30.0}],
-            input_box_variants=variants
-        )
+    def test_fully_inside_pallet_has_zero_overhang_and_no_warning(self):
+        result = self.validate_boxes([{"box_id": "TP-331", "x": 432.5, "y": 332.5}])
 
-        violations = self.overhang_violations(result)
-        self.assertEqual(len(violations), 1)
-        self.assertIn("Y方向", violations[0])
+        self.assertEqual(result["overhang_mm"], {"left": 0.0, "right": 0.0, "front": 0.0, "back": 0.0})
+        self.assertEqual(result["warnings"], [])
 
-    def test_missing_input_box_variants_disallows_exception(self):
-        result = self.validate_boxes([{"box_id": "TP-362", "x": 400.0, "y": -30.0}])
+    def test_right_and_back_overhang_are_measured_independently(self):
+        result = self.validate_boxes([{"box_id": "TP-331", "x": 900.0, "y": 700.0}])
 
-        violations = self.overhang_violations(result)
-        self.assertEqual(len(violations), 1)
-        self.assertIn("Y方向", violations[0])
+        # x: min=900,max=1235 -> right = 1235-1200 = 35 ; y: min=700,max=1035 -> back = 1035-1000=35
+        self.assertEqual(result["overhang_mm"], {"left": 0.0, "right": 35.0, "front": 0.0, "back": 35.0})
 
     def test_external_lid_combined_footprint_is_used_for_overhang(self):
         # 箱本体のみなら上限内(16mm)だが、蓋込み外形では超過(20.5mm)する
@@ -219,43 +275,56 @@ class OverhangTests(unittest.TestCase):
             "lid_id": "サンボックス330フタ"
         }])
 
-        violations = self.overhang_violations(result)
-        self.assertEqual(len(violations), 1)
-        self.assertIn("X方向", violations[0])
+        self.assertGreater(result["overhang_mm"]["left"], 16.0)
 
-    def test_overhang_limit_is_configurable_per_axis(self):
-        result = self.validate_boxes(
+    def test_old_retired_overhang_keys_do_not_affect_warning_or_violations(self):
+        with_retired = self.validate_boxes(
             [{"box_id": "TP-331", "x": -16.0, "y": 300.0}],
-            overhang_x=15.0
+            extra_pallet={"max_overhang_x_mm": 0.0, "max_small_edge_overhang_mm": 5.0}
         )
+        without_retired = self.validate_boxes([{"box_id": "TP-331", "x": -16.0, "y": 300.0}])
 
-        violations = self.overhang_violations(result)
-        self.assertEqual(len(violations), 1)
-        self.assertIn("X方向", violations[0])
+        self.assertEqual(with_retired["overhang_mm"], without_retired["overhang_mm"])
+        self.assertEqual(with_retired["violations"], without_retired["violations"])
 
-    def test_old_overhang_key_is_reported_as_invalid(self):
+
+class PalletBottomSupportTests(PalletCaseBuilderMixin, unittest.TestCase):
+    """85%底面支持率は、パレット直置き分も箱本体底面とパレット矩形(原点0,0〜
+    length×width)との実交差面積で判定する。
+    """
+
+    def test_support_math_matches_engine_formula_at_exact_85_percent_boundary(self):
+        from supervisor.validate import get_intersection_area, MIN_SUPPORT_RATIO, SUPPORT_RATIO_TOLERANCE
+
+        # engine._support_ratio(0, 0, 1000, 850, 0, 0, []) と同一の数値例
+        area = get_intersection_area(0.0, 0.0, 1000.0, 850.0, 0.0, 0.0, 850.0, 850.0)
+        ratio = area / (1000.0 * 850.0)
+        self.assertAlmostEqual(ratio, 0.85)
+        self.assertGreaterEqual(ratio, MIN_SUPPORT_RATIO - SUPPORT_RATIO_TOLERANCE)
+
+    def test_box_mostly_outside_small_pallet_fails_support_ratio(self):
+        # TP-331(335x335) をパレット(167.5x167.5)の角に直置き -> 支持率25%
         result = self.validate_boxes(
-            [{"box_id": "TP-331", "x": 432.5, "y": 332.5}],
-            extra_pallet={"max_small_edge_overhang_mm": 30.0}
+            [{"box_id": "TP-331", "x": 0.0, "y": 0.0}],
+            pallet={"length": 167.5, "width": 167.5}
         )
+        self.assertTrue(any("支持面積不足" in v for v in result["violations"]))
 
-        self.assertEqual(self.overhang_violations(result), [])
-        self.assertTrue(any(
-            "max_small_edge_overhang_mm" in v for v in result["violations"]
-        ))
-
-    def test_invalid_overhang_limit_value_is_reported_and_defaults_are_used(self):
+    def test_box_fully_within_pallet_at_origin_passes_support_ratio(self):
         result = self.validate_boxes(
-            [{"box_id": "TP-331", "x": -16.0, "y": 300.0}],
-            extra_pallet={"max_overhang_x_mm": -5.0}
+            [{"box_id": "TP-331", "x": 0.0, "y": 0.0}],
+            pallet={"length": 335.0, "width": 335.0}
         )
+        self.assertFalse(any("支持面積不足" in v or "空中浮遊" in v for v in result["violations"]))
 
-        self.assertTrue(any(
-            "max_overhang_x_mm" in v for v in result["violations"]
-        ))
-        # 既定値20mmにフォールバックするため、16mmのオーバーハングは違反にならない
-        self.assertEqual(self.overhang_violations(result), [])
+    def test_box_entirely_off_pallet_is_floating(self):
+        result = self.validate_boxes(
+            [{"box_id": "TP-331", "x": 10000.0, "y": 10000.0}],
+            pallet={"length": 335.0, "width": 335.0}
+        )
+        self.assertTrue(any("空中浮遊エラー" in v for v in result["violations"]))
 
+class CoordinateReferenceAndCenteringTests(PalletCaseBuilderMixin, unittest.TestCase):
     def test_off_center_load_is_rejected(self):
         result = self.validate_boxes([{"box_id": "TP-362", "x": 0.0, "y": 100.0}])
 
@@ -287,6 +356,8 @@ class OverhangTests(unittest.TestCase):
         self.assertIs(normalized, data)
         self.assertEqual(normalized["boxes"][0]["position"]["z"], 30.0)
 
+
+class ExternalLidColumnStackTests(PalletCaseBuilderMixin, unittest.TestCase):
     def test_external_lid_tp_column_allows_different_box_ids(self):
         result = self.validate_boxes([
             {"box_id": "TP-331", "x": 428.0, "y": 328.0,
@@ -370,27 +441,35 @@ class OverhangTests(unittest.TestCase):
 
         self.assertFalse(any(box.box_id == "TP-332" and box.z > 0.0 for box in result.boxes))
 
-
 class MixedLayerSearchTests(unittest.TestCase):
+    """行探索の組み合わせ回帰テスト。旧 max_overhang_y_mm 由来のエンベロープ計算は
+    廃止され、_determine_mixed_envelope は pallet.max_x_span / max_y_span を
+    そのまま返す (inclusive、ケースごとの上限がそのまま探索幅になる)。
+    """
+
     @classmethod
     def setUpClass(cls):
         cls.box_db = load_box_db()
         cls.lid_db = load_lid_db()
         testcase_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                      "test_programmer", "test_cases", "outer_cover_test.json")
+        if not os.path.exists(testcase_path):
+            raise unittest.SkipTest(
+                f"fixture not provided by test_programmer: {testcase_path}"
+            )
         with open(testcase_path, encoding="utf-8") as source:
             cls.testcase = json.load(source)
         cls.validator = PalletizeValidator(cls.box_db, cls.lid_db)
 
-    def make_engine_and_pool(self, max_overhang_y_mm=25.0):
+    def make_engine_and_pool(self, max_y_span=None):
         """独立行探索テスト専用: 承認済み入力コーパス(outer_cover_test.json)自体は変更せず、
-        このテストローカルの PalletSpec インスタンスにのみ Y方向オーバーハング許容を
-        25mm 設定し、行探索の組み合わせ回帰意図を維持する（max_overhang_y_mm=None なら
-        pallet.json の既定値(未設定時 PalletSpec既定の20mm)をそのまま使用する）。
+        このテストローカルの PalletSpec インスタンスにのみ荷山最大W (max_y_span) を
+        上書きし、行探索の組み合わせ回帰意図を維持する(max_y_span=None なら
+        pallet.json の既定値をそのまま使用する)。
         """
         pallet_spec = PalletSpec.from_dict(self.testcase["pallet"])
-        if max_overhang_y_mm is not None:
-            pallet_spec.max_overhang_y_mm = max_overhang_y_mm
+        if max_y_span is not None:
+            pallet_spec.max_y_span = max_y_span
         engine = Palletizer(
             {box_id: BoxSpec.from_dict(data) for box_id, data in self.box_db.items()},
             pallet_spec
@@ -408,6 +487,7 @@ class MixedLayerSearchTests(unittest.TestCase):
     def test_mixed_depth_combination_is_retained(self):
         engine, pool = self.make_engine_and_pool()
         envelope = engine._determine_mixed_envelope(pool)
+        self.assertEqual(envelope["y_span"], engine.pallet.max_y_span)
         self.assertGreaterEqual(envelope["y_span"], 1034.0)
         layer_pool = [box for box in pool if box.height + box.lid_thickness == 115.5]
         candidates = engine._mixed_layer_candidates(layer_pool, 0.0, 0, [], envelope)
@@ -420,29 +500,26 @@ class MixedLayerSearchTests(unittest.TestCase):
             self.assertAlmostEqual(max(box.max_y for box in boxes)
                                    - min(box.footprint_min_y for box in boxes), 1034.0)
 
-    def test_default_20mm_overhang_is_required_for_widest_mixed_combination(self):
-        """pallet.max_overhang_y_mm の既定値(20mm)が、この行探索の組み合わせ候補を
-        実際に左右していることを確認する（既定20mmでは許容されるが、0mmまで絞ると
-        同じ幅の組み合わせが候補から排除される=既定値が単なる飾りでないことの回帰確認）。
+    def test_mixed_envelope_is_the_case_max_span_directly(self):
+        """_determine_mixed_envelope は pallet.max_x_span / max_y_span をそのまま
+        返す(ケースごとの上限がそのまま探索幅になる。旧オーバーハング由来の
+        1040mm相当の計算式は存在しない)。
         """
-        engine, pool = self.make_engine_and_pool(max_overhang_y_mm=None)
+        engine, pool = self.make_engine_and_pool(max_y_span=1040.0)
+        envelope = engine._determine_mixed_envelope(pool)
+        self.assertEqual(envelope["y_span"], 1040.0)
+        self.assertEqual(envelope["x_span"], engine.pallet.max_x_span)
+
         layer_pool = [box for box in pool if box.height + box.lid_thickness == 115.5]
-
-        # ここでは行探索テスト専用の25mmローカルオーバーライドではなく、
-        # PalletSpecの既定値(20mm)相当のエンベロープで検証する
-        engine.pallet.max_overhang_y_mm = 20.0
-        default_envelope = engine._determine_mixed_envelope(pool)
-        self.assertAlmostEqual(default_envelope["y_span"], 1040.0)
-        default_candidates = engine._mixed_layer_candidates(layer_pool, 0.0, 0, [], default_envelope)
-        default_spans = [
+        candidates = engine._mixed_layer_candidates(layer_pool, 0.0, 0, [], envelope)
+        spans = [
             max(box.max_y for box in boxes) - min(box.footprint_min_y for box in boxes)
-            for boxes, _ in default_candidates
+            for boxes, _ in candidates
         ]
-        self.assertTrue(any(span > 1034.0 for span in default_spans))
-        self.assertTrue(all(span <= default_envelope["y_span"] + EPS for span in default_spans))
+        self.assertTrue(all(span <= envelope["y_span"] + EPS for span in spans))
 
-        # オーバーハングを0mmまで絞ると、同じ幅の組み合わせ候補は生成されなくなる
-        engine.pallet.max_overhang_y_mm = 0.0
+        # max_y_spanを厳しく絞ると、同じ幅の組み合わせ候補は生成されなくなる
+        engine.pallet.max_y_span = 1000.0
         strict_envelope = engine._determine_mixed_envelope(pool)
         self.assertAlmostEqual(strict_envelope["y_span"], 1000.0)
         strict_candidates = engine._mixed_layer_candidates(layer_pool, 0.0, 0, [], strict_envelope)
@@ -454,6 +531,7 @@ class MixedLayerSearchTests(unittest.TestCase):
         self.assertFalse(any(span > 1034.0 for span in strict_spans))
 
     def test_candidate_limit_inventory_and_input_are_preserved(self):
+        from algorithm_programmer.palletizer import MIXED_LAYER_SEARCH_WIDTH
         engine, pool = self.make_engine_and_pool()
         layer_pool = [box for box in pool if box.height + box.lid_thickness == 115.5]
         original_specs = [dict(box.__dict__) for box in layer_pool]

@@ -12,6 +12,7 @@ import glob
 import webbrowser
 import socketserver
 import re
+import math
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import urllib.parse
 
@@ -23,6 +24,57 @@ TEST_CASES_DIR = os.path.join(BASE_DIR, "test_cases")
 APPROVAL_STATE_PATH = os.path.join(BASE_DIR, "test_case_approval.json")
 DEFAULT_PORT = 8083
 CASE_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$")
+PALLET_DEFAULTS = {
+    "length": 1200.0,
+    "width": 1000.0,
+    "height": 130.0,
+    "max_x_span": 1360.0,
+    "max_y_span": 1100.0,
+    "max_height": 1200.0,
+}
+
+def parse_positive_finite_number(raw, label):
+    if isinstance(raw, bool):
+        raise ValueError(f"{label} は真偽値を指定できません")
+    if isinstance(raw, (int, float)):
+        value = float(raw)
+    elif isinstance(raw, str):
+        trimmed = raw.strip()
+        if trimmed == "":
+            raise ValueError(f"{label} は空欄にできません")
+        try:
+            value = float(trimmed)
+        except ValueError as e:
+            raise ValueError(f"{label} は数値で指定してください") from e
+    else:
+        raise ValueError(f"{label} は数値で指定してください")
+
+    if not math.isfinite(value):
+        raise ValueError(f"{label} は有限の数値で指定してください")
+    if value <= 0:
+        raise ValueError(f"{label} は0より大きい値で指定してください")
+    return value
+
+def validate_and_normalize_pallet_spec(case_id, pallet_obj):
+    if pallet_obj is None:
+        pallet_obj = {}
+    if not isinstance(pallet_obj, dict):
+        raise ValueError(f"テストケース {case_id} の pallet はオブジェクトである必要があります")
+
+    merged = {**PALLET_DEFAULTS, **pallet_obj}
+    normalized = {
+        "length": parse_positive_finite_number(merged.get("length"), f"{case_id}.pallet.length"),
+        "width": parse_positive_finite_number(merged.get("width"), f"{case_id}.pallet.width"),
+        "height": parse_positive_finite_number(merged.get("height"), f"{case_id}.pallet.height"),
+        "max_x_span": parse_positive_finite_number(merged.get("max_x_span"), f"{case_id}.pallet.max_x_span"),
+        "max_y_span": parse_positive_finite_number(merged.get("max_y_span"), f"{case_id}.pallet.max_y_span"),
+        "max_height": parse_positive_finite_number(merged.get("max_height"), f"{case_id}.pallet.max_height"),
+    }
+    if normalized["length"] < normalized["width"]:
+        raise ValueError(f"{case_id}.pallet: length は width 以上で指定してください")
+    if normalized["max_x_span"] < normalized["max_y_span"]:
+        raise ValueError(f"{case_id}.pallet: max_x_span は max_y_span 以上で指定してください")
+    return normalized
 
 def get_test_case_ids():
     return {
@@ -152,6 +204,7 @@ class TestCaseViewerHandler(SimpleHTTPRequestHandler):
                         raise ValueError(f"テストケース {case_id} の内容が不正です")
                     if type(approval_state.get(case_id)) is not bool:
                         raise ValueError(f"テストケース {case_id} の採否状態が不正です")
+                    tc_obj["pallet"] = validate_and_normalize_pallet_spec(case_id, tc_obj.get("pallet"))
 
                 os.makedirs(TEST_CASES_DIR, exist_ok=True)
 
@@ -181,7 +234,7 @@ class TestCaseViewerHandler(SimpleHTTPRequestHandler):
                     "approved_count": sum(shared_state.values())
                 }
                 self.wfile.write(json.dumps(res).encode("utf-8"))
-                print(f"✓ 保存: {saved_count} 件 / 削除: {deleted_count} 件 / 採用: {sum(shared_state.values())} 件")
+                print(f"保存完了: {saved_count} 件 / 削除: {deleted_count} 件 / 採用: {sum(shared_state.values())} 件")
                 return
             except Exception as e:
                 self.send_response(500)

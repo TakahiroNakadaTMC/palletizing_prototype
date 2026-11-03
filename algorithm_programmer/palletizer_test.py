@@ -98,7 +98,7 @@ class SingleLayerPatternTests(unittest.TestCase):
 
     def test_remainder_does_not_create_upper_layer(self) -> None:
         engine = Palletizer({self.box.id: self.box})
-        for count, per_layer in ((5, 5), (7, 5), (10, 5), (12, 4)):
+        for count, per_layer in ((5, 5), (7, 3), (10, 5), (12, 4)):
             with self.subTest(count=count):
                 result = engine.run("single_remainder", [{"box_id": self.box.id, "count": count}])
                 self.assert_identical_layers(result.boxes, per_layer, count // per_layer)
@@ -116,7 +116,7 @@ class SingleLayerPatternTests(unittest.TestCase):
             (15, 1200.0, 5, 3, 287.5),
             (14, 1200.0, 7, 2, 195.0),
             (30, 1200.0, 6, 5, 472.5),
-            (16, 1200.0, 5, 3, 287.5),
+            (16, 1200.0, 4, 4, 380.0),
             (15, 287.4, 7, 2, 195.0),
             (15, 287.5, 5, 3, 287.5),
         )
@@ -189,11 +189,11 @@ class SingleLayerPatternTests(unittest.TestCase):
                 self.assertEqual(sum(item["count"] for item in result.unplaced_boxes), 15)
                 self.assertFalse(result.summary["is_valid"])
 
-    def test_partial_first_layer_is_preserved(self) -> None:
+    def test_small_input_selects_complete_centered_pattern_without_minimum(self) -> None:
         engine = Palletizer({self.box.id: self.box})
-        full, _ = engine.palletize_single([self.box] * 5)
         placed, unplaced = engine.palletize_single([self.box] * 2)
-        self.assertEqual(placed, full[:2])
+        self.assert_identical_layers(placed, 2, 1)
+        self.assertTrue(engine.calculate_summary(placed)["is_valid"])
         self.assertEqual(unplaced, [])
 
     def test_height_limit_keeps_complete_layers(self) -> None:

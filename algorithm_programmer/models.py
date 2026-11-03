@@ -157,41 +157,38 @@ class PalletSpec:
     length: float = 1200.0        # mm (X軸 長辺 L)
     width: float = 1000.0         # mm (Y軸 短辺 W)
     max_height: float = 1200.0    # mm (Z軸 最大積載高)
-    min_x_span: float = 800.0     # mm (長辺荷姿最小幅: >=800mm)
-    max_x_span: float = 1360.0    # mm (長辺荷姿許容上限: <1360mm)
-    min_y_span: float = 800.0     # mm (短辺荷姿最小幅: >=800mm)
-    max_y_span: float = 1100.0    # mm (短辺荷姿最大幅: <1100mm)
-    max_overhang_x_mm: float = 20.0
-    max_overhang_y_mm: float = 20.0
+    max_x_span: float = 1360.0    # mm (荷山最大L、境界値を含む)
+    max_y_span: float = 1100.0    # mm (荷山最大W、境界値を含む)
+    height: float = 130.0        # mm (パレット本体高。積載高には含めない)
 
     def __post_init__(self) -> None:
-        for name in ("max_overhang_x_mm", "max_overhang_y_mm"):
+        for name in ("length", "width", "height", "max_x_span", "max_y_span", "max_height"):
             value = getattr(self, name)
-            if not math.isfinite(value) or value < 0:
-                raise ValueError(f"{name} は0以上の有限の数値で指定してください")
+            if (isinstance(value, bool) or not isinstance(value, (int, float))
+                    or not math.isfinite(value) or value <= 0):
+                raise ValueError(f"pallet.{name} は0より大きい有限の数値で指定してください")
+        if self.max_y_span > self.max_x_span:
+            raise ValueError("荷山最大L (max_x_span) は最大W (max_y_span) 以上にしてください")
 
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> "PalletSpec":
-        if "max_small_edge_overhang_mm" in d:
-            raise ValueError(
-                "max_small_edge_overhang_mm は廃止されました。削除して "
-                "max_overhang_x_mm / max_overhang_y_mm を指定してください（既定値は各20mm）"
-            )
-        length = float(d.get("length", 1200.0))
-        width = float(d.get("width", 1000.0))
+        defaults = cls()
+        values: Dict[str, float] = {}
+        for name in ("length", "width", "height", "max_x_span", "max_y_span", "max_height"):
+            raw = d.get(name, getattr(defaults, name))
+            try:
+                if isinstance(raw, bool):
+                    raise ValueError("boolean is not a dimension")
+                values[name] = float(raw)
+                if not math.isfinite(values[name]) or values[name] <= 0:
+                    raise ValueError("dimension must be positive and finite")
+            except (TypeError, ValueError, OverflowError) as exc:
+                raise ValueError(f"pallet.{name} は0より大きい有限の数値で指定してください") from exc
+        length, width = values["length"], values["width"]
         if width > length:
             length, width = width, length
-        return cls(
-            length=length,
-            width=width,
-            max_height=float(d.get("max_height", 1200.0)),
-            min_x_span=float(d.get("min_x_span", 800.0)),
-            max_x_span=float(d.get("max_x_span", 1360.0)),
-            min_y_span=float(d.get("min_y_span", 800.0)),
-            max_y_span=float(d.get("max_y_span", 1100.0)),
-            max_overhang_x_mm=float(d.get("max_overhang_x_mm", 20.0)),
-            max_overhang_y_mm=float(d.get("max_overhang_y_mm", 20.0))
-        )
+        values.update(length=length, width=width)
+        return cls(**values)
 
 @dataclass
 class PalletizeSummary:

@@ -3,6 +3,16 @@
 独立制約バリデータ (validate.py)
 constraints/constraints.md の全制約項目に基づき、
 tester/results/ 配下の全パレタイズ結果データを独立・厳格に検証します。
+
+v2026-11-03: 新パレット6項目 (length, width, height, max_x_span, max_y_span,
+max_height) 方式に対応。下限(min800)・軸別オーバーハング上限(max_overhang_x_mm /
+max_overhang_y_mm)・670mm例外・旧 max_small_edge_overhang_mm は廃止。
+荷山の長辺/短辺/高さは各上限値「以下」であれば合格 (inclusive、下限なし)。
+オーバーハングは合否に影響しない参考情報 (overhang_mm: left/right/front/back) として
+算出するのみ。底面支持率85%判定は、パレット直置き分についても箱本体底面と
+パレット矩形(原点〜length×width)との実交差面積で計算する。
+本バリデータは algorithm_programmer の内部モデル・エンジンには依存せず、
+独立した実装として制約を再計算する。
 """
 
 import math
@@ -11,7 +21,7 @@ import sys
 import glob
 import json
 from datetime import date
-from typing import List, Dict, Tuple, Any
+from typing import List, Dict, Tuple, Any, Optional
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
@@ -24,25 +34,34 @@ RESULTS_DIR = os.path.join(PROJECT_ROOT, "tester", "results")
 APPROVAL_STATE_PATH = os.path.join(PROJECT_ROOT, "test_programmer", "test_case_approval.json")
 REPORT_PATH = os.path.join(BASE_DIR, "reports", "validation_report.md")
 
-# 荷姿制約パラメータ (constraints/constraints.md より)
-MAX_HEIGHT = 1200.0        # mm (最大積載高)
-MIN_X_SPAN = 800.0         # mm (長辺荷姿最小幅: >=800mm)
-MAX_X_SPAN = 1360.0        # mm (長辺荷姿許容上限: <1360mm)
-MIN_Y_SPAN = 800.0         # mm (短辺荷姿最小幅: >=800mm)
-MAX_Y_SPAN = 1100.0        # mm (短辺荷姿許容上限: <1100mm)
-# オーバーハング制約 (旧 max_small_edge_overhang_mm / 335mm最下段限定ルールは廃止)
-DEFAULT_OVERHANG_X_MM = 20.0   # mm (pallet.max_overhang_x_mm 既定値)
-DEFAULT_OVERHANG_Y_MM = 20.0   # mm (pallet.max_overhang_y_mm 既定値)
-# 例外: INPUTが単一荷姿種別(box_id+lid_id)のみで構成され、かつ回転後の箱本体寸法が
-# 670mm以上となる軸に限り、当該軸のオーバーハング上限チェックを免除する。
-OVERHANG_EXCEPTION_BODY_THRESHOLD_MM = 670.0
-# オーバーハング関連の比較は浮動小数点の丸め誤差のみを許容する極小許容差を用いる
-# (669.999mm や 20.0001mm のような僅かな超過を誤って許容しないため、EPS=1e-3は使わない)
-OVERHANG_FLOAT_EPS = 1e-9
+# 荷姿制約パラメータの既定値 (constraints/constraints.md より、PalletSpecの既定値と同一)
+# パレットは6項目のみ: 物理寸法(length/width/height)と荷山上限(max_x_span/max_y_span/max_height)。
+# いずれも0より大きい有限数値が必須。下限(旧min800)は存在しない。
+PALLET_DIM_DEFAULTS: Dict[str, float] = {
+    "length": 1200.0,       # mm (X軸 パレット物理長辺L)
+    "width": 1000.0,        # mm (Y軸 パレット物理短辺W)
+    "height": 130.0,        # mm (パレット本体の物理高さ。積載高には含めない)
+    "max_x_span": 1360.0,   # mm (荷山長辺の上限、境界値を含む=inclusive、下限なし)
+    "max_y_span": 1100.0,   # mm (荷山短辺の上限、境界値を含む=inclusive、下限なし)
+    "max_height": 1200.0,   # mm (パレット上面からの積載高さ上限。固定キャップなし、設定値が常に正)
+}
+# 廃止されたキー。レガシー結果データに含まれていても無視する(エラーにしない/フォールバックしない=
+# 単純に無視する)。新設定である6項目のみを使用する。
+RETIRED_PALLET_KEYS = (
+    "min_x_span", "min_y_span",
+    "max_overhang_x_mm", "max_overhang_y_mm",
+    "max_small_edge_overhang_mm",
+)
+
+# 底面支持率の下限(85%)。algorithm_programmer の engine 側判定(0.85 - 1e-6)に
+# 合わせ、浮動小数点丸めで85.0%ちょうどが不合格側へ振れないよう同じ微小許容差を使う。
 MIN_SUPPORT_RATIO = 0.85   # 底面支持面積比率の下限 (85%)
+SUPPORT_RATIO_TOLERANCE = 1e-6
 SUPPORT_CORNER_TOLERANCE_MM = 0.01
 CORNER_HEIGHT_TOLERANCE = 3.0  # mm (最高層四隅高さの許容誤差)
 EPS = 1e-3                 # 浮動小数点誤差マージン
+# 荷山スパン・高さの上限比較は、engine 側(1e-9)と揃えて僅かな丸め誤差のみ許容する。
+SPAN_FLOAT_EPS = 1e-9
 POSITION_REFERENCE = "combined_footprint_min_xy_top_z"
 
 def load_box_db() -> Dict[str, Any]:
@@ -147,6 +166,74 @@ def covered_support_corners(
     return covered, unique
 
 
+def resolve_pallet_dims(pallet_data: Any, violations: List[str]) -> Dict[str, float]:
+    """結果JSONの pallet 設定から新6項目を解決する。
+
+    - 6項目 (length/width/height/max_x_span/max_y_span/max_height) は
+      0より大きい有限数値であることを必須とする。欠落時のみ既定値を使う
+      (これは正常な省略であり、無効値のフォールバックではない)。
+      値が存在するのに無効(非数値・NaN・Inf・0以下・bool)な場合は、必ず
+      明示的な違反として報告した上で、処理継続のために既定値へフォールバックする
+      (値を無かったことにする「サイレント」なフォールバックではない)。
+    - 旧キー(min_x_span/min_y_span/max_overhang_x_mm/max_overhang_y_mm/
+      max_small_edge_overhang_mm)はレガシーデータとして単に無視する(エラーに
+      しない)。
+    - length/width は幅>長さの場合に入れ替える(既存どおりの正規化)。
+    - max_y_span が max_x_span を上回る設定(短辺上限 > 長辺上限)は不正として報告する。
+    """
+    if not isinstance(pallet_data, dict):
+        if pallet_data is not None:
+            violations.append(
+                "設定エラー: pallet はオブジェクト形式で指定してください。既定値を使用します"
+            )
+        pallet_data = {}
+
+    resolved: Dict[str, float] = {}
+    for name, default in PALLET_DIM_DEFAULTS.items():
+        if name not in pallet_data:
+            resolved[name] = default
+            continue
+
+        raw_value = pallet_data[name]
+        value: Optional[float] = None
+        try:
+            if isinstance(raw_value, bool):
+                raise ValueError("bool is not a dimension")
+            value = float(raw_value)
+        except (TypeError, ValueError):
+            violations.append(
+                f"設定エラー: pallet.{name} は0より大きい有限の数値で指定してください "
+                f"({raw_value!r})。既定値 {default:g}mm を使用します"
+            )
+            resolved[name] = default
+            continue
+
+        if not math.isfinite(value) or value <= 0.0:
+            violations.append(
+                f"設定エラー: pallet.{name} は0より大きい有限の数値で指定してください "
+                f"({value})。既定値 {default:g}mm を使用します"
+            )
+            resolved[name] = default
+            continue
+
+        resolved[name] = value
+
+    length, width = resolved["length"], resolved["width"]
+    if width > length:
+        length, width = width, length
+    resolved["length"], resolved["width"] = length, width
+
+    if resolved["max_y_span"] > resolved["max_x_span"]:
+        violations.append(
+            "設定エラー: 荷山最大L (pallet.max_x_span="
+            f"{resolved['max_x_span']:.1f}mm) は荷山最大W (pallet.max_y_span="
+            f"{resolved['max_y_span']:.1f}mm) 以上にしてください"
+        )
+
+    # 旧キーはレガシーデータとして無視する(RETIRED_PALLET_KEYS は意図的に未参照)。
+    return resolved
+
+
 class PalletizeValidator:
     def __init__(self, box_db: Dict[str, Any], lid_db: Dict[str, Any]):
         self.box_db = box_db
@@ -166,30 +253,68 @@ class PalletizeValidator:
             return "NON_TP", box.get("box_id")
         return None
 
+    @staticmethod
+    def _empty_report(test_name: str, violations: List[str], warnings: List[str],
+                      physical_height: float = 0.0) -> Dict[str, Any]:
+        return {
+            "test_name": test_name,
+            "is_pass": False,
+            "total_boxes": 0,
+            "x_span": 0.0,
+            "y_span": 0.0,
+            "max_z": 0.0,
+            "vol_eff": 0.0,
+            "physical_height": round(physical_height, 2),
+            "total_height": round(physical_height, 2),
+            "overhang_mm": {"left": 0.0, "right": 0.0, "front": 0.0, "back": 0.0},
+            "violations": violations,
+            "warnings": warnings,
+        }
+
     def validate_case(self, result_path: str) -> Dict[str, Any]:
-        with open(result_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        test_name = os.path.basename(result_path)
+        try:
+            with open(result_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, json.JSONDecodeError) as exc:
+            return self._empty_report(
+                test_name, [f"結果ファイルの読み込みに失敗しました: {exc}"], []
+            )
+
+        if not isinstance(data, dict):
+            return self._empty_report(
+                test_name, ["結果データがオブジェクト形式ではありません"], []
+            )
+
         data = normalize_result_coordinates(data)
+        test_name = data.get("test_name", test_name)
 
-        test_name = data.get("test_name", os.path.basename(result_path))
-        boxes = data.get("boxes", [])
-        total_boxes = len(boxes)
-
-        violations = []
-        warnings = []
-
-        if total_boxes == 0:
-            return {
-                "test_name": test_name,
-                "is_pass": False,
-                "total_boxes": 0,
-                "violations": ["配置箱数が0です"],
-                "warnings": [],
-                "details": {}
-            }
+        violations: List[str] = []
+        warnings: List[str] = []
 
         # -------------------------------------------------------------
-        # 1. 荷姿寸法・境界制約の検証
+        # 0. パレット設定(新6項目)の検証。箱が0件の場合でも必ず実行する。
+        # -------------------------------------------------------------
+        pallet = resolve_pallet_dims(data.get("pallet"), violations)
+        pallet_x_length = pallet["length"]
+        pallet_y_width = pallet["width"]
+        physical_height = pallet["height"]
+        max_height = pallet["max_height"]
+        max_x_span = pallet["max_x_span"]
+        max_y_span = pallet["max_y_span"]
+
+        boxes = data.get("boxes", [])
+        if not isinstance(boxes, list):
+            violations.append("結果データのboxesがリスト形式ではありません")
+            boxes = []
+        total_boxes = len(boxes)
+
+        if total_boxes == 0:
+            violations.append("配置箱数が0です")
+            return self._empty_report(test_name, violations, warnings, physical_height)
+
+        # -------------------------------------------------------------
+        # 1. 荷姿寸法・境界制約の検証 (inclusive、下限なし)
         # -------------------------------------------------------------
         footprint_bounds = [get_footprint_bounds(b) for b in boxes]
         min_x = min(bounds[0] for bounds in footprint_bounds)
@@ -201,116 +326,52 @@ class PalletizeValidator:
         y_span = max_y - min_y
 
         max_z = max(b["position"]["z"] + b["dimensions"]["height"] for b in boxes)
-        pallet_data = data.get("pallet", {})
-        pallet_length = float(pallet_data.get("length", 1200.0))
-        pallet_width = float(pallet_data.get("width", 1000.0))
-        if pallet_width > pallet_length:
-            pallet_length, pallet_width = pallet_width, pallet_length
-        pallet_x_length = pallet_length
-        pallet_y_width = pallet_width
 
-        # (1) 最大積載高
-        if max_z > MAX_HEIGHT + EPS:
-            violations.append(f"最大積載高超過: {max_z:.1f}mm > {MAX_HEIGHT}mm (超過: {max_z - MAX_HEIGHT:.1f}mm)")
+        # (1) 最大積載高 (ケースごとの pallet.max_height が常に権威値。固定1200キャップは無い)
+        if max_z > max_height + SPAN_FLOAT_EPS:
+            violations.append(
+                f"最大積載高さ超過: {max_z:.1f}mm > {max_height:.1f}mm "
+                f"(上限は{max_height:.1f}mm以下、超過: {max_z - max_height:.1f}mm)"
+            )
 
-        # (2) 長辺荷姿幅 (800mm <= X < 1360mm)
-        if x_span < MIN_X_SPAN - EPS:
-            violations.append(f"長辺荷姿幅不足: {x_span:.1f}mm < {MIN_X_SPAN}mm (安定性不足)")
-        if x_span >= MAX_X_SPAN:
-            violations.append(f"長辺荷姿幅超過: {x_span:.1f}mm >= {MAX_X_SPAN}mm")
+        # (2) 長辺荷姿スパン (0 < X <= max_x_span。下限(旧800mm)は廃止、上限は境界値を含む)
+        if x_span > max_x_span + SPAN_FLOAT_EPS:
+            violations.append(
+                f"長辺荷姿スパン超過: {x_span:.1f}mm > {max_x_span:.1f}mm "
+                f"(上限は{max_x_span:.1f}mm以下、下限なし)"
+            )
 
-        # (3) 短辺荷姿幅 (800mm <= Y < 1100mm)
-        if y_span < MIN_Y_SPAN - EPS:
-            violations.append(f"短辺荷姿幅不足: {y_span:.1f}mm < {MIN_Y_SPAN}mm (安定性不足)")
-        if y_span >= MAX_Y_SPAN:
-            violations.append(f"短辺荷姿幅超過: {y_span:.1f}mm >= {MAX_Y_SPAN}mm (短辺オーバーハング許容枠超過)")
+        # (3) 短辺荷姿スパン (0 < Y <= max_y_span。下限(旧800mm)は廃止、上限は境界値を含む)
+        if y_span > max_y_span + SPAN_FLOAT_EPS:
+            violations.append(
+                f"短辺荷姿スパン超過: {y_span:.1f}mm > {max_y_span:.1f}mm "
+                f"(上限は{max_y_span:.1f}mm以下、下限なし)"
+            )
 
+        # (4) 荷姿センタリング (中心座標誤差0.01mm以内)
         center_x = (min_x + max_x) / 2.0
         center_y = (min_y + max_y) / 2.0
         if (abs(center_x - pallet_x_length / 2.0) > 0.01 or
             abs(center_y - pallet_y_width / 2.0) > 0.01):
             violations.append(
                 f"荷姿センタリング違反: 中心 ({center_x:.2f}, {center_y:.2f})mm, "
-            f"パレット中心 ({pallet_x_length / 2.0:.2f}, {pallet_y_width / 2.0:.2f})mm"
+                f"パレット中心 ({pallet_x_length / 2.0:.2f}, {pallet_y_width / 2.0:.2f})mm"
             )
 
-        # (4) オーバーハング制約 (全段対象、箱/蓋の結合外形を使用)
-        if "max_small_edge_overhang_mm" in pallet_data:
-            violations.append(
-                "設定エラー: pallet.max_small_edge_overhang_mm は廃止されました。"
-                "max_overhang_x_mm / max_overhang_y_mm (既定値は各20mm) を指定してください"
+        # (5) オーバーハング(パレット端はみ出し)は合否に影響しない参考情報として算出する。
+        #     箱・蓋の結合外形全体のバウンディングボックスを用いる。
+        overhang = {
+            "left": round(max(0.0, -min_x), 2),
+            "right": round(max(0.0, max_x - pallet_x_length), 2),
+            "front": round(max(0.0, -min_y), 2),
+            "back": round(max(0.0, max_y - pallet_y_width), 2),
+        }
+        if any(value > 0 for value in overhang.values()):
+            warnings.append(
+                "要確認: パレットからのはみ出し "
+                f"左{overhang['left']} / 右{overhang['right']} / "
+                f"手前{overhang['front']} / 奥{overhang['back']}mm（合否とは別の確認情報）"
             )
-
-        def _resolve_overhang_limit(key: str, default: float) -> float:
-            if key not in pallet_data:
-                return default
-            raw_value = pallet_data.get(key)
-            try:
-                value = float(raw_value)
-            except (TypeError, ValueError):
-                violations.append(
-                    f"設定エラー: pallet.{key} が数値として解釈できません ({raw_value!r})。"
-                    f"既定値 {default:.1f}mm を使用します"
-                )
-                return default
-            if not math.isfinite(value) or value < 0.0:
-                violations.append(
-                    f"設定エラー: pallet.{key} は0以上の有限数値で指定してください ({value})。"
-                    f"既定値 {default:.1f}mm を使用します"
-                )
-                return default
-            return value
-
-        overhang_x_limit = _resolve_overhang_limit("max_overhang_x_mm", DEFAULT_OVERHANG_X_MM)
-        overhang_y_limit = _resolve_overhang_limit("max_overhang_y_mm", DEFAULT_OVERHANG_Y_MM)
-
-        # 例外適用可否の判定: INPUTが単一荷姿種別(box_id+lid_id)のみで構成されている場合のみ、
-        # かつその唯一の荷姿種別と一致する箱に限り、回転後の本体寸法が670mm以上の軸について
-        # オーバーハング上限チェックを免除する。
-        # input_box_variants が存在しない（旧形式の結果）場合は、配置済み箱から推測せず、
-        # 常に例外を適用しない（安全側）。
-        raw_input_variants = data.get("input_box_variants")
-        sole_input_variant = None
-        if isinstance(raw_input_variants, list) and all(
-                isinstance(v, dict) and isinstance(v.get("box_id"), str)
-                and bool(v["box_id"]) and isinstance(v.get("lid_id"), str)
-                for v in raw_input_variants):
-            unique_variants = {(v["box_id"], v["lid_id"]) for v in raw_input_variants}
-            if len(unique_variants) == 1:
-                sole_input_variant = next(iter(unique_variants))
-
-        for box, bounds in zip(boxes, footprint_bounds):
-            dimensions = box["dimensions"]
-            x_overhang = max(0.0, -bounds[0], bounds[2] - pallet_x_length)
-            y_overhang = max(0.0, -bounds[1], bounds[3] - pallet_y_width)
-
-            box_identity = (box.get("box_id"), box.get("lid_id", self.default_lid_id))
-            identity_matches_sole_variant = (
-                sole_input_variant is not None and box_identity == sole_input_variant
-            )
-
-            body_width = float(dimensions["width"])
-            body_length = float(dimensions["length"])
-
-            x_exception = (
-                identity_matches_sole_variant
-                and body_width >= OVERHANG_EXCEPTION_BODY_THRESHOLD_MM
-            )
-            y_exception = (
-                identity_matches_sole_variant
-                and body_length >= OVERHANG_EXCEPTION_BODY_THRESHOLD_MM
-            )
-
-            if x_overhang > overhang_x_limit + OVERHANG_FLOAT_EPS and not x_exception:
-                violations.append(
-                    f"オーバーハング違反: Order #{box['order']} ({box['box_id']}) "
-                    f"X方向 {x_overhang:.1f}mm > {overhang_x_limit:.1f}mm"
-                )
-            if y_overhang > overhang_y_limit + OVERHANG_FLOAT_EPS and not y_exception:
-                violations.append(
-                    f"オーバーハング違反: Order #{box['order']} ({box['box_id']}) "
-                    f"Y方向 {y_overhang:.1f}mm > {overhang_y_limit:.1f}mm"
-                )
 
         # -------------------------------------------------------------
         # 2. 各箱の幾何・回転・天地固定・嵌合寸法の検証
@@ -321,7 +382,6 @@ class PalletizeValidator:
             pos = b["position"]
             dims = b["dimensions"]
             rot = b["rotation"]
-            fitting = b["fitting_depth"]
 
             if bid not in self.box_db:
                 violations.append(f"Order #{order}: 未知の箱型番 '{bid}' が使用されています")
@@ -378,7 +438,7 @@ class PalletizeValidator:
                 b2_bounds = get_footprint_bounds(b2)
                 if intersects_2d_rect(b1_bounds[0], b1_bounds[1], b1_bounds[2] - b1_bounds[0], b1_bounds[3] - b1_bounds[1],
                                       b2_bounds[0], b2_bounds[1], b2_bounds[2] - b2_bounds[0], b2_bounds[3] - b2_bounds[1]):
-                    
+
                     b1_z = b1["position"]["z"]
                     b1_top = b1_z + b1["dimensions"]["height"]
                     b2_z = b2["position"]["z"]
@@ -397,6 +457,9 @@ class PalletizeValidator:
 
         # -------------------------------------------------------------
         # 4. 空中浮き防止 ＆ 底面支持面積比率の検証
+        #    (パレット直置き分についても、箱本体底面とパレット矩形
+        #     (原点0,0 〜 pallet_x_length,pallet_y_width) との実交差面積を
+        #     支持面積に算入する。蓋の張り出しは支持面に含めない)
         # -------------------------------------------------------------
         for b in boxes:
             order = b["order"]
@@ -407,10 +470,15 @@ class PalletizeValidator:
             l = b["dimensions"]["length"]
             fitting = b["fitting_depth"]
 
-            if z <= EPS:
-                continue  # パレット直置きはOK
+            is_on_pallet = z <= EPS
+            pallet_support_area = 0.0
+            if is_on_pallet:
+                pallet_support_area = get_intersection_area(
+                    x, y, w, l, 0.0, 0.0, pallet_x_length, pallet_y_width
+                )
 
-            # 直下にある下段箱を探索
+            # 直下にある下段箱を探索 (パレット直置きの場合も、他の箱が同じZ帯に
+            # 存在する可能性はゼロではないため、通常通り探索する)
             supporting_boxes = []
             for other in boxes:
                 if other["order"] == order:
@@ -423,44 +491,45 @@ class PalletizeValidator:
                                           other_bounds[2] - other_bounds[0], other_bounds[3] - other_bounds[1]):
                         supporting_boxes.append(other)
 
-            if not supporting_boxes:
-                violations.append(f"Order #{order} ({b['box_id']}): 空中浮遊エラー（下段に支持する箱が存在しません）")
+            if not supporting_boxes and pallet_support_area <= 0.0:
+                violations.append(f"Order #{order} ({b['box_id']}): 空中浮遊エラー（パレットまたは下段に支持する箱が存在しません）")
                 continue
 
-            upper_group = self._column_stack_group(b)
-            lower_column_boxes = [
-                sb for sb in supporting_boxes
-                if self._column_stack_group(sb) is not None
-            ]
-            aligned_column_supports = [
-                sb for sb in supporting_boxes
-                if self._column_stack_group(sb) == upper_group
-                and all(abs(a - c) <= 0.01 for a, c in zip(get_footprint_bounds(sb), get_footprint_bounds(b)))
-            ]
-            column_rule_failed = (
-                (upper_group is None and bool(lower_column_boxes))
-                or (upper_group is not None and
-                    (len(supporting_boxes) != 1 or len(aligned_column_supports) != 1))
-            )
-            if column_rule_failed:
-                violations.append(
-                    f"Order #{order} ({b['box_id']}): コラム積み条件違反 "
-                    "（対象群・蓋ID・箱蓋外形位置を揃えた単一支持が必要です）"
+            if not is_on_pallet:
+                upper_group = self._column_stack_group(b)
+                lower_column_boxes = [
+                    sb for sb in supporting_boxes
+                    if self._column_stack_group(sb) is not None
+                ]
+                aligned_column_supports = [
+                    sb for sb in supporting_boxes
+                    if self._column_stack_group(sb) == upper_group
+                    and all(abs(a - c) <= 0.01 for a, c in zip(get_footprint_bounds(sb), get_footprint_bounds(b)))
+                ]
+                column_rule_failed = (
+                    (upper_group is None and bool(lower_column_boxes))
+                    or (upper_group is not None and
+                        (len(supporting_boxes) != 1 or len(aligned_column_supports) != 1))
                 )
-
-            # v2026-10-27: 適合コラム積みだけ免除し、下段隅を位置で集計する。
-            if upper_group is None or column_rule_failed:
-                covered, unique = covered_support_corners(b, supporting_boxes)
-                if len(unique) < 2:
+                if column_rule_failed:
                     violations.append(
-                        f"Order #{order} ({b['box_id']}): 下段隅の被覆不足 "
-                        f"(支持箱={[sb['order'] for sb in supporting_boxes]}, "
-                        f"被覆隅={covered}, 重複除外前={len(covered)}, "
-                        f"重複除外後={len(unique)} < 2, 位置={unique})"
+                        f"Order #{order} ({b['box_id']}): コラム積み条件違反 "
+                        "（対象群・蓋ID・箱蓋外形位置を揃えた単一支持が必要です）"
                     )
 
-            # 支持面積比率の算出
-            total_support_area = 0.0
+                # v2026-10-27: 適合コラム積みだけ免除し、下段隅を位置で集計する。
+                if upper_group is None or column_rule_failed:
+                    covered, unique = covered_support_corners(b, supporting_boxes)
+                    if len(unique) < 2:
+                        violations.append(
+                            f"Order #{order} ({b['box_id']}): 下段隅の被覆不足 "
+                            f"(支持箱={[sb['order'] for sb in supporting_boxes]}, "
+                            f"被覆隅={covered}, 重複除外前={len(covered)}, "
+                            f"重複除外後={len(unique)} < 2, 位置={unique})"
+                        )
+
+            # 支持面積比率の算出 (パレット直置き面積 + 下段箱との重なり面積)
+            total_support_area = pallet_support_area
             for sb in supporting_boxes:
                 sb_bounds = get_footprint_bounds(sb)
                 area = get_intersection_area(x, y, w, l, sb_bounds[0], sb_bounds[1],
@@ -468,8 +537,8 @@ class PalletizeValidator:
                 total_support_area += area
 
             box_bottom_area = w * l
-            support_ratio = total_support_area / box_bottom_area
-            if support_ratio < MIN_SUPPORT_RATIO - EPS:
+            support_ratio = total_support_area / box_bottom_area if box_bottom_area > 0 else 0.0
+            if support_ratio < MIN_SUPPORT_RATIO - SUPPORT_RATIO_TOLERANCE:
                 violations.append(f"Order #{order} ({b['box_id']}): 支持面積不足 ({support_ratio*100:.1f}% < {MIN_SUPPORT_RATIO*100:.0f}%)")
 
             # 下段箱が上段箱より幅・奥行き両方とも大きい場合はNG
@@ -534,9 +603,9 @@ class PalletizeValidator:
 
         is_pass = (len(violations) == 0)
 
-        pallet_vol = 1200.0 * 1000.0 * 1200.0
+        pallet_vol = pallet_x_length * pallet_y_width * max_height
         box_vol = sum(b["dimensions"]["width"] * b["dimensions"]["length"] * b["dimensions"]["height"] for b in boxes)
-        vol_eff = (box_vol / pallet_vol) * 100.0
+        vol_eff = (box_vol / pallet_vol) * 100.0 if pallet_vol > 0 else 0.0
 
         return {
             "test_name": test_name,
@@ -546,6 +615,9 @@ class PalletizeValidator:
             "y_span": y_span,
             "max_z": max_z,
             "vol_eff": vol_eff,
+            "physical_height": round(physical_height, 2),
+            "total_height": round(physical_height + max_z, 2),
+            "overhang_mm": overhang,
             "violations": violations,
             "warnings": warnings
         }
@@ -574,7 +646,14 @@ def run_supervisor_validation():
     fail_count = 0
 
     for rpath in result_files:
-        res = validator.validate_case(rpath)
+        try:
+            res = validator.validate_case(rpath)
+        except Exception as exc:  # 想定外データでもランナー全体を落とさない
+            res = PalletizeValidator._empty_report(
+                os.path.basename(rpath),
+                [f"検証中に予期しないエラーが発生しました: {exc!r}"],
+                []
+            )
         reports.append(res)
         status = "✅ PASS" if res["is_pass"] else "❌ FAIL"
         if res["is_pass"]:
@@ -582,13 +661,22 @@ def run_supervisor_validation():
         else:
             fail_count += 1
 
-        print(f"{status} [{res['test_name']:<28}] 箱数:{res['total_boxes']:>3}箱 | 荷姿:{res['x_span']:>4.0f}x{res['y_span']:>4.0f}x{res['max_z']:>4.0f}mm | 充填率:{res['vol_eff']:>5.1f}%")
+        x_span = res.get("x_span", 0.0)
+        y_span = res.get("y_span", 0.0)
+        max_z = res.get("max_z", 0.0)
+        vol_eff = res.get("vol_eff", 0.0)
+
+        print(f"{status} [{res['test_name']:<28}] 箱数:{res['total_boxes']:>3}箱 | 荷姿:{x_span:>4.0f}x{y_span:>4.0f}x{max_z:>4.0f}mm | 充填率:{vol_eff:>5.1f}%")
+        if res.get("warnings"):
+            for w in res["warnings"]:
+                print(f"    - ⚠️ 警告: {w}")
         if not res["is_pass"]:
             for v in res["violations"]:
                 print(f"    - 🚨 違反: {v}")
 
+    total_cases = len(reports) if reports else 1
     print("="*80)
-    print(f"📊 検証結果: 全 {len(reports)} ケース中  合格: {pass_count} 件 / 不合格: {fail_count} 件 (合格率: {pass_count/len(reports)*100:.1f}%)")
+    print(f"📊 検証結果: 全 {len(reports)} ケース中  合格: {pass_count} 件 / 不合格: {fail_count} 件 (合格率: {pass_count/total_cases*100:.1f}%)")
     print("="*80)
 
     # Markdown レポートの出力
@@ -606,23 +694,27 @@ def run_supervisor_validation():
         f.write("| :--- | :---: | :---: | :---: | :---: | :--- |\n")
         for r in reports:
             status = "✅ PASS" if r["is_pass"] else "❌ FAIL"
-            dims = f"{r['x_span']:.0f} × {r['y_span']:.0f} × {r['max_z']:.0f}"
-            notes = "制約項目全クリア" if r["is_pass"] else "<br>".join(r["violations"])
-            f.write(f"| **`{r['test_name']}`** | {status} | {r['total_boxes']} 箱 | {dims} | {r['vol_eff']:.1f}% | {notes} |\n")
+            dims = f"{r.get('x_span', 0.0):.0f} × {r.get('y_span', 0.0):.0f} × {r.get('max_z', 0.0):.0f}"
+            notes_parts = list(r.get("violations", [])) if not r["is_pass"] else []
+            notes_parts.extend(r.get("warnings", []))
+            notes = "<br>".join(notes_parts) if notes_parts else "制約項目全クリア"
+            f.write(f"| **`{r['test_name']}`** | {status} | {r.get('total_boxes', 0)} 箱 | {dims} | {r.get('vol_eff', 0.0):.1f}% | {notes} |\n")
         f.write("\n---\n\n")
         f.write("## 2. 制約別チェック項目と検証基準\n\n")
-        f.write(r"1. **最大積載高さ制約** ($\le 1200\text{ mm}$): 全箱の頂点Z座標がパレット上面から1200mm以下であること。" + "\n")
-        f.write(r"2. **長辺荷姿スパン制約** ($800\text{ mm} \le X < 1360\text{ mm}$): X方向の全幅が800mm以上1360mm未満であること。" + "\n")
-        f.write(r"3. **短辺荷姿スパン制約** ($800\text{ mm} \le Y < 1100\text{ mm}$): Y方向の全幅が800mm以上かつオーバーハング許容枠1100mm未満であること。" + "\n")
+        f.write("0. **パレット設定(6項目)検証**: `length`/`width`/`height`/`max_x_span`/`max_y_span`/`max_height` がそれぞれ0より大きい有限数値であること。欠落時は既定値 (1200/1000/130/1360/1100/1200mm) を使用し、無効値は明示的な違反として報告した上で既定値にフォールバックする。旧キー (`min_x_span`/`min_y_span`/`max_overhang_x_mm`/`max_overhang_y_mm`/`max_small_edge_overhang_mm`) はレガシーデータとして無視する。\n")
+        f.write(r"1. **最大積載高さ制約** (ケースごとの `pallet.max_height` 以下、固定キャップなし): 全箱の頂点Z座標がパレット上面からの上限以下であること。" + "\n")
+        f.write(r"2. **長辺荷姿スパン制約** (`pallet.max_x_span` 以下。下限なし): X方向の全幅が上限以下であること。" + "\n")
+        f.write(r"3. **短辺荷姿スパン制約** (`pallet.max_y_span` 以下。下限なし): Y方向の全幅が上限以下であること。" + "\n")
         f.write(r"4. **天地固定・回転制約**: 全箱の外寸高さがカタログ仕様と一致し、回転角が0度または90度のみであること。" + "\n")
         f.write(r"5. **嵌合沈み込み計算**: 段積み時の上段箱の底面Z座標が `下段上面Z - fitting_depth` と正確に一致していること。" + "\n")
-        f.write(r"6. **空中配置禁止・底面支持率** ($\ge 85\%$): 底面積の85%以上が下段箱またはパレットによって支持されていること。" + "\n")
+        f.write(r"6. **空中配置禁止・底面支持率** ($\ge 85\%$): 底面積の85%以上が、パレット矩形(原点〜length×width)または下段箱の実交差面積によって支持されていること(パレット直置き分も実交差で計算)。" + "\n")
         f.write(r"7. **3D幾何衝突の完全排除**: 箱同士の不正な空間食い込み（嵌合深さを超える干渉）が0件であること。" + "\n")
         f.write("8. **積み込み順序（Order）の物理的整合性**: 支持関係にある箱について、\n")
         f.write(r"   下段箱が上段箱より必ず先に積載されていること ($order_{lower} < order_{upper}$)。" + "\n")
         f.write("9. **最高層四隅高さ一致制約 (Top 4-Corner Leveling)**:\n")
         f.write(r"   四隅それぞれの上面高さが荷山の最高到達点 $Z_{max}$ と 3.0mm 以内で一致すること。" + "\n")
         f.write(r"10. **下段支持箱サイズ制限**: 直接支持する下段箱の幅・奥行きが、上段箱より両方とも 1.0mm を超えて大きくないこと。" + "\n")
+        f.write(r"11. **オーバーハング(参考情報)**: 合否には影響しない。箱・蓋結合外形のバウンディングボックスとパレット端との左右前後のはみ出し量 (`overhang_mm`) を警告として記録する。" + "\n")
 
     print(f"📄 総合検証レポートを出力しました: {REPORT_PATH}")
 

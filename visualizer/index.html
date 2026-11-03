@@ -26,6 +26,9 @@
   <div id="viewport-container">
     <canvas id="main-canvas"></canvas>
   </div>
+  <div id="load-error" class="hidden absolute top-24 left-4 right-4 z-30 bg-rose-950 text-rose-100 border border-rose-500 rounded-xl p-4">
+    読み込みエラー: <span id="load-error-message"></span>
+  </div>
 
   <!-- Top Navigation / Controls Bar -->
   <header class="absolute top-4 left-4 right-4 z-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pointer-events-none">
@@ -62,8 +65,11 @@
       </div>
       <div class="w-px h-6 bg-slate-700"></div>
       <div>
-        <span class="text-[10px] text-slate-400 block font-medium">荷姿寸法 (全層・箱+蓋 外接 X×Y×Z)</span>
+        <span class="text-[10px] text-slate-400 block font-medium">荷姿外寸 L×W / パレットH + 荷物H = 総H</span>
         <span class="font-bold font-mono text-indigo-300 text-xs" id="metric-dims">0 × 0 × 0 mm</span>
+        <span class="block text-[10px] text-slate-300" id="metric-heights">0 + 0 = 0 mm</span>
+        <span class="block text-[10px] text-amber-300" id="metric-overhang"></span>
+        <span class="block text-[10px] text-amber-300" id="metric-warning"></span>
       </div>
       <div class="w-px h-6 bg-slate-700"></div>
       <div>
@@ -260,6 +266,7 @@
       try {
         const res = await fetch('/api/results');
         if (res.ok) {
+          document.getElementById('load-error').classList.add('hidden');
           const list = await res.json();
           select.innerHTML = '';
           if (list.length === 0) {
@@ -274,9 +281,12 @@
           });
           select.selectedIndex = 0;
           loadResultFile(list[0].filename);
+        } else {
+          throw new Error(`結果一覧の取得に失敗しました (${res.status})`);
         }
       } catch (e) {
         console.error("Failed to load results list", e);
+        showLoadError(e);
       }
     }
 
@@ -284,13 +294,24 @@
       if (isPlaying) togglePlay();
       try {
         const res = await fetch(`/api/result/${filename}`);
-        if (res.ok) {
-          currentData = normalizePositionReference(await res.json());
-          processData(currentData);
-        }
+        if (!res.ok) throw new Error(`結果の取得に失敗しました (${res.status})`);
+        const data = normalizePositionReference(await res.json());
+        resolveGuideConfig(data);
+        currentData = data;
+        processData(currentData);
+        document.getElementById('load-error').classList.add('hidden');
       } catch (e) {
         console.error("Failed to load result data", e);
+        showLoadError(e);
       }
+    }
+
+    function showLoadError(error) {
+      currentData = null;
+      document.getElementById('load-error-message').textContent = error.message || String(error);
+      document.getElementById('load-error').classList.remove('hidden');
+      document.getElementById('badge-valid').textContent = '設定・読込エラー';
+      document.getElementById('badge-valid').className = 'text-xs text-rose-300';
     }
 
     function normalizePositionReference(data) {
@@ -365,75 +386,38 @@
       return Object.prototype.hasOwnProperty.call(obj || {}, key);
     }
 
-    function getSoleInputVariant(data) {
-      if (!Array.isArray(data?.input_box_variants)) return null;
-      if (data.input_box_variants.length !== 1) return null;
-      const only = data.input_box_variants[0] || {};
-      if (!hasOwn(only, 'box_id') || !hasOwn(only, 'lid_id')) return null;
-      if (typeof only.box_id !== 'string' || only.box_id.length === 0) return null;
-      if (typeof only.lid_id !== 'string') return null;
-      return { box_id: only.box_id, lid_id: only.lid_id };
-    }
-
-    function hasCompleteBoxIdentity(box) {
-      return hasOwn(box, 'box_id') && hasOwn(box, 'lid_id')
-        && typeof box.box_id === 'string' && box.box_id.length > 0
-        && typeof box.lid_id === 'string';
+    function parsePalletPositiveField(pallet, key, fallback) {
+      if (!hasOwn(pallet, key)) return fallback;
+      const raw = pallet[key];
+      if (typeof raw === 'boolean') throw new Error(`pallet.${key} は真偽値を指定できません`);
+      if (typeof raw !== 'number' && typeof raw !== 'string') {
+        throw new Error(`pallet.${key} は数値で指定してください`);
+      }
+      const value = Number(raw);
+      if (!Number.isFinite(value) || value <= 0) {
+        throw new Error(`pallet.${key} は正の有限数で指定してください`);
+      }
+      return value;
     }
 
     function resolveGuideConfig(data) {
       const pallet = data?.pallet || {};
-      const pW = Number(pallet.length || 1200);
-      const pL = Number(pallet.width || 1000);
-      const maxH = Number(pallet.max_height || 1200);
-
-      const normalOverhangX = Number(pallet.max_overhang_x_mm ?? 20);
-      const normalOverhangY = Number(pallet.max_overhang_y_mm ?? 20);
-      const saneOverhangX = Number.isFinite(normalOverhangX) && normalOverhangX >= 0 ? normalOverhangX : 20;
-      const saneOverhangY = Number.isFinite(normalOverhangY) && normalOverhangY >= 0 ? normalOverhangY : 20;
-
-      const capSpanXRaw = Number(pallet.max_x_span ?? 1360);
-      const capSpanYRaw = Number(pallet.max_y_span ?? 1100);
-      const capSpanX = Number.isFinite(capSpanXRaw) && capSpanXRaw > 0 ? capSpanXRaw : 1360;
-      const capSpanY = Number.isFinite(capSpanYRaw) && capSpanYRaw > 0 ? capSpanYRaw : 1100;
+      const pW = parsePalletPositiveField(pallet, 'length', 1200);
+      const pL = parsePalletPositiveField(pallet, 'width', 1000);
+      const pH = parsePalletPositiveField(pallet, 'height', 130);
+      const maxH = parsePalletPositiveField(pallet, 'max_height', 1200);
+      const capSpanX = parsePalletPositiveField(pallet, 'max_x_span', 1360);
+      const capSpanY = parsePalletPositiveField(pallet, 'max_y_span', 1100);
+      if (pW < pL) throw new Error('pallet.length は pallet.width 以上で指定してください');
+      if (capSpanX < capSpanY) throw new Error('pallet.max_x_span は pallet.max_y_span 以上で指定してください');
       const capMinX = (pW - capSpanX) / 2;
       const capMaxX = capMinX + capSpanX;
       const capMinY = (pL - capSpanY) / 2;
       const capMaxY = capMinY + capSpanY;
 
-      const rawNormalMinX = -saneOverhangX;
-      const rawNormalMaxX = pW + saneOverhangX;
-      const rawNormalMinY = -saneOverhangY;
-      const rawNormalMaxY = pL + saneOverhangY;
-
-      // tolerance guide is clipped inside overall cap guide
-      const normalMinX = Math.max(rawNormalMinX, capMinX);
-      const normalMaxX = Math.min(rawNormalMaxX, capMaxX);
-      const normalMinY = Math.max(rawNormalMinY, capMinY);
-      const normalMaxY = Math.min(rawNormalMaxY, capMaxY);
-
-      const boxes = Array.isArray(data?.boxes) ? data.boxes : [];
-      const soleVariant = getSoleInputVariant(data);
-      const metadataReady = Boolean(soleVariant);
-      const identityComplete = metadataReady && boxes.length > 0 && boxes.every(hasCompleteBoxIdentity);
-      const identityMatched = identityComplete && boxes.every(b => b.box_id === soleVariant.box_id && b.lid_id === soleVariant.lid_id);
-      const exceptionEligibleBoxes = identityMatched ? boxes : [];
-
-      const exceptionAxisX = exceptionEligibleBoxes.some(b => Number(b?.dimensions?.width || 0) >= 670);
-      const exceptionAxisY = exceptionEligibleBoxes.some(b => Number(b?.dimensions?.length || 0) >= 670);
-
       return {
-        pW, pL, maxH,
-        normalOverhangX: saneOverhangX,
-        normalOverhangY: saneOverhangY,
-        rawNormalMinX, rawNormalMaxX, rawNormalMinY, rawNormalMaxY,
-        normalMinX, normalMaxX, normalMinY, normalMaxY,
-        capSpanX, capSpanY, capMinX, capMaxX, capMinY, capMaxY,
-        metadataReady,
-        identityComplete,
-        identityMatched,
-        exceptionAxisX,
-        exceptionAxisY
+      pW, pL, pH, maxH,
+      capSpanX, capSpanY, capMinX, capMaxX, capMinY, capMaxY
       };
     }
 
@@ -441,19 +425,12 @@
       const container = document.getElementById('guide-legend');
       if (!container) return;
       const cfg = resolveGuideConfig(data);
-      const metadataNote = !cfg.metadataReady
-        ? '入力variant: 不足/不正（例外判定なし）'
-        : (!cfg.identityComplete
-          ? '配置箱のidentity不足（例外判定なし）'
-          : (cfg.identityMatched ? '単一入力identity一致（例外判定可能）' : '単一入力だがidentity不一致（例外判定なし）'));
-
       container.innerHTML = `
         <div class="text-slate-300 font-semibold">制約ガイド凡例（全層・箱+蓋 外接判定）</div>
-        <div class="flex items-center gap-2"><span class="w-3 h-[2px] inline-block bg-yellow-300"></span><span>通常許容ガイド: ±${cfg.normalOverhangX}mm(X) / ±${cfg.normalOverhangY}mm(Y) ※表示はCAP内にクリップ</span></div>
-        <div class="flex items-center gap-2"><span class="w-3 h-[2px] inline-block bg-rose-400"></span><span>例外CAPガイド: X<${cfg.capSpanX} / Y<${cfg.capSpanY}（単一inputの対象箱の該当方向のみ）</span></div>
-        <div class="text-slate-500">${metadataNote}</div>
-        <div class="text-slate-500">例外有効軸: X=${cfg.exceptionAxisX ? 'ON' : 'OFF'}, Y=${cfg.exceptionAxisY ? 'ON' : 'OFF'}</div>
-        <div class="text-slate-500">※ ガイド表示は制約PASSを保証しません</div>
+        <div>白: パレット本体 ${cfg.pW} × ${cfg.pL} × ${cfg.pH} mm</div>
+        <div class="text-yellow-300">荷山最大外形: X(L) ≤ ${cfg.capSpanX} / Y(W) ≤ ${cfg.capSpanY} / H ≤ ${cfg.maxH} mm</div>
+        <div class="text-slate-500">Hはパレット上面から。固定下限・はみ出し許容値の制約なし。</div>
+        <div class="text-slate-500">はみ出しは要確認情報です。支持率85%以上は別途必須で、実物の安全・安定性を保証しません。</div>
       `;
     }
 
@@ -473,7 +450,7 @@
 
     function computeOverallBounds(boxes) {
       if (!Array.isArray(boxes) || boxes.length === 0) {
-        return { x_span: 0, y_span: 0, max_z: 0 };
+        return { min_x: 0, max_x: 0, min_y: 0, max_y: 0, x_span: 0, y_span: 0, max_z: 0 };
       }
       const bounds = boxes.map(computeBoxOuterBounds);
       const minX = Math.min(...bounds.map(b => b.minX));
@@ -482,6 +459,7 @@
       const maxY = Math.max(...bounds.map(b => b.maxY));
       const maxZ = Math.max(...bounds.map(b => b.maxZ));
       return {
+        min_x: minX, max_x: maxX, min_y: minY, max_y: maxY,
         x_span: Math.round((maxX - minX) * 10) / 10,
         y_span: Math.round((maxY - minY) * 10) / 10,
         max_z: Math.round(maxZ * 10) / 10
@@ -490,7 +468,6 @@
 
     function updateUIMetrics(data) {
       const summary = data.summary || {};
-      const bbox = summary.bounding_box || {};
       const boxes = data.boxes || [];
       const unplacedBoxes = data.unplaced_boxes || [];
       const unplacedCount = Number(data.unplaced_boxes_count ?? unplacedBoxes.reduce((sum, item) => sum + Number(item.count || 0), 0));
@@ -530,8 +507,20 @@
       document.getElementById('metric-boxes').textContent = `${placedCount} / ${inputCount} 箱`;
       document.getElementById('metric-unplaced').textContent = `未配置 ${unplacedCount} 箱`;
       document.getElementById('metric-layers').textContent = `${summary.total_layers || 0} 段`;
-            const overallBounds = computeOverallBounds(boxes);
-      document.getElementById('metric-dims').textContent = `${overallBounds.x_span} × ${overallBounds.y_span} × ${overallBounds.max_z} mm`;
+      const cfg = resolveGuideConfig(data);
+      const overallBounds = computeOverallBounds(boxes);
+      const longSide = Math.max(overallBounds.x_span, overallBounds.y_span);
+      const shortSide = Math.min(overallBounds.x_span, overallBounds.y_span);
+      document.getElementById('metric-dims').textContent = `L${longSide} × W${shortSide} mm (X${overallBounds.x_span} / Y${overallBounds.y_span})`;
+      document.getElementById('metric-heights').textContent = `${cfg.pH} + ${overallBounds.max_z} = ${Math.round((cfg.pH + overallBounds.max_z) * 100) / 100} mm`;
+      const overhang = [
+        Math.max(0, -overallBounds.min_x), Math.max(0, overallBounds.max_x - cfg.pW),
+        Math.max(0, -overallBounds.min_y), Math.max(0, overallBounds.max_y - cfg.pL)
+      ].map(value => Math.round(value * 100) / 100);
+      document.getElementById('metric-overhang').textContent = `はみ出し 左/右/手前/奥: ${overhang.join(' / ')} mm`;
+      const warnings = Array.isArray(summary.warnings) ? summary.warnings : [];
+      document.getElementById('metric-warning').textContent = warnings.length
+        ? warnings.join(' / ') : (overhang.some(value => value > 0) ? '要確認: パレットからはみ出しています' : 'はみ出しなし');
       document.getElementById('metric-vol').textContent = `${summary.volume_efficiency_percent || 0} %`;
 
       const unplacedSummary = document.getElementById('unplaced-summary');
@@ -560,18 +549,27 @@
     function resetViewTransform() {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      panX = w / 2;
-      panY = h / 2 + 80;
-      if (viewMode === 'iso') {
-        zoom = Math.min(w, h) / 2400;
-        panY = h / 2 + 100;
-      } else if (viewMode === 'top') {
-        zoom = Math.min(w, h) / 1800;
-        panY = h / 2;
-      } else {
-        zoom = Math.min(w, h) / 1800;
-        panY = h / 2 + 100;
+      const cfg = resolveGuideConfig(currentData);
+      const halfX = Math.max(cfg.pW, cfg.capSpanX) / 2;
+      const halfY = Math.max(cfg.pL, cfg.capSpanY) / 2;
+      zoom = 1;
+      panX = 0;
+      panY = 0;
+      const points = [];
+      for (const x of [-halfX, halfX]) {
+        for (const y of [-halfY, halfY]) {
+          for (const z of [-cfg.pH, cfg.maxH]) {
+            points.push(project3D(cfg.pW / 2 + x, cfg.pL / 2 + y, z));
+          }
+        }
       }
+      const minX = Math.min(...points.map(point => point.x));
+      const maxX = Math.max(...points.map(point => point.x));
+      const minY = Math.min(...points.map(point => point.y));
+      const maxY = Math.max(...points.map(point => point.y));
+      zoom = Math.min(w * 0.70 / Math.max(maxX - minX, 1), h * 0.62 / Math.max(maxY - minY, 1));
+      panX = w / 2 - (minX + maxX) * zoom / 2;
+      panY = h / 2 + 40 - (minY + maxY) * zoom / 2;
     }
 
     // -----------------------------------------------------------------------
@@ -633,9 +631,10 @@
 
     // Draw Floor Grid & Pallet
     function drawGridAndPallet() {
-      const pW = currentData.pallet?.length || 1200;
-      const pL = currentData.pallet?.width || 1000;
-      const pH = 144;
+      const cfg = resolveGuideConfig(currentData);
+      const pW = cfg.pW;
+      const pL = cfg.pL;
+      const pH = cfg.pH;
 
       // Floor Grid
       ctx.strokeStyle = 'rgba(51, 65, 85, 0.4)';
@@ -688,41 +687,20 @@
       ctx.closePath();
       ctx.stroke();
 
-      // 2. Normal Overhang Tolerance (default ±20mm each axis)
+      // Maximum cargo footprint, independent of physical pallet size.
       ctx.strokeStyle = '#fde047';
       ctx.lineWidth = 1.8;
       const normalPts = [
-        project3D(cfg.normalMinX, cfg.normalMinY, 0),
-        project3D(cfg.normalMaxX, cfg.normalMinY, 0),
-        project3D(cfg.normalMaxX, cfg.normalMaxY, 0),
-        project3D(cfg.normalMinX, cfg.normalMaxY, 0)
+        project3D(cfg.capMinX, cfg.capMinY, 0),
+        project3D(cfg.capMaxX, cfg.capMinY, 0),
+        project3D(cfg.capMaxX, cfg.capMaxY, 0),
+        project3D(cfg.capMinX, cfg.capMaxY, 0)
       ];
       ctx.beginPath();
       ctx.moveTo(normalPts[0].x, normalPts[0].y);
       for (let i = 1; i < normalPts.length; i++) ctx.lineTo(normalPts[i].x, normalPts[i].y);
       ctx.closePath();
       ctx.stroke();
-
-      // 3. Exception Outer Caps (axis-specific, if qualified)
-      if (cfg.exceptionAxisX || cfg.exceptionAxisY) {
-        const exMinX = cfg.exceptionAxisX ? cfg.capMinX : cfg.normalMinX;
-        const exMaxX = cfg.exceptionAxisX ? cfg.capMaxX : cfg.normalMaxX;
-        const exMinY = cfg.exceptionAxisY ? cfg.capMinY : cfg.normalMinY;
-        const exMaxY = cfg.exceptionAxisY ? cfg.capMaxY : cfg.normalMaxY;
-        ctx.strokeStyle = '#fb7185';
-        ctx.lineWidth = 2;
-        const capPts = [
-          project3D(exMinX, exMinY, 0),
-          project3D(exMaxX, exMinY, 0),
-          project3D(exMaxX, exMaxY, 0),
-          project3D(exMinX, exMaxY, 0)
-        ];
-        ctx.beginPath();
-        ctx.moveTo(capPts[0].x, capPts[0].y);
-        for (let i = 1; i < capPts.length; i++) ctx.lineTo(capPts[i].x, capPts[i].y);
-        ctx.closePath();
-        ctx.stroke();
-      }
 
       // 4. Pallet top outline (reference)
       ctx.setLineDash([]);

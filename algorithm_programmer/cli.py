@@ -65,6 +65,9 @@ def main():
     print(f"  荷姿寸法: X={summary['bounding_box']['x_span']:.1f}mm, Y={summary['bounding_box']['y_span']:.1f}mm, Z={summary['bounding_box']['max_z']:.1f}mm")
     print(f"  体積充填率: {summary['volume_efficiency_percent']:.1f}%")
     print(f"  制約合否: {'✅ PASS' if summary['is_valid'] else '❌ FAIL'}")
+    print(f"  パレット込み総高さ: {summary['total_height']:.1f}mm")
+    for warning in summary["warnings"]:
+        print(f"  警告: {warning}")
     if not summary["is_valid"]:
         for v in summary["violations"]:
             print(f"    - 違反: {v}")

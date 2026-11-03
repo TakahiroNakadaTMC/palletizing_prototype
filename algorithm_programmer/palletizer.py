@@ -4,7 +4,7 @@
 HM-Palletizer:
 1. 嵌合沈み込み計算 (fitting_depth)
 2. TP規格モジュール嵌合段積み & 非TPコラム積み
-3. 長辺<1360mm / 短辺800-1100mm 許容対応
+3. ケース別の荷山最大L/W/H以下、下限・はみ出し制約なし (v2026-11-03)
 4. 最高層四隅高さ一致 (Top 4-Corner Leveling)
 5. トポロジカル積み順付番 (Order)
 """
@@ -18,18 +18,17 @@ from algorithm_programmer.models import BoxSpec, PlacedBox, PalletSpec, Palletiz
 CORNER_HEIGHT_TOLERANCE_MM = 3.0
 SUPPORT_CORNER_TOLERANCE_MM = 0.01
 TOP_CORNER_MARGIN_MM = 35.0
-OVERHANG_EXCEPTION_MIN_EDGE_MM = 670.0
 GEOMETRY_EPS_MM = 1e-3
 MIXED_LAYER_SEARCH_WIDTH = 16
 
 def calculate_max_layers(height: float, fitting_depth: float, max_height: float) -> int:
     """嵌合沈み込みを考慮した最大積載段数を算出"""
-    if height <= 0 or max_height < height:
+    if height <= 0 or max_height + 1e-9 < height:
         return 0
     effective_h = height - fitting_depth
     if effective_h <= 0:
-        return int(max_height // height)
-    return int((max_height - height) // effective_h) + 1
+        return math.floor((max_height + 1e-9) / height)
+    return math.floor((max_height - height + 1e-9) / effective_h) + 1
 
 def intersects_2d(x1: float, y1: float, w1: float, l1: float,
                   x2: float, y2: float, w2: float, l2: float, eps: float = 1e-4) -> bool:
@@ -59,7 +58,6 @@ class Palletizer:
     def __init__(self, box_db: Dict[str, BoxSpec], pallet: Optional[PalletSpec] = None):
         self.box_db = box_db
         self.pallet = pallet or PalletSpec()
-        self._single_load_variant: Optional[Tuple[str, str]] = None
 
     def _column_stack_group(self, box_id: str, lid_id: str,
                             lid_fit_type: str) -> Optional[Tuple[str, str]]:
@@ -105,21 +103,14 @@ class Palletizer:
         ]
         return len(matching) == 1 and len(lower_direct) == 1
 
-    # v2026-10-26: 全段・蓋込みの方向別許容差と、投入単載の670mm辺例外。
-    def _overhang_is_valid(self, boxes: List[PlacedBox], shift_x: float = 0.0,
-                           shift_y: float = 0.0) -> bool:
+    def _pallet_support_is_valid(self, boxes: List[PlacedBox], shift_x: float = 0.0,
+                                 shift_y: float = 0.0) -> bool:
+        """最下段本体の実接地面積を確認する。蓋の張り出しは支持面にしない。"""
         for box in boxes:
-            single = self._single_load_variant == (box.box_id, box.lid_id)
-            if not (single and box.width >= OVERHANG_EXCEPTION_MIN_EDGE_MM):
-                limit = self.pallet.max_overhang_x_mm
-                if (box.footprint_min_x + shift_x < -limit - 1e-9
-                        or box.max_x + shift_x > self.pallet.length + limit + 1e-9):
-                    return False
-            if not (single and box.length >= OVERHANG_EXCEPTION_MIN_EDGE_MM):
-                limit = self.pallet.max_overhang_y_mm
-                if (box.footprint_min_y + shift_y < -limit - 1e-9
-                        or box.max_y + shift_y > self.pallet.width + limit + 1e-9):
-                    return False
+            if box.z <= GEOMETRY_EPS_MM and self._support_ratio(
+                    box.x + shift_x, box.y + shift_y, box.width, box.length,
+                    box.z, box.fitting_depth, []) < 0.85 - 1e-6:
+                return False
         return True
 
     def _centered_shift(self, boxes: List[PlacedBox]) -> Tuple[float, float]:
@@ -132,11 +123,11 @@ class Palletizer:
             (self.pallet.width - (max_y - min_y)) / 2.0 - min_y
         )
 
-    def _centered_overhang_is_valid(self, boxes: List[PlacedBox]) -> bool:
+    def _centered_pallet_support_is_valid(self, boxes: List[PlacedBox]) -> bool:
         if not boxes:
             return True
         shift_x, shift_y = self._centered_shift(boxes)
-        return self._overhang_is_valid(boxes, shift_x, shift_y)
+        return self._pallet_support_is_valid(boxes, shift_x, shift_y)
 
     def run(self, test_name: str, box_input_list: List[Dict[str, Any]], lid_db: Dict[str, Dict[str, Any]] = None) -> PalletizeResult:
         """テストケース投入リストを受け取り、単載または混載アルゴリズムを実行
@@ -163,7 +154,6 @@ class Palletizer:
         input_box_variants = [
             {"box_id": box_id, "lid_id": lid_id} for box_id, lid_id in input_variants
         ]
-        self._single_load_variant = None
         expanded_boxes: List[BoxSpec] = []
         unplaced_boxes: List[Dict[str, Any]] = []
         
@@ -194,7 +184,7 @@ class Palletizer:
                 test_name=test_name,
                 pallet=self.pallet,
                 boxes=[],
-                summary={"error": "No valid boxes provided"},
+                summary=self.calculate_summary([]),
                 unplaced_boxes=unplaced_boxes,
                 input_boxes_count=input_boxes_count,
                 input_box_variants=input_box_variants
@@ -202,15 +192,14 @@ class Palletizer:
 
         unique_variants = set(b.pool_key for b in expanded_boxes)
         if len(unique_variants) == 1:
-            placed, algorithm_unplaced = self.palletize_single(
-                expanded_boxes, allow_overhang_exception=len(input_variants) == 1
-            )
+            placed, algorithm_unplaced = self.palletize_single(expanded_boxes)
         else:
             placed, algorithm_unplaced = self.palletize_mixed(expanded_boxes)
         unplaced_boxes.extend(algorithm_unplaced)
 
         # 最高層四隅高さ揃え処理
         placed, unplaced_boxes = self.level_top_four_corners(placed, unplaced_boxes)
+        self._align_pallet_bounds(placed)
 
         # トポロジカルソートで積み順 order を付番
         placed = self.assign_loading_orders(placed)
@@ -231,15 +220,10 @@ class Palletizer:
     # -------------------------------------------------------------------------
     # 1. 単載パレタイズ (Mono-load Palletizer) — v2026-10-22: 総配置数優先・同数なら低い荷山
     # -------------------------------------------------------------------------
-    def palletize_single(self, boxes: List[BoxSpec], lids: List[Dict[str, Any]] = None,
-                         allow_overhang_exception: bool = True
+    def palletize_single(self, boxes: List[BoxSpec], lids: List[Dict[str, Any]] = None
                          ) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
         """単一の箱型番・蓋組み合わせを全段同一の平面配置で積む。"""
         sample_box = boxes[0]
-        variants = {box.pool_key for box in boxes}
-        self._single_load_variant = (
-            sample_box.pool_key if allow_overhang_exception and len(variants) == 1 else None
-        )
         w, l, h = sample_box.width, sample_box.length, sample_box.height
         depth = sample_box.fitting_depth
         rib = sample_box.rib_thickness
@@ -279,14 +263,14 @@ class Palletizer:
                     layer_index=0, lid_id=sample_box.lid_id, lid_width=lid_w, lid_length=lid_l,
                     lid_fit_type=sample_box.lid_fit_type
                 ))
-            if not (self.pallet.min_x_span <= x_span < self.pallet.max_x_span):
+            if x_span > self.pallet.max_x_span + 1e-9:
                 continue
-            if not (self.pallet.min_y_span <= y_span < self.pallet.max_y_span):
+            if y_span > self.pallet.max_y_span + 1e-9:
                 continue
 
             centered_x = (self.pallet.length - x_span) / 2.0
             centered_y = (self.pallet.width - y_span) / 2.0
-            if not self._overhang_is_valid(pattern_boxes, centered_x, centered_y):
+            if not self._pallet_support_is_valid(pattern_boxes, centered_x, centered_y):
                 continue
 
             count_in_layer = len(pattern["boxes"])
@@ -315,7 +299,7 @@ class Palletizer:
             best_pattern = fallback_pattern
         if not best_pattern:
             return [], [{"box_id": sample_box.id, "count": len(boxes),
-                         "reason": "荷姿寸法・方向別はみ出し・四隅の条件を満たす配置がありません"}]
+                         "reason": "荷山最大外形・底面支持率・四隅の条件を満たす配置がありません"}]
 
         placed_boxes: List[PlacedBox] = []
         total_needed = len(boxes)
@@ -330,7 +314,7 @@ class Palletizer:
 
         for layer in range(max_layers):
             layer_z = layer * (effective_height - depth)
-            if layer_z + effective_height > self.pallet.max_height + 1e-4:
+            if layer_z + effective_height > self.pallet.max_height + 1e-9:
                 unplaced_reason = "最大積載高さを超えるため配置できません"
                 break
 
@@ -386,19 +370,20 @@ class Palletizer:
         unplaced_count = total_needed - box_idx
         unplaced = [{"box_id": sample_box.id, "count": unplaced_count, "reason": unplaced_reason}] if unplaced_count > 0 else []
 
-        if not self._overhang_is_valid(placed_boxes):
+        self._align_pallet_bounds(placed_boxes)
+        if not self._pallet_support_is_valid(placed_boxes):
             return [], [{"box_id": sample_box.id, "count": total_needed,
-                         "reason": "全段・蓋込みの方向別はみ出し制限を満たす配置がありません"}]
+                         "reason": "パレットによる底面支持率85%以上を満たす配置がありません"}]
 
         return placed_boxes, unplaced
 
     def _generate_single_2d_patterns(self, w: float, l: float) -> List[Dict[str, Any]]:
         patterns = []
-        max_x = self.pallet.max_x_span - 1.0  # 1359mm
-        max_y = self.pallet.max_y_span - 1.0  # 1099mm
+        max_x = self.pallet.max_x_span
+        max_y = self.pallet.max_y_span
 
-        nx1 = int(max_x // w)
-        ny1 = int(max_y // l)
+        nx1 = math.floor((max_x + 1e-9) / w)
+        ny1 = math.floor((max_y + 1e-9) / l)
         for count_x in range(1, nx1 + 1):
             for count_y in range(1, ny1 + 1):
                 boxes0 = [
@@ -412,8 +397,8 @@ class Palletizer:
                     "y_span": count_y * l
                 })
 
-        nx2 = int(max_x // l)
-        ny2 = int(max_y // w)
+        nx2 = math.floor((max_x + 1e-9) / l)
+        ny2 = math.floor((max_y + 1e-9) / w)
         for count_x in range(1, nx2 + 1):
             for count_y in range(1, ny2 + 1):
                 boxes90 = [
@@ -430,7 +415,7 @@ class Palletizer:
         reduced_patterns = []
         for split_nx_0 in range(1, nx1 + 1):
             width_used_0 = split_nx_0 * w
-            max_nx_90 = int((max_x - width_used_0) // l)
+            max_nx_90 = math.floor((max_x - width_used_0 + 1e-9) / l)
             for split_nx_90 in range(max_nx_90, 0, -1):
                 for count_y_0 in range(ny1, 0, -1):
                     for count_y_90 in range(ny2, 0, -1):
@@ -451,7 +436,7 @@ class Palletizer:
 
         for split_ny_0 in range(1, ny1 + 1):
             len_used_0 = split_ny_0 * l
-            max_ny_90 = int((max_y - len_used_0) // w)
+            max_ny_90 = math.floor((max_y - len_used_0 + 1e-9) / w)
             for split_ny_90 in range(max_ny_90, 0, -1):
                 for count_x_0 in range(nx1, 0, -1):
                     for count_x_90 in range(nx2, 0, -1):
@@ -495,7 +480,6 @@ class Palletizer:
             boxes: 投入箱リスト
             lids: 【NEW】各箱に対応する蓋情報リスト
         """
-        self._single_load_variant = None
         placed_boxes: List[PlacedBox] = []
 
         if lids is not None:
@@ -516,7 +500,7 @@ class Palletizer:
         envelope = self._determine_mixed_envelope(box_pool)
         first_layers = []
         candidate_pool = [box for box in box_pool
-                          if box.height + box.lid_thickness <= self.pallet.max_height + 1e-4]
+                          if box.height + box.lid_thickness <= self.pallet.max_height + 1e-9]
         while candidate_pool:
             layer_height = self._choose_layer_height(candidate_pool)
             height_pool = [box for box in candidate_pool
@@ -574,7 +558,7 @@ class Palletizer:
             # 高さ制約を満たす箱種だけで代表高さを選ぶ。
             height_eligible_pool = [
                 b for b in box_pool
-                if current_z + b.height + b.lid_thickness <= self.pallet.max_height + 1e-4
+                if current_z + b.height + b.lid_thickness <= self.pallet.max_height + 1e-9
             ]
             if not height_eligible_pool:
                 stop_reason = "残箱を積むには最大積載高さを超えます"
@@ -591,7 +575,7 @@ class Palletizer:
                 candidate_placed, candidate_remaining = self._pack_mixed_layer(
                     layer_pool, current_z, layer_idx, placed_boxes, envelope
                 )
-                if candidate_placed and max(pb.top_z for pb in candidate_placed) <= self.pallet.max_height + 1e-4:
+                if candidate_placed and max(pb.top_z for pb in candidate_placed) <= self.pallet.max_height + 1e-9:
                     candidate_score = self._mixed_layer_candidate_score(placed_boxes, candidate_placed)
                     if best_layer_score is None or candidate_score > best_layer_score:
                         layer_placed = candidate_placed
@@ -610,7 +594,7 @@ class Palletizer:
                 break
 
             layer_top = max(pb.top_z for pb in layer_placed)
-            if layer_top > self.pallet.max_height + 1e-4:
+            if layer_top > self.pallet.max_height + 1e-9:
                 # この層は積載高さを超過するため積まない
                 stop_reason = "次の層を積むと最大積載高さを超えます"
                 break
@@ -695,22 +679,21 @@ class Palletizer:
     def _determine_mixed_envelope(self, pool: List[BoxSpec]) -> Dict[str, float]:
         """異なる箱寸法の行も組み合わせられる全層共通の探索範囲を返す。"""
         return {
-            "x_span": min(self.pallet.max_x_span - 0.01,
-                          self.pallet.length + 2 * self.pallet.max_overhang_x_mm),
-            "y_span": min(self.pallet.max_y_span - 0.01,
-                          self.pallet.width + 2 * self.pallet.max_overhang_y_mm)
+            "x_span": self.pallet.max_x_span,
+            "y_span": self.pallet.max_y_span
         }
 
     def _support_ratio(self, x: float, y: float, w: float, l: float,
                        base_z: float, fitting_depth: float,
                        lower_boxes: List[PlacedBox], tol: float = 1.0) -> float:
         """パレット直置き、または直下段箱に対する底面支持面積比率を算出"""
-        if base_z <= 1e-3:
-            return 1.0
-
         bottom_area = w * l
         if bottom_area <= 0:
             return 0.0
+        if base_z <= 1e-3:
+            supported_w = max(0.0, min(x + w, self.pallet.length) - max(x, 0.0))
+            supported_l = max(0.0, min(y + l, self.pallet.width) - max(y, 0.0))
+            return supported_w * supported_l / bottom_area
 
         total_support = 0.0
         for ob in lower_boxes:
@@ -854,7 +837,7 @@ class Palletizer:
                 for spec, rot, w, l in eligible:
                     if pool_counter[spec.pool_key] <= 0:
                         continue
-                    if x_cursor + w > e + tol:
+                    if x_cursor + w > e + 1e-9:
                         continue
                     box_w, box_l = (spec.width, spec.length) if rot == 0 else (spec.length, spec.width)
                     box_x = x_cursor + (w - box_w) / 2.0
@@ -907,7 +890,8 @@ class Palletizer:
         box_w, box_l = (spec.width, spec.length) if rot == 0 else (spec.length, spec.width)
         lid_w, lid_l = (spec.lid_width, spec.lid_length) if rot == 0 else (spec.lid_length, spec.lid_width)
 
-        if x < -tol or y < -tol or x + footprint_w > max_row_width + tol or y + footprint_l > max_total_depth + tol:
+        if (x < -tol or y < -tol or x + footprint_w > max_row_width + 1e-9
+                or y + footprint_l > max_total_depth + 1e-9):
             return None
 
         for placed in layer_boxes:
@@ -1022,7 +1006,7 @@ class Palletizer:
                         
                         if pb is not None:
                             layer_boxes.append(pb)
-                            if not self._centered_overhang_is_valid(lower_boxes + layer_boxes):
+                            if not self._centered_pallet_support_is_valid(lower_boxes + layer_boxes):
                                 layer_boxes.pop()
                                 continue
                             pool_counter[pool_key] -= 1
@@ -1066,7 +1050,7 @@ class Palletizer:
                     for pool_key, count in remaining.items() if count > 0
                     for dimension in (id_to_spec[pool_key].footprint_width,
                                       id_to_spec[pool_key].footprint_length)
-                    if 0 < dimension <= max_total_depth - row_y + 1e-3
+                    if 0 < dimension <= max_total_depth - row_y + 1e-9
                 }, reverse=True)
                 extended = False
                 for depth in depths:
@@ -1080,9 +1064,9 @@ class Palletizer:
                         continue
                     candidate_boxes = layer_boxes + row_boxes
                     next_y = max(box.max_y for box in candidate_boxes)
-                    if next_y > max_total_depth + 1e-3:
+                    if next_y > max_total_depth + 1e-9:
                         continue
-                    if not self._centered_overhang_is_valid(placed_so_far + candidate_boxes):
+                    if not self._centered_pallet_support_is_valid(placed_so_far + candidate_boxes):
                         continue
                     next_states.append((next_y, candidate_boxes, trial_counter))
                     extended = True
@@ -1141,8 +1125,8 @@ class Palletizer:
             long_side = max(spec.footprint_width, spec.footprint_length)
             short_side = min(spec.footprint_width, spec.footprint_length)
             span = long_side + short_side
-            if (long_side == short_side or span > envelope["x_span"]
-                    or span > envelope["y_span"]):
+            if (long_side == short_side or span > envelope["x_span"] + 1e-9
+                    or span > envelope["y_span"] + 1e-9):
                 continue
             horizontal = 0 if spec.footprint_width >= spec.footprint_length else 90
             vertical = 90 - horizontal
@@ -1157,7 +1141,7 @@ class Palletizer:
                 if placed is None:
                     break
                 layer.append(placed)
-            if len(layer) != 4 or not self._centered_overhang_is_valid(placed_so_far + layer):
+            if len(layer) != 4 or not self._centered_pallet_support_is_valid(placed_so_far + layer):
                 continue
             remaining = []
             consumed = 0
@@ -1220,7 +1204,7 @@ class Palletizer:
 
             best = None
             for d in candidate_depths:
-                if y_cursor + d > max_total_depth + 1e-3:
+                if y_cursor + d > max_total_depth + 1e-9:
                     continue
                 
                 intervals = self._row_free_intervals(layer_boxes, y_cursor, d, max_row_width)
@@ -1231,7 +1215,7 @@ class Palletizer:
                                                      base_z, layer_idx, lower_boxes)
                 if not row_boxes:
                     continue
-                if not self._centered_overhang_is_valid(placed_so_far + layer_boxes + row_boxes):
+                if not self._centered_pallet_support_is_valid(placed_so_far + layer_boxes + row_boxes):
                     continue
                 
                 fill = sum(rb.width for rb in row_boxes)
@@ -1374,6 +1358,12 @@ class Palletizer:
             return {
                 "total_boxes": 0,
                 "total_layers": 0,
+                "bounding_box": {"min_x": 0.0, "max_x": 0.0, "x_span": 0.0,
+                                 "min_y": 0.0, "max_y": 0.0, "y_span": 0.0, "max_z": 0.0},
+                "volume_efficiency_percent": 0.0,
+                "overhang_mm": {"left": 0.0, "right": 0.0, "front": 0.0, "back": 0.0},
+                "total_height": self.pallet.height,
+                "warnings": [],
                 "is_valid": False,
                 "violations": ["No boxes placed"]
             }
@@ -1394,16 +1384,12 @@ class Palletizer:
         vol_efficiency = (box_vol / pallet_vol) * 100.0
 
         violations = []
-        if max_z > self.pallet.max_height + 1e-4:
+        if max_z > self.pallet.max_height + 1e-9:
             violations.append(f"Max height exceeded: {max_z:.1f}mm > {self.pallet.max_height}mm")
-        if x_span < self.pallet.min_x_span - 1e-4:
-            violations.append(f"Long side span too small: {x_span:.1f}mm < {self.pallet.min_x_span}mm")
-        if x_span >= self.pallet.max_x_span:
-            violations.append(f"Long side span exceeded: {x_span:.1f}mm >= {self.pallet.max_x_span}mm")
-        if y_span >= self.pallet.max_y_span:
-            violations.append(f"Short side overhang exceeded: {y_span:.1f}mm >= {self.pallet.max_y_span}mm")
-        if y_span < self.pallet.min_y_span - 1e-4:
-            violations.append(f"Short side too small: {y_span:.1f}mm < {self.pallet.min_y_span}mm")
+        if x_span > self.pallet.max_x_span + 1e-9:
+            violations.append(f"Long side span exceeded: {x_span:.1f}mm > {self.pallet.max_x_span}mm")
+        if y_span > self.pallet.max_y_span + 1e-9:
+            violations.append(f"Short side span exceeded: {y_span:.1f}mm > {self.pallet.max_y_span}mm")
 
         center_x = (min_x + max_x) / 2.0
         center_y = (min_y + max_y) / 2.0
@@ -1411,10 +1397,10 @@ class Palletizer:
             abs(center_y - self.pallet.width / 2.0) > 0.01):
             violations.append("Palletized load is not centered on the pallet")
 
-        if not self._overhang_is_valid(placed_boxes):
-            violations.append("Box/lid overhang exceeds the configured X/Y limit without a single-load exception")
-
         for box in placed_boxes:
+            if self._support_ratio(box.x, box.y, box.width, box.length,
+                                   box.z, box.fitting_depth, placed_boxes) < 0.85 - 1e-6:
+                violations.append(f"Order #{box.order} ({box.box_id}): 底面支持率85%未満")
             if not self._support_corners_allowed(box, placed_boxes):
                 violations.append(
                     f"Order #{box.order} ({box.box_id}): 下段隅の被覆またはコラム積み条件違反"
@@ -1440,6 +1426,19 @@ class Palletizer:
         else:
             violations.append("Top 4-corners coverage is incomplete")
 
+        overhang = {
+            "left": round(max(0.0, -min_x), 2),
+            "right": round(max(0.0, max_x - self.pallet.length), 2),
+            "front": round(max(0.0, -min_y), 2),
+            "back": round(max(0.0, max_y - self.pallet.width), 2)
+        }
+        warnings = []
+        if any(value > 0 for value in overhang.values()):
+            warnings.append(
+                "要確認: パレットからのはみ出し "
+                f"左{overhang['left']} / 右{overhang['right']} / "
+                f"手前{overhang['front']} / 奥{overhang['back']}mm（合否とは別の確認情報）"
+            )
         return {
             "total_boxes": len(placed_boxes),
             "total_layers": layers,
@@ -1453,6 +1452,9 @@ class Palletizer:
                 "max_z": round(max_z, 2)
             },
             "volume_efficiency_percent": round(vol_efficiency, 2),
+            "overhang_mm": overhang,
+            "total_height": round(self.pallet.height + max_z, 2),
+            "warnings": warnings,
             "is_valid": len(violations) == 0,
             "violations": violations
         }

@@ -41,6 +41,12 @@ def generate_html(result_data: dict, output_html_path: str):
   <div id="viewport-container">
     <canvas id="main-canvas"></canvas>
   </div>
+  <div id="load-error" class="hidden absolute inset-0 z-40 flex items-center justify-center p-6 pointer-events-none">
+    <div class="max-w-3xl w-full bg-rose-950/90 border border-rose-500/60 rounded-2xl p-4 shadow-2xl">
+      <div class="text-rose-300 font-bold text-sm">ビューアの読み込みに失敗しました</div>
+      <div id="load-error-message" class="mt-2 text-rose-100 text-xs whitespace-pre-wrap break-all"></div>
+    </div>
+  </div>
 
   <!-- Top Navigation / Info Bar -->
   <header class="absolute top-4 left-4 right-4 z-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pointer-events-none">
@@ -71,13 +77,20 @@ def generate_html(result_data: dict, output_html_path: str):
       </div>
       <div class="w-px h-6 bg-slate-700"></div>
       <div>
-        <span class="text-[10px] text-slate-400 block font-medium">荷姿寸法 (全層・箱+蓋 外接 X×Y×Z)</span>
-        <span class="font-bold font-mono text-indigo-300 text-xs" id="metric-dims">0 × 0 × 0 mm</span>
+        <span class="text-[10px] text-slate-400 block font-medium">荷姿外寸 (L×W, X/Y併記) / 高さ (物理H + 荷物H = 総H)</span>
+        <span class="font-bold font-mono text-indigo-300 text-xs" id="metric-dims">L0 × W0 mm (X0 / Y0)</span>
+        <span class="block text-[10px] text-slate-300" id="metric-heights">0 + 0 = 0 mm</span>
       </div>
       <div class="w-px h-6 bg-slate-700"></div>
       <div>
-        <span class="text-[10px] text-slate-400 block font-medium">体積充填率</span>
+        <span class="text-[10px] text-slate-400 block font-medium">実測オーバーハング（左/右/前/後）</span>
+        <span class="font-bold font-mono text-amber-300 text-[11px]" id="metric-overhang">0 / 0 / 0 / 0 mm</span>
+      </div>
+      <div class="w-px h-6 bg-slate-700"></div>
+      <div>
+        <span class="text-[10px] text-slate-400 block font-medium">体積充填率 / 警告</span>
         <span class="font-bold font-mono text-emerald-400 text-sm" id="metric-vol">0 %</span>
+        <span class="block text-[10px] text-rose-300" id="metric-warning">警告なし</span>
       </div>
     </div>
   </header>
@@ -258,6 +271,16 @@ def generate_html(result_data: dict, output_html_path: str):
       }};
     }}
 
+    function showLoadError(err) {{
+      const panel = document.getElementById('load-error');
+      const message = document.getElementById('load-error-message');
+      if (!panel || !message) return;
+      const text = err instanceof Error ? err.message : String(err || '不明なエラー');
+      message.textContent = text;
+      panel.classList.remove('hidden');
+      currentData = null;
+    }}
+
     function initRenderer() {{
       canvas = document.getElementById('main-canvas');
       ctx = canvas.getContext('2d');
@@ -267,7 +290,12 @@ def generate_html(result_data: dict, output_html_path: str):
 
       setupInteractions();
       setupUIEvents();
-      processData(PALLETIZE_DATA);
+      try {{
+        processData(PALLETIZE_DATA);
+      }} catch (err) {{
+        console.error('viewer load failed', err);
+        showLoadError(err);
+      }}
 
       requestAnimationFrame(renderLoop);
     }}
@@ -324,74 +352,44 @@ def generate_html(result_data: dict, output_html_path: str):
       return Object.prototype.hasOwnProperty.call(obj || {{}}, key);
     }}
 
-    function getSoleInputVariant(data) {{
-      if (!Array.isArray(data?.input_box_variants)) return null;
-      if (data.input_box_variants.length !== 1) return null;
-      const only = data.input_box_variants[0] || {{}};
-      if (!hasOwn(only, 'box_id') || !hasOwn(only, 'lid_id')) return null;
-      if (typeof only.box_id !== 'string' || only.box_id.length === 0) return null;
-      if (typeof only.lid_id !== 'string') return null;
-      return {{ box_id: only.box_id, lid_id: only.lid_id }};
-    }}
-
-    function hasCompleteBoxIdentity(box) {{
-      return hasOwn(box, 'box_id') && hasOwn(box, 'lid_id')
-        && typeof box.box_id === 'string' && box.box_id.length > 0
-        && typeof box.lid_id === 'string';
+    function parsePalletPositiveField(pallet, key, fallback) {{
+      if (!hasOwn(pallet, key)) return fallback;
+      const raw = pallet[key];
+      if (typeof raw === 'boolean') {{
+        throw new Error(`pallet.${{key}} は真偽値を指定できません`);
+      }}
+      if (typeof raw !== 'number' && typeof raw !== 'string') {{
+        throw new Error(`pallet.${{key}} は数値で指定してください`);
+      }}
+      const n = Number(raw);
+      if (!Number.isFinite(n) || n <= 0) {{
+        throw new Error(`pallet.${{key}} は正の有限数で指定してください`);
+      }}
+      return n;
     }}
 
     function resolveGuideConfig(data) {{
       const pallet = data?.pallet || {{}};
-      const pW = Number(pallet.length || 1200);
-      const pL = Number(pallet.width || 1000);
-      const maxH = Number(pallet.max_height || 1200);
-
-      const normalOverhangX = Number(pallet.max_overhang_x_mm ?? 20);
-      const normalOverhangY = Number(pallet.max_overhang_y_mm ?? 20);
-      const saneOverhangX = Number.isFinite(normalOverhangX) && normalOverhangX >= 0 ? normalOverhangX : 20;
-      const saneOverhangY = Number.isFinite(normalOverhangY) && normalOverhangY >= 0 ? normalOverhangY : 20;
-
-      const capSpanXRaw = Number(pallet.max_x_span ?? 1360);
-      const capSpanYRaw = Number(pallet.max_y_span ?? 1100);
-      const capSpanX = Number.isFinite(capSpanXRaw) && capSpanXRaw > 0 ? capSpanXRaw : 1360;
-      const capSpanY = Number.isFinite(capSpanYRaw) && capSpanYRaw > 0 ? capSpanYRaw : 1100;
+      const pW = parsePalletPositiveField(pallet, 'length', 1200);
+      const pL = parsePalletPositiveField(pallet, 'width', 1000);
+      const pH = parsePalletPositiveField(pallet, 'height', 130);
+      const maxH = parsePalletPositiveField(pallet, 'max_height', 1200);
+      const capSpanX = parsePalletPositiveField(pallet, 'max_x_span', 1360);
+      const capSpanY = parsePalletPositiveField(pallet, 'max_y_span', 1100);
+      if (pW < pL) {{
+        throw new Error('pallet.length は pallet.width 以上で指定してください');
+      }}
+      if (capSpanX < capSpanY) {{
+        throw new Error('pallet.max_x_span は pallet.max_y_span 以上で指定してください');
+      }}
       const capMinX = (pW - capSpanX) / 2;
       const capMaxX = capMinX + capSpanX;
       const capMinY = (pL - capSpanY) / 2;
       const capMaxY = capMinY + capSpanY;
 
-      const rawNormalMinX = -saneOverhangX;
-      const rawNormalMaxX = pW + saneOverhangX;
-      const rawNormalMinY = -saneOverhangY;
-      const rawNormalMaxY = pL + saneOverhangY;
-
-      const normalMinX = Math.max(rawNormalMinX, capMinX);
-      const normalMaxX = Math.min(rawNormalMaxX, capMaxX);
-      const normalMinY = Math.max(rawNormalMinY, capMinY);
-      const normalMaxY = Math.min(rawNormalMaxY, capMaxY);
-
-      const boxes = Array.isArray(data?.boxes) ? data.boxes : [];
-      const soleVariant = getSoleInputVariant(data);
-      const metadataReady = Boolean(soleVariant);
-      const identityComplete = metadataReady && boxes.length > 0 && boxes.every(hasCompleteBoxIdentity);
-      const identityMatched = identityComplete && boxes.every(b => b.box_id === soleVariant.box_id && b.lid_id === soleVariant.lid_id);
-      const exceptionEligibleBoxes = identityMatched ? boxes : [];
-
-      const exceptionAxisX = exceptionEligibleBoxes.some(b => Number(b?.dimensions?.width || 0) >= 670);
-      const exceptionAxisY = exceptionEligibleBoxes.some(b => Number(b?.dimensions?.length || 0) >= 670);
-
       return {{
-        pW, pL, maxH,
-        normalOverhangX: saneOverhangX,
-        normalOverhangY: saneOverhangY,
-        rawNormalMinX, rawNormalMaxX, rawNormalMinY, rawNormalMaxY,
-        normalMinX, normalMaxX, normalMinY, normalMaxY,
+        pW, pL, pH, maxH,
         capSpanX, capSpanY, capMinX, capMaxX, capMinY, capMaxY,
-        metadataReady,
-        identityComplete,
-        identityMatched,
-        exceptionAxisX,
-        exceptionAxisY
       }};
     }}
 
@@ -399,19 +397,16 @@ def generate_html(result_data: dict, output_html_path: str):
       const container = document.getElementById('guide-legend');
       if (!container) return;
       const cfg = resolveGuideConfig(data);
-      const metadataNote = !cfg.metadataReady
-        ? '入力variant: 不足/不正（例外判定なし）'
-        : (!cfg.identityComplete
-          ? '配置箱のidentity不足（例外判定なし）'
-          : (cfg.identityMatched ? '単一入力identity一致（例外判定可能）' : '単一入力だがidentity不一致（例外判定なし）'));
+      const warnings = Array.isArray(data?.summary?.warnings) ? data.summary.warnings : [];
+      const warningText = warnings.length > 0 ? warnings.join(' / ') : '警告なし';
 
       container.innerHTML = `
         <div class="text-slate-300 font-semibold">制約ガイド凡例（全層・箱+蓋 外接判定）</div>
-        <div class="flex items-center gap-2"><span class="w-3 h-[2px] inline-block bg-yellow-300"></span><span>通常許容ガイド: ±${{cfg.normalOverhangX}}mm(X) / ±${{cfg.normalOverhangY}}mm(Y) ※表示はCAP内にクリップ</span></div>
-        <div class="flex items-center gap-2"><span class="w-3 h-[2px] inline-block bg-rose-400"></span><span>例外CAPガイド: X<${{cfg.capSpanX}} / Y<${{cfg.capSpanY}}（単一inputの対象箱の該当方向のみ）</span></div>
-        <div class="text-slate-500">${{metadataNote}}</div>
-        <div class="text-slate-500">例外有効軸: X=${{cfg.exceptionAxisX ? 'ON' : 'OFF'}}, Y=${{cfg.exceptionAxisY ? 'ON' : 'OFF'}}</div>
-        <div class="text-slate-500">※ ガイド表示は制約PASSを保証しません</div>
+        <div class="flex items-center gap-2"><span class="w-3 h-[2px] inline-block bg-slate-100"></span><span>白: パレット外形 L(X)=${{cfg.pW}} / W(Y)=${{cfg.pL}}（z=0）</span></div>
+        <div class="flex items-center gap-2"><span class="w-3 h-[2px] inline-block bg-rose-400"></span><span>赤: X長辺方向上限（max_x_span）=${{cfg.capSpanX}} / 高さ上限 H=${{cfg.maxH}}</span></div>
+        <div class="flex items-center gap-2"><span class="w-3 h-[2px] inline-block bg-yellow-300"></span><span>黄: Y短辺方向上限（max_y_span）=${{cfg.capSpanY}}</span></div>
+        <div class="text-slate-500">警告: ${{warningText}}</div>
+        <div class="text-slate-500">※ 警告表示は安全・安定性を保証しません（支持率85%要件は別途必須）</div>
       `;
     }}
 
@@ -431,7 +426,7 @@ def generate_html(result_data: dict, output_html_path: str):
 
     function computeOverallBounds(boxes) {{
       if (!Array.isArray(boxes) || boxes.length === 0) {{
-        return {{ x_span: 0, y_span: 0, max_z: 0 }};
+        return {{ min_x: 0, max_x: 0, min_y: 0, max_y: 0, x_span: 0, y_span: 0, max_z: 0 }};
       }}
       const bounds = boxes.map(computeBoxOuterBounds);
       const minX = Math.min(...bounds.map(b => b.minX));
@@ -440,6 +435,10 @@ def generate_html(result_data: dict, output_html_path: str):
       const maxY = Math.max(...bounds.map(b => b.maxY));
       const maxZ = Math.max(...bounds.map(b => b.maxZ));
       return {{
+        min_x: Math.round(minX * 10) / 10,
+        max_x: Math.round(maxX * 10) / 10,
+        min_y: Math.round(minY * 10) / 10,
+        max_y: Math.round(maxY * 10) / 10,
         x_span: Math.round((maxX - minX) * 10) / 10,
         y_span: Math.round((maxY - minY) * 10) / 10,
         max_z: Math.round(maxZ * 10) / 10
@@ -448,12 +447,22 @@ def generate_html(result_data: dict, output_html_path: str):
 
     function updateUIMetrics(data) {{
       const summary = data.summary || {{}};
-      const bbox = summary.bounding_box || {{}};
       const boxes = data.boxes || [];
       const unplacedBoxes = data.unplaced_boxes || [];
       const unplacedCount = Number(data.unplaced_boxes_count ?? unplacedBoxes.reduce((sum, item) => sum + Number(item.count || 0), 0));
       const placedCount = Number(data.placed_boxes_count ?? boxes.length);
       const inputCount = Number(data.input_boxes_count ?? placedCount + unplacedCount);
+      const cfg = resolveGuideConfig(data);
+      const overallBounds = computeOverallBounds(boxes);
+      const overhangFromSummary = summary.overhang_mm || {{}};
+      const leftOverhang = Number.isFinite(Number(overhangFromSummary.left)) ? Number(overhangFromSummary.left) : Math.max(0, -overallBounds.min_x);
+      const rightOverhang = Number.isFinite(Number(overhangFromSummary.right)) ? Number(overhangFromSummary.right) : Math.max(0, overallBounds.max_x - cfg.pW);
+      const frontOverhang = Number.isFinite(Number(overhangFromSummary.front)) ? Number(overhangFromSummary.front) : Math.max(0, -overallBounds.min_y);
+      const backOverhang = Number.isFinite(Number(overhangFromSummary.back)) ? Number(overhangFromSummary.back) : Math.max(0, overallBounds.max_y - cfg.pL);
+      const cargoHeight = Number.isFinite(Number(summary.cargo_height)) ? Number(summary.cargo_height) : Math.max(0, overallBounds.max_z);
+      const physicalHeight = cfg.pH;
+      const totalHeight = Number.isFinite(Number(summary.total_height)) ? Number(summary.total_height) : (physicalHeight + cargoHeight);
+      const warnings = Array.isArray(summary.warnings) ? summary.warnings : [];
 
       const validBadge = document.getElementById('badge-valid');
       if (summary.is_valid) {{
@@ -467,9 +476,13 @@ def generate_html(result_data: dict, output_html_path: str):
       document.getElementById('metric-boxes').textContent = `${{placedCount}} / ${{inputCount}} 箱`;
       document.getElementById('metric-unplaced').textContent = `未配置 ${{unplacedCount}} 箱`;
       document.getElementById('metric-layers').textContent = `${{summary.total_layers || 0}} 段`;
-            const overallBounds = computeOverallBounds(boxes);
-      document.getElementById('metric-dims').textContent = `${{overallBounds.x_span}} × ${{overallBounds.y_span}} × ${{overallBounds.max_z}} mm`;
+      const longSide = Math.max(overallBounds.x_span, overallBounds.y_span);
+      const shortSide = Math.min(overallBounds.x_span, overallBounds.y_span);
+      document.getElementById('metric-dims').textContent = `L${{longSide}} × W${{shortSide}} mm (X${{overallBounds.x_span}} / Y${{overallBounds.y_span}})`;
+      document.getElementById('metric-heights').textContent = `${{physicalHeight}} + ${{cargoHeight}} = ${{totalHeight}} mm`;
+      document.getElementById('metric-overhang').textContent = `${{leftOverhang}} / ${{rightOverhang}} / ${{frontOverhang}} / ${{backOverhang}} mm`;
       document.getElementById('metric-vol').textContent = `${{summary.volume_efficiency_percent || 0}} %`;
+      document.getElementById('metric-warning').textContent = warnings.length > 0 ? warnings.join(' / ') : '警告なし';
 
       const unplacedSummary = document.getElementById('unplaced-summary');
       unplacedSummary.replaceChildren();
@@ -497,18 +510,27 @@ def generate_html(result_data: dict, output_html_path: str):
     function resetViewTransform() {{
       const w = window.innerWidth;
       const h = window.innerHeight;
-      panX = w / 2;
-      panY = h / 2 + 80;
-      if (viewMode === 'iso') {{
-        zoom = Math.min(w, h) / 2400;
-        panY = h / 2 + 100;
-      }} else if (viewMode === 'top') {{
-        zoom = Math.min(w, h) / 1800;
-        panY = h / 2;
-      }} else {{
-        zoom = Math.min(w, h) / 1800;
-        panY = h / 2 + 100;
+      const cfg = resolveGuideConfig(currentData);
+      const halfX = Math.max(cfg.pW, cfg.capSpanX) / 2;
+      const halfY = Math.max(cfg.pL, cfg.capSpanY) / 2;
+      zoom = 1;
+      panX = 0;
+      panY = 0;
+      const points = [];
+      for (const x of [-halfX, halfX]) {{
+        for (const y of [-halfY, halfY]) {{
+          for (const z of [-cfg.pH, cfg.maxH]) {{
+            points.push(project3D(cfg.pW / 2 + x, cfg.pL / 2 + y, z));
+          }}
+        }}
       }}
+      const minX = Math.min(...points.map(point => point.x));
+      const maxX = Math.max(...points.map(point => point.x));
+      const minY = Math.min(...points.map(point => point.y));
+      const maxY = Math.max(...points.map(point => point.y));
+      zoom = Math.min(w * 0.70 / Math.max(maxX - minX, 1), h * 0.62 / Math.max(maxY - minY, 1));
+      panX = w / 2 - (minX + maxX) * zoom / 2;
+      panY = h / 2 + 40 - (minY + maxY) * zoom / 2;
     }}
 
     function project3D(x, y, z) {{
@@ -557,9 +579,10 @@ def generate_html(result_data: dict, output_html_path: str):
     }}
 
     function drawGridAndPallet() {{
-      const pW = currentData.pallet?.length || 1200;
-      const pL = currentData.pallet?.width || 1000;
-      const pH = 144;
+      const cfg = resolveGuideConfig(currentData);
+      const pW = cfg.pW;
+      const pL = cfg.pL;
+      const pH = cfg.pH;
 
       ctx.strokeStyle = 'rgba(51, 65, 85, 0.4)';
       ctx.lineWidth = 1;
@@ -603,35 +626,31 @@ def generate_html(result_data: dict, output_html_path: str):
       ctx.closePath();
       ctx.stroke();
 
-      ctx.strokeStyle = '#fde047';
-      ctx.lineWidth = 1.8;
-      const normalPts = [
-        project3D(cfg.normalMinX, cfg.normalMinY, 0), project3D(cfg.normalMaxX, cfg.normalMinY, 0),
-        project3D(cfg.normalMaxX, cfg.normalMaxY, 0), project3D(cfg.normalMinX, cfg.normalMaxY, 0)
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 2;
+      const redLines = [
+        [project3D(cfg.capMinX, cfg.capMinY, 0), project3D(cfg.capMinX, cfg.capMaxY, 0)],
+        [project3D(cfg.capMaxX, cfg.capMinY, 0), project3D(cfg.capMaxX, cfg.capMaxY, 0)]
       ];
-      ctx.beginPath();
-      ctx.moveTo(normalPts[0].x, normalPts[0].y);
-      for (let i = 1; i < normalPts.length; i++) ctx.lineTo(normalPts[i].x, normalPts[i].y);
-      ctx.closePath();
-      ctx.stroke();
-
-      if (cfg.exceptionAxisX || cfg.exceptionAxisY) {{
-        const exMinX = cfg.exceptionAxisX ? cfg.capMinX : cfg.normalMinX;
-        const exMaxX = cfg.exceptionAxisX ? cfg.capMaxX : cfg.normalMaxX;
-        const exMinY = cfg.exceptionAxisY ? cfg.capMinY : cfg.normalMinY;
-        const exMaxY = cfg.exceptionAxisY ? cfg.capMaxY : cfg.normalMaxY;
-        ctx.strokeStyle = '#fb7185';
-        ctx.lineWidth = 2;
-        const capPts = [
-          project3D(exMinX, exMinY, 0), project3D(exMaxX, exMinY, 0),
-          project3D(exMaxX, exMaxY, 0), project3D(exMinX, exMaxY, 0)
-        ];
+      redLines.forEach(line => {{
         ctx.beginPath();
-        ctx.moveTo(capPts[0].x, capPts[0].y);
-        for (let i = 1; i < capPts.length; i++) ctx.lineTo(capPts[i].x, capPts[i].y);
-        ctx.closePath();
+        ctx.moveTo(line[0].x, line[0].y);
+        ctx.lineTo(line[1].x, line[1].y);
         ctx.stroke();
-      }}
+      }});
+
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 2;
+      const yellowLines = [
+        [project3D(cfg.capMinX, cfg.capMinY, 0), project3D(cfg.capMaxX, cfg.capMinY, 0)],
+        [project3D(cfg.capMinX, cfg.capMaxY, 0), project3D(cfg.capMaxX, cfg.capMaxY, 0)]
+      ];
+      yellowLines.forEach(line => {{
+        ctx.beginPath();
+        ctx.moveTo(line[0].x, line[0].y);
+        ctx.lineTo(line[1].x, line[1].y);
+        ctx.stroke();
+      }});
 
       ctx.setLineDash([]);
       ctx.strokeStyle = '#e2e8f0';

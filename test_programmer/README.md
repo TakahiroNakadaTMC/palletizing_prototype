@@ -18,8 +18,8 @@
 オティックス9件、ROKI2件です。投入要求数は合計625箱です。
 
 これらは実際の荷姿パターンに基づくケースです。箱の投入数量、蓋指定、
-ケース固有のパレット条件を保持しています。一部のはみ出し許容値は既定の20mmより大きく、
-ケース固有の値が設定されています。採用状態は一括実行の対象であることを示し、
+ケース固有のパレット条件（6項目: `length,width,height,max_x_span,max_y_span,max_height`）を保持しています。
+採用状態は一括実行の対象であることを示し、
 配置結果の制約検証PASSを意味しません。
 
 ---
@@ -85,10 +85,12 @@ python3 test_programmer/serve_testcase_viewer.py
 
 採否状態は `test_case_approval.json` に共有保存され、初期登録済みケースは採用、新規ケースは未採用になります。ビューアで採否を変更した後、「テストケース一括保存」を押すとケースと採否状態が保存されます。テストランナーは採用ケースだけを実行します。ビューアでケースを削除して一括保存すると、対応するケースJSONも削除されますが、過去の実行結果JSONは履歴として残ります。
 
-2026-10更新: 作成/編集モーダルで
-`max_overhang_x_mm` / `max_overhang_y_mm`（片側許容mm）を入力可能になりました。
-既存ケース編集時は既存 `pallet` を保持し、未設定時は各20 mmを表示します。
-旧 `max_small_edge_overhang_mm` は保存時に削除して新設定へ移行します。
+2026-11更新: 作成/編集モーダルで `pallet` の6項目
+（`length,width,height,max_x_span,max_y_span,max_height`）をケース単位で直接編集できます。
+既定値は `1200,1000,130,1360,1100,1200` で、全項目は正の有限数、
+かつ `length >= width` / `max_x_span >= max_y_span` を必須とします。
+保存時は旧キー（`min_x_span`,`min_y_span`,`max_overhang_x_mm`,`max_overhang_y_mm`,`max_small_edge_overhang_mm`）を除去し、
+`pallet` は上記6項目のみを保存します。
 
 ---
 

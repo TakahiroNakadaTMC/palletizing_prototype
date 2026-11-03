@@ -91,9 +91,15 @@ def run_all_tests():
                 "x_span": bbox.get("x_span", 0.0),
                 "y_span": bbox.get("y_span", 0.0),
                 "z_max": bbox.get("max_z", 0.0),
+                "input": rdata.get("input_boxes_count", 0),
+                "unplaced": rdata.get("unplaced_boxes_count", 0),
+                "warnings": s.get("warnings", []),
                 "violations": s.get("violations", [])
             })
             print(f"  {status} [{tc_name}]: {len(rdata.get('boxes', []))}箱, 充填率 {s.get('volume_efficiency_percent', 0.0):.1f}%, X={bbox.get('x_span', 0.0):.0f} Y={bbox.get('y_span', 0.0):.0f} Z={bbox.get('max_z', 0.0):.0f}")
+            print(f"    投入: {rdata.get('input_boxes_count', 0)}箱 / 未配置: {rdata.get('unplaced_boxes_count', 0)}箱")
+            for warning in s.get("warnings", []):
+                print(f"    ⚠️ {warning}")
         except Exception as e:
             print(f"❌ 結果読み込み失敗 ({tc_name}): {e}")
 
@@ -105,6 +111,11 @@ def run_all_tests():
     for row in summary_list:
         dims = f"{row['x_span']:.0f} × {row['y_span']:.0f} × {row['z_max']:.0f}"
         print(f"{row['name']:<30} | {row['status']:<6} | {row['boxes']:<4} | {row['layers']:<3} | {row['vol']:>5.1f}% | {dims}")
+    print(f"結果読込: {len(summary_list)}/{len(tc_files)}件 | "
+          f"投入: {sum(row['input'] for row in summary_list)}箱 / "
+          f"配置: {sum(row['boxes'] for row in summary_list)}箱 / "
+          f"未配置: {sum(row['unplaced'] for row in summary_list)}箱")
+    print(f"はみ出し要確認: {sum(bool(row['warnings']) for row in summary_list)}件（制約合否とは別）")
     print("="*80)
     return 0
 
