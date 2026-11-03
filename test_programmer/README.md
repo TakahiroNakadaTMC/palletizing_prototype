@@ -13,47 +13,63 @@
 
 本ディレクトリは、パレタイズアルゴリズムの評価・シミュレーションに使用するテストデータ生成スクリプトおよびテストケースJSON群を管理します。
 
-[`box_research/box_db.json`](../box_research/box_db.json) で承認された13種類のTP規格箱
-（基準335系、1.5倍340系、2倍360系、大型460系、ハーフ131系、および浅型/標準/深型の各高さ体系）をもとに、
-単載・同高混載・異高モジュール混載・境界値テストを設計しています。
-既存13件の蓋なしケースを維持し、同じ構成の標準蓋付き派生ケース13件を加え、生成後は計26件になります。
+現在のテストケースは30件で、全件が採用状態です。内訳はアイシン11件、
+アーレスティ2件、アート金属1件、グゼー1件、ニッタン2件、NOK2件、
+オティックス9件、ROKI2件です。投入要求数は合計625箱です。
 
-2026-10-29: 外部作成のテストケース30件を追加しました。内訳は aisin 11件、
-arresuthi 2件、art 1件、guze 1件、nittan 2件、nok 2件、othics 9件、roki 2件です。
-既存27件（上記26件と外嵌め蓋ケース）は変更せず、登録総数は57件です。
-追加30件は採用済みとして登録し、元データの投入数量・蓋指定・X/Y方向別はみ出し許容値を保持しています。
-一部の許容値は既定の20mmより大きく（X方向70mm、Y方向54mm）、ケース固有の条件です。
-採用状態は一括実行の対象であることを示し、配置結果の制約検証PASSを意味しません。
+これらは実際の荷姿パターンに基づくケースです。箱の投入数量、蓋指定、
+ケース固有のパレット条件を保持しています。一部のはみ出し許容値は既定の20mmより大きく、
+ケース固有の値が設定されています。採用状態は一括実行の対象であることを示し、
+配置結果の制約検証PASSを意味しません。
 
 ---
 
 ## 2. テストケース一覧
 
-| 分類 | テストケース名 | 対象箱型番 | 箱数 | 主な検証目的 |
-| :--- | :--- | :--- | :---: | :--- |
-| **単載** | [`single_tp332.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp332.json) | TP-332 (335x335x195) | 60 | 基準モジュール単載パターンの最大充填（ブロック/レンガ） |
-| **単載** | [`single_tp342.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp342.json) | TP-342 (502.5x335x195) | 40 | 1.5モジュール単載パターンの探索 |
-| **単載** | [`single_tp362.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp362.json) | TP-362 (670x335x195) | 30 | 2倍モジュール単載（長辺1340mmフィット＆短辺制約） |
-| **単載** | [`single_tp462.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp462.json) | TP-462 (670x502.5x195) | 24 | 大型モジュール単載パターンの安定配置 |
-| **単載** | [`single_tp131.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp131.json) | TP-131 (335x167.5x102.5) | 120 | ハーフモジュール小箱の大量充填 |
-| **単載** | [`single_tp331.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/single_tp331.json) | TP-331 (335x335x102.5) | 80 | 浅型基準箱の多段積載 |
-| **混載** | [`mixed_tp_same_height.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_same_height.json) | TP-332, 342, 362, 462 | 42 | 同一高さ（H=195mm）のモジュール平面組み合わせ混載 |
-| **混載** | [`mixed_tp_modular_stack.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_modular_stack.json) | TP-331, 332, 362, 462 | 58 | TP-330系2個の上にTP-360系を載せる跨ぎ嵌合段積み |
-| **混載** | [`mixed_tp_different_heights.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_different_heights.json) | 9種類のTP箱 (高102.5/148.75/195/287.5) | 74 | 4段階の異高が混在する高度な混載・嵌合Z追従 |
-| **混載** | [`mixed_tp_large_volume.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/mixed_tp_large_volume.json) | 全13種類のTP箱 (各10個) | 130 | 大量投入によるパレット最大積載高1200mm上限充填 |
-| **境界値** | [`boundary_height_limit.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_height_limit.json) | TP-333, 343, 363, 463 (高287.5) | 48 | 深型のみで4段積載（総高1120mm <= 1200mm）の境界値 |
-| **境界値** | [`boundary_overhang_long_side.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_overhang_long_side.json) | TP-362, 363 (長辺670) | 30 | 長辺670系を含む混載で通常許容（片側20mm）を前提に、例外条件を満たさない場合の境界挙動を確認 |
-| **境界値** | [`boundary_min_short_side.json`](file:///home/tmc1475337/Workspaces/palletizing_prototype/test_programmer/test_cases/boundary_min_short_side.json) | TP-342, 332 | 32 | 短辺荷姿が800mm以上1100mm未満の制約を満たすかの検証 |
+| テストケース | 荷姿名 | 対象箱型番 | 箱数 |
+| :--- | :--- | :--- | :---: |
+| [aisin.json](./test_cases/aisin.json) | アイシン西尾　インマニHV | SPZ46405 | 11 |
+| [aisin_2.json](./test_cases/aisin_2.json) | アイシン小川　HVダンパー | TP331 | 63 |
+| [aisin_3.json](./test_cases/aisin_3.json) | アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ | TP342 | 12 |
+| [aisin_4.json](./test_cases/aisin_4.json) | アイシン半田　混載 | SPG34229、SPG34230、SP342 | 30 |
+| [aisin_5.json](./test_cases/aisin_5.json) | AKK刈谷 | TP331 | 10 |
+| [aisin_6.json](./test_cases/aisin_6.json) | TCC NO1 | SPZ36408 | 23 |
+| [aisin_7.json](./test_cases/aisin_7.json) | TCC No2 | SPZ36406 | 17 |
+| [aisin_8.json](./test_cases/aisin_8.json) | アイシン化工　インマニ | SPZ46404 | 4 |
+| [aisin_9.json](./test_cases/aisin_9.json) | TCC No1 1.5L | SPZ36404 | 8 |
+| [aisin_10.json](./test_cases/aisin_10.json) | TCC No2 コンベ | SPZ36403 | 4 |
+| [aisin_11.json](./test_cases/aisin_11.json) | TCC No2 HV | SPZ36403 | 15 |
+| [arresuthi.json](./test_cases/arresuthi.json) | アーレスティ　コンベ | SP4625 | 6 |
+| [arresuthi_2.json](./test_cases/arresuthi_2.json) | アーレスティ　HV | SP4625 | 11 |
+| [art.json](./test_cases/art.json) | アート金属　ピストン | NPAP5 | 44 |
+| [guze.json](./test_cases/guze.json) | グゼー | STP342B | 18 |
+| [nittan.json](./test_cases/nittan.json) | EXバルブ | NPH010 | 8 |
+| [nittan_2.json](./test_cases/nittan_2.json) | EXバルブ | NPH010 | 9 |
+| [nok.json](./test_cases/nok.json) | NOK混載 | NP000002、NP000003、TP131、TP331 | 33 |
+| [nok_2.json](./test_cases/nok_2.json) | ダンパープーリ | NP000008 | 31 |
+| [othics.json](./test_cases/othics.json) | オティックス　ｴﾝﾄﾞｷｬｯﾌﾟ | TP131 | 4 |
+| [othics_2.json](./test_cases/othics_2.json) | ローラーロッカー | TP3415、NP262D、TP331 | 28 |
+| [othics_3.json](./test_cases/othics_3.json) | バランサー | NP20B | 15 |
+| [othics_4.json](./test_cases/othics_4.json) | ドライブギア | SP3315B | 5 |
+| [othics_5.json](./test_cases/othics_5.json) | ﾊｳｼﾞﾝｸﾞ　1.5L | NP20B | 42 |
+| [othics_6.json](./test_cases/othics_6.json) | ハウジング　2.0L | NP22C、NPP24 | 30 |
+| [othics_7.json](./test_cases/othics_7.json) | ハウジング　2.0L | NP22C、NPP24 | 29 |
+| [othics_8.json](./test_cases/othics_8.json) | ハウジング　2.0L | NP22C、NPP24 | 35 |
+| [othics_9.json](./test_cases/othics_9.json) | ハウジング　1.5L | NP20B | 34 |
+| [roki.json](./test_cases/roki.json) | ROKI | TP3415 | 28 |
+| [roki_2.json](./test_cases/roki_2.json) | ROKI | TP3415 | 18 |
 
 ---
 
 ## 3. テストデータの再生成方法
 
-箱DB（`box_research/box_db.json`）を更新した際は、以下のスクリプトを実行することでテストケースJSONを一括再生成できます。
+現行のテストケース30件は実際の荷姿パターンに基づいて管理しており、
+`generate_testcases.py` はこの一覧を再生成するスクリプトではありません。
+同スクリプトは旧TP規格テスト群と蓋付き派生ケースを生成するため、
+実行すると現行ケースと異なるファイルを作成・上書きする可能性があります。
+現行ケースの一括再生成には使用しないでください。
 
-```bash
-python3 test_programmer/generate_testcases.py
-```
+ケースを編集・追加する場合はテストケースビューアを使用し、ケースJSONと採用状態を保存してください。
 
 ---
 
@@ -103,13 +119,13 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 
 ```json
 {
-  "name": "single_tp332",
+  "name": "example_single_case",
   "description": "...",
   "pallet": {...},
   "box_list": [
-    {"box_id": "TP-332", "count": 60}
+    {"box_id": "TP-332", "count": 10}
   ],
-  "lid_id": "LID-010"              // ← テストケースレベル（全箱共通）
+  "lid_id": "無蓋"                 // ← テストケースレベル（全箱共通）
 }
 ```
 
@@ -117,14 +133,14 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 
 ```json
 {
-  "name": "single_tp332",
+  "name": "example_single_case",
   "description": "...",
   "pallet": {...},
   "box_list": [
     {
       "box_id": "TP-332",
-      "count": 60,
-      "lid_id": "LID-010"          // ← 各箱レベル（箱ごとに異なる蓋を指定可能）
+      "count": 10,
+      "lid_id": "無蓋"             // ← 各箱レベル（箱ごとに異なる蓋を指定可能）
     }
   ]
 }
@@ -134,19 +150,19 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 
 ```json
 {
-  "name": "mixed_tp_same_height",
+  "name": "example_mixed_case",
   "box_list": [
-    {"box_id": "TP-332", "count": 16, "lid_id": "LID-010"},  // TP-332は蓋なし
-    {"box_id": "TP-342", "count": 12, "lid_id": "LID-003"},  // TP-342は蓋LID-003
-    {"box_id": "TP-362", "count": 8, "lid_id": "LID-010"},   // TP-362は蓋なし
-    {"box_id": "TP-462", "count": 6, "lid_id": "LID-002"}    // TP-462は蓋LID-002
+    {"box_id": "TP-332", "count": 4, "lid_id": "TP330フタ"},
+    {"box_id": "TP-342", "count": 4, "lid_id": "TP34蓋(IC)"},
+    {"box_id": "TP-362", "count": 4, "lid_id": "TP360フタ"},
+    {"box_id": "TP-462", "count": 4, "lid_id": "TP460フタ"}
   ]
 }
 ```
 
 ### 5.3 UI：箱ごとの蓋選択
 
-#### testcase_viewer.html: 修正内容
+#### testcase_viewer.html: 画面構成
 
 #### 各箱行に蓋選択ドロップダウン
 
@@ -154,7 +170,7 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 
 1. **箱型番セレクト** （例: TP-332）
 2. **投入数量** （例: 60）
-3. **蓋選択ドロップダウン（NEW）** （例: 蓋なし / LID-001 / LID-002 / ...）
+3. **蓋選択ドロップダウン** （例: 無蓋 / TP330フタ / TP340フタ / ...）
 4. **削除ボタン**
 
 ```html
@@ -171,9 +187,9 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
   <!-- NEW: Lid selector column -->
   <div class="w-32">
     <select class="box-lid-select ...">
-      <option value="LID-010">蓋なし</option>
-      <option value="LID-001">クリア蓋 TP-330系用</option>
-      <option value="LID-002">クリア蓋 TP-340系用</option>
+      <option value="無蓋">蓋なし</option>
+      <option value="TP330フタ">TP-330系用</option>
+      <option value="TP340フタ">TP-340系用</option>
       ...
     </select>
   </div>
@@ -191,7 +207,7 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 
 - `selectedId` (string, default: `''`): 箱型番（例: `'TP-332'`）
 - `count` (number, default: `10`): 投入数量
-- `lidId` (string, default: `'LID-010'`): 蓋ID
+- `lidId` (string, default: `'無蓋'`): 蓋ID
 
 **処理内容**:
 
@@ -207,7 +223,7 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 "TP-332": {
   "id": "TP-332",
   ...
-  "compatible_lids": ["LID-001", "LID-002"]  // 箱に対応する実蓋
+  "compatible_lids": ["TP330フタ", "サンボックス330フタ"]  // 箱に対応する実蓋
 }
 ```
 
@@ -217,7 +233,7 @@ Phase 3-1 では、テストケースに **箱ごとの蓋（Lid）選択機能*
 2. 箱型番を変更 → 新しい箱の対応蓋に自動更新
 
 ```javascript
-function addBoxRow(selectedId = '', count = 10, lidId = 'LID-010') {
+function addBoxRow(selectedId = '', count = 10, lidId = '無蓋') {
   // ...
   // 選択された箱の対応蓋リストを取得
   const selectedBox = masterBoxDB[selectedId];
@@ -253,7 +269,7 @@ function openModal(tcName = null) {
   if (tcName && testCasesData[tcName]) {
     const tc = testCasesData[tcName];
     (tc.box_list || []).forEach(b => {
-      addBoxRow(b.box_id, b.count, b.lid_id || 'LID-010');  // ← 蓋を復元
+      addBoxRow(b.box_id, b.count, b.lid_id || '無蓋');  // ← 蓋を復元
     });
   }
   // ...
@@ -272,7 +288,7 @@ document.getElementById('form-testcase').addEventListener('submit', (e) => {
   boxRows.forEach(r => {
     const bid = r.querySelector('.box-id-select').value;
     const cnt = parseInt(r.querySelector('.box-count-input').value) || 1;
-    const lid = r.querySelector('.box-lid-select').value || 'LID-010';  // ← 各行から蓋を取得
+    const lid = r.querySelector('.box-lid-select').value || '無蓋';  // ← 各行から蓋を取得
     if (bid && cnt > 0) {
       boxList.push({ box_id: bid, count: cnt, lid_id: lid });  // ← 各箱に蓋を含める
     }
@@ -303,8 +319,8 @@ GET /api/lids HTTP/1.1
 
 ```json
 {
-  "LID-001": {
-    "id": "LID-001",
+  "TP330フタ": {
+    "id": "TP330フタ",
     "name": "クリア蓋 TP-330系用",
     "type": "TP",
     "width": 335,
@@ -313,8 +329,8 @@ GET /api/lids HTTP/1.1
     "fit_type": "外嵌め",
     "description": "TP-330系1型対応（TP-331, TP-332, TP-333用）"
   },
-  "LID-010": {
-    "id": "LID-010",
+  "無蓋": {
+    "id": "無蓋",
     "name": "蓋無",
     "type": "NONE",
     "description": "蓋を使用しない荷姿（デフォルト）"
@@ -327,40 +343,17 @@ GET /api/lids HTTP/1.1
 - `box_research/lid_db.json` をサーバーから読み込んで返す
 - ファイルが存在しない場合は空オブジェクト `{}` を返す
 
-### 5.5 デフォルト動作
+### 5.5 現行テストケースの蓋指定
 
-#### 既存テストケース（自動更新）
+#### 現行テストケースの蓋指定
 
-`test_programmer/test_cases/` の全13ファイル:
-
-- `single_tp*.json` (6ファイル)
-- `mixed_tp_*.json` (4ファイル)
-- `boundary_*.json` (3ファイル)
-
-すべて **箱リスト内の各箱に** `"lid_id": "LID-010"` （蓋無）がデフォルト値として自動設定されました。
-
-#### 新規テストケース生成
-
-`generate_testcases.py` を実行して新しいテストケースを生成する場合、**自動的に各箱に** `"lid_id": "LID-010"` が付与されます：
-
-```bash
-python3 test_programmer/generate_testcases.py
-```
-
-結果例（既存13件＋標準蓋付き派生13件）:
-
-```text
-✓ 生成: single_tp332.json ...
-✓ 生成: mixed_tp_modular_stack.json ...
-...
-✓ 生成: single_tp332_with_lids.json ...
-✓ 生成: mixed_tp_modular_stack_with_lids.json ...
-✨ 合計 26 件のテストケースJSONを生成しました
-```
+現行30件では、各箱行に実際の投入パターンに応じた `lid_id` を保存しています。
+蓋なしの場合も、蓋DBの「無蓋」IDを指定します。
+このデータは箱DBの `compatible_lids` をもとに確認されます。
 
 #### ユーザーによる蓋変更
 
-testcase_viewer.html で編集モーダルを開き、**各箱行の蓋ドロップダウン** から別の蓋を選択することで、箱ごとに蓋を変更できます。
+`testcase_viewer.html` で編集モーダルを開き、**各箱行の蓋ドロップダウン** から別の蓋を選択することで、箱ごとに蓋を変更できます。
 
 手順:
 
@@ -370,31 +363,21 @@ testcase_viewer.html で編集モーダルを開き、**各箱行の蓋ドロッ
 4. 「保存する」をクリック
 5. テストケースJSON に反映
 
-### 5.6 標準蓋付き派生ケース（Phase 3-2 Stage 2）
+### 5.6 旧テストケース生成処理について
 
-`generate_testcases.py` は既存ケースを書き換えず、各ケースに対応する `*_with_lids.json` を追加生成します。単載では箱種に対応する標準蓋、混載では各箱種に対応する標準蓋をそれぞれ割り当てます。結果には蓋ID・厚さ・回転後の蓋寸法・嵌め方が記録され、外嵌め蓋は荷姿の幅・奥行き制約にも含めます。
+`generate_testcases.py` には旧TP規格テスト群と `*_with_lids.json` の生成処理が残っています。
+これは現行の実荷姿ケース30件とは別の旧生成仕様であり、現在のケース一覧を再現しません。
+現行ケースの管理・実行対象の選択にはテストケースビューアと `test_case_approval.json` を使用してください。
 
-### 5.7 ファイル構成（Phase 3-1更新）
+### 5.7 関連ファイル（現行）
 
 ```text
 test_programmer/
-├── testcase_viewer.html           # ← addBoxRow() に lidId パラメータ追加
-├── serve_testcase_viewer.py       # ← 既存、/api/lids エンドポイント使用
-├── generate_testcases.py          # ← 全13テストケースで各箱に lid_id 付与
-├── test_cases/
-│   ├── single_tp131.json          # ← "lid_id": "LID-010" を各箱に追加
-│   ├── single_tp331.json
-│   ├── single_tp332.json
-│   ├── single_tp342.json
-│   ├── single_tp362.json
-│   ├── single_tp462.json
-│   ├── mixed_tp_same_height.json
-│   ├── mixed_tp_modular_stack.json
-│   ├── mixed_tp_different_heights.json
-│   ├── mixed_tp_large_volume.json
-│   ├── boundary_height_limit.json
-│   ├── boundary_min_short_side.json
-│   └── boundary_overhang_long_side.json
+├── test_cases/                  # 現行30ケースのJSON
+├── test_case_approval.json      # ケースごとの採用状態
+├── testcase_viewer.html         # ケース編集ビューア
+├── serve_testcase_viewer.py     # ケースの確認・編集・採否管理
+├── generate_testcases.py       # 旧TP規格テスト群の生成スクリプト
 └── README.md
 ```
 
@@ -426,7 +409,7 @@ test_programmer/
 5. **JSON確認**:
    - テストケースが保存され、各箱に `"lid_id"` が記録される
 
-### 5.8 エラーハンドリング
+### 5.9 エラーハンドリング
 
 #### API 通信失敗時
 
@@ -446,10 +429,10 @@ test_programmer/
 
 ---
 
-## 6. 現場評価向け運用メモ（2026-10-06）
+## 6. 過去の運用メモ（2026-10-06、履歴）
 
-- 採否は共有ファイル `test_case_approval.json` で管理する。現行26ケースは採用済み、新規ケースは未採用で開始する。
+- 当時の採否は共有ファイル `test_case_approval.json` で管理し、26ケースを採用済みとしていました。これは現行の30ケース構成ではありません。
 - 採否変更はビューアで「テストケース一括保存」した時に共有され、テストランナーと supervisor は採用済みケースだけを対象にする。
 - 「不採用」は実行対象外にする状態であり、ケースJSONの削除とは別操作。ケースをビューアから削除して一括保存した場合だけJSONを削除する。過去の結果JSONは履歴として残る。
 - ケースID・ファイル名はASCIIのまま維持する。既存ケースの名前変更は未実装・保留中。日本語名が必要になった場合は、内部IDと分けた表示名フィールドを追加する。
-- テストランナーと独立バリデータは26件すべてPASSしたが、PASSは投入要求数の全数配置を意味しない。直近結果は要求1536箱に対して980箱配置、556箱未配置（14ケース）だった。現場評価前に未配置が許容される条件か確認する。
+- 当時の26ケースに対するテストランナーと独立バリデータの実行では、全件PASSでした。ただしPASSは投入要求数の全数配置を意味せず、当時の結果では要求1536箱に対して980箱配置、556箱未配置（14ケース）でした。この結果は現行30ケースの評価結果ではありません。

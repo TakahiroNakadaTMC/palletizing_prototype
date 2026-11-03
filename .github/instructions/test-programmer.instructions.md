@@ -1,56 +1,13 @@
-# Copilot エージェント定義：Test Programmer
-## テストデータ生成・テストケース設計
+---
+description: "パレタイズのテストケース作成・編集、箱・蓋の参照整合性確認、採用状態や関連ドキュメントの更新時に使用します。"
+---
 
-### ロール・責務
-- `box_research/box_db.json` に登録された箱データをもとに、多様なテストケース（箱投入リスト）を設計・生成
-- 単載・混載・境界値テスト等、様々なパターンをカバー
-- アルゴリズムの品質検証に必要なテストケース群を網羅的に作成
+# テストケース作成・編集の指針
 
-### 主要入力ファイル
-- `constraints/constraints.md` - 荷姿制約仕様
-- `box_research/box_db.json` - 箱仕様データベース
-
-### 主要出力ファイル
-- `test_programmer/generate_testcases.py` - テストケース生成スクリプト
-- `test_programmer/test_cases/` - 生成されたテストケースJSON群
-- `test_programmer/README.md` - テストケース設計ドキュメント
-
-### テストケースのパターン例
-1. **単載テスト**（Single Box Type）
-   - `single_tp331_*.json` - TP-331 型のみ投入
-   - `single_tp460_*.json` - TP-460 型のみ投入
-2. **混載テスト**（Mixed Box Types）
-   - `mixed_tp_*.json` - TP-330系 + TP-460系 混載
-   - `mixed_tp_non_tp_*.json` - TP箱 + 非TP箱 混載
-3. **境界値テスト**（Boundary Value Test）
-   - `boundary_max_height_*.json` - 積載高さ 1200mm 上限テスト
-   - `boundary_overhang_*.json` - 長辺 1360mm 上限テスト
-  - `boundary_short_side_*.json` - 短辺荷姿幅 800mm以上1100mm未満の制約テスト
-
-### テストケースJSON仕様
-```json
-{
-  "test_name": "single_tp331_20pcs",
-  "description": "TP-331型を20個投入",
-  "pallet": {
-    "length": 1200,
-    "width": 1000,
-    "max_height": 1200
-  },
-  "box_list": [
-    {"box_id": "TP-331", "count": 20}
-  ]
-}
-```
-
-### 利用可能なツール
-- ファイル読み込み（constraints/, box_research/）
-- ファイル書き込み（test_programmer/ ディレクトリ）
-- シェルコマンド実行
-
-### 行動指針
-1. TP規格モジュール比率（1x1, 2x1等）に基づき、実現可能な組み合わせを設計
-2. 各テストケースの目的（何の制約・機能をテストするか）を明記
-3. 境界値テストはパレットの寸法上限・高さ上限を意識した設計
-4. テストケース数は実装チェック時間とのバランスを考慮（目安 10-20 ケース）
-5. 各テストケースは再現可能・冪等性を備えた設計にする
+- 現行のテストケースは実際の荷姿を記録したものとして扱います。根拠なく投入数量・蓋の指定・パレット条件を推測または変更しないでください。
+- 単載・混載・境界値・非TP箱のコラム積みなどのアルゴリズム検証ケースは、依頼された場合に作成し、実荷姿ケースと目的を混同しないでください。
+- 保存前に各 `box_id` を `box_research/box_db.json`、各 `lid_id` を `box_research/lid_db.json` と照合し、蓋が箱の `compatible_lids` に含まれることを確認してください。
+- ケースは `test_programmer/test_cases/` に保存し、現行スキーマの `name`、`description`、`pallet` と、`box_id`・`count`・`lid_id` を含む `box_list` を使用してください。
+- 実行対象の選択は `test_programmer/test_case_approval.json` で管理してください。採用状態はテスト実行対象であることを示し、制約検証に合格したことを意味しません。
+- 変更後はJSONの妥当性、参照先、ケース数、投入数量、採用状態を確認し、`test_programmer/README.md` の記載も同期してください。
+- 廃止した `generate_testcases.py` の手順は使用せず、テストケースビューアでケースを作成・編集してください。

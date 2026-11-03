@@ -206,33 +206,9 @@
       "サンボックス460フタ"
     ]
   },
-  "TP-111": {
-    "id": "TP-111",
-    "name": "TP規格コンテナ TP-111",
-    "type": "TP",
-    "length": 167.5,
-    "width": 167.5,
-    "height": 102.5,
-    "fitting_depth": 10,
-    "rib_thickness": 22.5,
-    "module_ratio": "0.5x0.5",
-    "description": "TP-110系 1型 極小モジュール (内寸133x133/有効内寸123x123, 側面厚22.5mm)"
-  },
-  "TP-132": {
-    "id": "TP-132",
-    "name": "TP規格コンテナ TP-132",
-    "type": "TP",
-    "length": 335,
-    "width": 167.5,
-    "height": 195,
-    "fitting_depth": 10,
-    "rib_thickness": 22,
-    "module_ratio": "1x0.5",
-    "description": "TP-130系 2型 ハーフモジュール深型 (有効内寸291x123, 側面厚22.0mm)"
-  },
   "TP-361": {
     "id": "TP-361",
-    "name": "TP規格コンテナ TP-361",
+    "name": "TP-361",
     "type": "TP",
     "length": 670,
     "width": 335,
@@ -240,11 +216,12 @@
     "fitting_depth": 10,
     "rib_thickness": 22.5,
     "module_ratio": "2x1",
-    "description": "TP-360系 1型 2倍モジュール浅型 (内寸635x300/有効内寸625x290, 側面厚22.5mm)"
+    "description": "TP-360系 1型 2倍モジュール浅型 (内寸635x300/有効内寸625x290, 側面厚22.5mm)",
+    "compatible_lids": []
   },
   "TP-461": {
     "id": "TP-461",
-    "name": "TP規格コンテナ TP-461",
+    "name": "TP-461",
     "type": "TP",
     "length": 670,
     "width": 502.5,
@@ -252,11 +229,12 @@
     "fitting_depth": 10,
     "rib_thickness": 22,
     "module_ratio": "2x1.5",
-    "description": "TP-460系 1型 大型モジュール浅型 (内寸635x468/有効内寸626x458, 側面厚22.0mm)"
+    "description": "TP-460系 1型 大型モジュール浅型 (内寸635x468/有効内寸626x458, 側面厚22.0mm)",
+    "compatible_lids": []
   },
   "TP-482": {
     "id": "TP-482",
-    "name": "TP規格コンテナ TP-482",
+    "name": "TP-482",
     "type": "TP",
     "length": 837.5,
     "width": 502.5,
@@ -264,139 +242,8 @@
     "fitting_depth": 10,
     "rib_thickness": 22,
     "module_ratio": "2.5x1.5",
-    "description": "TP-480系 特大モジュール (内寸803x468/有効内寸794x459, 側面厚22.0mm)"
-  },
-  "TP-492": {
-    "id": "TP-492",
-    "name": "TP規格コンテナ TP-492",
-    "type": "TP",
-    "length": 1005,
-    "width": 502.5,
-    "height": 195,
-    "fitting_depth": 10,
-    "rib_thickness": 22,
-    "module_ratio": "3x1.5",
-    "description": "TP-490系 超特大モジュール (内寸970x468/有効内寸961x459, 側面厚22.0mm)"
-  },
-  "OC-50L": {
-    "id": "OC-50L",
-    "name": "折りたたみコンテナ 50L (CB-S51NR/オリコン50B)",
-    "type": "NON_TP",
-    "length": 530,
-    "width": 366,
-    "height": 325,
-    "fitting_depth": 10,
-    "rib_thickness": 18.5,
-    "module_ratio": null,
-    "description": "標準折りたたみコンテナ 50L (内寸493x335/有効内寸493x335, 側面厚18.5mm)"
-  },
-  "OC-40L": {
-    "id": "OC-40L",
-    "name": "折りたたみコンテナ 40L",
-    "type": "NON_TP",
-    "length": 530,
-    "width": 366,
-    "height": 272,
-    "fitting_depth": 10,
-    "rib_thickness": 18.5,
-    "module_ratio": null,
-    "description": "標準折りたたみコンテナ 40L 中型 (側面厚18.5mm)"
-  },
-  "OC-75L": {
-    "id": "OC-75L",
-    "name": "折りたたみコンテナ 75L",
-    "type": "NON_TP",
-    "length": 650,
-    "width": 440,
-    "height": 327,
-    "fitting_depth": 12,
-    "rib_thickness": 20,
-    "module_ratio": null,
-    "description": "大型折りたたみコンテナ 75L (内寸600x405, 側面厚20.0mm)"
-  },
-  "OC-20L": {
-    "id": "OC-20L",
-    "name": "折りたたみコンテナ 20L",
-    "type": "NON_TP",
-    "length": 380,
-    "width": 305,
-    "height": 237,
-    "fitting_depth": 8,
-    "rib_thickness": 16.5,
-    "module_ratio": null,
-    "description": "小型折りたたみコンテナ 20L (内寸346x274, 側面厚16.5mm)"
-  },
-  "BOX-STD-24B": {
-    "id": "BOX-STD-24B",
-    "name": "サンボックス 24B",
-    "type": "NON_TP",
-    "length": 438,
-    "width": 328,
-    "height": 260,
-    "fitting_depth": 10,
-    "rib_thickness": 18,
-    "module_ratio": null,
-    "description": "一般汎用ベタ目コンテナ 24B型 (内寸402x292, 側面厚18.0mm)"
-  },
-  "BOX-STD-36-2": {
-    "id": "BOX-STD-36-2",
-    "name": "サンボックス 36-2",
-    "type": "NON_TP",
-    "length": 593,
-    "width": 393,
-    "height": 206,
-    "fitting_depth": 10,
-    "rib_thickness": 25,
-    "module_ratio": null,
-    "description": "一般汎用ベタ目コンテナ 36-2型 (内寸543x343, 側面厚25.0mm)"
-  },
-  "BOX-BANJU-A": {
-    "id": "BOX-BANJU-A",
-    "name": "サンコー 番重A型",
-    "type": "NON_TP",
-    "length": 574,
-    "width": 388,
-    "height": 105,
-    "fitting_depth": 8,
-    "rib_thickness": 20,
-    "module_ratio": null,
-    "description": "食品・部品搬送用 標準番重 A型浅型 (内寸534x348, 側面厚20.0mm)"
-  },
-  "BOX-CUSTOM-S": {
-    "id": "BOX-CUSTOM-S",
-    "name": "独自通い箱 Sサイズ",
-    "type": "NON_TP",
-    "length": 400,
-    "width": 300,
-    "height": 200,
-    "fitting_depth": 8,
-    "rib_thickness": 20,
-    "module_ratio": null,
-    "description": "独自フットプリント通い箱 S型 (内寸360x260想定, 側面厚20.0mm)"
-  },
-  "BOX-CUSTOM-M": {
-    "id": "BOX-CUSTOM-M",
-    "name": "独自通い箱 Mサイズ",
-    "type": "NON_TP",
-    "length": 500,
-    "width": 400,
-    "height": 250,
-    "fitting_depth": 10,
-    "rib_thickness": 20,
-    "module_ratio": null,
-    "description": "独自フットプリント通い箱 M型 (内寸460x360想定, 側面厚20.0mm)"
-  },
-  "BOX-CUSTOM-L": {
-    "id": "BOX-CUSTOM-L",
-    "name": "独自通い箱 Lサイズ",
-    "type": "NON_TP",
-    "length": 600,
-    "width": 400,
-    "height": 300,
-    "fitting_depth": 12,
-    "rib_thickness": 25,
-    "module_ratio": null,
-    "description": "独自フットプリント通い箱 L型 (内寸550x350想定, 側面厚25.0mm)"
+    "description": "TP-480系 特大モジュール (内寸803x468/有効内寸794x459, 側面厚22.0mm)",
+    "compatible_lids": []
   },
   "NP000002": {
     "id": "NP000002",

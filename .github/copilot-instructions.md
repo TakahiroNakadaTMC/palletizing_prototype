@@ -24,11 +24,9 @@
 | コマンド | 説明 | 入力 | 出力 |
 |---------|------|------|------|
 | `python box_research/serve_viewer.py` | 箱・蓋DBビューア起動 | — | ブラウザで `http://localhost:8081` |
-| `python3 test_programmer/generate_testcases.py` | テストケース生成 | `box_research/box_db.json` | `test_programmer/test_cases/*.json` |
-| `python3 tester/run_tests.py` | 全テストケース実行 | `test_programmer/test_cases/` | `tester/results/result_*.json` |
-| `python3 tester/run_tests.py -k single_tp332` | 特定テストを実行 | 名前パターン | 該当結果 |
+| `python tester/run_tests.py` | 採用済みテストケースを実行 | `test_programmer/test_cases/`、採用状態 | `tester/results/result_*.json` |
 | `python3 supervisor/validate.py` | 制約バリデーション | `tester/results/*.json` | `supervisor/reports/validation_report.md` |
-| `python3 visualizer/visualize.py tester/results/result_*.json` | 3D可視化（スタンドアロンHTML生成） | 結果JSON | `visualizer/viewer.html` |
+| `python3 visualizer/visualize.py <result.json> [-o <output.html>]` | 結果1件の3D可視化（スタンドアロンHTML生成） | 結果JSON | HTMLファイル |
 | `python3 visualizer/serve_3d_viewer.py` | 統合ビューワサーバー起動 | — | ブラウザで `http://localhost:8082` |
 
 ### Lid Database Management **[NEW: Phase 2]**
@@ -56,18 +54,13 @@ python box_research/serve_viewer.py
 - 箱編集時に互換蓋（compatible_lids）をチェックボックスで選択
 - 蓋を箱に紐付けて保存
 
-### Quick Single-Test Validation
+### Running Approved Test Cases
 
 ```bash
-# 1. 単一テストケースのパレタイズ実行
-python3 algorithm_programmer/cli.py \
-  test_programmer/test_cases/single_tp332.json \
-  -o tester/results/result_test.json
+# 採用済みテストケースを実行
+python tester/run_tests.py
 
-# 2. 結果を可視化
-python3 visualizer/visualize.py tester/results/result_test.json -o visualizer/viewer_test.html
-
-# 3. 制約検証
+# 生成された結果を制約検証
 python3 supervisor/validate.py
 ```
 

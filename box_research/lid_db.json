@@ -1,15 +1,4 @@
 {
-  "TEST2": {
-    "id": "TEST2",
-    "name": "機能確認用",
-    "type": "OTHER",
-    "length": 350,
-    "width": 300,
-    "thickness": 15,
-    "fit_type": "内嵌め",
-    "color": "",
-    "description": "機能確認用"
-  },
   "TP330フタ": {
     "id": "TP330フタ",
     "name": "TP330系用",
@@ -201,7 +190,7 @@
     "id": "TP34蓋(IC)",
     "name": "TP34系",
     "type": "TP",
-    "length": 503,
+    "length": 502.5,
     "width": 335,
     "thickness": 15,
     "fit_type": "内嵌め",
