@@ -21,6 +21,29 @@ TOP_CORNER_MARGIN_MM = 35.0
 GEOMETRY_EPS_MM = 1e-3
 MIXED_LAYER_SEARCH_WIDTH = 16
 
+def _generate_pinwheel_pattern(w: float, l: float, max_x: float,
+                               max_y: float) -> Optional[Dict[str, Any]]:
+    """箱・蓋を含む外形から、中央を空けた4箱の風車配置を1候補作る。"""
+    long_side = max(w, l)
+    short_side = min(w, l)
+    span = long_side + short_side
+    if w == l or span > max_x + 1e-9 or span > max_y + 1e-9:
+        return None
+    horizontal = 0 if w >= l else 90
+    vertical = 90 - horizontal
+    positions = [(0.0, 0.0, horizontal), (long_side, 0.0, vertical),
+                 (short_side, long_side, horizontal), (0.0, short_side, vertical)]
+    return {
+        "type": "pinwheel",
+        "boxes": [
+            {"x": x, "y": y, "w": w if rotation == 0 else l,
+             "l": l if rotation == 0 else w, "rot": rotation}
+            for x, y, rotation in positions
+        ],
+        "x_span": span,
+        "y_span": span
+    }
+
 def calculate_max_layers(height: float, fitting_depth: float, max_height: float) -> int:
     """嵌合沈み込みを考慮した最大積載段数を算出"""
     if height <= 0 or max_height + 1e-9 < height:
@@ -218,7 +241,7 @@ class Palletizer:
         )
 
     # -------------------------------------------------------------------------
-    # 1. 単載パレタイズ (Mono-load Palletizer) — v2026-10-22: 総配置数優先・同数なら低い荷山
+    # 1. 単載パレタイズ — v2026-11-04: 風車追加、配置数・低高さ・外形占有率の順に選定
     # -------------------------------------------------------------------------
     def palletize_single(self, boxes: List[BoxSpec], lids: List[Dict[str, Any]] = None
                          ) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
@@ -241,6 +264,12 @@ class Palletizer:
             # 全段同一配置では、本体から張り出す蓋の隅に上段底面が届かない。
             max_layers = min(max_layers, 1)
         candidate_patterns = self._generate_single_2d_patterns(footprint_w, footprint_l)
+        if len(boxes) >= 4 and max_layers > 0:
+            pinwheel = _generate_pinwheel_pattern(
+                footprint_w, footprint_l, self.pallet.max_x_span, self.pallet.max_y_span
+            )
+            if pinwheel is not None:
+                candidate_patterns.append(pinwheel)
 
         best_pattern = None
         best_score = None
@@ -249,6 +278,17 @@ class Palletizer:
         for pattern in candidate_patterns:
             x_span = pattern["x_span"]
             y_span = pattern["y_span"]
+            if x_span > self.pallet.max_x_span + 1e-9:
+                continue
+            if y_span > self.pallet.max_y_span + 1e-9:
+                continue
+            count_in_layer = len(pattern["boxes"])
+            layers = min(len(boxes) // count_in_layer, max_layers)
+            load_height = effective_height + (layers - 1) * (effective_height - depth)
+            occupancy = (x_span * y_span) / (self.pallet.max_x_span * self.pallet.max_y_span)
+            score = (count_in_layer * layers, -load_height, occupancy)
+            if layers > 0 and best_score is not None and score <= best_score:
+                continue
 
             pattern_boxes = []
             for item in pattern["boxes"]:
@@ -263,17 +303,11 @@ class Palletizer:
                     layer_index=0, lid_id=sample_box.lid_id, lid_width=lid_w, lid_length=lid_l,
                     lid_fit_type=sample_box.lid_fit_type
                 ))
-            if x_span > self.pallet.max_x_span + 1e-9:
-                continue
-            if y_span > self.pallet.max_y_span + 1e-9:
-                continue
-
             centered_x = (self.pallet.length - x_span) / 2.0
             centered_y = (self.pallet.width - y_span) / 2.0
             if not self._pallet_support_is_valid(pattern_boxes, centered_x, centered_y):
                 continue
 
-            count_in_layer = len(pattern["boxes"])
             # 完全な層を作れない少数投入では、従来の最大パターンの先頭部分を使う。
             if fallback_pattern is None and (len(boxes) < count_in_layer or max_layers == 0):
                 fallback_pattern = pattern
@@ -286,11 +320,8 @@ class Palletizer:
             ) for left in (True, False) for front in (True, False)):
                 continue
 
-            layers = min(len(boxes) // count_in_layer, max_layers)
             if layers == 0:
                 continue
-            load_height = effective_height + (layers - 1) * (effective_height - depth)
-            score = (count_in_layer * layers, -load_height)
             if best_score is None or score > best_score:
                 best_score = score
                 best_pattern = pattern
@@ -1122,20 +1153,17 @@ class Palletizer:
         for key, spec in specs.items():
             if counts[key] < 4:
                 continue
-            long_side = max(spec.footprint_width, spec.footprint_length)
-            short_side = min(spec.footprint_width, spec.footprint_length)
-            span = long_side + short_side
-            if (long_side == short_side or span > envelope["x_span"] + 1e-9
-                    or span > envelope["y_span"] + 1e-9):
+            pattern = _generate_pinwheel_pattern(
+                spec.footprint_width, spec.footprint_length,
+                envelope["x_span"], envelope["y_span"]
+            )
+            if pattern is None:
                 continue
-            horizontal = 0 if spec.footprint_width >= spec.footprint_length else 90
-            vertical = 90 - horizontal
-            positions = [(0.0, 0.0, horizontal), (long_side, 0.0, vertical),
-                         (short_side, long_side, horizontal), (0.0, short_side, vertical)]
             layer = []
-            for x, y, rotation in positions:
+            for item in pattern["boxes"]:
                 placed = self._try_place_at(
-                    x, y, spec, rotation, layer, envelope["x_span"], envelope["y_span"],
+                    item["x"], item["y"], spec, item["rot"], layer,
+                    envelope["x_span"], envelope["y_span"],
                     base_z, layer_idx, lower_boxes
                 )
                 if placed is None:

@@ -6,7 +6,9 @@ from typing import Dict, List, Tuple
 from unittest.mock import mock_open, patch
 
 from algorithm_programmer.models import BoxSpec, PalletSpec, PlacedBox
-from algorithm_programmer.palletizer import Palletizer
+from algorithm_programmer.palletizer import (
+    Palletizer, _generate_pinwheel_pattern, intersects_2d
+)
 from supervisor.validate import PalletizeValidator
 
 
@@ -174,7 +176,9 @@ class SingleLayerPatternTests(unittest.TestCase):
                     if len(pattern["boxes"]) == 5)
         missing_corner = dict(full, boxes=full["boxes"][:-1])
         with patch.object(engine, "_generate_single_2d_patterns",
-                          return_value=[missing_corner, full]):
+                          return_value=[missing_corner, full]), patch(
+                              "algorithm_programmer.palletizer._generate_pinwheel_pattern",
+                              return_value=None):
             placed, unplaced = engine.palletize_single([self.box] * 12)
         self.assert_identical_layers(placed, 5, 2)
         self.assertEqual(sum(item["count"] for item in unplaced), 2)
@@ -205,6 +209,171 @@ class SingleLayerPatternTests(unittest.TestCase):
                 self.assertLessEqual(max(box.top_z for box in placed), limit)
                 self.assertEqual(unplaced, [{"box_id": self.box.id, "count": 40 - 5 * layers,
                                             "reason": "最大積載高さの上限に達しました"}])
+
+    def test_pinwheel_real_cases_repeat_and_pass_independent_validation(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        raw_boxes = json.loads((root / "box_research" / "box_db.json").read_text(encoding="utf-8"))
+        lids = json.loads((root / "box_research" / "lid_db.json").read_text(encoding="utf-8"))
+        db = {key: BoxSpec.from_dict(value) for key, value in raw_boxes.items()}
+        validator = PalletizeValidator(raw_boxes, lids)
+        for name, layers, span, height, unplaced in (
+                ("aisin_10", 1, 1005.0, 395.0, 0),
+                ("aisin_9", 2, 1005.0, 780.0, 0),
+                ("nittan", 2, 1107.0, 311.0, 0),
+                ("nittan_2", 2, 1107.0, 311.0, 1)):
+            with self.subTest(name=name):
+                case = json.loads((root / "test_programmer" / "test_cases" /
+                                   (name + ".json")).read_text(encoding="utf-8"))
+                engine = Palletizer(db, PalletSpec.from_dict(case["pallet"]))
+                result = engine.run(name, case["box_list"], lids)
+                self.assert_identical_layers(result.boxes, 4, layers)
+                bounds = result.summary["bounding_box"]
+                self.assertEqual((bounds["x_span"], bounds["y_span"]), (span, span))
+                self.assertEqual(bounds["max_z"], height)
+                self.assertEqual(sum(row["count"] for row in result.unplaced_boxes), unplaced)
+                base = [box for box in result.boxes if box.layer_index == 0]
+                center_x = engine.pallet.length / 2.0
+                center_y = engine.pallet.width / 2.0
+                for index, box in enumerate(base):
+                    self.assertFalse(box.footprint_min_x < center_x < box.max_x and
+                                     box.footprint_min_y < center_y < box.max_y)
+                    for other in base[index + 1:]:
+                        self.assertFalse(intersects_2d(
+                            box.footprint_min_x, box.footprint_min_y,
+                            box.footprint_width, box.footprint_length,
+                            other.footprint_min_x, other.footprint_min_y,
+                            other.footprint_width, other.footprint_length))
+                for box in result.boxes:
+                    if box.layer_index > 0:
+                        self.assertEqual(len(box.supported_by), 1)
+                        self.assertLess(box.supported_by[0], box.order)
+                self.assertEqual(result.input_boxes_count, len(result.boxes) + unplaced)
+                with patch("builtins.open", mock_open(read_data=json.dumps(result.to_dict()))):
+                    validation = validator.validate_case(name + ".json")
+                self.assertEqual(validation["violations"], [])
+
+    def test_occupancy_uses_lid_footprint_and_same_column_positions(self) -> None:
+        box = replace(self.box, type="NON_TP", width=300.0, length=600.0,
+                      lid_id="LID", lid_width=335.0, lid_length=670.0,
+                      lid_thickness=15.0, lid_fit_type="外嵌め")
+        engine = Palletizer({box.id: box}, PalletSpec(max_x_span=1340.0, max_y_span=1005.0))
+        placed, unplaced = engine.palletize_single([box] * 8)
+        self.assert_identical_layers(placed, 4, 2)
+        self.assertEqual(unplaced, [])
+        summary = engine.calculate_summary(placed)
+        self.assertEqual(summary["bounding_box"]["x_span"], 1005.0)
+        self.assertEqual(summary["bounding_box"]["y_span"], 1005.0)
+        self.assertTrue(summary["is_valid"])
+
+    def test_more_boxes_outrank_higher_occupancy(self) -> None:
+        box = replace(self.box, width=335.0, length=335.0, height=102.5)
+        result = Palletizer({box.id: box}, PalletSpec(
+            max_x_span=1005.0, max_y_span=1005.0)).run(
+                "count_first", [{"box_id": box.id, "count": 10}])
+        self.assert_identical_layers(result.boxes, 2, 5)
+        self.assertEqual(result.unplaced_boxes, [])
+
+    def test_lower_height_outranks_higher_occupancy(self) -> None:
+        box = replace(self.box, width=335.0, length=670.0)
+        result = Palletizer({box.id: box}, PalletSpec(
+            max_x_span=1340.0, max_y_span=1005.0)).run(
+                "height_first", [{"box_id": box.id, "count": 6}])
+        self.assert_identical_layers(result.boxes, 6, 1)
+        self.assertEqual(result.summary["bounding_box"]["x_span"], 1340.0)
+        self.assertEqual(result.summary["bounding_box"]["y_span"], 1005.0)
+
+    def test_occupancy_tie_retains_original_candidate_order(self) -> None:
+        box = replace(self.box, width=335.0, length=335.0)
+        engine = Palletizer({box.id: box}, PalletSpec(max_x_span=1005.0, max_y_span=1005.0))
+        patterns = [pattern for pattern in engine._generate_single_2d_patterns(335.0, 335.0)
+                    if len(pattern["boxes"]) == 2]
+        for candidates in (patterns, list(reversed(patterns))):
+            with self.subTest(first=candidates[0]["boxes"]):
+                with patch.object(engine, "_generate_single_2d_patterns", return_value=candidates):
+                    placed, _ = engine.palletize_single([box] * 2)
+                expected = candidates[0]
+                bounds = engine.calculate_summary(placed)["bounding_box"]
+                self.assertEqual((bounds["x_span"], bounds["y_span"]),
+                                 (expected["x_span"], expected["y_span"]))
+
+    def test_invalid_support_rejects_wider_pinwheel(self) -> None:
+        box = replace(self.box, width=335.0, length=670.0)
+        engine = Palletizer({box.id: box}, PalletSpec(
+            length=800.0, width=800.0, max_x_span=1005.0, max_y_span=1005.0))
+        result = engine.run("support_first", [{"box_id": box.id, "count": 4}])
+        self.assert_identical_layers(result.boxes, 2, 2)
+        self.assertEqual(result.summary["bounding_box"]["x_span"], 670.0)
+        self.assertEqual(result.summary["bounding_box"]["y_span"], 670.0)
+        self.assertTrue(result.summary["is_valid"])
+
+    def test_pinwheel_limit_inclusive_and_below_limit_rejected(self) -> None:
+        box = replace(self.box, width=335.0, length=670.0)
+        for x_limit, y_limit, layers in ((1005.0, 1005.0, 1),
+                                         (1005.0, 1004.99, 2),
+                                         (1004.99, 1004.99, 2)):
+            with self.subTest(x_limit=x_limit, y_limit=y_limit):
+                engine = Palletizer({box.id: box}, PalletSpec(
+                    max_x_span=x_limit, max_y_span=y_limit))
+                result = engine.run("pinwheel_boundary", [{"box_id": box.id, "count": 4}])
+                self.assert_identical_layers(result.boxes, 4 // layers, layers)
+                self.assertTrue(result.summary["is_valid"])
+
+    def test_pinwheel_geometry_handles_both_footprint_orientations(self) -> None:
+        for w, l in ((335.0, 670.0), (670.0, 335.0)):
+            with self.subTest(w=w, l=l):
+                pattern = _generate_pinwheel_pattern(w, l, 1005.0, 1005.0)
+                self.assertIsNotNone(pattern)
+                if pattern is None:
+                    self.fail("A rectangular footprint must produce one pinwheel")
+                self.assertEqual(len(pattern["boxes"]), 4)
+                self.assertEqual(pattern["x_span"], 1005.0)
+                self.assertEqual(pattern["y_span"], 1005.0)
+                for item in pattern["boxes"]:
+                    self.assertEqual((item["w"], item["l"]),
+                                     (w, l) if item["rot"] == 0 else (l, w))
+        self.assertIsNone(_generate_pinwheel_pattern(335.0, 335.0, 1005.0, 1005.0))
+        self.assertIsNone(_generate_pinwheel_pattern(335.0, 670.0, 1004.99, 1005.0))
+        self.assertIsNone(_generate_pinwheel_pattern(335.0, 670.0, 1005.0, 1004.99))
+
+    def test_small_input_does_not_generate_pinwheel(self) -> None:
+        engine = Palletizer({self.box.id: self.box})
+        with patch("algorithm_programmer.palletizer._generate_pinwheel_pattern") as generate:
+            placed, unplaced = engine.palletize_single([self.box] * 3)
+        generate.assert_not_called()
+        self.assert_identical_layers(placed, 3, 1)
+        self.assertEqual(unplaced, [])
+
+    def test_dominated_pinwheel_skips_detailed_support_evaluation(self) -> None:
+        box = replace(self.box, width=335.0, length=670.0)
+        engine = Palletizer({box.id: box}, PalletSpec(
+            max_x_span=1340.0, max_y_span=1005.0))
+        with patch.object(engine, "_pallet_support_is_valid",
+                          wraps=engine._pallet_support_is_valid) as support:
+            placed, unplaced = engine.palletize_single([box] * 6)
+        self.assert_identical_layers(placed, 6, 1)
+        self.assertEqual(unplaced, [])
+        self.assertNotIn(4, [len(call.args[0]) for call in support.call_args_list])
+
+    def test_mixed_pinwheel_retains_geometry_inventory_and_upper_layer(self) -> None:
+        other = replace(self.box, id="OTHER")
+        engine = Palletizer({self.box.id: self.box, other.id: other})
+        envelope = {"x_span": 1000.0, "y_span": 1000.0}
+        candidates = engine._pinwheel_layer_candidates(
+            [self.box] * 5 + [other], 0.0, 0, [], envelope)
+        self.assertEqual(len(candidates), 1)
+        layer, remaining = candidates[0]
+        self.assertEqual([(box.x, box.y, box.rotation) for box in layer],
+                         [(0.0, 0.0, 90), (600.0, 0.0, 0),
+                          (400.0, 600.0, 90), (0.0, 400.0, 0)])
+        self.assertEqual(remaining, [self.box, other])
+        upper_candidates = engine._pinwheel_layer_candidates(
+            [self.box] * 4, 190.0, 1, layer, envelope)
+        self.assertEqual(len(upper_candidates), 1)
+        upper, remaining = upper_candidates[0]
+        self.assertEqual(remaining, [])
+        self.assertEqual([(box.x, box.y, box.rotation) for box in upper],
+                         [(box.x, box.y, box.rotation) for box in layer])
+        self.assertEqual({box.z for box in upper}, {190.0})
 
 
 if __name__ == "__main__":
