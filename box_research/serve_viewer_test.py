@@ -27,16 +27,28 @@ class ViewerServerTest(unittest.TestCase):
             "NONE": {"id": "NONE", "type": "NONE", "thickness": 0},
             "LID": {"id": "LID", "type": "TP", "thickness": 15},
         }
+        self.pallets = {
+            "pallets": {
+                viewer.STANDARD_PALLET_ID: copy.deepcopy(viewer.STANDARD_PALLET),
+                "MODEL_1200x1000x130": {
+                    "id": "MODEL_1200x1000x130", "model": "MODEL", "length": 1200,
+                    "width": 1000, "height": 130, "suppliers": ["Supplier A", "Supplier B"],
+                }
+            }
+        }
         self.box_path = self.root / "box_db.json"
         self.lid_path = self.root / "lid_db.json"
+        self.pallet_path = self.root / "pallet_db.json"
         self.box_path.write_text(json.dumps(self.boxes), encoding="utf-8")
         self.lid_path.write_text(json.dumps(self.lids), encoding="utf-8")
+        self.pallet_path.write_text(json.dumps(self.pallets), encoding="utf-8")
         (self.root / "cases").mkdir()
         (self.root / "db_viewer.html").write_text("<title>Integrated viewer</title>", encoding="utf-8")
         for name, value in {
             "BASE_DIR": str(self.root),
             "BOX_DB_PATH": str(self.box_path),
             "LID_DB_PATH": str(self.lid_path),
+            "PALLET_DB_PATH": str(self.pallet_path),
             "VIEWER_HTML_PATH": str(self.root / "db_viewer.html"),
             "TEST_CASES_DIR": str(self.root / "cases"),
         }.items():
@@ -84,6 +96,37 @@ class ViewerServerTest(unittest.TestCase):
         status, _, body = self.request("GET", "/api/lids")
         self.assertEqual(status, 500)
         self.assertEqual(json.loads(body)["status"], "error")
+
+    def test_reads_pallet_database_and_references(self):
+        status, headers, body = self.request("GET", "/api/pallets")
+        self.assertEqual(status, 200)
+        self.assertEqual(headers["Cache-Control"], "no-store")
+        self.assertEqual(json.loads(body), self.pallets)
+        (self.root / "cases" / "used.json").write_text(
+            json.dumps({"pallet_id": "MODEL_1200x1000x130"}), encoding="utf-8"
+        )
+        status, _, body = self.request("GET", "/api/pallet_references")
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body), {"MODEL_1200x1000x130": ["used.json"]})
+
+    def test_pallet_save_rejects_referenced_delete_and_invalid_dimensions(self):
+        before = self.pallet_path.read_bytes()
+        (self.root / "cases" / "used.json").write_text(
+            json.dumps({"pallet_id": "MODEL_1200x1000x130"}), encoding="utf-8"
+        )
+        status, _, body = self.request(
+            "POST",
+            "/api/pallets/save_all",
+            {"pallets": {viewer.STANDARD_PALLET_ID: copy.deepcopy(viewer.STANDARD_PALLET)}},
+        )
+        self.assertEqual(status, 400)
+        self.assertIn("used.json", json.loads(body)["message"])
+        self.assertEqual(self.pallet_path.read_bytes(), before)
+        invalid = copy.deepcopy(self.pallets)
+        invalid["pallets"]["MODEL_1200x1000x130"]["height"] = float("inf")
+        status, _, _ = self.request("POST", "/api/pallets/save_all", invalid)
+        self.assertEqual(status, 400)
+        self.assertEqual(self.pallet_path.read_bytes(), before)
 
     def test_related_save_replaces_both_and_preserves_dimension_values(self):
         boxes = copy.deepcopy(self.boxes)

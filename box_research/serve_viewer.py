@@ -9,6 +9,7 @@ import http.server
 import socketserver
 import json
 import os
+import math
 import tempfile
 import webbrowser
 import urllib.parse
@@ -18,6 +19,17 @@ PORT = 8081
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BOX_DB_PATH = os.path.join(BASE_DIR, "box_db.json")
 LID_DB_PATH = os.path.join(BASE_DIR, "lid_db.json")
+PALLET_DB_PATH = os.path.join(BASE_DIR, "pallet_db.json")
+STANDARD_PALLET_ID = "__STANDARD_1200_1000_130__"
+STANDARD_PALLET = {
+    "id": STANDARD_PALLET_ID,
+    "model": "標準パレット（型番未指定）",
+    "length": 1200,
+    "width": 1000,
+    "height": 130,
+    "suppliers": [],
+    "standard": True,
+}
 TEST_CASES_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "test_programmer", "test_cases"))
 VIEWER_HTML_PATH = os.path.join(BASE_DIR, "db_viewer.html")
 
@@ -44,6 +56,82 @@ def _read_database(path: str) -> Dict[str, Any]:
     if not isinstance(data, dict) or any(not isinstance(item, dict) for item in data.values()):
         raise ValueError("Database must be an object containing records")
     return data
+
+
+def _read_pallet_database() -> Dict[str, Any]:
+    with open(PALLET_DB_PATH, "r", encoding="utf-8") as source:
+        data = json.load(source)
+    return _validate_pallet_database(data)
+
+
+def _pallet_references() -> Dict[str, List[str]]:
+    references = {}
+    for filename in sorted(os.listdir(TEST_CASES_DIR)):
+        if not filename.endswith(".json"):
+            continue
+        with open(os.path.join(TEST_CASES_DIR, filename), "r", encoding="utf-8") as source:
+            test_case = json.load(source)
+        if not isinstance(test_case, dict):
+            raise ValueError("Invalid test case: {}".format(filename))
+        pallet_id = test_case.get("pallet_id")
+        if pallet_id:
+            if not isinstance(pallet_id, str):
+                raise ValueError("Invalid pallet_id in {}".format(filename))
+            references.setdefault(pallet_id, []).append(filename)
+    return references
+
+
+def _validate_pallet_database(data: Dict[str, Any]) -> Dict[str, Any]:
+    if not isinstance(data, dict) or set(data) != {"pallets"}:
+        raise ValueError("Pallet database must contain a pallets object")
+    pallets = data["pallets"]
+    if not isinstance(pallets, dict):
+        raise ValueError("pallets must be an object")
+    if STANDARD_PALLET_ID not in pallets:
+        raise ValueError("The fixed standard pallet record is required")
+    for pallet_id, pallet in pallets.items():
+        if (not isinstance(pallet_id, str) or not pallet_id
+                or not isinstance(pallet, dict) or pallet.get("id") != pallet_id):
+            raise ValueError("Pallet id must match its key")
+        if not isinstance(pallet.get("model"), str) or not pallet["model"].strip():
+            raise ValueError("Pallet {} requires a model".format(pallet_id))
+        suppliers = pallet.get("suppliers")
+        is_standard = pallet_id == STANDARD_PALLET_ID
+        if (not isinstance(suppliers, list) or (not suppliers and not is_standard)
+                or any(not isinstance(name, str) or not name.strip() for name in suppliers)
+                or len(suppliers) != len(set(suppliers))):
+            raise ValueError("Pallet {} requires unique supplier names".format(pallet_id))
+        if is_standard and pallet != STANDARD_PALLET:
+            raise ValueError("The standard pallet record is fixed and cannot be changed")
+        if not is_standard and pallet.get("standard"):
+            raise ValueError("Only the reserved standard pallet can be marked standard")
+        for field in ("length", "width", "height"):
+            value = pallet.get(field)
+            if (isinstance(value, bool) or not isinstance(value, (int, float))
+                    or not math.isfinite(value) or value <= 0):
+                raise ValueError("Pallet {}.{} must be a positive finite number".format(pallet_id, field))
+    return data
+
+
+def _validate_pallet_case_references(test_cases: Dict[str, Any], pallet_db: Dict[str, Any]) -> None:
+    pallets = pallet_db["pallets"]
+    for case_id, case in test_cases.items():
+        if not isinstance(case, dict):
+            raise ValueError("Test case {} must be an object".format(case_id))
+        pallet_id = case.get("pallet_id")
+        supplier_name = case.get("supplier_name")
+        if pallet_id is None:
+            continue
+        if not isinstance(pallet_id, str) or pallet_id not in pallets:
+            raise ValueError("Test case {} references an unknown pallet".format(case_id))
+        pallet = pallets[pallet_id]
+        if pallet_id != STANDARD_PALLET_ID and supplier_name not in pallet["suppliers"]:
+            raise ValueError("Test case {} supplier does not use pallet {}".format(case_id, pallet_id))
+        spec = case.get("pallet")
+        if not isinstance(spec, dict) or any(
+            spec.get(field) != pallet[field] for field in ("length", "width", "height")
+        ):
+            raise ValueError("Test case {} pallet dimensions do not match {}".format(case_id, pallet_id))
 
 
 def _lid_references(lid_db: Dict[str, Any]) -> Dict[str, List[str]]:
@@ -76,9 +164,12 @@ def _test_case_references(field: str, default_id: Any = None) -> Dict[str, List[
 
 
 def _validate_databases(data: Dict[str, Any]) -> Dict[str, Any]:
-    if not isinstance(data, dict) or not data or set(data) - {"boxes", "lids"}:
-        raise ValueError("Specify boxes and/or lids")
+    if not isinstance(data, dict) or not data or set(data) - {"boxes", "lids", "pallets"}:
+        raise ValueError("Specify boxes, lids, and/or pallets")
     for name, database in data.items():
+        if name == "pallets":
+            _validate_pallet_database(database)
+            continue
         if not isinstance(database, dict):
             raise ValueError("{} must be an object".format(name))
         for key, item in database.items():
@@ -117,13 +208,29 @@ def _validate_databases(data: Dict[str, Any]) -> Dict[str, Any]:
             not isinstance(lid_id, str) or lid_id not in lids for lid_id in compatible
         ):
             raise ValueError("Unknown or invalid compatible_lids for {}".format(box_id))
+    if "pallets" in data:
+        _validate_pallet_database(data["pallets"])
+        references = _pallet_references()
+        old_pallets = _read_pallet_database()["pallets"]
+        new_pallets = data["pallets"]["pallets"]
+        for pallet_id in sorted(old_pallets.keys() - new_pallets.keys()):
+            if references.get(pallet_id):
+                raise ValueError("Pallet {} is referenced by: {}".format(
+                    pallet_id, ", ".join(references[pallet_id])
+                ))
+        test_cases = {}
+        for filename in sorted(os.listdir(TEST_CASES_DIR)):
+            if filename.endswith(".json"):
+                with open(os.path.join(TEST_CASES_DIR, filename), "r", encoding="utf-8") as source:
+                    test_cases[os.path.splitext(filename)[0]] = json.load(source)
+        _validate_pallet_case_references(test_cases, data["pallets"])
     return data
 
 
 def _save_databases(data: Dict[str, Any]) -> None:
     """Stage all files first; restore originals if a replacement fails."""
     _validate_databases(data)
-    paths = {"boxes": BOX_DB_PATH, "lids": LID_DB_PATH}
+    paths = {"boxes": BOX_DB_PATH, "lids": LID_DB_PATH, "pallets": PALLET_DB_PATH}
     staged = {}
     backups = {}
     replaced = []
@@ -201,14 +308,18 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Length", "0")
             self.end_headers()
             return
-        elif parsed.path in ("/api/boxes", "/api/lids", "/api/lid_references", "/api/box_references"):
+        elif parsed.path in ("/api/boxes", "/api/lids", "/api/pallets", "/api/lid_references", "/api/box_references", "/api/pallet_references"):
             try:
                 if parsed.path == "/api/boxes":
                     data = _read_database(BOX_DB_PATH)
                 elif parsed.path == "/api/lids":
                     data = _read_database(LID_DB_PATH)
+                elif parsed.path == "/api/pallets":
+                    data = _read_pallet_database()
                 elif parsed.path == "/api/box_references":
                     data = _test_case_references("box_id")
+                elif parsed.path == "/api/pallet_references":
+                    data = _pallet_references()
                 else:
                     data = _lid_references(_read_database(LID_DB_PATH))
                 self._json_response(200, data)
@@ -220,7 +331,7 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path in ("/api/save", "/api/lids/save_all", "/api/databases/save"):
+        if parsed.path in ("/api/save", "/api/lids/save_all", "/api/pallets/save_all", "/api/databases/save"):
             try:
                 content_len = int(self.headers.get("Content-Length", 0))
                 if content_len <= 0:
@@ -230,6 +341,8 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
                     data = {"boxes": data}
                 elif parsed.path == "/api/lids/save_all":
                     data = {"lids": data}
+                elif parsed.path == "/api/pallets/save_all":
+                    data = {"pallets": data}
                 _save_databases(data)
             except (ValueError, UnicodeError, TypeError) as error:
                 self.log_error("Invalid database save: %s", error)

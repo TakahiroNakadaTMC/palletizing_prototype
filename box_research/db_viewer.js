@@ -4,12 +4,14 @@
     loadError: '',
     saving: false,
     activeTab: 'boxes',
-    draft: { boxes: {}, lids: {} },
-    persisted: { boxes: {}, lids: {} },
+    draft: { boxes: {}, lids: {}, pallets: {} },
+    persisted: { boxes: {}, lids: {}, pallets: {} },
     lidReferences: {},
     lidReferencesLoaded: false,
     boxReferences: {},
     boxReferencesLoaded: false,
+    palletReferences: {},
+    palletReferencesLoaded: false,
     boxSearch: '',
     boxFilter: 'all',
     lidSearch: '',
@@ -27,13 +29,19 @@
     saveFeedback: byId('save-feedback'),
     tabBoxes: byId('tab-boxes'),
     tabLids: byId('tab-lids'),
+    tabPallets: byId('tab-pallets'),
     panelBoxes: byId('panel-boxes'),
     panelLids: byId('panel-lids'),
+    panelPallets: byId('panel-pallets'),
     boxStatus: byId('box-status'),
     lidStatus: byId('lid-status'),
     boxSearch: byId('box-search'),
     boxesBody: byId('boxes-body'),
     lidsBody: byId('lids-body'),
+    palletsBody: byId('pallets-body'),
+    palletStatus: byId('pallet-status'),
+    palletSave: byId('btn-pallet-save'),
+    palletAddForm: byId('pallet-add-form'),
     boxNoResults: byId('box-no-results'),
     copyJson: byId('btn-copy-json'),
     downloadJson: byId('btn-download-json'),
@@ -162,12 +170,13 @@
     return {
       boxesDirty: JSON.stringify(state.draft.boxes) !== JSON.stringify(state.persisted.boxes),
       lidsDirty: JSON.stringify(state.draft.lids) !== JSON.stringify(state.persisted.lids),
+      palletsDirty: JSON.stringify(state.draft.pallets) !== JSON.stringify(state.persisted.pallets),
     };
   }
 
   function hasUnsavedChanges() {
     const dirty = computeDirty();
-    return dirty.boxesDirty || dirty.lidsDirty || state.formDirty.box || state.formDirty.lid;
+    return dirty.boxesDirty || dirty.lidsDirty || dirty.palletsDirty || state.formDirty.box || state.formDirty.lid;
   }
 
   function updateDirtyIndicator() {
@@ -178,7 +187,7 @@
       return;
     }
     const dirty = computeDirty();
-    if (!dirty.boxesDirty && !dirty.lidsDirty && !state.formDirty.box && !state.formDirty.lid) {
+    if (!dirty.boxesDirty && !dirty.lidsDirty && !dirty.palletsDirty && !state.formDirty.box && !state.formDirty.lid) {
       el.globalDirty.classList.add('bg-emerald-100', 'text-emerald-700');
       el.globalDirty.textContent = '状態: 保存済み';
       return;
@@ -186,6 +195,7 @@
     const parts = [];
     if (dirty.boxesDirty) parts.push('箱ドラフト未保存');
     if (dirty.lidsDirty) parts.push('蓋ドラフト未保存');
+    if (dirty.palletsDirty) parts.push('パレットドラフト未保存');
     if (state.formDirty.box || state.formDirty.lid) parts.push('編集中フォーム未反映');
     el.globalDirty.classList.add('bg-amber-100', 'text-amber-800');
     el.globalDirty.textContent = `状態: ${parts.join(' / ')}`;
@@ -193,9 +203,9 @@
 
   function setEditable(enabled) {
     const controls = [
-      el.tabBoxes, el.tabLids, el.boxSearch, el.lidSearch,
+      el.tabBoxes, el.tabLids, el.tabPallets, el.boxSearch, el.lidSearch,
       el.copyJson, el.downloadJson, el.reloadAll,
-      el.boxAdd, el.boxSave, el.lidAdd, el.lidSave,
+      el.boxAdd, el.boxSave, el.lidAdd, el.lidSave, el.palletSave,
       ...qsa('.filter-tab'),
     ];
     controls.forEach(control => {
@@ -203,6 +213,8 @@
     });
     qsa('button,input,select', el.boxesBody).forEach(n => { n.disabled = !enabled; });
     qsa('button,input,select', el.lidsBody).forEach(n => { n.disabled = !enabled; });
+    qsa('button,input,select', el.palletsBody).forEach(n => { n.disabled = !enabled; });
+    qsa('button,input,select', el.palletAddForm).forEach(n => { n.disabled = !enabled; });
   }
 
   function setSaving(flag) {
@@ -211,10 +223,11 @@
     if (flag) {
       el.boxStatus.textContent = '保存中... 完了まで編集をロックしています。';
       el.lidStatus.textContent = '保存中... 完了まで編集をロックしています。';
+      el.palletStatus.textContent = '保存中... 完了まで編集をロックしています。';
     }
   }
 
-  function validateLoadedShape(boxes, lids, refs, boxRefs) {
+  function validateLoadedShape(boxes, lids, refs, boxRefs, pallets, palletRefs) {
     if (!boxes || typeof boxes !== 'object' || Array.isArray(boxes)) throw new Error('箱DB形式不正');
     if (!lids || typeof lids !== 'object' || Array.isArray(lids)) throw new Error('蓋DB形式不正');
     if (!refs || typeof refs !== 'object' || Array.isArray(refs)) throw new Error('蓋参照形式不正');
@@ -222,16 +235,21 @@
         || Object.values(boxRefs).some(names => !Array.isArray(names) || names.some(name => typeof name !== 'string'))) {
       throw new Error('箱参照形式不正');
     }
+    if (!pallets || typeof pallets !== 'object' || !pallets.pallets
+        || typeof pallets.pallets !== 'object' || Array.isArray(pallets.pallets)) throw new Error('パレットDB形式不正');
+    if (!palletRefs || typeof palletRefs !== 'object' || Array.isArray(palletRefs)) throw new Error('パレット参照形式不正');
   }
 
   function showError(message) {
     state.loaded = false;
     state.boxReferencesLoaded = false;
+    state.palletReferencesLoaded = false;
     state.loadError = message;
     el.errorText.textContent = message;
     el.errorBanner.classList.remove('hidden');
     el.boxStatus.textContent = '読み込み失敗のため編集できません。再試行してください。';
     el.lidStatus.textContent = '読み込み失敗のため編集できません。再試行してください。';
+    el.palletStatus.textContent = '読み込み失敗のため編集できません。再試行してください。';
     setEditable(false);
     updateDirtyIndicator();
   }
@@ -244,34 +262,45 @@
     hideError();
     setEditable(false);
     state.loaded = false;
-    el.boxStatus.textContent = '箱・蓋・参照情報を読み込み中...';
+    el.boxStatus.textContent = '箱・蓋・パレット・参照情報を読み込み中...';
     el.lidStatus.textContent = '箱・蓋・参照情報を読み込み中...';
+    el.palletStatus.textContent = 'パレットDB・参照情報を読み込み中...';
     try {
-      const [boxesRes, lidsRes, refsRes, boxRefsRes] = await Promise.all([
+      const [boxesRes, lidsRes, refsRes, boxRefsRes, palletsRes, palletRefsRes] = await Promise.all([
         fetch('/api/boxes', { cache: 'no-store' }),
         fetch('/api/lids', { cache: 'no-store' }),
         fetch('/api/lid_references', { cache: 'no-store' }),
         fetch('/api/box_references', { cache: 'no-store' }),
+        fetch('/api/pallets', { cache: 'no-store' }),
+        fetch('/api/pallet_references', { cache: 'no-store' }),
       ]);
       if (!boxesRes.ok) throw new Error(`箱DB取得に失敗 (HTTP ${boxesRes.status})`);
       if (!lidsRes.ok) throw new Error(`蓋DB取得に失敗 (HTTP ${lidsRes.status})`);
       if (!refsRes.ok) throw new Error(`蓋参照取得に失敗 (HTTP ${refsRes.status})`);
       if (!boxRefsRes.ok) throw new Error(`箱参照取得に失敗 (HTTP ${boxRefsRes.status})`);
+      if (!palletsRes.ok) throw new Error(`パレットDB取得に失敗 (HTTP ${palletsRes.status})`);
+      if (!palletRefsRes.ok) throw new Error(`パレット参照取得に失敗 (HTTP ${palletRefsRes.status})`);
 
       const boxes = normalizeDimensionOrder(await boxesRes.json());
       const lids = normalizeDimensionOrder(await lidsRes.json());
       const refs = await refsRes.json();
       const boxRefs = await boxRefsRes.json();
-      validateLoadedShape(boxes, lids, refs, boxRefs);
+      const palletsData = await palletsRes.json();
+      const palletRefs = await palletRefsRes.json();
+      validateLoadedShape(boxes, lids, refs, boxRefs, palletsData, palletRefs);
 
       state.persisted.boxes = clone(boxes);
       state.persisted.lids = clone(lids);
+      state.persisted.pallets = clone(palletsData.pallets);
       state.draft.boxes = clone(boxes);
       state.draft.lids = clone(lids);
+      state.draft.pallets = clone(palletsData.pallets);
       state.lidReferences = refs;
       state.lidReferencesLoaded = true;
       state.boxReferences = boxRefs;
       state.boxReferencesLoaded = true;
+      state.palletReferences = palletRefs;
+      state.palletReferencesLoaded = true;
       state.formDirty.box = false;
       state.formDirty.lid = false;
       state.boxLidSyncTouched = false;
@@ -306,8 +335,10 @@
   function renderAll() {
     renderBoxes();
     renderLids();
+    renderPallets();
     updateStats();
     refreshStatusLines();
+    el.palletStatus.textContent = `登録仕様 ${Object.keys(state.draft.pallets).length} 件。仕入先ごとに型番・寸法を選択できます。`;
     updateDirtyIndicator();
     refreshIcons();
   }
@@ -442,6 +473,50 @@
     container.classList.remove('scale-100');
     container.classList.add('scale-95');
     dialog.classList.add('hidden');
+  }
+
+  function renderPallets() {
+    el.palletsBody.innerHTML = '';
+    Object.values(state.draft.pallets).sort((a, b) => a.model.localeCompare(b.model, 'ja')).forEach(pallet => {
+      const tr = document.createElement('tr');
+      tr.className = 'border-b border-slate-100';
+      if (pallet.standard) {
+        tr.classList.add('bg-blue-50');
+        tr.innerHTML = `
+          <td class="p-2 font-bold">${escapeHtml(pallet.model)}<span class="ml-2 text-[10px] text-blue-700">固定</span></td>
+          <td class="p-2 text-slate-500">全仕入先共通</td>
+          ${['length', 'width', 'height'].map(field => `<td class="p-2 text-right font-mono">${escapeHtml(String(pallet[field]))}</td>`).join('')}
+          <td class="p-2 text-slate-500">編集不可</td>`;
+        el.palletsBody.appendChild(tr);
+        return;
+      }
+      tr.innerHTML = `
+        <td class="p-2"><input data-pallet-field="model" data-pallet-id="${escapeHtml(pallet.id)}" value="${escapeHtml(pallet.model)}" aria-label="型番" class="w-full px-2 py-1 border rounded font-mono"></td>
+        <td class="p-2"><input data-pallet-field="suppliers" data-pallet-id="${escapeHtml(pallet.id)}" value="${escapeHtml(pallet.suppliers.join('、'))}" aria-label="仕入先" class="w-full px-2 py-1 border rounded"></td>
+        ${['length', 'width', 'height'].map(field => `<td class="p-2"><input data-pallet-field="${field}" data-pallet-id="${escapeHtml(pallet.id)}" type="number" min="0.000001" step="any" value="${escapeHtml(String(pallet[field]))}" aria-label="${field}" class="w-24 px-2 py-1 border rounded text-right"></td>`).join('')}
+        <td class="p-2"><button type="button" data-pallet-delete="${escapeHtml(pallet.id)}" class="px-2 py-1 text-rose-700 border border-rose-200 rounded">削除</button></td>`;
+      el.palletsBody.appendChild(tr);
+    });
+    qsa('[data-pallet-field]', el.palletsBody).forEach(input => input.addEventListener('change', () => {
+      const pallet = state.draft.pallets[input.dataset.palletId];
+      if (input.dataset.palletField === 'suppliers') {
+        pallet.suppliers = Array.from(new Set(input.value.split(/[、,]/).map(name => name.trim()).filter(Boolean)));
+      } else if (['length', 'width', 'height'].includes(input.dataset.palletField)) {
+        pallet[input.dataset.palletField] = Number(input.value);
+      } else {
+        pallet.model = input.value.trim();
+      }
+      updateDirtyIndicator();
+    }));
+    qsa('[data-pallet-delete]', el.palletsBody).forEach(button => button.addEventListener('click', () => {
+      const id = button.dataset.palletDelete;
+      if (!state.palletReferencesLoaded) return alert('パレット参照を取得できないため削除できません');
+      const refs = state.palletReferences[id] || [];
+      if (refs.length) return alert(`パレット "${id}" はテストケース参照があるため削除できません`);
+      if (!confirm(`パレット "${state.draft.pallets[id].model}" を削除しますか？`)) return;
+      delete state.draft.pallets[id];
+      renderAll();
+    }));
   }
 
   function renderCompatibleLids(selectedLids) {
@@ -739,6 +814,40 @@
       const removed = Object.keys(state.persisted.boxes).filter(id => !Object.prototype.hasOwnProperty.call(payload.boxes, id));
       if (!guardBoxRemoval(removed, '保存対象から除外')) return;
     }
+    if (payload.pallets) {
+      const removed = Object.keys(state.persisted.pallets).filter(id => !Object.prototype.hasOwnProperty.call(payload.pallets.pallets, id));
+      if (!state.palletReferencesLoaded) return alert('パレット参照を取得できないため保存できません');
+      const used = removed.filter(id => (state.palletReferences[id] || []).length);
+      if (used.length) return alert(`テストケース参照があるパレットは削除できません: ${used.join(', ')}`);
+      for (const [id, pallet] of Object.entries(payload.pallets.pallets)) {
+        if (pallet.standard) {
+          const fixedStandard = {
+            id: '__STANDARD_1200_1000_130__',
+            model: '標準パレット（型番未指定）',
+            length: 1200,
+            width: 1000,
+            height: 130,
+            suppliers: [],
+            standard: true,
+          };
+          if (id !== fixedStandard.id || Object.keys(fixedStandard).some(key => {
+            const actual = pallet[key];
+            const expected = fixedStandard[key];
+            return Array.isArray(expected)
+              ? !Array.isArray(actual) || JSON.stringify(actual) !== JSON.stringify(expected)
+              : actual !== expected;
+          }) || Object.keys(pallet).some(key => !Object.prototype.hasOwnProperty.call(fixedStandard, key))) {
+            return alert('標準パレットは固定仕様のため変更できません');
+          }
+          continue;
+        }
+        if (pallet.id !== id || !pallet.model.trim() || !Array.isArray(pallet.suppliers) || !pallet.suppliers.length
+            || new Set(pallet.suppliers).size !== pallet.suppliers.length
+            || ['length', 'width', 'height'].some(field => !Number.isFinite(pallet[field]) || pallet[field] <= 0)) {
+          return alert(`パレット "${id}" の型番・仕入先・寸法を確認してください`);
+        }
+      }
+    }
     setSaving(true);
     try {
       const response = await fetch('/api/databases/save', {
@@ -758,6 +867,7 @@
       if (!result || result.status !== 'ok') throw new Error((result && result.message) || '保存に失敗しました');
       if (payload.boxes) state.persisted.boxes = clone(payload.boxes);
       if (payload.lids) state.persisted.lids = clone(payload.lids);
+      if (payload.pallets) state.persisted.pallets = clone(payload.pallets.pallets);
       if (payload.lids) state.boxLidSyncTouched = false;
       renderAll();
       setFeedback('success', '保存が完了しました。');
@@ -767,6 +877,7 @@
       setFeedback('warning', detail);
       el.boxStatus.textContent = detail;
       el.lidStatus.textContent = detail;
+      el.palletStatus.textContent = detail;
       alert(detail);
     } finally {
       setSaving(false);
@@ -817,15 +928,24 @@
     return saveDatasets({ lids: state.draft.lids });
   }
 
+  async function savePallets() {
+    if (!guardEditable()) return;
+    return saveDatasets({ pallets: { pallets: state.draft.pallets } });
+  }
+
   function switchTab(tabName) {
     state.activeTab = tabName;
     const isBoxes = tabName === 'boxes';
+    const isLids = tabName === 'lids';
     el.panelBoxes.classList.toggle('hidden', !isBoxes);
-    el.panelLids.classList.toggle('hidden', isBoxes);
+    el.panelLids.classList.toggle('hidden', !isLids);
+    el.panelPallets.classList.toggle('hidden', tabName !== 'pallets');
     el.tabBoxes.className = isBoxes ? 'px-3 py-1.5 rounded-md bg-indigo-600 text-white' : 'px-3 py-1.5 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200';
-    el.tabLids.className = isBoxes ? 'px-3 py-1.5 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200' : 'px-3 py-1.5 rounded-md bg-indigo-600 text-white';
+    el.tabLids.className = isLids ? 'px-3 py-1.5 rounded-md bg-indigo-600 text-white' : 'px-3 py-1.5 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200';
+    el.tabPallets.className = tabName === 'pallets' ? 'px-3 py-1.5 rounded-md bg-indigo-600 text-white' : 'px-3 py-1.5 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200';
     el.tabBoxes.setAttribute('aria-selected', isBoxes ? 'true' : 'false');
-    el.tabLids.setAttribute('aria-selected', isBoxes ? 'false' : 'true');
+    el.tabLids.setAttribute('aria-selected', isLids ? 'true' : 'false');
+    el.tabPallets.setAttribute('aria-selected', tabName === 'pallets' ? 'true' : 'false');
     if (typeof location !== 'undefined' && typeof history !== 'undefined') {
       if (location.hash !== `#${tabName}`) history.replaceState(null, '', `#${tabName}`);
     }
@@ -833,7 +953,7 @@
 
   function applyHashTab() {
     const hash = (typeof location !== 'undefined' ? (location.hash || '') : '').replace('#', '');
-    switchTab(hash === 'lids' ? 'lids' : 'boxes');
+    switchTab(['boxes', 'lids', 'pallets'].includes(hash) ? hash : 'boxes');
   }
 
   function guardEditable() {
@@ -852,6 +972,27 @@
     el.retryLoad.addEventListener('click', loadAll);
     el.tabBoxes.addEventListener('click', () => switchTab('boxes'));
     el.tabLids.addEventListener('click', () => switchTab('lids'));
+    el.tabPallets.addEventListener('click', () => switchTab('pallets'));
+    el.palletSave.addEventListener('click', savePallets);
+    el.palletAddForm.addEventListener('submit', event => {
+      event.preventDefault();
+      if (!guardEditable()) return;
+      const model = byId('pallet-new-model').value.trim();
+      const suppliers = Array.from(new Set(byId('pallet-new-suppliers').value.split(/[、,]/).map(name => name.trim()).filter(Boolean)));
+      const length = Number(byId('pallet-new-length').value);
+      const width = Number(byId('pallet-new-width').value);
+      const height = Number(byId('pallet-new-height').value);
+      if (!model || !suppliers.length || [length, width, height].some(value => !Number.isFinite(value) || value <= 0)) {
+        return alert('型番・仕入先・正の寸法を入力してください');
+      }
+      const id = `${model}_${length}x${width}x${height}`;
+      const existing = state.draft.pallets[id];
+      state.draft.pallets[id] = existing
+        ? { ...existing, suppliers: Array.from(new Set([...existing.suppliers, ...suppliers])) }
+        : { id, model, length, width, height, suppliers };
+      el.palletAddForm.reset();
+      renderAll();
+    });
     el.boxSearch.addEventListener('input', () => {
       state.boxSearch = el.boxSearch.value;
       renderBoxes();
@@ -908,13 +1049,13 @@
     el.reloadAll.addEventListener('click', async () => {
       if (!guardEditable()) return;
       if (hasUnsavedChanges()) {
-        const ok = confirm('箱・蓋の未保存の追加/編集/削除/フォーム入力をすべて破棄して再読み込みします。よろしいですか？');
+        const ok = confirm('箱・蓋・パレットの未保存の追加/編集/削除/フォーム入力をすべて破棄して再読み込みします。よろしいですか？');
         if (!ok) return;
       }
       closeBoxDialog();
       closeLidDialog();
       await loadAll();
-      setFeedback('info', '箱DB・蓋DBをサーバーの最新状態に再読み込みしました。');
+      setFeedback('info', '箱DB・蓋DB・パレットDBをサーバーの最新状態に再読み込みしました。');
     });
     el.boxAdd.addEventListener('click', () => openBoxDialog());
     el.lidAdd.addEventListener('click', () => openLidDialog());

@@ -8,6 +8,7 @@ import sys
 import os
 import json
 import argparse
+from typing import Any, Dict
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
@@ -18,6 +19,37 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from algorithm_programmer.models import BoxSpec, PalletSpec
 from algorithm_programmer.palletizer import Palletizer
+from box_research.serve_viewer import STANDARD_PALLET_ID
+
+
+def resolve_pallet_spec(
+    tc_data: Dict[str, Any], pallet_database: Dict[str, Any]
+) -> PalletSpec:
+    """選択されたマスタレコードからパレット本体寸法を解決する。"""
+    pallet_id = tc_data.get("pallet_id")
+    pallets = pallet_database.get("pallets") if isinstance(pallet_database, dict) else None
+    if not isinstance(pallet_id, str) or not isinstance(pallets, dict) or pallet_id not in pallets:
+        raise ValueError("テストケースに有効な pallet_id がありません")
+
+    pallet_record = pallets[pallet_id]
+    if not isinstance(pallet_record, dict):
+        raise ValueError(f"パレットDBのレコードが不正です: {pallet_id}")
+    if pallet_id != STANDARD_PALLET_ID:
+        supplier_name = tc_data.get("supplier_name")
+        if not isinstance(supplier_name, str) or supplier_name not in pallet_record.get("suppliers", []):
+            raise ValueError(f"仕入先とパレット型番が一致しません: {pallet_id}")
+
+    case_pallet = tc_data.get("pallet", {})
+    if not isinstance(case_pallet, dict):
+        raise ValueError("テストケースの pallet はオブジェクト形式で指定してください")
+    pallet_spec_data = {
+        **case_pallet,
+        "length": pallet_record.get("length"),
+        "width": pallet_record.get("width"),
+        "height": pallet_record.get("height"),
+    }
+    return PalletSpec.from_dict(pallet_spec_data)
+
 
 def main():
     parser = argparse.ArgumentParser(description="パレタイザー実行CLI")
@@ -36,12 +68,16 @@ def main():
     with open(lid_db_path, "r", encoding="utf-8") as f:
         lid_db = json.load(f)
 
+    pallet_db_path = os.path.join(PROJECT_ROOT, "box_research", "pallet_db.json")
+    with open(pallet_db_path, "r", encoding="utf-8") as f:
+        pallet_database = json.load(f)
+
     # 2. テストケースのロード
     with open(args.testcase, "r", encoding="utf-8") as f:
         tc_data = json.load(f)
 
     test_name = tc_data.get("name", os.path.basename(args.testcase).replace(".json", ""))
-    pallet_spec = PalletSpec.from_dict(tc_data.get("pallet", {}))
+    pallet_spec = resolve_pallet_spec(tc_data, pallet_database)
     box_list = tc_data.get("box_list", [])
 
     # 3. パレタイズの実行

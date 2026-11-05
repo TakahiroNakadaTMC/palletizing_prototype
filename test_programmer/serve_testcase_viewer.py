@@ -15,19 +15,18 @@ import re
 import math
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import urllib.parse
+from box_research.serve_viewer import STANDARD_PALLET_ID, _validate_pallet_database
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 BOX_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "box_db.json")
 LID_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "lid_db.json")
+PALLET_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "pallet_db.json")
 TEST_CASES_DIR = os.path.join(BASE_DIR, "test_cases")
 APPROVAL_STATE_PATH = os.path.join(BASE_DIR, "test_case_approval.json")
 DEFAULT_PORT = 8083
 CASE_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$")
 PALLET_DEFAULTS = {
-    "length": 1200.0,
-    "width": 1000.0,
-    "height": 130.0,
     "max_x_span": 1360.0,
     "max_y_span": 1100.0,
     "max_height": 1200.0,
@@ -63,15 +62,10 @@ def validate_and_normalize_pallet_spec(case_id, pallet_obj):
 
     merged = {**PALLET_DEFAULTS, **pallet_obj}
     normalized = {
-        "length": parse_positive_finite_number(merged.get("length"), f"{case_id}.pallet.length"),
-        "width": parse_positive_finite_number(merged.get("width"), f"{case_id}.pallet.width"),
-        "height": parse_positive_finite_number(merged.get("height"), f"{case_id}.pallet.height"),
         "max_x_span": parse_positive_finite_number(merged.get("max_x_span"), f"{case_id}.pallet.max_x_span"),
         "max_y_span": parse_positive_finite_number(merged.get("max_y_span"), f"{case_id}.pallet.max_y_span"),
         "max_height": parse_positive_finite_number(merged.get("max_height"), f"{case_id}.pallet.max_height"),
     }
-    if normalized["length"] < normalized["width"]:
-        raise ValueError(f"{case_id}.pallet: length は width 以上で指定してください")
     if normalized["max_x_span"] < normalized["max_y_span"]:
         raise ValueError(f"{case_id}.pallet: max_x_span は max_y_span 以上で指定してください")
     return normalized
@@ -104,6 +98,12 @@ def load_approval_state():
     return state
 
 class TestCaseViewerHandler(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path in ("/", "/index.html"):
+            self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
     def translate_path(self, path):
         clean_path = path.split('?', 1)[0].split('#', 1)[0]
         clean_path = urllib.parse.unquote(clean_path)
@@ -136,6 +136,19 @@ class TestCaseViewerHandler(SimpleHTTPRequestHandler):
                     self.wfile.write(f.read())
             else:
                 self.wfile.write(b'{}')
+            return
+
+        if parsed.path == "/api/pallets":
+            try:
+                with open(PALLET_DB_PATH, "rb") as f:
+                    body = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(body)
+            except OSError as e:
+                self.send_error(500, f"パレットDBを読み込めません: {e}")
             return
 
         # API: テストケース一覧の取得
@@ -205,6 +218,19 @@ class TestCaseViewerHandler(SimpleHTTPRequestHandler):
                     if type(approval_state.get(case_id)) is not bool:
                         raise ValueError(f"テストケース {case_id} の採否状態が不正です")
                     tc_obj["pallet"] = validate_and_normalize_pallet_spec(case_id, tc_obj.get("pallet"))
+                with open(PALLET_DB_PATH, "r", encoding="utf-8") as f:
+                    pallet_db = _validate_pallet_database(json.load(f))
+                pallets = pallet_db.get("pallets", {})
+                for case_id, tc_obj in tcs_data.items():
+                    pallet_id = tc_obj.get("pallet_id")
+                    if pallet_id is None:
+                        raise ValueError(f"テストケース {case_id} のパレット型番または標準パレットを選択してください")
+                    if not isinstance(pallet_id, str) or pallet_id not in pallets:
+                        raise ValueError(f"テストケース {case_id} のパレット型番がDBにありません")
+                    pallet = pallets[pallet_id]
+                    if (pallet_id != STANDARD_PALLET_ID
+                            and tc_obj.get("supplier_name") not in pallet.get("suppliers", [])):
+                        raise ValueError(f"テストケース {case_id} の仕入先とパレット型番が一致しません")
 
                 os.makedirs(TEST_CASES_DIR, exist_ok=True)
 

@@ -162,35 +162,41 @@
           </div>
         </div>
 
-        <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/60">
-          <p class="text-[11px] font-bold text-slate-700 mb-2">パレット設定（mm）</p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-[11px] text-slate-600 mb-1">length（L / X長辺方向）</label>
-              <input type="number" id="input-pallet-length" min="0.000001" step="any" required value="1200" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+        <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/60 space-y-3">
+          <p class="text-[11px] font-bold text-slate-700">パレット・荷姿設定</p>
+          <section class="rounded-lg border border-blue-200 bg-blue-50/60 p-3">
+            <h3 class="text-[11px] font-bold text-blue-900 mb-2">使用するパレット</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+              <div>
+                <label class="block text-[11px] text-slate-600 mb-1">仕入先</label>
+                <select id="input-pallet-supplier" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg bg-white"></select>
+              </div>
+              <div>
+                <label class="block text-[11px] text-slate-600 mb-1">パレット型番・サイズ</label>
+                <select id="input-pallet-id" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg bg-white"></select>
+              </div>
             </div>
-            <div>
-              <label class="block text-[11px] text-slate-600 mb-1">width（W / Y短辺方向）</label>
-              <input type="number" id="input-pallet-width" min="0.000001" step="any" required value="1000" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <p class="text-[10px] text-blue-800">型番候補にはパレット寸法を表示します。型番が不明な場合は標準パレットを選択してください。</p>
+          </section>
+          <section class="rounded-lg border border-amber-200 bg-amber-50/60 p-3">
+            <h3 class="text-[11px] font-bold text-amber-900 mb-1">荷姿の上限（mm）</h3>
+            <p class="text-[10px] text-amber-800 mb-2">パレット上に載せる荷物の外形上限です。パレット本体の寸法ではありません。</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] text-slate-600 mb-1">max_height（パレット上面からの荷物高さ上限）</label>
+                <input type="number" id="input-pallet-max-height" min="0.000001" step="any" required value="1200" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+              </div>
+              <div>
+                <label class="block text-[11px] text-slate-600 mb-1">max_x_span（X / 長辺方向の荷姿上限）</label>
+                <input type="number" id="input-pallet-max-x-span" min="0.000001" step="any" required value="1360" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+              </div>
+              <div>
+                <label class="block text-[11px] text-slate-600 mb-1">max_y_span（Y / 短辺方向の荷姿上限）</label>
+                <input type="number" id="input-pallet-max-y-span" min="0.000001" step="any" required value="1100" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+              </div>
             </div>
-            <div>
-              <label class="block text-[11px] text-slate-600 mb-1">height（物理パレット厚）</label>
-              <input type="number" id="input-pallet-height" min="0.000001" step="any" required value="130" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-600 mb-1">max_height（荷物高さ上限）</label>
-              <input type="number" id="input-pallet-max-height" min="0.000001" step="any" required value="1200" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-600 mb-1">max_x_span（X / 長辺方向上限）</label>
-              <input type="number" id="input-pallet-max-x-span" min="0.000001" step="any" required value="1360" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-600 mb-1">max_y_span（Y / 短辺方向上限）</label>
-              <input type="number" id="input-pallet-max-y-span" min="0.000001" step="any" required value="1100" class="w-full px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-500 mt-2">※ 6項目すべて正の有限数。軸規約は L=X長辺方向 / W=Y短辺方向、length ≥ width、max_x_span ≥ max_y_span（上限値は含む）。</p>
+          </section>
+          <p class="text-[10px] text-slate-500">※ 荷姿上限は正の有限数で入力してください。軸規約は X=長辺方向 / Y=短辺方向、max_x_span ≥ max_y_span（上限値は含む）。</p>
         </div>
 
         <!-- Box Input List Table -->
@@ -233,13 +239,12 @@
     let currentFilter = 'all';
     let searchQuery = '';
     let lidDB = {}; // ← Add lidDB cache
+    let palletDB = { pallets: {} };
+    const STANDARD_PALLET_ID = '__STANDARD_1200_1000_130__';
     let persistedTestCaseNames = new Set();
 
     // Pallet Default Specification
     const DEFAULT_PALLET_SPEC = {
-      length: 1200.0,
-      width: 1000.0,
-      height: 130.0,
       max_x_span: 1360.0,
       max_y_span: 1100.0,
       max_height: 1200.0,
@@ -259,6 +264,19 @@
 
       // 1.5. Load Lids
       await loadLids();
+
+      try {
+        const palletResponse = await fetch('/api/pallets');
+        if (!palletResponse.ok) throw new Error(`HTTP ${palletResponse.status}`);
+        palletDB = await palletResponse.json();
+        if (!palletDB || typeof palletDB.pallets !== 'object' || Array.isArray(palletDB.pallets)) {
+          throw new Error('パレットDBの形式が不正です');
+        }
+      } catch (error) {
+        console.error('パレットDBの読み込みに失敗しました', error);
+        showToast(`パレットDBの読み込みに失敗しました: ${error.message}`);
+        return;
+      }
 
       // 2. Load Test Cases
       try {
@@ -321,6 +339,47 @@
 
     function getNoLidId() {
       return Object.keys(lidDB).find(id => lidDB[id].type === 'NONE') || '';
+    }
+
+    function escapeOptionText(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[character]);
+    }
+
+    function getPalletDimensionText(pallet) {
+      return `${pallet.length}×${pallet.width}×${pallet.height} mm`;
+    }
+
+    function renderPalletSelectors(supplierName = '', palletId = undefined) {
+      const supplierSelect = document.getElementById('input-pallet-supplier');
+      const palletSelect = document.getElementById('input-pallet-id');
+      const suppliers = new Set(Object.values(palletDB.pallets).flatMap(pallet => pallet.suppliers || []));
+      Object.values(testCasesData).forEach(testCase => {
+        if (testCase.supplier_name) suppliers.add(testCase.supplier_name);
+      });
+      if (supplierName) suppliers.add(supplierName);
+      supplierSelect.innerHTML = `<option value="">仕入先を選択</option>${[...suppliers].sort((a, b) => a.localeCompare(b, 'ja'))
+        .map(name => `<option value="${escapeOptionText(name)}">${escapeOptionText(name)}</option>`).join('')}`;
+      supplierSelect.value = supplierName || '';
+      const candidates = Object.values(palletDB.pallets)
+        .filter(pallet => (pallet.suppliers || []).includes(supplierSelect.value))
+        .sort((a, b) => a.model.localeCompare(b.model, 'ja') || a.id.localeCompare(b.id, 'ja'));
+      const standard = palletDB.pallets[STANDARD_PALLET_ID];
+      palletSelect.innerHTML = [
+        '<option value="">パレットの種類を選択</option>',
+        ...candidates.map(pallet =>
+          `<option value="${escapeOptionText(pallet.id)}">${escapeOptionText(pallet.model)}（${escapeOptionText(getPalletDimensionText(pallet))}）</option>`),
+        standard
+          ? `<option value="${escapeOptionText(standard.id)}">${escapeOptionText(standard.model)}（${escapeOptionText(getPalletDimensionText(standard))}）</option>`
+          : '',
+      ].join('');
+      const selectedId = palletId === undefined
+        ? (candidates.length ? '' : STANDARD_PALLET_ID)
+        : palletId;
+      palletSelect.value = selectedId === STANDARD_PALLET_ID
+        || candidates.some(pallet => pallet.id === selectedId)
+        ? selectedId : '';
     }
 
     function renderBoxBreakdown(item) {
@@ -412,7 +471,7 @@
         if (searchQuery) {
           const q = searchQuery.toLowerCase();
           const boxIds = (tc.box_list || []).map(b => b.box_id).join(' ');
-          const target = `${name} ${tc.description || ''} ${boxIds}`.toLowerCase();
+          const target = `${name} ${tc.description || ''} ${tc.supplier_name || ''} ${tc.pallet_id || ''} ${boxIds}`.toLowerCase();
           if (!target.includes(q)) return;
         }
 
@@ -459,7 +518,7 @@
 
           <!-- Card Footer Actions -->
           <div class="flex items-center justify-between border-t border-slate-100 pt-3 mt-4 text-xs">
-            <span class="text-slate-400 text-[11px]">${renderPalletSummary(tc.pallet)}</span>
+            <span class="text-slate-400 text-[11px]">${tc.supplier_name ? `${escapeOptionText(tc.supplier_name)} / ` : ''}${tc.pallet_id && palletDB.pallets[tc.pallet_id] ? `${escapeOptionText(palletDB.pallets[tc.pallet_id].model)} / ` : '型番未選択 / '}${renderPalletSummary(tc.pallet)}</span>
             <div class="flex items-center gap-1">
               <button type="button" data-name="${name}" class="edit-tc-btn p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition cursor-pointer" title="このテストケースの構成を変更">
                 <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -566,6 +625,7 @@
         inputName.disabled = true;
         inputDesc.value = tc.description || '';
         fillPalletForm(palletSpec);
+        renderPalletSelectors(tc.supplier_name || '', tc.pallet_id || '');
 
         (tc.box_list || []).forEach(b => {
           addBoxRow(b.box_id, b.count, b.lid_id || getNoLidId());
@@ -576,6 +636,7 @@
         document.getElementById('form-testcase').reset();
         inputName.disabled = false;
         fillPalletForm(DEFAULT_PALLET_SPEC);
+        renderPalletSelectors('', STANDARD_PALLET_ID);
         // Default rows
         const available = Object.keys(masterBoxDB);
         addBoxRow(available[0] || 'TP-332', 20, getNoLidId());
@@ -625,13 +686,10 @@
 
     function renderPalletSummary(pallet = {}) {
       const spec = resolvePalletSpecForEdit({ pallet });
-      return `パレット L(X)×W(Y)×H:${spec.length}×${spec.width}×${spec.height} / 荷姿上限 X×Y×H:${spec.max_x_span}×${spec.max_y_span}×${spec.max_height}`;
+      return `荷姿上限 X×Y×H:${spec.max_x_span}×${spec.max_y_span}×${spec.max_height}`;
     }
 
     function fillPalletForm(spec = {}) {
-      document.getElementById('input-pallet-length').value = spec.length;
-      document.getElementById('input-pallet-width').value = spec.width;
-      document.getElementById('input-pallet-height').value = spec.height;
       document.getElementById('input-pallet-max-height').value = spec.max_height;
       document.getElementById('input-pallet-max-x-span').value = spec.max_x_span;
       document.getElementById('input-pallet-max-y-span').value = spec.max_y_span;
@@ -640,9 +698,6 @@
     function resolvePalletSpecForEdit(tc) {
       const pallet = tc?.pallet || {};
       return {
-        length: pickPositiveFinite(pallet.length, DEFAULT_PALLET_SPEC.length),
-        width: pickPositiveFinite(pallet.width, DEFAULT_PALLET_SPEC.width),
-        height: pickPositiveFinite(pallet.height, DEFAULT_PALLET_SPEC.height),
         max_x_span: pickPositiveFinite(pallet.max_x_span, DEFAULT_PALLET_SPEC.max_x_span),
         max_y_span: pickPositiveFinite(pallet.max_y_span, DEFAULT_PALLET_SPEC.max_y_span),
         max_height: pickPositiveFinite(pallet.max_height, DEFAULT_PALLET_SPEC.max_height),
@@ -650,12 +705,9 @@
     }
 
     function getPalletSpecFromForm() {
-      const length = parsePalletNumericInput('input-pallet-length', 'length（長辺）');
-      if (!length.ok) return length;
-      const width = parsePalletNumericInput('input-pallet-width', 'width（短辺）');
-      if (!width.ok) return width;
-      const height = parsePalletNumericInput('input-pallet-height', 'height（物理パレット厚）');
-      if (!height.ok) return height;
+      const palletId = document.getElementById('input-pallet-id').value;
+      const pallet = palletDB.pallets[palletId];
+      if (!pallet) return { ok: false, message: 'パレットの種類を選択してください' };
       const maxHeight = parsePalletNumericInput('input-pallet-max-height', 'max_height（荷物高さ上限）');
       if (!maxHeight.ok) return maxHeight;
       const maxXSpan = parsePalletNumericInput('input-pallet-max-x-span', 'max_x_span（荷姿長辺上限）');
@@ -663,9 +715,6 @@
       const maxYSpan = parsePalletNumericInput('input-pallet-max-y-span', 'max_y_span（荷姿短辺上限）');
       if (!maxYSpan.ok) return maxYSpan;
 
-      if (length.value < width.value) {
-        return { ok: false, message: 'length（長辺）は width（短辺）以上で入力してください' };
-      }
       if (maxXSpan.value < maxYSpan.value) {
         return { ok: false, message: 'max_x_span（荷姿長辺上限）は max_y_span（荷姿短辺上限）以上で入力してください' };
       }
@@ -673,9 +722,6 @@
       return {
         ok: true,
         value: {
-          length: length.value,
-          width: width.value,
-          height: height.value,
           max_x_span: maxXSpan.value,
           max_y_span: maxYSpan.value,
           max_height: maxHeight.value,
@@ -691,9 +737,6 @@
         || Object.prototype.hasOwnProperty.call(pallet, 'min_y_span');
       return {
         pallet: {
-          length: toFiniteNumberStrict(pallet.length),
-          width: toFiniteNumberStrict(pallet.width),
-          height: toFiniteNumberStrict(pallet.height),
           max_x_span: toFiniteNumberStrict(pallet.max_x_span),
           max_y_span: toFiniteNumberStrict(pallet.max_y_span),
           max_height: toFiniteNumberStrict(pallet.max_height),
@@ -805,10 +848,18 @@
     });
 
     document.getElementById('btn-open-create-modal').addEventListener('click', () => openModal(null));
+    document.getElementById('input-pallet-supplier').addEventListener('change', event => {
+      const currentPalletId = document.getElementById('input-pallet-id').value;
+      const currentPallet = palletDB.pallets[currentPalletId];
+      const retainedPalletId = currentPalletId === STANDARD_PALLET_ID
+        || (currentPallet && (currentPallet.suppliers || []).includes(event.target.value))
+        ? currentPalletId : undefined;
+      renderPalletSelectors(event.target.value, retainedPalletId);
+    });
     document.getElementById('btn-close-modal').addEventListener('click', closeModal);
     document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
 
-    function validateTestCase(name, description, boxList) {
+    function validateTestCase(name, description, boxList, supplierName = '', palletId = '') {
       if (!name || name.length > 120 || /[<>:"/\\|?*\u0000-\u001f]/.test(name) || /[. ]$/.test(name) || name === '.' || name === '..') {
         return 'テスト名が空、長すぎる、またはファイル名に使用できない文字を含んでいます';
       }
@@ -817,6 +868,13 @@
       }
       if (!description) return 'テスト説明 / 検証目的を入力してください';
       if (!Array.isArray(boxList) || boxList.length === 0) return '少なくとも1つの箱を追加してください';
+      if (!palletId) return 'パレット型番または標準パレットを選択してください';
+      const selectedPallet = palletDB.pallets[palletId];
+      if (!selectedPallet) return 'パレット型番または標準パレットをDBから選択してください';
+      if (palletId !== STANDARD_PALLET_ID
+          && (!supplierName || !(selectedPallet.suppliers || []).includes(supplierName))) {
+        return '仕入先とパレット型番の組み合わせを確認してください';
+      }
 
       for (let index = 0; index < boxList.length; index++) {
         const item = boxList[index];
@@ -851,7 +909,13 @@
         return { box_id: bid, count: cnt, lid_id: lid };
       });
 
-      const validationError = validateTestCase(name, desc, boxList);
+      const supplierName = document.getElementById('input-pallet-supplier').value;
+      const palletId = document.getElementById('input-pallet-id').value;
+      if (!palletId || !palletDB.pallets[palletId]) {
+        showToast('パレット型番または標準パレットを選択してください');
+        return;
+      }
+      const validationError = validateTestCase(name, desc, boxList, supplierName, palletId);
       if (validationError) {
         showToast(validationError);
         return;
@@ -866,13 +930,14 @@
         showToast(palletResult.message);
         return;
       }
-
       const tcObj = {
         name: name,
         description: desc,
         pallet: palletResult.value,
         box_list: boxList
       };
+      if (supplierName) tcObj.supplier_name = supplierName;
+      tcObj.pallet_id = palletId;
 
       testCasesData[name] = tcObj;
       if (!editTargetTcName) {
@@ -907,7 +972,13 @@
 
       const sanitizedCases = {};
       for (const [name, testCase] of Object.entries(testCasesData)) {
-        const validationError = validateTestCase(name, testCase.description || '', testCase.box_list || []);
+        const validationError = validateTestCase(
+          name,
+          testCase.description || '',
+          testCase.box_list || [],
+          testCase.supplier_name || '',
+          testCase.pallet_id || ''
+        );
         if (validationError) {
           showToast(`${name}: ${validationError}`);
           return;
@@ -915,18 +986,11 @@
 
         const sanitized = sanitizePalletForSave(testCase.pallet || {});
         const p = sanitized.pallet;
-        const invalidBase = !Number.isFinite(p.length) || p.length <= 0
-          || !Number.isFinite(p.width) || p.width <= 0
-          || !Number.isFinite(p.height) || p.height <= 0
-          || !Number.isFinite(p.max_x_span) || p.max_x_span <= 0
+        const invalidBase = !Number.isFinite(p.max_x_span) || p.max_x_span <= 0
           || !Number.isFinite(p.max_y_span) || p.max_y_span <= 0
           || !Number.isFinite(p.max_height) || p.max_height <= 0;
         if (invalidBase) {
-          showToast(`${name}: パレット6項目は正の有限数である必要があります`);
-          return;
-        }
-        if (p.length < p.width) {
-          showToast(`${name}: length（長辺）は width（短辺）以上である必要があります`);
+          showToast(`${name}: 荷姿上限3項目は正の有限数である必要があります`);
           return;
         }
         if (p.max_x_span < p.max_y_span) {

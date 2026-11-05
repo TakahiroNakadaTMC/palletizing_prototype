@@ -9,6 +9,7 @@ const html = fs.readFileSync(path.join(__dirname, 'db_viewer.html'), 'utf8');
 const script = fs.readFileSync(path.join(__dirname, 'db_viewer.js'), 'utf8');
 const boxMaster = JSON.parse(fs.readFileSync(path.join(__dirname, 'box_db.json'), 'utf8'));
 const lidMaster = JSON.parse(fs.readFileSync(path.join(__dirname, 'lid_db.json'), 'utf8'));
+const palletMaster = JSON.parse(fs.readFileSync(path.join(__dirname, 'pallet_db.json'), 'utf8')).pallets;
 
 test('markup keeps specification columns and display filters without box approval controls', () => {
   const boxPanel = html.match(/<section id="panel-boxes"[\s\S]*?<\/section>/)?.[0] || '';
@@ -124,6 +125,7 @@ async function setupApp(options = {}) {
   const confirms = [];
   let persistedBoxes = clone(boxMaster);
   let persistedLids = clone(lidMaster);
+  let persistedPallets = clone(palletMaster);
   const listeners = {};
   const windowObj = {
     addEventListener(type, listener) { listeners[type] = listener; },
@@ -166,12 +168,15 @@ async function setupApp(options = {}) {
       }
       if (url === '/api/boxes') return { ok: true, json: async () => clone(persistedBoxes) };
       if (url === '/api/lids') return { ok: true, json: async () => clone(persistedLids) };
+      if (url === '/api/pallets') return { ok: true, json: async () => ({ pallets: clone(persistedPallets) }) };
       if (url === '/api/lid_references') return { ok: true, json: async () => ({}) };
       if (url === '/api/box_references') return { ok: true, json: async () => options.boxReferences || {} };
+      if (url === '/api/pallet_references') return { ok: true, json: async () => options.palletReferences || {} };
       if (url === '/api/databases/save') {
         const payload = JSON.parse(init.body);
         if (payload.boxes) persistedBoxes = clone(payload.boxes);
         if (payload.lids) persistedLids = clone(payload.lids);
+        if (payload.pallets) persistedPallets = clone(payload.pallets.pallets);
         return { ok: true, json: async () => ({ status: 'ok' }) };
       }
       throw new Error(`Unexpected fetch ${url}`);
@@ -198,18 +203,44 @@ async function setupApp(options = {}) {
     lidRowEdit,
     persistedBoxes: () => persistedBoxes,
     persistedLids: () => persistedLids,
+    persistedPallets: () => persistedPallets,
   };
 }
 
 test('initial load uses no-store and enables editing', async () => {
   const app = await setupApp();
   const noStoreTargets = app.requests
-    .filter(r => ['/api/boxes', '/api/lids', '/api/lid_references', '/api/box_references'].includes(r.url))
+    .filter(r => ['/api/boxes', '/api/lids', '/api/lid_references', '/api/box_references', '/api/pallets', '/api/pallet_references'].includes(r.url))
     .map(r => r.init.cache);
-  assert.deepEqual(noStoreTargets, ['no-store', 'no-store', 'no-store', 'no-store']);
+  assert.deepEqual(noStoreTargets, ['no-store', 'no-store', 'no-store', 'no-store', 'no-store', 'no-store']);
   assert.equal(app.elements.get('btn-box-save').disabled, false);
   assert.equal(app.elements.get('btn-lid-save').disabled, false);
+  assert.equal(app.elements.get('btn-pallet-save').disabled, false);
   assert.equal(app.run('window.__dbViewer.state.loaded'), true);
+});
+
+test('pallet tab adds shared supplier specs and saves the normalized database', async () => {
+  const app = await setupApp();
+  app.run("window.__dbViewer.switchTab('pallets')");
+  assert.equal(app.run('window.__dbViewer.state.activeTab'), 'pallets');
+  app.run(`
+    const form = document.getElementById('pallet-add-form');
+    document.getElementById('pallet-new-model').value = 'SHARED';
+    document.getElementById('pallet-new-suppliers').value = 'Supplier A、Supplier B';
+    document.getElementById('pallet-new-length').value = '1200';
+    document.getElementById('pallet-new-width').value = '1000';
+    document.getElementById('pallet-new-height').value = '130';
+    form.listeners.submit({ preventDefault() {} });
+  `);
+  const recordId = 'SHARED_1200x1000x130';
+  assert.deepEqual(
+    JSON.parse(app.run(`JSON.stringify(window.__dbViewer.state.draft.pallets[${JSON.stringify(recordId)}])`)),
+    { id: recordId, model: 'SHARED', length: 1200, width: 1000, height: 130, suppliers: ['Supplier A', 'Supplier B'] }
+  );
+  await app.run('window.__dbViewer.savePallets()');
+  const saveReq = app.requests.filter(r => r.url === '/api/databases/save').at(-1);
+  assert.deepEqual(JSON.parse(saveReq.init.body).pallets.pallets[recordId].suppliers, ['Supplier A', 'Supplier B']);
+  assert.ok(app.persistedPallets()[recordId]);
 });
 
 test('failed initial load blocks editing and retry succeeds', async () => {
