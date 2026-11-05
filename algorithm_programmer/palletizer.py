@@ -5,19 +5,19 @@ HM-Palletizer:
 1. 嵌合沈み込み計算 (fitting_depth)
 2. TP規格モジュール嵌合段積み & 非TPコラム積み
 3. ケース別の荷山最大L/W/H以下、下限・はみ出し制約なし (v2026-11-03)
-4. 最高層四隅高さ一致 (Top 4-Corner Leveling)
+4. 上載せ支持凸包65%・面積重心偏り・複数隅短辺670mm・四隅直上候補 (v2026-11-05)
 5. トポロジカル積み順付番 (Order)
 """
 
 import math
 import copy
 from collections import Counter
+from itertools import combinations
 from typing import List, Dict, Tuple, Optional, Any
 from algorithm_programmer.models import BoxSpec, PlacedBox, PalletSpec, PalletizeResult
+from constraints.top_support import TopSurface, evaluate_top_support
 
-CORNER_HEIGHT_TOLERANCE_MM = 3.0
 SUPPORT_CORNER_TOLERANCE_MM = 0.01
-TOP_CORNER_MARGIN_MM = 35.0
 GEOMETRY_EPS_MM = 1e-3
 MIXED_LAYER_SEARCH_WIDTH = 16
 
@@ -81,6 +81,20 @@ class Palletizer:
     def __init__(self, box_db: Dict[str, BoxSpec], pallet: Optional[PalletSpec] = None):
         self.box_db = box_db
         self.pallet = pallet or PalletSpec()
+
+    def _top_support(self, boxes: List[PlacedBox], centered: bool = False) -> Dict[str, Any]:
+        shift_x, shift_y = self._centered_shift(boxes) if centered and boxes else (0.0, 0.0)
+        surfaces = []
+        for box in boxes:
+            spec = self.box_db[box.box_id]
+            surfaces.append(TopSurface(
+                box.order, box.box_id,
+                (box.footprint_min_x + shift_x, box.footprint_min_y + shift_y,
+                 box.max_x + shift_x, box.max_y + shift_y),
+                box.z, box.top_z, spec.required_top_support_points
+            ))
+        return evaluate_top_support(surfaces, self.pallet.length, self.pallet.width,
+                                    self.pallet.max_x_span, self.pallet.max_y_span)
 
     def _column_stack_group(self, box_id: str, lid_id: str,
                             lid_fit_type: str) -> Optional[Tuple[str, str]]:
@@ -220,7 +234,7 @@ class Palletizer:
             placed, algorithm_unplaced = self.palletize_mixed(expanded_boxes)
         unplaced_boxes.extend(algorithm_unplaced)
 
-        # 最高層四隅高さ揃え処理
+        # 上載せ平パレットの支持調整
         placed, unplaced_boxes = self.level_top_four_corners(placed, unplaced_boxes)
         self._align_pallet_bounds(placed)
 
@@ -241,15 +255,14 @@ class Palletizer:
         )
 
     # -------------------------------------------------------------------------
-    # 1. 単載パレタイズ — v2026-11-04: 風車追加、配置数・低高さ・外形占有率の順に選定
+    # 1. 単載パレタイズ — v2026-11-05: 安定した端数最上段・四隅優先
     # -------------------------------------------------------------------------
     def palletize_single(self, boxes: List[BoxSpec], lids: List[Dict[str, Any]] = None
                          ) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
-        """単一の箱型番・蓋組み合わせを全段同一の平面配置で積む。"""
+        """下段は同一配置で繰り返し、最上段のみ安定した部分集合を許可する。"""
         sample_box = boxes[0]
         w, l, h = sample_box.width, sample_box.length, sample_box.height
         depth = sample_box.fitting_depth
-        rib = sample_box.rib_thickness
         effective_height = h + sample_box.lid_thickness
         footprint_w = sample_box.footprint_width
         footprint_l = sample_box.footprint_length
@@ -270,143 +283,146 @@ class Palletizer:
             )
             if pinwheel is not None:
                 candidate_patterns.append(pinwheel)
+        if len(boxes) >= 5:
+            for fw, fl, rotation in ((footprint_w, footprint_l, 0),
+                                     (footprint_l, footprint_w, 90)):
+                if 3 * fw <= self.pallet.max_x_span + 1e-9 and 3 * fl <= self.pallet.max_y_span + 1e-9:
+                    candidate_patterns.append({
+                        "type": "five_points", "x_span": 3 * fw, "y_span": 3 * fl,
+                        "boxes": [{"x": x, "y": y, "w": fw, "l": fl, "rot": rotation}
+                                  for x, y in ((0, 0), (2 * fw, 0), (0, 2 * fl),
+                                               (2 * fw, 2 * fl), (fw, fl))]
+                    })
 
-        best_pattern = None
+        best: List[PlacedBox] = []
         best_score = None
-        fallback_pattern = None
-
         for pattern in candidate_patterns:
-            x_span = pattern["x_span"]
-            y_span = pattern["y_span"]
-            if x_span > self.pallet.max_x_span + 1e-9:
+            if max_layers <= 0:
+                break
+            if (pattern["x_span"] > self.pallet.max_x_span + 1e-9 or
+                    pattern["y_span"] > self.pallet.max_y_span + 1e-9):
                 continue
-            if y_span > self.pallet.max_y_span + 1e-9:
+            possible_count = min(len(boxes), len(pattern["boxes"]) * max_layers)
+            needed_layers = math.ceil(possible_count / len(pattern["boxes"]))
+            best_possible = (
+                possible_count, 1,
+                -(effective_height + (needed_layers - 1) * (effective_height - depth)),
+                1,
+                pattern["x_span"] * pattern["y_span"] / (self.pallet.max_x_span * self.pallet.max_y_span),
+                int(pattern["x_span"] >= pattern["y_span"] - 1e-9), 1)
+            if best_score is not None and best_possible <= best_score:
                 continue
-            count_in_layer = len(pattern["boxes"])
-            layers = min(len(boxes) // count_in_layer, max_layers)
-            load_height = effective_height + (layers - 1) * (effective_height - depth)
-            occupancy = (x_span * y_span) / (self.pallet.max_x_span * self.pallet.max_y_span)
-            score = (count_in_layer * layers, -load_height, occupancy)
-            if layers > 0 and best_score is not None and score <= best_score:
+            base = self._single_pattern_boxes(sample_box, pattern)
+            self._align_pallet_bounds(base)
+            if not self._pallet_support_is_valid(base):
                 continue
-
-            pattern_boxes = []
-            for item in pattern["boxes"]:
-                box_w, box_l = (w, l) if item["rot"] == 0 else (l, w)
-                lid_w, lid_l = (sample_box.lid_width, sample_box.lid_length) if item["rot"] == 0 else (sample_box.lid_length, sample_box.lid_width)
-                pattern_boxes.append(PlacedBox(
-                    order=0, box_id=sample_box.id,
-                    x=item["x"] + (item["w"] - box_w) / 2.0,
-                    y=item["y"] + (item["l"] - box_l) / 2.0,
-                    z=0.0, width=box_w, length=box_l, height=effective_height,
-                    fitting_depth=depth, rib_thickness=rib, rotation=item["rot"],
-                    layer_index=0, lid_id=sample_box.lid_id, lid_width=lid_w, lid_length=lid_l,
-                    lid_fit_type=sample_box.lid_fit_type
-                ))
-            centered_x = (self.pallet.length - x_span) / 2.0
-            centered_y = (self.pallet.width - y_span) / 2.0
-            if not self._pallet_support_is_valid(pattern_boxes, centered_x, centered_y):
+            per_layer = len(base)
+            complete = min(len(boxes) // per_layer, max_layers)
+            remainder = min(len(boxes) - complete * per_layer, per_layer - 1)
+            if complete == 0:
+                remainder = min(len(boxes), per_layer)
+            full_layout: List[PlacedBox] = []
+            for layer in range(complete):
+                for box in base:
+                    placed = copy.copy(box)
+                    placed.layer_index = layer
+                    placed.z = round(layer * (effective_height - depth), 2)
+                    full_layout.append(placed)
+            candidate = full_layout
+            if remainder and complete < max_layers:
+                top = []
+                for box in base:
+                    placed = copy.copy(box)
+                    placed.layer_index = complete
+                    placed.z = round(complete * (effective_height - depth), 2)
+                    top.append(placed)
+                partial = self._select_partial_top(full_layout, top, remainder)
+                if partial:
+                    candidate = full_layout + partial
+            if not candidate:
                 continue
-
-            # 完全な層を作れない少数投入では、従来の最大パターンの先頭部分を使う。
-            if fallback_pattern is None and (len(boxes) < count_in_layer or max_layers == 0):
-                fallback_pattern = pattern
-
-            margin = TOP_CORNER_MARGIN_MM
-            if not all(any(
-                (pb.footprint_min_x <= margin if left else pb.max_x >= x_span - margin)
-                and (pb.footprint_min_y <= margin if front else pb.max_y >= y_span - margin)
-                for pb in pattern_boxes
-            ) for left in (True, False) for front in (True, False)):
+            self._align_pallet_bounds(candidate)
+            if not self._top_support(candidate)["is_valid"] or not self._pallet_support_is_valid(candidate):
                 continue
-
-            if layers == 0:
+            if any(not self._support_corners_allowed(box, candidate) for box in candidate):
                 continue
+            score = self._layout_score(candidate)
             if best_score is None or score > best_score:
-                best_score = score
-                best_pattern = pattern
+                best, best_score = candidate, score
 
-        if best_pattern is None:
-            best_pattern = fallback_pattern
-        if not best_pattern:
-            return [], [{"box_id": sample_box.id, "count": len(boxes),
-                         "reason": "荷山最大外形・底面支持率・四隅の条件を満たす配置がありません"}]
+        missing = len(boxes) - len(best)
+        reason = ("下段隅の被覆条件を満たせず上段に配置できません" if corner_limited else
+                  "荷山最大外形・高さ・底面支持率・上載せ支持条件を満たす配置がありません")
+        if not corner_limited and best and max(b.layer_index for b in best) == max_layers - 1:
+            reason = "最大積載高さの上限に達しました"
+        return best, [{"box_id": sample_box.id, "count": missing, "reason": reason}] if missing else []
 
-        placed_boxes: List[PlacedBox] = []
-        total_needed = len(boxes)
-        box_idx = 0
+    def _single_pattern_boxes(self, spec: BoxSpec, pattern: Dict[str, Any]) -> List[PlacedBox]:
+        boxes = []
+        for item in pattern["boxes"]:
+            rotation = item["rot"]
+            w, l = (spec.width, spec.length) if rotation == 0 else (spec.length, spec.width)
+            lw, ll = (spec.lid_width, spec.lid_length) if rotation == 0 else (spec.lid_length, spec.lid_width)
+            boxes.append(PlacedBox(
+                order=0, box_id=spec.id, x=item["x"] + (item["w"] - w) / 2.0,
+                y=item["y"] + (item["l"] - l) / 2.0, z=0.0, width=w, length=l,
+                height=spec.height + spec.lid_thickness, fitting_depth=spec.fitting_depth,
+                rib_thickness=spec.rib_thickness, rotation=rotation, lid_id=spec.lid_id,
+                lid_width=lw, lid_length=ll, lid_thickness=spec.lid_thickness,
+                lid_fit_type=spec.lid_fit_type
+            ))
+        return boxes
 
-        x_span = best_pattern["x_span"]
-        y_span = best_pattern["y_span"]
-        offset_x = (self.pallet.length - x_span) / 2.0
-        offset_y = (self.pallet.width - y_span) / 2.0
-        unplaced_reason = ("下段隅の被覆条件を満たせず上段に配置できません" if corner_limited
-                           else "最大積載高さの上限に達しました")
+    def _layout_score(self, boxes: List[PlacedBox]) -> Tuple[int, int, float, int, float, int, int]:
+        support = self._top_support(boxes, centered=True)
+        x_span = max(b.max_x for b in boxes) - min(b.footprint_min_x for b in boxes)
+        y_span = max(b.max_y for b in boxes) - min(b.footprint_min_y for b in boxes)
+        layer_counts = Counter(b.layer_index for b in boxes)
+        return (len(boxes), int(all(support["corners_supported"])),
+                -max(b.top_z for b in boxes),
+                int(len(set(layer_counts.values())) == 1),
+                x_span * y_span / (self.pallet.max_x_span * self.pallet.max_y_span),
+                int(x_span >= y_span - 1e-9), int(support["center_supported"]))
 
-        for layer in range(max_layers):
-            layer_z = layer * (effective_height - depth)
-            if layer_z + effective_height > self.pallet.max_height + 1e-9:
-                unplaced_reason = "最大積載高さを超えるため配置できません"
-                break
+    def _select_partial_top(self, lower: List[PlacedBox], top: List[PlacedBox],
+                            count: int) -> List[PlacedBox]:
+        """小さい層は全部分集合、大きい層は幅制限付き削除探索で安定した端数段を選ぶ。"""
+        beam = [tuple(range(len(top)))]
+        for target in range(count, 0, -1):
+            if math.comb(len(top), target) <= 4096:
+                subsets = combinations(range(len(top)), target)
+            else:
+                while len(beam[0]) > target:
+                    children = {indices[:i] + indices[i + 1:]
+                                for indices in beam for i in range(len(indices))}
+                    beam = sorted(sorted(children), key=lambda indices: self._partial_support_score(
+                        lower, [top[i] for i in indices]), reverse=True)[:MIXED_LAYER_SEARCH_WIDTH]
+                subsets = iter(beam)
+            best: List[PlacedBox] = []
+            best_score = None
+            for indices in subsets:
+                selected = [top[i] for i in indices]
+                combined = lower + selected
+                if not self._top_support(combined, centered=True)["is_valid"]:
+                    continue
+                if any(not self._support_corners_allowed(b, combined) for b in selected):
+                    continue
+                if not self._centered_pallet_support_is_valid(combined):
+                    continue
+                score = self._layout_score(combined)
+                if best_score is None or score > best_score:
+                    best, best_score = selected, score
+            if best:
+                return best
+        return []
 
-            layer_pattern = best_pattern["boxes"]
-
-            boxes_in_layer = len(layer_pattern)
-            # 四隅が揃う完全な層のみを積む
-            if box_idx + boxes_in_layer > total_needed and box_idx > 0:
-                unplaced_reason = "最上段を一層分そろえられず、四隅高さ一致を保てません"
-                break
-
-            layer_start = box_idx
-            corner_failed = False
-            for b_pos in layer_pattern:
-                if box_idx >= total_needed:
-                    break
-
-                box = boxes[box_idx]
-                box_w, box_l = (w, l) if b_pos["rot"] == 0 else (l, w)
-                lid_w, lid_l = (box.lid_width, box.lid_length) if b_pos["rot"] == 0 else (box.lid_length, box.lid_width)
-                
-                pb = PlacedBox(
-                    order=box_idx + 1,
-                    box_id=box.id,
-                    x=round(offset_x + b_pos["x"] + (b_pos["w"] - box_w) / 2.0, 2),
-                    y=round(offset_y + b_pos["y"] + (b_pos["l"] - box_l) / 2.0, 2),
-                    z=round(layer_z, 2),
-                    width=box_w,
-                    length=box_l,
-                    height=effective_height,
-                    fitting_depth=depth,
-                    rib_thickness=rib,
-                    rotation=b_pos["rot"],
-                    layer_index=layer,
-                    lid_id=box.lid_id,
-                    lid_thickness=box.lid_thickness,
-                    lid_width=lid_w,
-                    lid_length=lid_l,
-                    lid_fit_type=box.lid_fit_type
-                )
-                if not self._support_corners_allowed(pb, placed_boxes):
-                    del placed_boxes[layer_start:]
-                    box_idx = layer_start
-                    corner_failed = True
-                    unplaced_reason = "下段隅の被覆またはコラム積み条件を満たせません"
-                    break
-                placed_boxes.append(pb)
-                box_idx += 1
-
-            if corner_failed or box_idx >= total_needed:
-                break
-
-        unplaced_count = total_needed - box_idx
-        unplaced = [{"box_id": sample_box.id, "count": unplaced_count, "reason": unplaced_reason}] if unplaced_count > 0 else []
-
-        self._align_pallet_bounds(placed_boxes)
-        if not self._pallet_support_is_valid(placed_boxes):
-            return [], [{"box_id": sample_box.id, "count": total_needed,
-                         "reason": "パレットによる底面支持率85%以上を満たす配置がありません"}]
-
-        return placed_boxes, unplaced
+    def _partial_support_score(self, lower: List[PlacedBox], top: List[PlacedBox]
+                               ) -> Tuple[int, int, int, float]:
+        support = self._top_support(lower + top, centered=True)
+        edges = support["opposing_edge_lengths_mm"]
+        return (int(support["is_valid"]), int(support["balanced"]),
+                    sum(support["corners_supported"]),
+                    min(edges.values()))
 
     def _generate_single_2d_patterns(self, w: float, l: float) -> List[Dict[str, Any]]:
         patterns = []
@@ -450,11 +466,14 @@ class Palletizer:
             for split_nx_90 in range(max_nx_90, 0, -1):
                 for count_y_0 in range(ny1, 0, -1):
                     for count_y_90 in range(ny2, 0, -1):
+                        span_y = max(count_y_0 * l, count_y_90 * w)
                         boxes_split = [
-                            {"x": ix * w, "y": iy * l, "w": w, "l": l, "rot": 0}
+                            {"x": ix * w, "y": iy * l + (span_y - count_y_0 * l) / 2,
+                             "w": w, "l": l, "rot": 0}
                             for ix in range(split_nx_0) for iy in range(count_y_0)
                         ] + [
-                            {"x": width_used_0 + ix * l, "y": iy * w, "w": l, "l": w, "rot": 90}
+                            {"x": width_used_0 + ix * l, "y": iy * w + (span_y - count_y_90 * w) / 2,
+                             "w": l, "l": w, "rot": 90}
                             for ix in range(split_nx_90) for iy in range(count_y_90)
                         ]
                         target = patterns if (split_nx_90 == max_nx_90
@@ -462,7 +481,7 @@ class Palletizer:
                         target.append({
                             "type": "split_x", "boxes": boxes_split,
                             "x_span": width_used_0 + split_nx_90 * l,
-                            "y_span": max(count_y_0 * l, count_y_90 * w)
+                            "y_span": span_y
                         })
 
         for split_ny_0 in range(1, ny1 + 1):
@@ -471,18 +490,21 @@ class Palletizer:
             for split_ny_90 in range(max_ny_90, 0, -1):
                 for count_x_0 in range(nx1, 0, -1):
                     for count_x_90 in range(nx2, 0, -1):
+                        span_x = max(count_x_0 * w, count_x_90 * l)
                         boxes_split = [
-                            {"x": ix * w, "y": iy * l, "w": w, "l": l, "rot": 0}
+                            {"x": ix * w + (span_x - count_x_0 * w) / 2, "y": iy * l,
+                             "w": w, "l": l, "rot": 0}
                             for ix in range(count_x_0) for iy in range(split_ny_0)
                         ] + [
-                            {"x": ix * l, "y": len_used_0 + iy * w, "w": l, "l": w, "rot": 90}
+                            {"x": ix * l + (span_x - count_x_90 * l) / 2, "y": len_used_0 + iy * w,
+                             "w": l, "l": w, "rot": 90}
                             for ix in range(count_x_90) for iy in range(split_ny_90)
                         ]
                         target = patterns if (split_ny_90 == max_ny_90
                                               and count_x_0 == nx1 and count_x_90 == nx2) else reduced_patterns
                         target.append({
                             "type": "split_y", "boxes": boxes_split,
-                            "x_span": max(count_x_0 * w, count_x_90 * l),
+                            "x_span": span_x,
                             "y_span": len_used_0 + split_ny_90 * w
                         })
 
@@ -552,14 +574,48 @@ class Palletizer:
         for placed, unplaced in layouts:
             placed, unplaced = self.level_top_four_corners(placed, unplaced)
             self._align_pallet_bounds(placed)
+            placed = self._center_short_groups(placed)
             summary = self.calculate_summary(placed)
-            balanced = bool(placed) and self._mixed_layer_candidate_score([], placed)[0] == 1
-            score = (int(summary["is_valid"] and balanced), len(placed),
-                     -max((box.top_z for box in placed), default=0.0))
+            score = (int(summary["is_valid"]),) + (
+                self._layout_score(placed) if placed else (0, 0, 0.0, 0, 0.0, 0, 0))
             if best_score is None or score > best_score:
                 best_layout = placed, unplaced
                 best_score = score
         return best_layout
+
+    def _center_short_groups(self, boxes: List[PlacedBox]) -> List[PlacedBox]:
+        """分割配置の短いブロックを中央寄せし、同じコラム全段をまとめて移動する。"""
+        if not boxes:
+            return boxes
+        base = [b for b in boxes if b.z <= GEOMETRY_EPS_MM]
+        groups = [[b for b in base if b.rotation == r] for r in (0, 90)]
+        if not all(groups):
+            return boxes
+        bounds = [(min(b.footprint_min_x for b in g), min(b.footprint_min_y for b in g),
+                   max(b.max_x for b in g), max(b.max_y for b in g)) for g in groups]
+        a, b = bounds
+        axis = ("y" if a[2] <= b[0] + 1e-9 or b[2] <= a[0] + 1e-9 else
+                "x" if a[3] <= b[1] + 1e-9 or b[3] <= a[1] + 1e-9 else "")
+        if not axis:
+            return boxes
+        offset = 0 if axis == "x" else 1
+        center = (min(r[offset] for r in bounds) + max(r[offset + 2] for r in bounds)) / 2
+        shifts = {r: center - (rect[offset] + rect[offset + 2]) / 2
+                  for r, rect in zip((0, 90), bounds)}
+        candidate = [copy.copy(box) for box in boxes]
+        for box in candidate:
+            setattr(box, axis, round(getattr(box, axis) + shifts[box.rotation], 2))
+        self._align_pallet_bounds(candidate)
+        if not self.calculate_summary(candidate)["is_valid"]:
+            return boxes
+        if self._layout_score(candidate) < self._layout_score(boxes):
+            return boxes
+        for i, box in enumerate(candidate):
+            if any(check_collision_3d(other, box.footprint_min_x, box.footprint_min_y, box.z,
+                                      box.footprint_width, box.footprint_length, box.height,
+                                      box.fitting_depth) for other in candidate[:i]):
+                return boxes
+        return candidate
 
     def _palletize_mixed_layout(self, pool: List[BoxSpec], envelope: Dict[str, float],
                                 first_layer: Optional[List[PlacedBox]] = None
@@ -675,36 +731,22 @@ class Palletizer:
 
     def _mixed_layer_candidate_score(self, placed_boxes: List[PlacedBox],
                                     candidate_boxes: List[PlacedBox]
-                                    ) -> Tuple[int, int, float, int, float]:
-        """四隅の高さを崩さず、配置数と次段の高さ余裕も考慮して層候補を評価する。"""
+                                    ) -> Tuple[int, int, int, float, int, float]:
+        """上載せ支持を優先し、配置数と次段の高さ余裕を評価する。"""
         boxes = placed_boxes + candidate_boxes
-        min_x = min(box.footprint_min_x for box in boxes)
-        max_x = max(box.max_x for box in boxes)
-        min_y = min(box.footprint_min_y for box in boxes)
-        max_y = max(box.max_y for box in boxes)
-
-        corners = [
-            [box for box in boxes if box.footprint_min_x <= min_x + TOP_CORNER_MARGIN_MM and
-             box.footprint_min_y <= min_y + TOP_CORNER_MARGIN_MM],
-            [box for box in boxes if box.max_x >= max_x - TOP_CORNER_MARGIN_MM and
-             box.footprint_min_y <= min_y + TOP_CORNER_MARGIN_MM],
-            [box for box in boxes if box.footprint_min_x <= min_x + TOP_CORNER_MARGIN_MM and
-             box.max_y >= max_y - TOP_CORNER_MARGIN_MM],
-            [box for box in boxes if box.max_x >= max_x - TOP_CORNER_MARGIN_MM and
-             box.max_y >= max_y - TOP_CORNER_MARGIN_MM]
-        ]
-        corner_tops = [max(box.top_z for box in corner) for corner in corners if corner]
-        corner_coverage = len(corner_tops)
-        corner_spread = max(corner_tops) - min(corner_tops) if corner_coverage == 4 else float("inf")
-        balanced_corners = int(corner_coverage == 4 and corner_spread <= CORNER_HEIGHT_TOLERANCE_MM)
+        support = self._top_support(boxes, centered=True)
+        coverage = sum(support.get("corners_supported", []))
+        heights = [s["top_z"] for s in support["support_boxes"]]
+        spread = max(heights) - min(heights) if heights else float("inf")
         candidate_top = max(box.top_z for box in candidate_boxes)
 
         return (
-            balanced_corners,
-            corner_coverage,
-            -corner_spread,
+            int(support["is_valid"]),
+            int(coverage == 4),
             len(candidate_boxes),
-            -candidate_top
+            -candidate_top,
+            coverage,
+            -spread,
         )
 
     def _determine_mixed_envelope(self, pool: List[BoxSpec]) -> Dict[str, float]:
@@ -1140,7 +1182,69 @@ class Palletizer:
         candidates.sort(key=lambda candidate: self._mixed_layer_candidate_score(
             placed_so_far, candidate[0]
         ), reverse=True)
-        return candidates[:MIXED_LAYER_SEARCH_WIDTH]
+        return candidates[:MIXED_LAYER_SEARCH_WIDTH] + self._corner_column_candidates(
+            pool, base_z, layer_idx, placed_so_far, envelope)
+
+    def _corner_column_candidates(self, pool: List[BoxSpec], base_z: float, layer_idx: int,
+                                  placed_so_far: List[PlacedBox], envelope: Dict[str, float]
+                                  ) -> List[Tuple[List[PlacedBox], List[BoxSpec]]]:
+        """既存候補とは別枠で、下段四隅の直上配置と残箱充填案を追加する。"""
+        if not placed_so_far or layer_idx == 0:
+            return []
+        lower = [b for b in placed_so_far if b.z < base_z - GEOMETRY_EPS_MM]
+        x0 = min(b.footprint_min_x for b in placed_so_far)
+        y0 = min(b.footprint_min_y for b in placed_so_far)
+        x1 = max(b.max_x for b in placed_so_far)
+        y1 = max(b.max_y for b in placed_so_far)
+        anchors = []
+        for x, y in ((x0, y0), (x1, y0), (x0, y1), (x1, y1)):
+            matches = [b for b in lower
+                       if b.footprint_min_x - 1e-9 <= x <= b.max_x + 1e-9 and
+                       b.footprint_min_y - 1e-9 <= y <= b.max_y + 1e-9]
+            if not matches:
+                return []
+            anchor = max(matches, key=lambda b: b.top_z)
+            if anchor not in anchors:
+                anchors.append(anchor)
+        specs = {b.pool_key: b for b in pool}
+        states = [([], Counter(b.pool_key for b in pool))]
+        for anchor in anchors:
+            next_states = []
+            for layer, remaining in states:
+                for key, spec in specs.items():
+                    if remaining[key] <= 0:
+                        continue
+                    for rotation in (0, 90):
+                        fw, fl = ((spec.footprint_width, spec.footprint_length) if rotation == 0
+                                  else (spec.footprint_length, spec.footprint_width))
+                        if (abs(fw - (anchor.max_x - anchor.footprint_min_x)) > GEOMETRY_EPS_MM or
+                                abs(fl - (anchor.max_y - anchor.footprint_min_y)) > GEOMETRY_EPS_MM):
+                            continue
+                        placed = self._try_place_at(
+                            anchor.footprint_min_x, anchor.footprint_min_y, spec, rotation,
+                            layer, envelope["x_span"], envelope["y_span"], base_z, layer_idx, lower)
+                        if placed is not None:
+                            rest = Counter(remaining)
+                            rest[key] -= 1
+                            next_states.append((layer + [placed], rest))
+            states = next_states[:MIXED_LAYER_SEARCH_WIDTH]
+        candidates = []
+        for layer, remaining in states:
+            for fill in (False, True):
+                selected = [copy.copy(b) for b in layer]
+                rest = Counter(remaining)
+                if fill:
+                    self._ep_fill_layer(selected, rest, specs, envelope["x_span"],
+                                        envelope["y_span"], base_z, layer_idx, lower)
+                if not self._centered_pallet_support_is_valid(placed_so_far + selected):
+                    continue
+                leftover = []
+                for box in pool:
+                    if rest[box.pool_key] > 0:
+                        leftover.append(box)
+                        rest[box.pool_key] -= 1
+                candidates.append((selected, leftover))
+        return candidates
 
     def _pinwheel_layer_candidates(self, pool: List[BoxSpec], base_z: float, layer_idx: int,
                                    placed_so_far: List[PlacedBox], envelope: Dict[str, float]
@@ -1297,55 +1401,37 @@ class Palletizer:
             box.y = round(box.y + shift_y, 2)
 
     # -------------------------------------------------------------------------
-    # 3. 最高層四隅高さ揃え処理 (Top 4-Corner Leveling)
+    # 3. 上載せ支持の調整 — v2026-11-05
     # -------------------------------------------------------------------------
     def level_top_four_corners(self, placed_boxes: List[PlacedBox],
                                unplaced_boxes: List[Dict[str, Any]]) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
+        """上載せ支持が安定する最高の切り下げ高さを選ぶ。旧名は呼出互換のため維持。"""
         if not placed_boxes:
             return placed_boxes, unplaced_boxes
 
-        min_x = min(pb.footprint_min_x for pb in placed_boxes)
-        max_x = max(pb.max_x for pb in placed_boxes)
-        min_y = min(pb.footprint_min_y for pb in placed_boxes)
-        max_y = max(pb.max_y for pb in placed_boxes)
-
-        margin = TOP_CORNER_MARGIN_MM
-        c1_boxes = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.footprint_min_y <= min_y + margin]
-        c2_boxes = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.footprint_min_y <= min_y + margin]
-        c3_boxes = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.max_y >= max_y - margin]
-        c4_boxes = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.max_y >= max_y - margin]
-
-        if not (c1_boxes and c2_boxes and c3_boxes and c4_boxes):
+        if self._top_support(placed_boxes, centered=True)["is_valid"]:
             return placed_boxes, unplaced_boxes
 
-        top_c1 = max(pb.top_z for pb in c1_boxes)
-        top_c2 = max(pb.top_z for pb in c2_boxes)
-        top_c3 = max(pb.top_z for pb in c3_boxes)
-        top_c4 = max(pb.top_z for pb in c4_boxes)
-
-        min_corner_top = min(top_c1, top_c2, top_c3, top_c4)
-        max_corner_top = max(top_c1, top_c2, top_c3, top_c4)
-        overall_top = max(pb.top_z for pb in placed_boxes)
-
-        if (abs(max_corner_top - min_corner_top) <= CORNER_HEIGHT_TOLERANCE_MM and
-            abs(overall_top - max_corner_top) <= CORNER_HEIGHT_TOLERANCE_MM):
+        leveled_boxes = placed_boxes
+        for height in sorted({pb.top_z for pb in placed_boxes}, reverse=True):
+            candidate = [pb for pb in placed_boxes if pb.top_z <= height + 1e-9]
+            if self._top_support(candidate, centered=True)["is_valid"]:
+                leveled_boxes = candidate
+                break
+        if leveled_boxes is placed_boxes:
             return placed_boxes, unplaced_boxes
 
-        target_level = min_corner_top
-        leveled_boxes = []
         removed_count: Dict[str, int] = {}
-
+        retained = {id(pb) for pb in leveled_boxes}
         for pb in placed_boxes:
-            if pb.top_z <= target_level + CORNER_HEIGHT_TOLERANCE_MM:
-                leveled_boxes.append(pb)
-            else:
+            if id(pb) not in retained:
                 removed_count[pb.box_id] = removed_count.get(pb.box_id, 0) + 1
 
         unplaced_map = {item["box_id"]: dict(item) for item in unplaced_boxes}
         for bid, cnt in removed_count.items():
             item = unplaced_map.setdefault(bid, {"box_id": bid, "count": 0, "reason": ""})
             item["count"] += cnt
-            reason = "最高層の四隅高さを揃えるため除外されました"
+            reason = "上載せ平パレットの支持安定性を確保するため除外されました"
             if item["reason"] and reason not in item["reason"]:
                 item["reason"] += " / " + reason
             elif not item["reason"]:
@@ -1392,6 +1478,7 @@ class Palletizer:
                 "overhang_mm": {"left": 0.0, "right": 0.0, "front": 0.0, "back": 0.0},
                 "total_height": self.pallet.height,
                 "warnings": [],
+                "top_support": self._top_support([]),
                 "is_valid": False,
                 "violations": ["No boxes placed"]
             }
@@ -1434,25 +1521,8 @@ class Palletizer:
                     f"Order #{box.order} ({box.box_id}): 下段隅の被覆またはコラム積み条件違反"
                 )
 
-        # 四隅高さチェック
-        margin = TOP_CORNER_MARGIN_MM
-        c1 = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.footprint_min_y <= min_y + margin]
-        c2 = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.footprint_min_y <= min_y + margin]
-        c3 = [pb for pb in placed_boxes if pb.footprint_min_x <= min_x + margin and pb.max_y >= max_y - margin]
-        c4 = [pb for pb in placed_boxes if pb.max_x >= max_x - margin and pb.max_y >= max_y - margin]
-
-        if c1 and c2 and c3 and c4:
-            t1 = max(b.top_z for b in c1)
-            t2 = max(b.top_z for b in c2)
-            t3 = max(b.top_z for b in c3)
-            t4 = max(b.top_z for b in c4)
-            if not (abs(t1 - max_z) <= CORNER_HEIGHT_TOLERANCE_MM and
-                    abs(t2 - max_z) <= CORNER_HEIGHT_TOLERANCE_MM and
-                    abs(t3 - max_z) <= CORNER_HEIGHT_TOLERANCE_MM and
-                    abs(t4 - max_z) <= CORNER_HEIGHT_TOLERANCE_MM):
-                violations.append(f"Top 4-corners height mismatch: C1={t1:.1f}, C2={t2:.1f}, C3={t3:.1f}, C4={t4:.1f} (Max={max_z:.1f})")
-        else:
-            violations.append("Top 4-corners coverage is incomplete")
+        top_support = self._top_support(placed_boxes)
+        violations.extend(top_support["violations"])
 
         overhang = {
             "left": round(max(0.0, -min_x), 2),
@@ -1483,6 +1553,7 @@ class Palletizer:
             "overhang_mm": overhang,
             "total_height": round(self.pallet.height + max_z, 2),
             "warnings": warnings,
+            "top_support": top_support,
             "is_valid": len(violations) == 0,
             "violations": violations
         }

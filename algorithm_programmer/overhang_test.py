@@ -59,14 +59,13 @@ class PalletDimensionTests(unittest.TestCase):
         self.assertTrue(result.summary["warnings"])
         self.assert_validated(result, {"A": self.spec})
 
-    def test_no_minimum_span_and_single_box_centering(self) -> None:
+    def test_small_single_box_rejected_by_upper_support_rules(self) -> None:
         spec = replace(self.spec, width=300, length=300, height=100)
         result = Palletizer({"A": spec}).run("small", [{"box_id": "A", "count": 1}])
-        self.assertEqual(len(result.boxes), 1)
-        self.assertEqual((result.boxes[0].x, result.boxes[0].y), (450, 350))
-        self.assertEqual(result.summary["bounding_box"]["x_span"], 300)
+        self.assertEqual(result.boxes, [])
+        self.assertEqual(sum(b["count"] for b in result.unplaced_boxes), 1)
         self.assertEqual(result.summary["warnings"], [])
-        self.assert_validated(result, {"A": spec})
+        self.assertFalse(result.summary["is_valid"])
 
     def test_exact_fractional_lwh_maxima_and_over_limit(self) -> None:
         spec = replace(self.spec, width=1360.5, length=1100.5, height=1250)
@@ -106,15 +105,15 @@ class PalletDimensionTests(unittest.TestCase):
         self.assertFalse(result.summary["is_valid"])
 
     def test_lid_footprint_counts_for_maxima_and_warnings(self) -> None:
-        spec = replace(self.spec, width=600, length=500)
-        lids = {"L": dict(width=640, length=540, thickness=5, fit_type="外嵌め")}
-        pallet = PalletSpec(length=600, width=500, max_x_span=640, max_y_span=540)
+        spec = replace(self.spec, width=800, length=700)
+        lids = {"L": dict(width=840, length=740, thickness=5, fit_type="外嵌め")}
+        pallet = PalletSpec(length=800, width=700, max_x_span=840, max_y_span=740)
         result = Palletizer({"A": spec}, pallet).run(
             "lid", [{"box_id": "A", "count": 1, "lid_id": "L"}], lids)
         self.assertEqual(result.summary["overhang_mm"],
                          dict(left=20, right=20, front=20, back=20))
         self.assert_validated(result, {"A": spec}, lids)
-        rejected = Palletizer({"A": spec}, replace(pallet, max_x_span=639)).run(
+        rejected = Palletizer({"A": spec}, replace(pallet, max_x_span=839)).run(
             "lid_limit", [{"box_id": "A", "count": 1, "lid_id": "L"}], lids)
         self.assertEqual(rejected.boxes, [])
 

@@ -20,7 +20,10 @@
 `supervisor/validate.py` は `algorithm_programmer` のコアモデル・エンジン（`models.py` / `palletizer.py`）を
 **一切 import せず**、独立した検証ロジックとして実装されています。これはコア実装のバグや仕様変更から
 独立して荷姿制約を監査できるようにするためです（親エージェントの実装とは別に、同じ入力JSONを
-別ロジックで再検証します）。
+別ロジックで再検証します）。2026-11-05追加の上載せ支持幾何だけは、
+エンジン非依存の [共通制約ヘルパー](../constraints/top_support.py) を使用します。
+結果の座標・箱DBから入力を再構築し、保存されたサマリー・支持関係・合否は信用しません。
+この項目は別実装ではなく共通幾何規則の再計算です。
 
 ---
 
@@ -67,7 +70,11 @@ supervisor/
 1. **積載貨物高さ制約** ($\le$ `pallet.max_height`、inclusive）
 2. **長辺荷姿スパン制約** ($0 <$ X $\le$ `pallet.max_x_span`、inclusive、下限なし）
 3. **短辺荷姿スパン制約** ($0 <$ Y $\le$ `pallet.max_y_span`、inclusive、下限なし）
-4. **最高層四隅高さ一致** (各コーナーの誤差 3.0mm 以内)
+4. **上載せ平パレット支持安定性**（同高3 mm以内、原則外周4点、TP331/TP-331は中央含む5点。
+   四隅が欠ける場合だけ、接触支持領域の外周の前/奥と左/右の4辺すべてに各670 mm以上の連続支持を要求。
+   四隅支持でも1箱が複数隅を覆う場合は、接触支持領域全体の外接短辺670 mm以上が必要。
+   凸包面積は設定 `max_x_span × max_y_span` の65%以上、面積重心ずれはパレット中心から各設定幅の1/4未満。
+   内部空間を含む凸包で評価し、実荷山外形や実接触面積を分母にしない。パレット中心が支持面凸包の内部に必要）
 5. **天地固定・回転角度制約** (0° / 90° のみ、上下反転・横倒し禁止)
 6. **嵌合沈み込み計算** ($Z_{upper} = Z_{lower} + H_{lower} - fitting\_depth$)
 7. **空中配置禁止・底面支持率** ($\ge 85\%$、許容誤差 `1e-6`。パレット直置き（z<=EPS）の箱は、箱本体（蓋を除くbody）底面とパレット本体の矩形 `(0,0)-(pallet.length, pallet.width)` との実交差面積を支持面積として計上します。パレット外へ完全にはみ出た箱は支持面積0として扱われ、85%未満であれば空中浮遊エラーとなります)
@@ -81,6 +88,15 @@ supervisor/
 12. **荷姿センタリング**（箱・蓋外形の外接矩形中心とパレット中心が各方向0.01 mm以内で一致）
 
 ### 4.1 出力される高さ・体積情報
+
+- `report["top_support"]`: 支持高さ・接触支持箱・露出接触領域・四隅/中央充足・必要点数・
+  支持多角形・連続X/Y辺長・`opposing_edge_lengths_mm`（front/back/left/right）・
+  `opposing_support_axis`（XY/空文字）・670 mm例外適用・違反。箱DBの `top_support_points` で4/5を指定できる。
+  同寸法・同XY位置の上載せと均等荷重を仮定する。実耐荷重・たわみの保証ではない。
+  面積・偏りは `support_polygon_area_mm2`、`support_area_ratio`、`support_centroid`、
+  `centroid_offset_mm`、`reference_max_x_span_mm` / `reference_max_y_span_mm` に記録する。
+  複数隅を支持する実際の箱は `multi_corner_boxes`、接触支持外接短辺は `contact_short_side_mm`。
+  面積65%ちょうどは合格、重心ずれ1/4ちょうどは不合格。保存されたsummaryではなく出力座標と設定から再計算する。
 
 - `report["physical_pallet_height"]`: 解決済み `pallet.height`（パレット本体の物理高さ）
 - `report["total_height"]`: `pallet.height + 積載貨物の最高到達Z`（物理高さ込みの全体高さ）

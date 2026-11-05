@@ -160,11 +160,13 @@ class PalletDimensionValidationTests(PalletCaseBuilderMixin, unittest.TestCase):
 class PalletBoundaryIntegrationTests(PalletCaseBuilderMixin, unittest.TestCase):
     """validate_case 全体を通した、境界値(inclusive)・下限なし・空結果の検証。"""
 
-    def test_default_pallet_centers_single_box_without_violations(self):
+    def test_default_pallet_centered_small_box_fails_only_upper_support(self):
         result = self.validate_boxes(
             [{"box_id": "TP-331", "x": 432.5, "y": 332.5}], omit_pallet=True
         )
-        self.assertEqual(result["violations"], [])
+        self.assertEqual(result["violations"], result["top_support"]["violations"])
+        self.assertTrue(any("area ratio" in v for v in result["violations"]))
+        self.assertTrue(any("multiple outer corners" in v for v in result["violations"]))
 
     def test_long_side_span_boundary_is_inclusive(self):
         at_limit = self.validate_boxes(
@@ -175,7 +177,7 @@ class PalletBoundaryIntegrationTests(PalletCaseBuilderMixin, unittest.TestCase):
             [{"box_id": "TP-331", "x": 432.5, "y": 332.5}],
             extra_pallet={"max_x_span": 334.99, "max_y_span": 334.99}
         )
-        self.assertEqual(at_limit["violations"], [])
+        self.assertEqual(at_limit["violations"], at_limit["top_support"]["violations"])
         self.assertTrue(any("長辺荷姿スパン超過" in v for v in over_limit["violations"]))
 
     def test_short_side_span_boundary_is_inclusive(self):
@@ -187,7 +189,7 @@ class PalletBoundaryIntegrationTests(PalletCaseBuilderMixin, unittest.TestCase):
             [{"box_id": "TP-331", "x": 432.5, "y": 332.5}],
             extra_pallet={"max_y_span": 334.99}
         )
-        self.assertEqual(at_limit["violations"], [])
+        self.assertEqual(at_limit["violations"], at_limit["top_support"]["violations"])
         self.assertTrue(any("短辺荷姿スパン超過" in v for v in over_limit["violations"]))
 
     def test_max_height_boundary_is_inclusive(self):
@@ -199,7 +201,7 @@ class PalletBoundaryIntegrationTests(PalletCaseBuilderMixin, unittest.TestCase):
             [{"box_id": "TP-331", "x": 432.5, "y": 332.5}],
             extra_pallet={"max_height": 102.49}
         )
-        self.assertEqual(at_limit["violations"], [])
+        self.assertEqual(at_limit["violations"], at_limit["top_support"]["violations"])
         self.assertTrue(any("最大積載高さ超過" in v for v in over_limit["violations"]))
 
     def test_case_specific_max_height_is_authoritative_no_fixed_1200_cap(self):
@@ -208,7 +210,7 @@ class PalletBoundaryIntegrationTests(PalletCaseBuilderMixin, unittest.TestCase):
             [{"box_id": "TP-331", "x": 432.5, "y": 332.5, "z": 0.0}],
             extra_pallet={"max_height": 5000.0}
         )
-        self.assertEqual(result["violations"], [])
+        self.assertEqual(result["violations"], result["top_support"]["violations"])
         exceeding_default_only = self.validate_boxes(
             [{"box_id": "TP-331", "x": 432.5, "y": 332.5, "z": 1150.0}],
             extra_pallet={"max_height": 5000.0}

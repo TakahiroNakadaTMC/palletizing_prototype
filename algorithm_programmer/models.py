@@ -5,6 +5,7 @@
 import math
 from dataclasses import dataclass, field, asdict
 from typing import List, Dict, Optional, Tuple, Any
+from constraints.top_support import required_support_points
 
 POSITION_REFERENCE = "combined_footprint_min_xy_top_z"
 
@@ -25,6 +26,15 @@ class BoxSpec:
     lid_length: float = 0.0
     lid_thickness: float = 0.0
     lid_fit_type: str = "なし"
+    top_support_points: Optional[int] = None
+
+    def __post_init__(self) -> None:
+        self.top_support_points = self.required_top_support_points
+
+    @property
+    def required_top_support_points(self) -> int:
+        record = {} if self.top_support_points is None else {"top_support_points": self.top_support_points}
+        return required_support_points(self.id, record)
 
     @property
     def pool_key(self) -> Tuple[str, str]:
@@ -66,7 +76,8 @@ class BoxSpec:
             fitting_depth=float(d.get("fitting_depth", 10.0)),
             rib_thickness=float(d.get("rib_thickness", 22.0)),
             module_ratio=d.get("module_ratio"),
-            description=d.get("description", "")
+            description=d.get("description", ""),
+            top_support_points=required_support_points(d["id"], d)
         )
 
 @dataclass

@@ -28,6 +28,9 @@ sys.stderr.reconfigure(encoding="utf-8")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+from constraints.top_support import TopSurface, evaluate_top_support, required_support_points
 BOX_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "box_db.json")
 LID_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "lid_db.json")
 RESULTS_DIR = os.path.join(PROJECT_ROOT, "tester", "results")
@@ -58,7 +61,6 @@ RETIRED_PALLET_KEYS = (
 MIN_SUPPORT_RATIO = 0.85   # 底面支持面積比率の下限 (85%)
 SUPPORT_RATIO_TOLERANCE = 1e-6
 SUPPORT_CORNER_TOLERANCE_MM = 0.01
-CORNER_HEIGHT_TOLERANCE = 3.0  # mm (最高層四隅高さの許容誤差)
 EPS = 1e-3                 # 浮動小数点誤差マージン
 # 荷山スパン・高さの上限比較は、engine 側(1e-9)と揃えて僅かな丸め誤差のみ許容する。
 SPAN_FLOAT_EPS = 1e-9
@@ -269,6 +271,7 @@ class PalletizeValidator:
             "overhang_mm": {"left": 0.0, "right": 0.0, "front": 0.0, "back": 0.0},
             "violations": violations,
             "warnings": warnings,
+            "top_support": evaluate_top_support([], 0.0, 0.0, 0.0, 0.0),
         }
 
     def validate_case(self, result_path: str) -> Dict[str, Any]:
@@ -577,29 +580,22 @@ class PalletizeValidator:
                             violations.append(f"積み順トポロジカル違反: 上段 Order #{order} ({b['box_id']}) が下段 Order #{other['order']} ({other['box_id']}) より先に配置されています")
 
         # -------------------------------------------------------------
-        # 6. 最高層四隅高さ一致（Top 4-Corner Leveling）の検証
+        # 6. v2026-11-05: 出力座標から上載せ平パレットの接触支持を再計算
         # -------------------------------------------------------------
-        margin = 35.0  # mm
-        c1_boxes = [b for b, bounds in zip(boxes, footprint_bounds) if bounds[0] <= min_x + margin and bounds[1] <= min_y + margin]
-        c2_boxes = [b for b, bounds in zip(boxes, footprint_bounds) if bounds[2] >= max_x - margin and bounds[1] <= min_y + margin]
-        c3_boxes = [b for b, bounds in zip(boxes, footprint_bounds) if bounds[0] <= min_x + margin and bounds[3] >= max_y - margin]
-        c4_boxes = [b for b, bounds in zip(boxes, footprint_bounds) if bounds[2] >= max_x - margin and bounds[3] >= max_y - margin]
-
-        if not (c1_boxes and c2_boxes and c3_boxes and c4_boxes):
-            violations.append("最高層四隅エラー: 荷姿の四隅（4コーナー）の一部に箱が配置されていません")
-        else:
-            top_c1 = max(b["position"]["z"] + b["dimensions"]["height"] for b in c1_boxes)
-            top_c2 = max(b["position"]["z"] + b["dimensions"]["height"] for b in c2_boxes)
-            top_c3 = max(b["position"]["z"] + b["dimensions"]["height"] for b in c3_boxes)
-            top_c4 = max(b["position"]["z"] + b["dimensions"]["height"] for b in c4_boxes)
-
-            if not (abs(top_c1 - max_z) <= CORNER_HEIGHT_TOLERANCE and
-                    abs(top_c2 - max_z) <= CORNER_HEIGHT_TOLERANCE and
-                    abs(top_c3 - max_z) <= CORNER_HEIGHT_TOLERANCE and
-                    abs(top_c4 - max_z) <= CORNER_HEIGHT_TOLERANCE):
-                violations.append(
-                    f"最高層四隅高さ不一致: 左手前={top_c1:.1f}mm, 右手前={top_c2:.1f}mm, 左奥={top_c3:.1f}mm, 右奥={top_c4:.1f}mm (最高到達高={max_z:.1f}mm)"
-                )
+        surfaces = []
+        for box, bounds in zip(boxes, footprint_bounds):
+            box_id = box["box_id"]
+            try:
+                points = required_support_points(box_id, self.box_db.get(box_id, {}))
+            except ValueError as exc:
+                violations.append(str(exc))
+                continue
+            bottom = box["position"]["z"]
+            surfaces.append(TopSurface(box["order"], box_id, bounds, bottom,
+                                       bottom + box["dimensions"]["height"], points))
+        top_support = evaluate_top_support(surfaces, pallet_x_length, pallet_y_width,
+                                           max_x_span, max_y_span)
+        violations.extend(top_support["violations"])
 
         is_pass = (len(violations) == 0)
 
@@ -619,7 +615,8 @@ class PalletizeValidator:
             "total_height": round(physical_height + max_z, 2),
             "overhang_mm": overhang,
             "violations": violations,
-            "warnings": warnings
+            "warnings": warnings,
+            "top_support": top_support
         }
 
 def run_supervisor_validation():
@@ -697,6 +694,23 @@ def run_supervisor_validation():
             dims = f"{r.get('x_span', 0.0):.0f} × {r.get('y_span', 0.0):.0f} × {r.get('max_z', 0.0):.0f}"
             notes_parts = list(r.get("violations", [])) if not r["is_pass"] else []
             notes_parts.extend(r.get("warnings", []))
+            support = r["top_support"]
+            if support["is_valid"]:
+                mode = "長短4辺670mm支持の例外（荷山4隅不足）" if support["long_edge_exception"] else "外周4隅支持"
+                edges = support["opposing_edge_lengths_mm"]
+                notes_parts.append(
+                    f"上載せ: {mode} / 必要{support['required_points']}点 / "
+                    f"中央接触{'あり' if support['center_supported'] else 'なし'} / "
+                    f"連続X{support['continuous_support_x_mm']:.2f}, "
+                    f"Y{support['continuous_support_y_mm']:.2f}mm / "
+                    f"受け側 前{edges['front']:.2f}, 奥{edges['back']:.2f}, "
+                    f"左{edges['left']:.2f}, 右{edges['right']:.2f}mm / "
+                    f"凸包面積率{support['support_area_ratio'] * 100:.2f}%（設定上限比） / "
+                    f"凸包重心ずれX{support['centroid_offset_mm'][0]:.2f}, "
+                    f"Y{support['centroid_offset_mm'][1]:.2f}mm / "
+                    f"複数隅箱{len(support['multi_corner_boxes'])}個 / "
+                    f"支持短辺{support['contact_short_side_mm']:.2f}mm / 重心支持OK"
+                )
             notes = "<br>".join(notes_parts) if notes_parts else "制約項目全クリア"
             f.write(f"| **`{r['test_name']}`** | {status} | {r.get('total_boxes', 0)} 箱 | {dims} | {r.get('vol_eff', 0.0):.1f}% | {notes} |\n")
         f.write("\n---\n\n")
@@ -711,8 +725,7 @@ def run_supervisor_validation():
         f.write(r"7. **3D幾何衝突の完全排除**: 箱同士の不正な空間食い込み（嵌合深さを超える干渉）が0件であること。" + "\n")
         f.write("8. **積み込み順序（Order）の物理的整合性**: 支持関係にある箱について、\n")
         f.write(r"   下段箱が上段箱より必ず先に積載されていること ($order_{lower} < order_{upper}$)。" + "\n")
-        f.write("9. **最高層四隅高さ一致制約 (Top 4-Corner Leveling)**:\n")
-        f.write(r"   四隅それぞれの上面高さが荷山の最高到達点 $Z_{max}$ と 3.0mm 以内で一致すること。" + "\n")
+        f.write("9. **上載せ平パレット支持安定性**: 同寸法・同XY位置の上載せパレットを、最高接触面から3mm以内の露出上面で支持する。荷重重心はパレット中心で支持多角形の内部に必要。原則荷山外周4隅を覆う箱がパレット下面と接触する。四隅が欠ける場合だけ、接触支持領域の外接矩形の前/奥と左/右の4辺すべてで各670mm以上の連続支持を必須とする。四隅支持でも1箱が複数隅を覆う場合は接触支持領域全体の外接短辺670mm以上が必要。支持凸包面積は設定max_x_span×max_y_spanの65%以上、面積重心はパレット中心から各方向の設定幅の1/4未満（境界NG）。凸包には内部空間を含める。TP331/TP-331を含む5点支持指定では中央接触も必須。幾何近似であり耐荷重・たわみは保証しない。\n")
         f.write(r"10. **下段支持箱サイズ制限**: 直接支持する下段箱の幅・奥行きが、上段箱より両方とも 1.0mm を超えて大きくないこと。" + "\n")
         f.write(r"11. **オーバーハング(参考情報)**: 合否には影響しない。箱・蓋結合外形のバウンディングボックスとパレット端との左右前後のはみ出し量 (`overhang_mm`) を警告として記録する。" + "\n")
 
