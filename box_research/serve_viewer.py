@@ -9,27 +9,29 @@ import http.server
 import socketserver
 import json
 import os
-import math
+import sys
 import tempfile
 import webbrowser
 import urllib.parse
 from typing import Any, Dict, List
+
+if __package__ in (None, ""):
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from box_research.database_validation import (
+    STANDARD_PALLET,
+    STANDARD_PALLET_ID,
+    validate_box_lid_databases,
+    validate_case_pallet_reference,
+    validate_pallet_database as _validate_pallet_database,
+    validate_record_database,
+)
 
 PORT = 8081
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BOX_DB_PATH = os.path.join(BASE_DIR, "box_db.json")
 LID_DB_PATH = os.path.join(BASE_DIR, "lid_db.json")
 PALLET_DB_PATH = os.path.join(BASE_DIR, "pallet_db.json")
-STANDARD_PALLET_ID = "__STANDARD_1200_1000_130__"
-STANDARD_PALLET = {
-    "id": STANDARD_PALLET_ID,
-    "model": "標準パレット（型番未指定）",
-    "length": 1200,
-    "width": 1000,
-    "height": 130,
-    "suppliers": [],
-    "standard": True,
-}
 TEST_CASES_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "test_programmer", "test_cases"))
 VIEWER_HTML_PATH = os.path.join(BASE_DIR, "db_viewer.html")
 
@@ -81,57 +83,13 @@ def _pallet_references() -> Dict[str, List[str]]:
     return references
 
 
-def _validate_pallet_database(data: Dict[str, Any]) -> Dict[str, Any]:
-    if not isinstance(data, dict) or set(data) != {"pallets"}:
-        raise ValueError("Pallet database must contain a pallets object")
-    pallets = data["pallets"]
-    if not isinstance(pallets, dict):
-        raise ValueError("pallets must be an object")
-    if STANDARD_PALLET_ID not in pallets:
-        raise ValueError("The fixed standard pallet record is required")
-    for pallet_id, pallet in pallets.items():
-        if (not isinstance(pallet_id, str) or not pallet_id
-                or not isinstance(pallet, dict) or pallet.get("id") != pallet_id):
-            raise ValueError("Pallet id must match its key")
-        if not isinstance(pallet.get("model"), str) or not pallet["model"].strip():
-            raise ValueError("Pallet {} requires a model".format(pallet_id))
-        suppliers = pallet.get("suppliers")
-        is_standard = pallet_id == STANDARD_PALLET_ID
-        if (not isinstance(suppliers, list) or (not suppliers and not is_standard)
-                or any(not isinstance(name, str) or not name.strip() for name in suppliers)
-                or len(suppliers) != len(set(suppliers))):
-            raise ValueError("Pallet {} requires unique supplier names".format(pallet_id))
-        if is_standard and pallet != STANDARD_PALLET:
-            raise ValueError("The standard pallet record is fixed and cannot be changed")
-        if not is_standard and pallet.get("standard"):
-            raise ValueError("Only the reserved standard pallet can be marked standard")
-        for field in ("length", "width", "height"):
-            value = pallet.get(field)
-            if (isinstance(value, bool) or not isinstance(value, (int, float))
-                    or not math.isfinite(value) or value <= 0):
-                raise ValueError("Pallet {}.{} must be a positive finite number".format(pallet_id, field))
-    return data
-
-
 def _validate_pallet_case_references(test_cases: Dict[str, Any], pallet_db: Dict[str, Any]) -> None:
-    pallets = pallet_db["pallets"]
     for case_id, case in test_cases.items():
         if not isinstance(case, dict):
             raise ValueError("Test case {} must be an object".format(case_id))
-        pallet_id = case.get("pallet_id")
-        supplier_name = case.get("supplier_name")
-        if pallet_id is None:
+        if case.get("pallet_id") is None:
             continue
-        if not isinstance(pallet_id, str) or pallet_id not in pallets:
-            raise ValueError("Test case {} references an unknown pallet".format(case_id))
-        pallet = pallets[pallet_id]
-        if pallet_id != STANDARD_PALLET_ID and supplier_name not in pallet["suppliers"]:
-            raise ValueError("Test case {} supplier does not use pallet {}".format(case_id, pallet_id))
-        spec = case.get("pallet")
-        if not isinstance(spec, dict) or any(
-            spec.get(field) != pallet[field] for field in ("length", "width", "height")
-        ):
-            raise ValueError("Test case {} pallet dimensions do not match {}".format(case_id, pallet_id))
+        validate_case_pallet_reference(case_id, case, pallet_db)
 
 
 def _lid_references(lid_db: Dict[str, Any]) -> Dict[str, List[str]]:
@@ -170,11 +128,7 @@ def _validate_databases(data: Dict[str, Any]) -> Dict[str, Any]:
         if name == "pallets":
             _validate_pallet_database(database)
             continue
-        if not isinstance(database, dict):
-            raise ValueError("{} must be an object".format(name))
-        for key, item in database.items():
-            if not isinstance(item, dict) or item.get("id") != key:
-                raise ValueError("{}: record id must match its key ({})".format(name, key))
+        validate_record_database(database, name)
 
     old_lids = _read_database(LID_DB_PATH)
     lids = data.get("lids", old_lids)
@@ -189,8 +143,7 @@ def _validate_databases(data: Dict[str, Any]) -> Dict[str, Any]:
                 raise ValueError("Box {} is referenced by: {}".format(
                     box_id, ", ".join(references[box_id])
                 ))
-    if not any(lid.get("type") == "NONE" for lid in lids.values()):
-        raise ValueError("Keep at least one no-lid (NONE) option")
+    validate_box_lid_databases(boxes, lids)
     if "lids" in data:
         references = _lid_references(old_lids)
         for lid_id in old_lids.keys() - lids.keys():
@@ -202,12 +155,6 @@ def _validate_databases(data: Dict[str, Any]) -> Dict[str, Any]:
             if (lid.get("type") == "NONE" and lid_id in lids
                     and lids[lid_id].get("type") != "NONE" and references.get(lid_id)):
                 raise ValueError("Referenced no-lid option cannot change type: {}".format(lid_id))
-    for box_id, box in boxes.items():
-        compatible = box.get("compatible_lids", [])
-        if not isinstance(compatible, list) or any(
-            not isinstance(lid_id, str) or lid_id not in lids for lid_id in compatible
-        ):
-            raise ValueError("Unknown or invalid compatible_lids for {}".format(box_id))
     if "pallets" in data:
         _validate_pallet_database(data["pallets"])
         references = _pallet_references()

@@ -126,7 +126,10 @@ algorithm_programmer/
 本体Hを積載高さから差し引かず、内部Z座標は引き続きパレット上面を0とします。
 固定800 mm下限とはみ出し許容値・670 mm例外は撤廃しました。
 旧設定キーは読み込み時に無視し、結果には出力しません。
-旧ケースの個別寸法は維持し、本体H未設定時は130 mmです。
+現在のCLIでは、ケースの `pallet_id` からパレットDBの本体L/W/Hを取得します。
+旧ケースに本体寸法が残っていてもDB値を優先します。
+ケース固有の荷姿上限（`max_x_span`、`max_y_span`、`max_height`）は維持します。
+`PalletSpec` を直接生成する場合の本体Hの既定値は130 mmです。
 下限廃止により、小さい完全層を使って従来より多く配置できる場合があります。
 最下段は、本体底面とパレットとの交差面積で85%以上の支持を候補・最終判定で確認します。
 `summary.overhang_mm`（left/right/front/back）、`warnings`、
@@ -249,12 +252,12 @@ python -m unittest algorithm_programmer.corner_support_test algorithm_programmer
 
 ```bash
 # 単一テストケースの実行
-python3 algorithm_programmer/cli.py test_programmer/test_cases/mixed_tp_same_height.json
+python3 algorithm_programmer/cli.py test_programmer/test_cases/aisin.json
 
 # 結果をJSONファイルに出力
 python3 algorithm_programmer/cli.py \
-  test_programmer/test_cases/mixed_tp_same_height.json \
-  -o tester/results/result_mixed_tp_same_height.json
+  test_programmer/test_cases/aisin.json \
+  -o tester/results/result_aisin.json
 ```
 
 ---

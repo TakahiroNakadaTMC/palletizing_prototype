@@ -15,10 +15,18 @@ import re
 import math
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import urllib.parse
-from box_research.serve_viewer import STANDARD_PALLET_ID, _validate_pallet_database
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
+if __package__ in (None, ""):
+    sys.path.insert(0, PROJECT_ROOT)
+
+from box_research.database_validation import (
+    validate_box_lid_databases,
+    validate_case_references,
+    validate_pallet_database,
+)
+
 BOX_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "box_db.json")
 LID_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "lid_db.json")
 PALLET_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "pallet_db.json")
@@ -219,18 +227,14 @@ class TestCaseViewerHandler(SimpleHTTPRequestHandler):
                         raise ValueError(f"テストケース {case_id} の採否状態が不正です")
                     tc_obj["pallet"] = validate_and_normalize_pallet_spec(case_id, tc_obj.get("pallet"))
                 with open(PALLET_DB_PATH, "r", encoding="utf-8") as f:
-                    pallet_db = _validate_pallet_database(json.load(f))
-                pallets = pallet_db.get("pallets", {})
+                    pallet_db = validate_pallet_database(json.load(f))
+                with open(BOX_DB_PATH, "r", encoding="utf-8") as f:
+                    boxes = json.load(f)
+                with open(LID_DB_PATH, "r", encoding="utf-8") as f:
+                    lids = json.load(f)
+                validate_box_lid_databases(boxes, lids)
                 for case_id, tc_obj in tcs_data.items():
-                    pallet_id = tc_obj.get("pallet_id")
-                    if pallet_id is None:
-                        raise ValueError(f"テストケース {case_id} のパレット型番または標準パレットを選択してください")
-                    if not isinstance(pallet_id, str) or pallet_id not in pallets:
-                        raise ValueError(f"テストケース {case_id} のパレット型番がDBにありません")
-                    pallet = pallets[pallet_id]
-                    if (pallet_id != STANDARD_PALLET_ID
-                            and tc_obj.get("supplier_name") not in pallet.get("suppliers", [])):
-                        raise ValueError(f"テストケース {case_id} の仕入先とパレット型番が一致しません")
+                    validate_case_references(case_id, tc_obj, boxes, lids, pallet_db)
 
                 os.makedirs(TEST_CASES_DIR, exist_ok=True)
 

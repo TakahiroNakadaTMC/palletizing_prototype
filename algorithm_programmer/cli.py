@@ -19,7 +19,7 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from algorithm_programmer.models import BoxSpec, PalletSpec
 from algorithm_programmer.palletizer import Palletizer
-from box_research.serve_viewer import STANDARD_PALLET_ID
+from box_research.database_validation import STANDARD_PALLET_ID
 
 
 def resolve_pallet_spec(

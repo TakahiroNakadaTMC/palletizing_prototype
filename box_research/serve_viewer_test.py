@@ -128,6 +128,86 @@ class ViewerServerTest(unittest.TestCase):
         self.assertEqual(status, 400)
         self.assertEqual(self.pallet_path.read_bytes(), before)
 
+    def test_pallet_save_accepts_current_case_format_without_dimension_copy(self):
+        case = {
+            "pallet_id": "MODEL_1200x1000x130", "supplier_name": "Supplier A",
+            "pallet": {"max_x_span": 1360, "max_y_span": 1100, "max_height": 1200},
+        }
+        case_path = self.root / "cases" / "used.json"
+        case_path.write_text(json.dumps(case), encoding="utf-8")
+        before = case_path.read_bytes()
+        for endpoint, payload in (
+            ("/api/pallets/save_all", self.pallets),
+            ("/api/databases/save", {
+                "boxes": self.boxes, "lids": self.lids, "pallets": self.pallets,
+            }),
+        ):
+            with self.subTest(endpoint=endpoint):
+                status, _, body = self.request("POST", endpoint, payload)
+                self.assertEqual(status, 200, body)
+                self.assertEqual(case_path.read_bytes(), before)
+
+    def test_pallet_dimension_edit_uses_master_not_legacy_case_copy(self):
+        case = {
+            "pallet_id": "MODEL_1200x1000x130", "supplier_name": "Supplier A",
+            "pallet": {"length": 1200, "width": 1000, "height": 130},
+        }
+        case_path = self.root / "cases" / "legacy.json"
+        case_path.write_text(json.dumps(case), encoding="utf-8")
+        before = case_path.read_bytes()
+        updated = copy.deepcopy(self.pallets)
+        updated["pallets"]["MODEL_1200x1000x130"]["height"] = 140
+        status, _, body = self.request("POST", "/api/pallets/save_all", updated)
+        self.assertEqual(status, 200, body)
+        self.assertEqual(
+            json.loads(self.pallet_path.read_text(encoding="utf-8")), updated
+        )
+        self.assertEqual(case_path.read_bytes(), before)
+
+    def test_pallet_save_rejects_supplier_removal_without_writes(self):
+        (self.root / "cases" / "used.json").write_text(json.dumps({
+            "pallet_id": "MODEL_1200x1000x130", "supplier_name": "Supplier A",
+            "pallet": {"max_x_span": 1360, "max_y_span": 1100, "max_height": 1200},
+        }), encoding="utf-8")
+        updated = copy.deepcopy(self.pallets)
+        updated["pallets"]["MODEL_1200x1000x130"]["suppliers"] = ["Supplier B"]
+        before = self.pallet_path.read_bytes()
+        status, _, body = self.request("POST", "/api/pallets/save_all", updated)
+        self.assertEqual(status, 400, body)
+        self.assertIn("used", json.loads(body)["message"])
+        self.assertEqual(self.pallet_path.read_bytes(), before)
+
+    def test_real_database_no_change_save_with_all_current_cases(self):
+        project = Path(__file__).resolve().parents[1]
+        for path, name in (
+            (self.box_path, "box_db.json"), (self.lid_path, "lid_db.json"),
+            (self.pallet_path, "pallet_db.json"),
+        ):
+            path.write_bytes((project / "box_research" / name).read_bytes())
+        cases = {}
+        for source in (project / "test_programmer" / "test_cases").glob("*.json"):
+            cases[source.name] = source.read_bytes()
+            (self.root / "cases" / source.name).write_bytes(cases[source.name])
+        payload = {
+            "boxes": json.loads(self.box_path.read_text(encoding="utf-8")),
+            "lids": json.loads(self.lid_path.read_text(encoding="utf-8")),
+            "pallets": json.loads(self.pallet_path.read_text(encoding="utf-8")),
+        }
+        for endpoint, data in (
+            ("/api/pallets/save_all", payload["pallets"]),
+            ("/api/databases/save", payload),
+        ):
+            with self.subTest(endpoint=endpoint):
+                status, _, body = self.request("POST", endpoint, data)
+                self.assertEqual(status, 200, body)
+                for path, name in (
+                    (self.box_path, "boxes"), (self.lid_path, "lids"),
+                    (self.pallet_path, "pallets"),
+                ):
+                    self.assertEqual(json.loads(path.read_text(encoding="utf-8")), payload[name])
+                for name, original in cases.items():
+                    self.assertEqual((self.root / "cases" / name).read_bytes(), original)
+
     def test_related_save_replaces_both_and_preserves_dimension_values(self):
         boxes = copy.deepcopy(self.boxes)
         lids = copy.deepcopy(self.lids)
