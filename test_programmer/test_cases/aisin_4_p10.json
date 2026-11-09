@@ -1,0 +1,28 @@
+{
+  "name": "aisin_4_p10",
+  "description": "アイシン半田　混載（箱数+10%評価）",
+  "pallet": {
+    "max_x_span": 1005.0,
+    "max_y_span": 1005.0,
+    "max_height": 1200.0
+  },
+  "box_list": [
+    {
+      "box_id": "SPG34229",
+      "count": 15,
+      "lid_id": "TP34蓋(IC)"
+    },
+    {
+      "box_id": "SPG34230",
+      "count": 15,
+      "lid_id": "TP34蓋(IC)"
+    },
+    {
+      "box_id": "SP342",
+      "count": 2,
+      "lid_id": "無蓋"
+    }
+  ],
+  "supplier_name": "アイシン",
+  "pallet_id": "D4-1012-7_1200x1000x130"
+}

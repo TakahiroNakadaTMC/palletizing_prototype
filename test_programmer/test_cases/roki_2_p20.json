@@ -1,0 +1,18 @@
+{
+  "name": "roki_2_p20",
+  "description": "ROKI（箱数+20%評価）",
+  "pallet": {
+    "max_x_span": 1005.0,
+    "max_y_span": 1005.0,
+    "max_height": 1200.0
+  },
+  "box_list": [
+    {
+      "box_id": "TP3415",
+      "count": 22,
+      "lid_id": "無蓋"
+    }
+  ],
+  "supplier_name": "ROKI",
+  "pallet_id": "__STANDARD_1200_1000_130__"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "aisin_7_m10",
+  "description": "TCC No2（箱数-10%評価）",
+  "pallet": {
+    "max_x_span": 1340.0,
+    "max_y_span": 1005.0,
+    "max_height": 1200.0
+  },
+  "box_list": [
+    {
+      "box_id": "SPZ36406",
+      "count": 15,
+      "lid_id": "TP360フタ"
+    }
+  ],
+  "supplier_name": "アイシン",
+  "pallet_id": "D4-1012-7_1200x1000x130"
+}

@@ -1,0 +1,28 @@
+{
+  "name": "othics_2_m20",
+  "description": "ローラーロッカー（箱数-20%評価）",
+  "pallet": {
+    "max_x_span": 1188.0,
+    "max_y_span": 1036.0,
+    "max_height": 1200.0
+  },
+  "box_list": [
+    {
+      "box_id": "TP3415",
+      "count": 13,
+      "lid_id": "TP34蓋ロック付き"
+    },
+    {
+      "box_id": "NP262D",
+      "count": 6,
+      "lid_id": "サンボックス＃26"
+    },
+    {
+      "box_id": "TP331",
+      "count": 3,
+      "lid_id": "サンボックス330フタ"
+    }
+  ],
+  "supplier_name": "オティックス",
+  "pallet_id": "D4-1012-4_1200x1000x130"
+}

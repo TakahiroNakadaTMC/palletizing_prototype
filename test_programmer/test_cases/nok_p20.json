@@ -1,0 +1,33 @@
+{
+  "name": "nok_p20",
+  "description": "NOK混載（箱数+20%評価）",
+  "pallet": {
+    "max_x_span": 1146.0,
+    "max_y_span": 1005.0,
+    "max_height": 1200.0
+  },
+  "box_list": [
+    {
+      "box_id": "NP000002",
+      "count": 4,
+      "lid_id": "無蓋"
+    },
+    {
+      "box_id": "NP000003",
+      "count": 8,
+      "lid_id": "無蓋"
+    },
+    {
+      "box_id": "TP131",
+      "count": 7,
+      "lid_id": "無蓋"
+    },
+    {
+      "box_id": "TP331",
+      "count": 20,
+      "lid_id": "無蓋"
+    }
+  ],
+  "supplier_name": "NOK",
+  "pallet_id": "JL-R4-1210C_1200x1000x130"
+}

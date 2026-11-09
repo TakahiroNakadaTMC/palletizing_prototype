@@ -1,0 +1,18 @@
+{
+  "name": "nittan_2_m20",
+  "description": "EXバルブ（箱数-20%評価）",
+  "pallet": {
+    "max_x_span": 1107.0,
+    "max_y_span": 1107.0,
+    "max_height": 1200.0
+  },
+  "box_list": [
+    {
+      "box_id": "NPH010",
+      "count": 7,
+      "lid_id": "無蓋"
+    }
+  ],
+  "supplier_name": "ニッタン",
+  "pallet_id": "__STANDARD_1200_1000_130__"
+}

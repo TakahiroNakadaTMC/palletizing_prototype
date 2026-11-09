@@ -1,0 +1,18 @@
+{
+  "name": "aisin_5_m20",
+  "description": "AKK刈谷（箱数-20%評価）",
+  "pallet": {
+    "max_x_span": 1005.0,
+    "max_y_span": 1005.0,
+    "max_height": 1200.0
+  },
+  "box_list": [
+    {
+      "box_id": "TP331",
+      "count": 8,
+      "lid_id": "TP330フタ"
+    }
+  ],
+  "supplier_name": "アイシン",
+  "pallet_id": "D4-1012-7_1200x1000x130"
+}
