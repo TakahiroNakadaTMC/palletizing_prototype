@@ -105,16 +105,18 @@ class PalletDimensionTests(unittest.TestCase):
         self.assertFalse(result.summary["is_valid"])
 
     def test_lid_footprint_counts_for_maxima_and_warnings(self) -> None:
-        spec = replace(self.spec, width=800, length=700)
+        spec = replace(self.spec, width=800, length=700, lid_id="L",
+                       lid_width=840, lid_length=740, lid_thickness=5,
+                       lid_fit_type="外嵌め")
         lids = {"L": dict(width=840, length=740, thickness=5, fit_type="外嵌め")}
         pallet = PalletSpec(length=800, width=700, max_x_span=840, max_y_span=740)
-        result = Palletizer({"A": spec}, pallet).run(
-            "lid", [{"box_id": "A", "count": 1, "lid_id": "L"}], lids)
+        result = Palletizer({("A", "L"): spec}, pallet).run(
+            "lid", [{"box_id": "A", "count": 1, "lid_id": "L"}])
         self.assertEqual(result.summary["overhang_mm"],
                          dict(left=20, right=20, front=20, back=20))
         self.assert_validated(result, {"A": spec}, lids)
-        rejected = Palletizer({"A": spec}, replace(pallet, max_x_span=839)).run(
-            "lid_limit", [{"box_id": "A", "count": 1, "lid_id": "L"}], lids)
+        rejected = Palletizer({("A", "L"): spec}, replace(pallet, max_x_span=839)).run(
+            "lid_limit", [{"box_id": "A", "count": 1, "lid_id": "L"}])
         self.assertEqual(rejected.boxes, [])
 
     def test_mixed_envelope_uses_inclusive_case_maxima(self) -> None:

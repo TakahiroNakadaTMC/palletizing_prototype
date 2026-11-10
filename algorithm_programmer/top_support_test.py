@@ -6,6 +6,7 @@ from pathlib import Path
 import unittest
 from unittest.mock import mock_open, patch
 
+from algorithm_programmer.cli import resolve_box_specs
 from algorithm_programmer.models import BoxSpec, PalletSpec, PlacedBox
 from algorithm_programmer.palletizer import Palletizer
 from constraints.top_support import TopSurface, evaluate_top_support, required_support_points
@@ -211,11 +212,13 @@ class TopSupportTest(unittest.TestCase):
         self.assertEqual(result["continuous_support_x_mm"], 0)
 
     def test_lid_contact_and_upper_coordinates(self):
-        spec = BoxSpec("OTHER", "OTHER", "NON_TP", 300, 300, 100, 0, 0)
+        spec = BoxSpec("OTHER", "OTHER", "NON_TP", 300, 300, 100, 0, 0,
+                       lid_id="LID", lid_width=700, lid_length=400,
+                       lid_thickness=5, lid_fit_type="外嵌め")
         box = PlacedBox(1, spec.id, 450, 350, 0, 300, 300, 105, 0, 0, 90,
                         lid_id="LID", lid_thickness=5, lid_width=700,
                         lid_length=400, lid_fit_type="外嵌め")
-        engine = Palletizer({spec.id: spec})
+        engine = Palletizer({(spec.id, "LID"): spec})
         expected = engine.calculate_summary([box])["top_support"]
         self.assertEqual(expected["support_regions"], [(250, 300, 950, 700)])
         data = {"coordinate_reference": "combined_footprint_min_xy_top_z",
@@ -369,8 +372,9 @@ class RevisedRealLayoutTests(unittest.TestCase):
 
     def run_case(self, name):
         case = json.loads((self.root / "test_programmer" / "test_cases" / (name + ".json")).read_text(encoding="utf-8"))
-        engine = Palletizer(self.db, PalletSpec.from_dict(case["pallet"]))
-        result = engine.run(name, case["box_list"], self.lids)
+        box_specs, box_list = resolve_box_specs(case["box_list"], self.raw, self.lids)
+        engine = Palletizer(box_specs, PalletSpec.from_dict(case["pallet"]))
+        result = engine.run(name, box_list)
         validator = PalletizeValidator(self.raw, self.lids)
         with patch("builtins.open", mock_open(read_data=json.dumps(result.to_dict()))):
             validation = validator.validate_case(name + ".json")

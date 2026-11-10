@@ -7,6 +7,7 @@ from collections import Counter
 from dataclasses import replace
 from unittest.mock import mock_open, patch
 
+from algorithm_programmer.cli import resolve_box_specs
 from algorithm_programmer.models import BoxSpec, PalletSpec
 from algorithm_programmer.palletizer import Palletizer
 from supervisor.validate import (
@@ -391,15 +392,13 @@ class ExternalLidColumnStackTests(PalletCaseBuilderMixin, unittest.TestCase):
         self.assertTrue(any("コラム積み条件違反" in v for v in result["violations"]))
 
     def test_palletizer_stacks_different_tp_ids_with_the_same_external_lid(self):
-        box_specs = {
-            box_id: BoxSpec.from_dict(data)
-            for box_id, data in self.box_db.items()
-        }
-        palletizer = Palletizer(box_specs, PalletSpec())
-        result = palletizer.run("external_lid_tp_column", [
+        box_list = [
             {"box_id": "TP-331", "count": 9, "lid_id": "サンボックス330フタ"},
-            {"box_id": "TP-332", "count": 9, "lid_id": "サンボックス330フタ"}
-        ], self.lid_db)
+            {"box_id": "TP-332", "count": 9, "lid_id": "サンボックス330フタ"},
+        ]
+        box_specs, box_list = resolve_box_specs(box_list, self.box_db, self.lid_db)
+        palletizer = Palletizer(box_specs, PalletSpec())
+        result = palletizer.run("external_lid_tp_column", box_list)
 
         result_data = result.to_dict()
         self.assertEqual(result_data["coordinate_reference"],
@@ -431,15 +430,13 @@ class ExternalLidColumnStackTests(PalletCaseBuilderMixin, unittest.TestCase):
         self.assertTrue(validation["is_pass"], validation["violations"])
 
     def test_palletizer_does_not_stack_external_lid_tp_on_a_different_lid(self):
-        box_specs = {
-            box_id: BoxSpec.from_dict(data)
-            for box_id, data in self.box_db.items()
-        }
-        palletizer = Palletizer(box_specs, PalletSpec())
-        result = palletizer.run("external_lid_tp_different_lids", [
+        box_list = [
             {"box_id": "TP-331", "count": 9, "lid_id": "サンボックス330フタ"},
-            {"box_id": "TP-332", "count": 9, "lid_id": "TP330フタ"}
-        ], self.lid_db)
+            {"box_id": "TP-332", "count": 9, "lid_id": "TP330フタ"},
+        ]
+        box_specs, box_list = resolve_box_specs(box_list, self.box_db, self.lid_db)
+        palletizer = Palletizer(box_specs, PalletSpec())
+        result = palletizer.run("external_lid_tp_different_lids", box_list)
 
         self.assertFalse(any(box.box_id == "TP-332" and box.z > 0.0 for box in result.boxes))
 
@@ -472,17 +469,13 @@ class MixedLayerSearchTests(unittest.TestCase):
         pallet_spec = PalletSpec.from_dict(self.testcase["pallet"])
         if max_y_span is not None:
             pallet_spec.max_y_span = max_y_span
-        engine = Palletizer(
-            {box_id: BoxSpec.from_dict(data) for box_id, data in self.box_db.items()},
-            pallet_spec
+        box_specs, box_list = resolve_box_specs(
+            self.testcase["box_list"], self.box_db, self.lid_db
         )
+        engine = Palletizer(box_specs, pallet_spec)
         pool = []
-        for entry in self.testcase["box_list"]:
-            lid = self.lid_db[entry["lid_id"]]
-            spec = replace(engine.box_db[entry["box_id"]],
-                           lid_id=entry["lid_id"], lid_width=lid["width"],
-                           lid_length=lid["length"], lid_thickness=lid["thickness"],
-                           lid_fit_type=lid["fit_type"])
+        for entry in box_list:
+            spec = box_specs[(entry["box_id"], entry["lid_id"])]
             pool.extend([spec] * entry["count"])
         return engine, pool
 
@@ -560,7 +553,8 @@ class MixedLayerSearchTests(unittest.TestCase):
 
     def test_final_layout_improves_loading_and_passes_validation(self):
         engine, _ = self.make_engine_and_pool()
-        result = engine.run(self.testcase["name"], self.testcase["box_list"], self.lid_db)
+        _, box_list = resolve_box_specs(self.testcase["box_list"], self.box_db, self.lid_db)
+        result = engine.run(self.testcase["name"], box_list)
         self.assertGreaterEqual(len(result.boxes), 48)
         bottom_ids = {box.box_id for box in result.boxes if box.z == 0.0}
         self.assertEqual(bottom_ids, {"TP-331", "TP-341"})

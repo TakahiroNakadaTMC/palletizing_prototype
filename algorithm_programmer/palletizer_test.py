@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 from unittest.mock import mock_open, patch
 
+from algorithm_programmer.cli import resolve_box_specs
 from algorithm_programmer.models import BoxSpec, PalletSpec, PlacedBox
 from algorithm_programmer.palletizer import (
     Palletizer, _generate_pinwheel_pattern, intersects_2d
@@ -32,9 +33,7 @@ class SingleLayerPatternTests(unittest.TestCase):
 
     def test_asymmetric_split_repeats_through_public_run(self) -> None:
         engine = Palletizer({self.box.id: self.box})
-        lids = {"NONE": {"type": "NONE", "width": 0.0, "length": 0.0,
-                         "thickness": 0.0, "fit_type": "なし"}}
-        result = engine.run("single_split", [{"box_id": self.box.id, "count": 15}], lids)
+        result = engine.run("single_split", [{"box_id": self.box.id, "count": 15}])
         self.assertEqual(result.unplaced_boxes, [])
         base = [box for box in result.boxes if box.layer_index == 0]
         self.assertEqual({box.rotation for box in base}, {0, 90})
@@ -49,6 +48,7 @@ class SingleLayerPatternTests(unittest.TestCase):
             if box.layer_index > 0:
                 self.assertEqual(len(box.supported_by), 1)
                 self.assertLess(box.supported_by[0], box.order)
+        lids = {"": {"type": "NONE", "fit_type": "なし"}}
         validator = PalletizeValidator({self.box.id: asdict(self.box)}, lids)
         with patch("builtins.open", mock_open(read_data=json.dumps(result.to_dict()))):
             validation = validator.validate_case("single_split.json")
@@ -68,15 +68,19 @@ class SingleLayerPatternTests(unittest.TestCase):
         for box_type, fit_type in (("NON_TP", "なし"), ("TP", "外嵌め"), ("TP", "内嵌め")):
             with self.subTest(box_type=box_type, fit_type=fit_type):
                 box = replace(self.box, type=box_type)
-                lids = {"NONE": {"type": "NONE", "width": 0.0, "length": 0.0,
-                                 "thickness": 0.0, "fit_type": "なし"}}
                 item = {"box_id": box.id, "count": 15}
                 if fit_type != "なし":
                     box = replace(box, width=380.0, length=580.0)
+                    item["lid_id"] = "LID"
+                    box = replace(box, lid_id="LID", lid_width=400.0, lid_length=600.0,
+                                  lid_thickness=5.0, lid_fit_type=fit_type)
+                    specs = {(box.id, "LID"): box}
                     lids = {"LID": {"width": 400.0, "length": 600.0,
                                     "thickness": 5.0, "fit_type": fit_type}}
-                    item["lid_id"] = "LID"
-                result = Palletizer({box.id: box}).run("single_variant", [item], lids)
+                else:
+                    specs = {box.id: box}
+                    lids = {"": {"type": "NONE", "fit_type": "なし"}}
+                result = Palletizer(specs).run("single_variant", [item])
                 if fit_type == "内嵌め":
                     self.assertEqual(result.unplaced_boxes, [{
                         "box_id": box.id, "count": 10,
@@ -121,8 +125,7 @@ class SingleLayerPatternTests(unittest.TestCase):
         db_path = Path(__file__).resolve().parents[1] / "box_research" / "box_db.json"
         raw = json.loads(db_path.read_text(encoding="utf-8"))["TP341"]
         box = BoxSpec.from_dict(raw)
-        lids = {"NONE": {"type": "NONE", "width": 0.0, "length": 0.0,
-                         "thickness": 0.0, "fit_type": "なし"}}
+        lids = {"": {"type": "NONE", "fit_type": "なし"}}
         cases = (
             (15, 1200.0, 7, 2, 195.0),
             (14, 1200.0, 7, 2, 195.0),
@@ -134,7 +137,7 @@ class SingleLayerPatternTests(unittest.TestCase):
         for count, limit, per_layer, layers, height in cases:
             with self.subTest(count=count, limit=limit):
                 engine = Palletizer({box.id: box}, PalletSpec(max_height=limit))
-                result = engine.run("tp341_selection", [{"box_id": box.id, "count": count}], lids)
+                result = engine.run("tp341_selection", [{"box_id": box.id, "count": count}])
                 if count == 16:
                     self.assertEqual([sum(b.layer_index == i for b in result.boxes)
                                       for i in range(layers)], [6, 6, 4])
@@ -150,7 +153,7 @@ class SingleLayerPatternTests(unittest.TestCase):
                     validation = validator.validate_case("tp341_selection.json")
                 self.assertEqual(validation["violations"], [])
                 self.assertEqual(result.to_dict(), engine.run(
-                    "tp341_selection", [{"box_id": box.id, "count": count}], lids).to_dict())
+                    "tp341_selection", [{"box_id": box.id, "count": count}]).to_dict())
 
     def test_reduced_layers_with_lids_and_non_tp(self) -> None:
         for box_type, fit_type in (("NON_TP", "なし"), ("TP", "外嵌め"), ("TP", "内嵌め")):
@@ -159,11 +162,14 @@ class SingleLayerPatternTests(unittest.TestCase):
             lids = {"TEST-LID": {"width": 335.0, "length": 502.5,
                                  "thickness": thickness, "fit_type": fit_type}}
             item = {"box_id": box.id, "count": 15, "lid_id": "TEST-LID"}
+            box = replace(box, lid_id="TEST-LID", lid_width=335.0, lid_length=502.5,
+                          lid_thickness=thickness, lid_fit_type=fit_type)
             full_height = 287.5 + 3 * thickness
             for limit, per_layer, layers in ((full_height, 7, 2), (full_height - 0.1, 7, 2)):
                 with self.subTest(box_type=box_type, fit_type=fit_type, limit=limit):
-                    engine = Palletizer({box.id: box}, PalletSpec(max_height=limit))
-                    result = engine.run("single_reduced_variant", [item], lids)
+                    engine = Palletizer({(box.id, "TEST-LID"): box},
+                                        PalletSpec(max_height=limit))
+                    result = engine.run("single_reduced_variant", [item])
                     self.assert_identical_layers(result.boxes, per_layer, layers)
                     self.assertEqual(max(b.top_z for b in result.boxes),
                                      102.5 + thickness + (layers - 1) * (92.5 + thickness))
@@ -233,7 +239,6 @@ class SingleLayerPatternTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         raw_boxes = json.loads((root / "box_research" / "box_db.json").read_text(encoding="utf-8"))
         lids = json.loads((root / "box_research" / "lid_db.json").read_text(encoding="utf-8"))
-        db = {key: BoxSpec.from_dict(value) for key, value in raw_boxes.items()}
         validator = PalletizeValidator(raw_boxes, lids)
         for name, per_layer, layers, x_span, y_span, height, unplaced in (
                 ("aisin_10", 4, 1, 1005.0, 1005.0, 395.0, 0),
@@ -243,8 +248,9 @@ class SingleLayerPatternTests(unittest.TestCase):
             with self.subTest(name=name):
                 case = json.loads((root / "test_programmer" / "test_cases" /
                                    (name + ".json")).read_text(encoding="utf-8"))
-                engine = Palletizer(db, PalletSpec.from_dict(case["pallet"]))
-                result = engine.run(name, case["box_list"], lids)
+                box_specs, box_list = resolve_box_specs(case["box_list"], raw_boxes, lids)
+                engine = Palletizer(box_specs, PalletSpec.from_dict(case["pallet"]))
+                result = engine.run(name, box_list)
                 self.assert_identical_layers(result.boxes, per_layer, layers)
                 bounds = result.summary["bounding_box"]
                 self.assertEqual((bounds["x_span"], bounds["y_span"]), (x_span, y_span))

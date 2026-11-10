@@ -1,6 +1,7 @@
 import unittest
 
-from algorithm_programmer.cli import resolve_pallet_spec
+from algorithm_programmer.cli import resolve_box_specs, resolve_pallet_spec
+from algorithm_programmer.models import BoxSpec
 
 
 class ResolvePalletSpecTest(unittest.TestCase):
@@ -57,6 +58,76 @@ class ResolvePalletSpecTest(unittest.TestCase):
         case = dict(self.test_case, supplier_name="Other supplier")
         with self.assertRaisesRegex(ValueError, "仕入先"):
             resolve_pallet_spec(case, self.pallet_database)
+
+
+class ResolveBoxSpecsTest(unittest.TestCase):
+    def setUp(self):
+        self.box_database = {
+            "BOX_A": {
+                "id": "BOX_A", "name": "Box A", "type": "TP",
+                "width": 300, "length": 400, "height": 200,
+                "fitting_depth": 10, "rib_thickness": 20,
+                "compatible_lids": ["LID_A"],
+            },
+            "BOX_UNUSED": {
+                "id": "BOX_UNUSED", "name": "Unused", "type": "TP",
+                "width": 500, "length": 600, "height": 200,
+                "fitting_depth": 10, "rib_thickness": 20,
+            },
+        }
+        self.lid_database = {
+            "NO_LID": {
+                "id": "NO_LID", "type": "NONE", "width": 0, "length": 0,
+                "thickness": 0, "fit_type": "なし",
+            },
+            "LID_A": {
+                "id": "LID_A", "type": "TP", "width": 320, "length": 420,
+                "thickness": 5, "fit_type": "外嵌め",
+            },
+            "LID_UNUSED": {
+                "id": "LID_UNUSED", "type": "TP", "width": 100, "length": 100,
+                "thickness": 1, "fit_type": "内嵌め",
+            },
+        }
+
+    def test_selects_only_box_and_lid_variants_used_by_case(self):
+        specs, box_list = resolve_box_specs(
+            [{"box_id": "BOX_A", "count": 2, "lid_id": "LID_A"}],
+            self.box_database,
+            self.lid_database,
+        )
+        self.assertEqual(list(specs), [("BOX_A", "LID_A")])
+        selected = specs[("BOX_A", "LID_A")]
+        self.assertIsInstance(selected, BoxSpec)
+        self.assertEqual(
+            (selected.lid_width, selected.lid_length, selected.lid_thickness,
+             selected.lid_fit_type),
+            (320, 420, 5, "外嵌め"),
+        )
+        self.assertEqual(box_list[0]["lid_id"], "LID_A")
+
+    def test_uses_no_lid_record_when_case_omits_lid_id(self):
+        specs, box_list = resolve_box_specs(
+            [{"box_id": "BOX_A", "count": 1}],
+            self.box_database,
+            self.lid_database,
+        )
+        self.assertEqual(list(specs), [("BOX_A", "NO_LID")])
+        self.assertEqual(box_list[0]["lid_id"], "NO_LID")
+
+    def test_rejects_unknown_or_incompatible_lid(self):
+        with self.assertRaisesRegex(ValueError, "蓋DB"):
+            resolve_box_specs(
+                [{"box_id": "BOX_A", "lid_id": "MISSING"}],
+                self.box_database,
+                self.lid_database,
+            )
+        with self.assertRaisesRegex(ValueError, "対応していません"):
+            resolve_box_specs(
+                [{"box_id": "BOX_A", "lid_id": "LID_UNUSED"}],
+                self.box_database,
+                self.lid_database,
+            )
 
 
 if __name__ == "__main__":

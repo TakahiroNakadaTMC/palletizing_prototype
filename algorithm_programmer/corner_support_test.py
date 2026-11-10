@@ -131,7 +131,11 @@ class CornerSupportTests(unittest.TestCase):
     def test_external_tp_and_non_tp_column_exemptions(self):
         lids = {'LID': {'fit_type': '外嵌め'}, 'OTHER': {'fit_type': '外嵌め'}}
         for box_type in ('TP', 'NON_TP'):
-            engine = Palletizer({'TP': replace(self.spec, type=box_type)})
+            lid_spec = replace(self.spec, type=box_type, lid_id='LID',
+                               lid_fit_type='外嵌め')
+            other_lid_spec = replace(lid_spec, lid_id='OTHER')
+            engine = Palletizer({('TP', 'LID'): lid_spec,
+                                 ('TP', 'OTHER'): other_lid_spec})
             lower = box(lid_id='LID', lid_width=120, lid_length=120, lid_fit_type='外嵌め')
             upper = replace(lower, order=2, z=90)
             self.assertEqual(engine._covered_support_corners(upper, [lower]), [])
@@ -151,8 +155,12 @@ class CornerSupportTests(unittest.TestCase):
         lower = box(lid_id='LID', lid_width=120, lid_length=120, lid_fit_type='外嵌め')
         upper = replace(lower, order=3, z=90, box_id='OTHER')
         for box_type in ('TP', 'NON_TP'):
-            engine = Palletizer({'TP': replace(self.spec, type=box_type),
-                                 'OTHER': replace(self.spec, id='OTHER', type=box_type)})
+            tp_spec = replace(self.spec, type=box_type, lid_id='LID',
+                              lid_fit_type='外嵌め')
+            other_spec = replace(self.spec, id='OTHER', type=box_type,
+                                 lid_id='LID', lid_fit_type='外嵌め')
+            engine = Palletizer({('TP', 'LID'): tp_spec,
+                                 ('OTHER', 'LID'): other_spec})
             self.assertEqual(engine._support_corners_allowed(upper, [lower]), box_type == 'TP')
             violations = self.validate(upper, [lower], box_type, lids)
             self.assertEqual(any('コラム' in m for m in violations), box_type == 'NON_TP')

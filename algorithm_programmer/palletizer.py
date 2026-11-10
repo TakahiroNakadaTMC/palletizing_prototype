@@ -13,7 +13,7 @@ import math
 import copy
 from collections import Counter
 from itertools import combinations
-from typing import List, Dict, Tuple, Optional, Any
+from typing import List, Dict, Tuple, Optional, Any, Union
 from algorithm_programmer.models import BoxSpec, PlacedBox, PalletSpec, PalletizeResult
 from constraints.top_support import TopSurface, evaluate_top_support
 
@@ -78,15 +78,41 @@ def check_collision_3d(b1: PlacedBox, x2: float, y2: float, z2: float,
     return not (b1_top <= z2 + eps or box2_top <= b1.z + eps)
 
 class Palletizer:
-    def __init__(self, box_db: Dict[str, BoxSpec], pallet: Optional[PalletSpec] = None):
-        self.box_db = box_db
+    def __init__(
+        self,
+        box_specs: Dict[Union[str, Tuple[str, str]], BoxSpec],
+        pallet: Optional[PalletSpec] = None,
+    ):
+        self.box_specs: Dict[Tuple[str, str], BoxSpec] = {}
+        for key, spec in box_specs.items():
+            if isinstance(key, tuple):
+                if len(key) != 2:
+                    raise ValueError("箱仕様のキーは (box_id, lid_id) の組で指定してください")
+                box_id, lid_id = key
+            else:
+                box_id, lid_id = key, spec.lid_id
+            if box_id != spec.id:
+                raise ValueError(f"箱仕様のキーとIDが一致しません: {box_id}")
+            self.box_specs[(box_id, lid_id)] = spec
         self.pallet = pallet or PalletSpec()
+
+    def _get_box_spec(self, box_id: str, lid_id: str = "") -> Optional[BoxSpec]:
+        spec = self.box_specs.get((box_id, lid_id))
+        if spec is not None or lid_id:
+            return spec
+        matching_specs = [
+            candidate for (candidate_id, _), candidate in self.box_specs.items()
+            if candidate_id == box_id
+        ]
+        return matching_specs[0] if len(matching_specs) == 1 else None
 
     def _top_support(self, boxes: List[PlacedBox], centered: bool = False) -> Dict[str, Any]:
         shift_x, shift_y = self._centered_shift(boxes) if centered and boxes else (0.0, 0.0)
         surfaces = []
         for box in boxes:
-            spec = self.box_db[box.box_id]
+            spec = self._get_box_spec(box.box_id, box.lid_id)
+            if spec is None:
+                raise ValueError(f"配置箱の仕様が見つかりません: {box.box_id}/{box.lid_id}")
             surfaces.append(TopSurface(
                 box.order, box.box_id,
                 (box.footprint_min_x + shift_x, box.footprint_min_y + shift_y,
@@ -98,7 +124,7 @@ class Palletizer:
 
     def _column_stack_group(self, box_id: str, lid_id: str,
                             lid_fit_type: str) -> Optional[Tuple[str, str]]:
-        spec = self.box_db.get(box_id)
+        spec = self._get_box_spec(box_id, lid_id)
         if spec is None:
             return None
         if spec.is_tp and lid_fit_type == "外嵌め":
@@ -166,55 +192,42 @@ class Palletizer:
         shift_x, shift_y = self._centered_shift(boxes)
         return self._pallet_support_is_valid(boxes, shift_x, shift_y)
 
-    def run(self, test_name: str, box_input_list: List[Dict[str, Any]], lid_db: Dict[str, Dict[str, Any]] = None) -> PalletizeResult:
+    def run(self, test_name: str, box_input_list: List[Dict[str, Any]]) -> PalletizeResult:
         """テストケース投入リストを受け取り、単載または混載アルゴリズムを実行
         
         Args:
             test_name: テスト名
             box_input_list: 投入箱リスト [{"box_id": "TP-332", "count": 60, "lid_id": "蓋ID"}, ...]
-            lid_db: 蓋DB。lid_id 省略時は type が "NONE" の蓋を使用
         """
-        if lid_db is None:
-            lid_db = {}
-
         input_boxes_count = sum(max(0, int(item.get("count", 1))) for item in box_input_list)
 
-        default_lid_id = next(
-            (lid_id for lid_id, lid_info in lid_db.items() if lid_info.get("type") == "NONE"),
-            ""
-        )
-        
-        input_variants = sorted({
-            (item["box_id"], item.get("lid_id", default_lid_id))
-            for item in box_input_list if item.get("count", 1) > 0
-        })
-        input_box_variants = [
-            {"box_id": box_id, "lid_id": lid_id} for box_id, lid_id in input_variants
-        ]
         expanded_boxes: List[BoxSpec] = []
         unplaced_boxes: List[Dict[str, Any]] = []
+        input_variants = set()
         
         for item in box_input_list:
             bid = item["box_id"]
             cnt = item.get("count", 1)
-            lid_id = item.get("lid_id", default_lid_id)
-            
-            if bid in self.box_db:
-                lid_info = lid_db.get(lid_id, {})  # 【NEW】蓋情報を取得
+            lid_id = item.get("lid_id", "")
+            spec = self._get_box_spec(bid, lid_id)
+
+            if spec is not None:
+                lid_id = spec.lid_id
                 for _ in range(cnt):
-                    box = copy.copy(self.box_db[bid])
-                    box.lid_id = lid_id
-                    box.lid_width = float(lid_info.get("width", 0.0))
-                    box.lid_length = float(lid_info.get("length", 0.0))
-                    box.lid_thickness = float(lid_info.get("thickness", 0.0))
-                    box.lid_fit_type = lid_info.get("fit_type", "なし")
-                    expanded_boxes.append(box)
-            elif cnt > 0:
+                    expanded_boxes.append(copy.copy(spec))
+            if cnt > 0:
+                input_variants.add((bid, lid_id))
+            if spec is None and cnt > 0:
                 unplaced_boxes.append({
                     "box_id": bid,
                     "count": cnt,
-                    "reason": "箱DBに型番が登録されていません"
+                    "reason": "選択された箱・蓋の仕様が見つかりません"
                 })
+
+        input_box_variants = [
+            {"box_id": box_id, "lid_id": lid_id}
+            for box_id, lid_id in sorted(input_variants)
+        ]
 
         if not expanded_boxes:
             return PalletizeResult(
@@ -257,7 +270,7 @@ class Palletizer:
     # -------------------------------------------------------------------------
     # 1. 単載パレタイズ — v2026-11-05: 安定した端数最上段・四隅優先
     # -------------------------------------------------------------------------
-    def palletize_single(self, boxes: List[BoxSpec], lids: List[Dict[str, Any]] = None
+    def palletize_single(self, boxes: List[BoxSpec]
                          ) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
         """下段は同一配置で繰り返し、最上段のみ安定した部分集合を許可する。"""
         sample_box = boxes[0]
@@ -526,23 +539,13 @@ class Palletizer:
     #    層ループは箱切れ/高さ超過/配置不能のいずれかでのみ終了し、中間層の四隅不一致で
     #    打ち切らない（四隅高さ揃えは最上段のみ level_top_four_corners で保証する）。
     # -------------------------------------------------------------------------
-    def palletize_mixed(self, boxes: List[BoxSpec], lids: List[Dict[str, Any]] = None) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
+    def palletize_mixed(self, boxes: List[BoxSpec]) -> Tuple[List[PlacedBox], List[Dict[str, Any]]]:
         """混載パレタイズ: MSP-EPハイブリッドによるレイヤー別パッキング
         
         Args:
             boxes: 投入箱リスト
-            lids: 【NEW】各箱に対応する蓋情報リスト
         """
         placed_boxes: List[PlacedBox] = []
-
-        if lids is not None:
-            boxes = [copy.copy(box) for box in boxes]
-            for box, lid in zip(boxes, lids):
-                box.lid_id = lid.get("lid_id", box.lid_id)
-                box.lid_width = float(lid.get("lid_width", box.lid_width))
-                box.lid_length = float(lid.get("lid_length", box.lid_length))
-                box.lid_thickness = float(lid.get("lid_thickness", box.lid_thickness))
-                box.lid_fit_type = lid.get("fit_type", box.lid_fit_type)
 
         box_pool = sorted(
             boxes,
@@ -812,9 +815,9 @@ class Palletizer:
         if upper.z <= 1e-3:
             return True
         if self._column_stack_group(upper.box_id, upper.lid_id, upper.lid_fit_type) is not None:
-            spec = copy.copy(self.box_db[upper.box_id])
-            spec.lid_id = upper.lid_id
-            spec.lid_fit_type = upper.lid_fit_type
+            spec = self._get_box_spec(upper.box_id, upper.lid_id)
+            if spec is None:
+                return False
             return self._column_stack_is_allowed(
                 spec, upper, [lower for lower in lower_boxes if lower is not upper]
             )
