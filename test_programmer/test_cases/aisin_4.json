@@ -2,9 +2,9 @@
   "name": "aisin_4",
   "description": "アイシン半田　混載",
   "pallet": {
-    "max_x_span": 1005.0,
+    "max_x_span": 1172.5,
     "max_y_span": 1005.0,
-    "max_height": 1200.0
+    "max_height": 1050.0
   },
   "box_list": [
     {

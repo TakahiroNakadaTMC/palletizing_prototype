@@ -4,7 +4,7 @@
   "pallet": {
     "max_x_span": 1340.0,
     "max_y_span": 1005.0,
-    "max_height": 1200.0
+    "max_height": 768.0
   },
   "box_list": [
     {
@@ -14,5 +14,5 @@
     }
   ],
   "supplier_name": "アーレスティ",
-  "pallet_id": "__STANDARD_1200_1000_130__"
+  "pallet_id": "D4-1012-9_1200x1000x150"
 }

@@ -2,9 +2,9 @@
   "name": "othics_3_p10",
   "description": "バランサー（箱数+10%評価）",
   "pallet": {
-    "max_x_span": 1200.0,
-    "max_y_span": 1005.0,
-    "max_height": 1200.0
+    "max_x_span": 1107.0,
+    "max_y_span": 950.0,
+    "max_height": 1014.0
   },
   "box_list": [
     {

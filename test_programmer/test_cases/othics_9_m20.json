@@ -2,9 +2,9 @@
   "name": "othics_9_m20",
   "description": "ハウジング　1.5L（箱数-20%評価）",
   "pallet": {
-    "max_x_span": 1135.0,
-    "max_y_span": 1005.0,
-    "max_height": 1200.0
+    "max_x_span": 1107.0,
+    "max_y_span": 950.0,
+    "max_height": 1014.0
   },
   "box_list": [
     {

@@ -2,9 +2,9 @@
   "name": "aisin_10_m10",
   "description": "TCC No2 コンベ（箱数-10%評価）",
   "pallet": {
-    "max_x_span": 1005.0,
+    "max_x_span": 1340.0,
     "max_y_span": 1005.0,
-    "max_height": 1200.0
+    "max_height": 1185.0
   },
   "box_list": [
     {
@@ -14,5 +14,5 @@
     }
   ],
   "supplier_name": "アイシン",
-  "pallet_id": "D4-1012-7_1200x1000x130"
+  "pallet_id": "D4-1012-3_1200x1000x150"
 }

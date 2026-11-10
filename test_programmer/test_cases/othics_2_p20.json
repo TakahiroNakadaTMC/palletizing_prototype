@@ -2,9 +2,9 @@
   "name": "othics_2_p20",
   "description": "ローラーロッカー（箱数+20%評価）",
   "pallet": {
-    "max_x_span": 1188.0,
+    "max_x_span": 1106.0,
     "max_y_span": 1036.0,
-    "max_height": 1200.0
+    "max_height": 845.0
   },
   "box_list": [
     {

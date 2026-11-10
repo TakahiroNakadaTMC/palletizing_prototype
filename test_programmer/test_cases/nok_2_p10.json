@@ -3,8 +3,8 @@
   "description": "ダンパープーリ（箱数+10%評価）",
   "pallet": {
     "max_x_span": 1212.0,
-    "max_y_span": 1005.0,
-    "max_height": 1200.0
+    "max_y_span": 966.0,
+    "max_height": 777.0
   },
   "box_list": [
     {

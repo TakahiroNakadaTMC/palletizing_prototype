@@ -2,9 +2,9 @@
   "name": "guze_p10",
   "description": "グゼー（箱数+10%評価）",
   "pallet": {
-    "max_x_span": 1172.5,
-    "max_y_span": 1005.0,
-    "max_height": 1200.0
+    "max_x_span": 1173.0,
+    "max_y_span": 1006.0,
+    "max_height": 1050.0
   },
   "box_list": [
     {
@@ -14,5 +14,5 @@
     }
   ],
   "supplier_name": "グゼー",
-  "pallet_id": "__STANDARD_1200_1000_130__"
+  "pallet_id": "D4-1111-6_1100x1100x150"
 }

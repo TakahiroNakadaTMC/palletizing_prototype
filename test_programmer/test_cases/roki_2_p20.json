@@ -2,9 +2,9 @@
   "name": "roki_2_p20",
   "description": "ROKI（箱数+20%評価）",
   "pallet": {
-    "max_x_span": 1005.0,
+    "max_x_span": 1172.5,
     "max_y_span": 1005.0,
-    "max_height": 1200.0
+    "max_height": 894.0
   },
   "box_list": [
     {
@@ -14,5 +14,5 @@
     }
   ],
   "supplier_name": "ROKI",
-  "pallet_id": "__STANDARD_1200_1000_130__"
+  "pallet_id": "D4-1111-14_1100x1100x122"
 }
