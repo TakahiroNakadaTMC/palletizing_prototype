@@ -1,0 +1,2907 @@
+{
+  "schema_version": 1,
+  "test_cases": {
+    "aisin": {
+      "name": "aisin",
+      "description": "アイシン西尾　インマニHV",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "171202402000",
+          "count": 11
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-2_1203x1002x150"
+    },
+    "aisin_10": {
+      "name": "aisin_10",
+      "description": "TCC No2 コンベ",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113201502100",
+          "count": 4
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_10_m10": {
+      "name": "aisin_10_m10",
+      "description": "TCC No2 コンベ（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113201502100",
+          "count": 4
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_10_m20": {
+      "name": "aisin_10_m20",
+      "description": "TCC No2 コンベ（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113201502100",
+          "count": 3
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_10_p10": {
+      "name": "aisin_10_p10",
+      "description": "TCC No2 コンベ（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113201502100",
+          "count": 4
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_10_p20": {
+      "name": "aisin_10_p20",
+      "description": "TCC No2 コンベ（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113201502100",
+          "count": 5
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_11": {
+      "name": "aisin_11",
+      "description": "TCC No2 HV",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113201502100",
+          "count": 15
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_11_m10": {
+      "name": "aisin_11_m10",
+      "description": "TCC No2 HV（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113201502100",
+          "count": 14
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_11_m20": {
+      "name": "aisin_11_m20",
+      "description": "TCC No2 HV（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113201502100",
+          "count": 12
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_11_p10": {
+      "name": "aisin_11_p10",
+      "description": "TCC No2 HV（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113201502100",
+          "count": 17
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_11_p20": {
+      "name": "aisin_11_p20",
+      "description": "TCC No2 HV（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113201502100",
+          "count": 18
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_2": {
+      "name": "aisin_2",
+      "description": "アイシン小川　HVダンパー",
+      "pallet": {
+        "max_x_span": 1005.0,
+        "max_y_span": 1005.0,
+        "max_height": 826.0
+      },
+      "box_list": [
+        {
+          "part_number": "31270K001300",
+          "count": 63
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_2_m10": {
+      "name": "aisin_2_m10",
+      "description": "アイシン小川　HVダンパー（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1005.0,
+        "max_y_span": 1005.0,
+        "max_height": 826.0
+      },
+      "box_list": [
+        {
+          "part_number": "31270K001300",
+          "count": 57
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_2_m20": {
+      "name": "aisin_2_m20",
+      "description": "アイシン小川　HVダンパー（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1005.0,
+        "max_y_span": 1005.0,
+        "max_height": 826.0
+      },
+      "box_list": [
+        {
+          "part_number": "31270K001300",
+          "count": 50
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_2_p10": {
+      "name": "aisin_2_p10",
+      "description": "アイシン小川　HVダンパー（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1005.0,
+        "max_y_span": 1005.0,
+        "max_height": 826.0
+      },
+      "box_list": [
+        {
+          "part_number": "31270K001300",
+          "count": 69
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_2_p20": {
+      "name": "aisin_2_p20",
+      "description": "アイシン小川　HVダンパー（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1005.0,
+        "max_y_span": 1005.0,
+        "max_height": 826.0
+      },
+      "box_list": [
+        {
+          "part_number": "31270K001300",
+          "count": 76
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_3": {
+      "name": "aisin_3",
+      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "151002402000",
+          "count": 12
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_3_m10": {
+      "name": "aisin_3_m10",
+      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "151002402000",
+          "count": 11
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_3_m20": {
+      "name": "aisin_3_m20",
+      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "151002402000",
+          "count": 10
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_3_p10": {
+      "name": "aisin_3_p10",
+      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "151002402000",
+          "count": 13
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_3_p20": {
+      "name": "aisin_3_p20",
+      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "151002402000",
+          "count": 14
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_4": {
+      "name": "aisin_4",
+      "description": "アイシン半田　混載",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "160321519000",
+          "count": 14
+        },
+        {
+          "part_number": "160322402000",
+          "count": 14
+        },
+        {
+          "part_number": "152502501000",
+          "count": 2
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_4_m10": {
+      "name": "aisin_4_m10",
+      "description": "アイシン半田　混載（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "160321519000",
+          "count": 13
+        },
+        {
+          "part_number": "160322402000",
+          "count": 13
+        },
+        {
+          "part_number": "152502501000",
+          "count": 2
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_4_m20": {
+      "name": "aisin_4_m20",
+      "description": "アイシン半田　混載（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "160321519000",
+          "count": 11
+        },
+        {
+          "part_number": "160322402000",
+          "count": 11
+        },
+        {
+          "part_number": "152502501000",
+          "count": 2
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_4_p10": {
+      "name": "aisin_4_p10",
+      "description": "アイシン半田　混載（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "160321519000",
+          "count": 15
+        },
+        {
+          "part_number": "160322402000",
+          "count": 15
+        },
+        {
+          "part_number": "152502501000",
+          "count": 2
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_4_p20": {
+      "name": "aisin_4_p20",
+      "description": "アイシン半田　混載（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "160321519000",
+          "count": 17
+        },
+        {
+          "part_number": "160322402000",
+          "count": 17
+        },
+        {
+          "part_number": "152502501000",
+          "count": 2
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_5": {
+      "name": "aisin_5",
+      "description": "AKK刈谷",
+      "pallet": {
+        "max_x_span": 1005.0,
+        "max_y_span": 1005.0,
+        "max_height": 472.0
+      },
+      "box_list": [
+        {
+          "part_number": "31270K001300",
+          "count": 10
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_5_m10": {
+      "name": "aisin_5_m10",
+      "description": "AKK刈谷（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1005.0,
+        "max_y_span": 1005.0,
+        "max_height": 472.0
+      },
+      "box_list": [
+        {
+          "part_number": "31270K001300",
+          "count": 9
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_5_m20": {
+      "name": "aisin_5_m20",
+      "description": "AKK刈谷（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1005.0,
+        "max_y_span": 1005.0,
+        "max_height": 472.0
+      },
+      "box_list": [
+        {
+          "part_number": "31270K001300",
+          "count": 8
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_5_p10": {
+      "name": "aisin_5_p10",
+      "description": "AKK刈谷（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1005.0,
+        "max_y_span": 1005.0,
+        "max_height": 472.0
+      },
+      "box_list": [
+        {
+          "part_number": "31270K001300",
+          "count": 11
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_5_p20": {
+      "name": "aisin_5_p20",
+      "description": "AKK刈谷（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1005.0,
+        "max_y_span": 1005.0,
+        "max_height": 472.0
+      },
+      "box_list": [
+        {
+          "part_number": "31270K001300",
+          "count": 12
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_6": {
+      "name": "aisin_6",
+      "description": "TCC NO1",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113102401000",
+          "count": 23
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_6_m10": {
+      "name": "aisin_6_m10",
+      "description": "TCC NO1（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113102401000",
+          "count": 21
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_6_m20": {
+      "name": "aisin_6_m20",
+      "description": "TCC NO1（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113102401000",
+          "count": 18
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_6_p10": {
+      "name": "aisin_6_p10",
+      "description": "TCC NO1（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113102401000",
+          "count": 25
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_6_p20": {
+      "name": "aisin_6_p20",
+      "description": "TCC NO1（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113102401000",
+          "count": 28
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_7": {
+      "name": "aisin_7",
+      "description": "TCC No2",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113202401000",
+          "count": 17
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_7_m10": {
+      "name": "aisin_7_m10",
+      "description": "TCC No2（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113202401000",
+          "count": 15
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_7_m20": {
+      "name": "aisin_7_m20",
+      "description": "TCC No2（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113202401000",
+          "count": 14
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_7_p10": {
+      "name": "aisin_7_p10",
+      "description": "TCC No2（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113202401000",
+          "count": 19
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_7_p20": {
+      "name": "aisin_7_p20",
+      "description": "TCC No2（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113202401000",
+          "count": 20
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-3_1200x1000x150"
+    },
+    "aisin_8": {
+      "name": "aisin_8",
+      "description": "アイシン化工　インマニ",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "171202401000",
+          "count": 4
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-2_1203x1002x150"
+    },
+    "aisin_8_m10": {
+      "name": "aisin_8_m10",
+      "description": "アイシン化工　インマニ（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "171202401000",
+          "count": 4
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-2_1203x1002x150"
+    },
+    "aisin_8_m20": {
+      "name": "aisin_8_m20",
+      "description": "アイシン化工　インマニ（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "171202401000",
+          "count": 3
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-2_1203x1002x150"
+    },
+    "aisin_8_p10": {
+      "name": "aisin_8_p10",
+      "description": "アイシン化工　インマニ（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "171202401000",
+          "count": 4
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-2_1203x1002x150"
+    },
+    "aisin_8_p20": {
+      "name": "aisin_8_p20",
+      "description": "アイシン化工　インマニ（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "171202401000",
+          "count": 5
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-2_1203x1002x150"
+    },
+    "aisin_9": {
+      "name": "aisin_9",
+      "description": "TCC No1 1.5L",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113101501000",
+          "count": 8
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_9_m10": {
+      "name": "aisin_9_m10",
+      "description": "TCC No1 1.5L（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113101501000",
+          "count": 7
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_9_m20": {
+      "name": "aisin_9_m20",
+      "description": "TCC No1 1.5L（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113101501000",
+          "count": 6
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_9_p10": {
+      "name": "aisin_9_p10",
+      "description": "TCC No1 1.5L（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113101501000",
+          "count": 9
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_9_p20": {
+      "name": "aisin_9_p20",
+      "description": "TCC No1 1.5L（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "113101501000",
+          "count": 10
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-7_1200x1000x130"
+    },
+    "aisin_m10": {
+      "name": "aisin_m10",
+      "description": "アイシン西尾　インマニHV（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "171202402000",
+          "count": 10
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-2_1203x1002x150"
+    },
+    "aisin_m20": {
+      "name": "aisin_m20",
+      "description": "アイシン西尾　インマニHV（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "171202402000",
+          "count": 9
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-2_1203x1002x150"
+    },
+    "aisin_p10": {
+      "name": "aisin_p10",
+      "description": "アイシン西尾　インマニHV（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "171202402000",
+          "count": 12
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-2_1203x1002x150"
+    },
+    "aisin_p20": {
+      "name": "aisin_p20",
+      "description": "アイシン西尾　インマニHV（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 1185.0
+      },
+      "box_list": [
+        {
+          "part_number": "171202402000",
+          "count": 13
+        }
+      ],
+      "supplier_name": "アイシン",
+      "pallet_id": "D4-1012-2_1203x1002x150"
+    },
+    "arresuthi": {
+      "name": "arresuthi",
+      "description": "アーレスティ　コンベ",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 768.0
+      },
+      "box_list": [
+        {
+          "part_number": "114201502000",
+          "count": 6
+        }
+      ],
+      "supplier_name": "アーレスティ",
+      "pallet_id": "D4-1012-9_1200x1000x150"
+    },
+    "arresuthi_2": {
+      "name": "arresuthi_2",
+      "description": "アーレスティ　HV",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 768.0
+      },
+      "box_list": [
+        {
+          "part_number": "114201502000",
+          "count": 11
+        }
+      ],
+      "supplier_name": "アーレスティ",
+      "pallet_id": "D4-1012-9_1200x1000x150"
+    },
+    "arresuthi_2_m10": {
+      "name": "arresuthi_2_m10",
+      "description": "アーレスティ　HV（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 768.0
+      },
+      "box_list": [
+        {
+          "part_number": "114201502000",
+          "count": 10
+        }
+      ],
+      "supplier_name": "アーレスティ",
+      "pallet_id": "D4-1012-9_1200x1000x150"
+    },
+    "arresuthi_2_m20": {
+      "name": "arresuthi_2_m20",
+      "description": "アーレスティ　HV（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 768.0
+      },
+      "box_list": [
+        {
+          "part_number": "114201502000",
+          "count": 9
+        }
+      ],
+      "supplier_name": "アーレスティ",
+      "pallet_id": "D4-1012-9_1200x1000x150"
+    },
+    "arresuthi_2_p10": {
+      "name": "arresuthi_2_p10",
+      "description": "アーレスティ　HV（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 768.0
+      },
+      "box_list": [
+        {
+          "part_number": "114201502000",
+          "count": 12
+        }
+      ],
+      "supplier_name": "アーレスティ",
+      "pallet_id": "D4-1012-9_1200x1000x150"
+    },
+    "arresuthi_2_p20": {
+      "name": "arresuthi_2_p20",
+      "description": "アーレスティ　HV（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 768.0
+      },
+      "box_list": [
+        {
+          "part_number": "114201502000",
+          "count": 13
+        }
+      ],
+      "supplier_name": "アーレスティ",
+      "pallet_id": "D4-1012-9_1200x1000x150"
+    },
+    "arresuthi_m10": {
+      "name": "arresuthi_m10",
+      "description": "アーレスティ　コンベ（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 768.0
+      },
+      "box_list": [
+        {
+          "part_number": "114201502000",
+          "count": 5
+        }
+      ],
+      "supplier_name": "アーレスティ",
+      "pallet_id": "D4-1012-9_1200x1000x150"
+    },
+    "arresuthi_m20": {
+      "name": "arresuthi_m20",
+      "description": "アーレスティ　コンベ（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 768.0
+      },
+      "box_list": [
+        {
+          "part_number": "114201502000",
+          "count": 5
+        }
+      ],
+      "supplier_name": "アーレスティ",
+      "pallet_id": "D4-1012-9_1200x1000x150"
+    },
+    "arresuthi_p10": {
+      "name": "arresuthi_p10",
+      "description": "アーレスティ　コンベ（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 768.0
+      },
+      "box_list": [
+        {
+          "part_number": "114201502000",
+          "count": 7
+        }
+      ],
+      "supplier_name": "アーレスティ",
+      "pallet_id": "D4-1012-9_1200x1000x150"
+    },
+    "arresuthi_p20": {
+      "name": "arresuthi_p20",
+      "description": "アーレスティ　コンベ（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1340.0,
+        "max_y_span": 1005.0,
+        "max_height": 768.0
+      },
+      "box_list": [
+        {
+          "part_number": "114201502000",
+          "count": 7
+        }
+      ],
+      "supplier_name": "アーレスティ",
+      "pallet_id": "D4-1012-9_1200x1000x150"
+    },
+    "art": {
+      "name": "art",
+      "description": "アート金属　ピストン",
+      "pallet": {
+        "max_x_span": 954.0,
+        "max_y_span": 954.0,
+        "max_height": 800.0
+      },
+      "box_list": [
+        {
+          "part_number": "132111507002",
+          "count": 44
+        }
+      ],
+      "supplier_name": "アート金属",
+      "pallet_id": "D4-1010-3_1000x1000x130"
+    },
+    "art_m10": {
+      "name": "art_m10",
+      "description": "アート金属　ピストン（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 954.0,
+        "max_y_span": 954.0,
+        "max_height": 800.0
+      },
+      "box_list": [
+        {
+          "part_number": "132111507002",
+          "count": 40
+        }
+      ],
+      "supplier_name": "アート金属",
+      "pallet_id": "D4-1010-3_1000x1000x130"
+    },
+    "art_m20": {
+      "name": "art_m20",
+      "description": "アート金属　ピストン（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 954.0,
+        "max_y_span": 954.0,
+        "max_height": 800.0
+      },
+      "box_list": [
+        {
+          "part_number": "132111507002",
+          "count": 35
+        }
+      ],
+      "supplier_name": "アート金属",
+      "pallet_id": "D4-1010-3_1000x1000x130"
+    },
+    "art_p10": {
+      "name": "art_p10",
+      "description": "アート金属　ピストン（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 954.0,
+        "max_y_span": 954.0,
+        "max_height": 800.0
+      },
+      "box_list": [
+        {
+          "part_number": "132111507002",
+          "count": 48
+        }
+      ],
+      "supplier_name": "アート金属",
+      "pallet_id": "D4-1010-3_1000x1000x130"
+    },
+    "art_p20": {
+      "name": "art_p20",
+      "description": "アート金属　ピストン（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 954.0,
+        "max_y_span": 954.0,
+        "max_height": 800.0
+      },
+      "box_list": [
+        {
+          "part_number": "132111507002",
+          "count": 53
+        }
+      ],
+      "supplier_name": "アート金属",
+      "pallet_id": "D4-1010-3_1000x1000x130"
+    },
+    "guze": {
+      "name": "guze",
+      "description": "グゼー",
+      "pallet": {
+        "max_x_span": 1173.0,
+        "max_y_span": 1006.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "160311502000",
+          "count": 18
+        }
+      ],
+      "supplier_name": "グゼー",
+      "pallet_id": "D4-1111-6_1100x1100x150"
+    },
+    "guze_m10": {
+      "name": "guze_m10",
+      "description": "グゼー（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1173.0,
+        "max_y_span": 1006.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "160311502000",
+          "count": 16
+        }
+      ],
+      "supplier_name": "グゼー",
+      "pallet_id": "D4-1111-6_1100x1100x150"
+    },
+    "guze_m20": {
+      "name": "guze_m20",
+      "description": "グゼー（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1173.0,
+        "max_y_span": 1006.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "160311502000",
+          "count": 14
+        }
+      ],
+      "supplier_name": "グゼー",
+      "pallet_id": "D4-1111-6_1100x1100x150"
+    },
+    "guze_p10": {
+      "name": "guze_p10",
+      "description": "グゼー（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1173.0,
+        "max_y_span": 1006.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "160311502000",
+          "count": 20
+        }
+      ],
+      "supplier_name": "グゼー",
+      "pallet_id": "D4-1111-6_1100x1100x150"
+    },
+    "guze_p20": {
+      "name": "guze_p20",
+      "description": "グゼー（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1173.0,
+        "max_y_span": 1006.0,
+        "max_height": 1050.0
+      },
+      "box_list": [
+        {
+          "part_number": "160311502000",
+          "count": 22
+        }
+      ],
+      "supplier_name": "グゼー",
+      "pallet_id": "D4-1111-6_1100x1100x150"
+    },
+    "nittan": {
+      "name": "nittan",
+      "description": "EXバルブ",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 1107.0,
+        "max_height": 960.0
+      },
+      "box_list": [
+        {
+          "part_number": "137152404000",
+          "count": 8
+        }
+      ],
+      "supplier_name": "ニッタン",
+      "pallet_id": "__STANDARD_1200_1000_130__"
+    },
+    "nittan_2": {
+      "name": "nittan_2",
+      "description": "EXバルブ",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 1107.0,
+        "max_height": 960.0
+      },
+      "box_list": [
+        {
+          "part_number": "137152404000",
+          "count": 9
+        }
+      ],
+      "supplier_name": "ニッタン",
+      "pallet_id": "__STANDARD_1200_1000_130__"
+    },
+    "nittan_2_m10": {
+      "name": "nittan_2_m10",
+      "description": "EXバルブ（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 1107.0,
+        "max_height": 960.0
+      },
+      "box_list": [
+        {
+          "part_number": "137152404000",
+          "count": 8
+        }
+      ],
+      "supplier_name": "ニッタン",
+      "pallet_id": "__STANDARD_1200_1000_130__"
+    },
+    "nittan_2_m20": {
+      "name": "nittan_2_m20",
+      "description": "EXバルブ（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 1107.0,
+        "max_height": 960.0
+      },
+      "box_list": [
+        {
+          "part_number": "137152404000",
+          "count": 7
+        }
+      ],
+      "supplier_name": "ニッタン",
+      "pallet_id": "__STANDARD_1200_1000_130__"
+    },
+    "nittan_2_p10": {
+      "name": "nittan_2_p10",
+      "description": "EXバルブ（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 1107.0,
+        "max_height": 960.0
+      },
+      "box_list": [
+        {
+          "part_number": "137152404000",
+          "count": 10
+        }
+      ],
+      "supplier_name": "ニッタン",
+      "pallet_id": "__STANDARD_1200_1000_130__"
+    },
+    "nittan_2_p20": {
+      "name": "nittan_2_p20",
+      "description": "EXバルブ（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 1107.0,
+        "max_height": 960.0
+      },
+      "box_list": [
+        {
+          "part_number": "137152404000",
+          "count": 11
+        }
+      ],
+      "supplier_name": "ニッタン",
+      "pallet_id": "__STANDARD_1200_1000_130__"
+    },
+    "nittan_m10": {
+      "name": "nittan_m10",
+      "description": "EXバルブ（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 1107.0,
+        "max_height": 960.0
+      },
+      "box_list": [
+        {
+          "part_number": "137152404000",
+          "count": 7
+        }
+      ],
+      "supplier_name": "ニッタン",
+      "pallet_id": "__STANDARD_1200_1000_130__"
+    },
+    "nittan_m20": {
+      "name": "nittan_m20",
+      "description": "EXバルブ（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 1107.0,
+        "max_height": 960.0
+      },
+      "box_list": [
+        {
+          "part_number": "137152404000",
+          "count": 6
+        }
+      ],
+      "supplier_name": "ニッタン",
+      "pallet_id": "__STANDARD_1200_1000_130__"
+    },
+    "nittan_p10": {
+      "name": "nittan_p10",
+      "description": "EXバルブ（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 1107.0,
+        "max_height": 960.0
+      },
+      "box_list": [
+        {
+          "part_number": "137152404000",
+          "count": 9
+        }
+      ],
+      "supplier_name": "ニッタン",
+      "pallet_id": "__STANDARD_1200_1000_130__"
+    },
+    "nittan_p20": {
+      "name": "nittan_p20",
+      "description": "EXバルブ（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 1107.0,
+        "max_height": 960.0
+      },
+      "box_list": [
+        {
+          "part_number": "137152404000",
+          "count": 10
+        }
+      ],
+      "supplier_name": "ニッタン",
+      "pallet_id": "__STANDARD_1200_1000_130__"
+    },
+    "nok": {
+      "name": "nok",
+      "description": "NOK混載",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 927.0
+      },
+      "box_list": [
+        {
+          "part_number": "909130210100",
+          "count": 3
+        },
+        {
+          "part_number": "903119001000",
+          "count": 7
+        },
+        {
+          "part_number": "232912802000",
+          "count": 6
+        },
+        {
+          "part_number": "903019200500",
+          "count": 17
+        }
+      ],
+      "supplier_name": "NOK",
+      "pallet_id": "JL-R4-1210C_1200x1000x130"
+    },
+    "nok_2": {
+      "name": "nok_2",
+      "description": "ダンパープーリ",
+      "pallet": {
+        "max_x_span": 1212.0,
+        "max_y_span": 966.0,
+        "max_height": 777.0
+      },
+      "box_list": [
+        {
+          "part_number": "134701515000",
+          "count": 31
+        }
+      ],
+      "supplier_name": "NOK",
+      "pallet_id": "JL-R4-1210C_1200x1000x130"
+    },
+    "nok_2_m10": {
+      "name": "nok_2_m10",
+      "description": "ダンパープーリ（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1212.0,
+        "max_y_span": 966.0,
+        "max_height": 777.0
+      },
+      "box_list": [
+        {
+          "part_number": "134701515000",
+          "count": 28
+        }
+      ],
+      "supplier_name": "NOK",
+      "pallet_id": "JL-R4-1210C_1200x1000x130"
+    },
+    "nok_2_m20": {
+      "name": "nok_2_m20",
+      "description": "ダンパープーリ（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1212.0,
+        "max_y_span": 966.0,
+        "max_height": 777.0
+      },
+      "box_list": [
+        {
+          "part_number": "134701515000",
+          "count": 25
+        }
+      ],
+      "supplier_name": "NOK",
+      "pallet_id": "JL-R4-1210C_1200x1000x130"
+    },
+    "nok_2_p10": {
+      "name": "nok_2_p10",
+      "description": "ダンパープーリ（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1212.0,
+        "max_y_span": 966.0,
+        "max_height": 777.0
+      },
+      "box_list": [
+        {
+          "part_number": "134701515000",
+          "count": 34
+        }
+      ],
+      "supplier_name": "NOK",
+      "pallet_id": "JL-R4-1210C_1200x1000x130"
+    },
+    "nok_2_p20": {
+      "name": "nok_2_p20",
+      "description": "ダンパープーリ（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1212.0,
+        "max_y_span": 966.0,
+        "max_height": 777.0
+      },
+      "box_list": [
+        {
+          "part_number": "134701515000",
+          "count": 37
+        }
+      ],
+      "supplier_name": "NOK",
+      "pallet_id": "JL-R4-1210C_1200x1000x130"
+    },
+    "nok_m10": {
+      "name": "nok_m10",
+      "description": "NOK混載（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 927.0
+      },
+      "box_list": [
+        {
+          "part_number": "909130210100",
+          "count": 3
+        },
+        {
+          "part_number": "903119001000",
+          "count": 6
+        },
+        {
+          "part_number": "232912802000",
+          "count": 5
+        },
+        {
+          "part_number": "903019200500",
+          "count": 15
+        }
+      ],
+      "supplier_name": "NOK",
+      "pallet_id": "JL-R4-1210C_1200x1000x130"
+    },
+    "nok_m20": {
+      "name": "nok_m20",
+      "description": "NOK混載（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 927.0
+      },
+      "box_list": [
+        {
+          "part_number": "909130210100",
+          "count": 2
+        },
+        {
+          "part_number": "903119001000",
+          "count": 6
+        },
+        {
+          "part_number": "232912802000",
+          "count": 5
+        },
+        {
+          "part_number": "903019200500",
+          "count": 14
+        }
+      ],
+      "supplier_name": "NOK",
+      "pallet_id": "JL-R4-1210C_1200x1000x130"
+    },
+    "nok_p10": {
+      "name": "nok_p10",
+      "description": "NOK混載（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 927.0
+      },
+      "box_list": [
+        {
+          "part_number": "909130210100",
+          "count": 3
+        },
+        {
+          "part_number": "903119001000",
+          "count": 8
+        },
+        {
+          "part_number": "232912802000",
+          "count": 7
+        },
+        {
+          "part_number": "903019200500",
+          "count": 19
+        }
+      ],
+      "supplier_name": "NOK",
+      "pallet_id": "JL-R4-1210C_1200x1000x130"
+    },
+    "nok_p20": {
+      "name": "nok_p20",
+      "description": "NOK混載（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 927.0
+      },
+      "box_list": [
+        {
+          "part_number": "909130210100",
+          "count": 4
+        },
+        {
+          "part_number": "903119001000",
+          "count": 8
+        },
+        {
+          "part_number": "232912802000",
+          "count": 7
+        },
+        {
+          "part_number": "903019200500",
+          "count": 20
+        }
+      ],
+      "supplier_name": "NOK",
+      "pallet_id": "JL-R4-1210C_1200x1000x130"
+    },
+    "othics": {
+      "name": "othics",
+      "description": "オティックス　ｴﾝﾄﾞｷｬｯﾌﾟ",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 309.0
+      },
+      "box_list": [
+        {
+          "part_number": "137162501000",
+          "count": 4
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_2": {
+      "name": "othics_2",
+      "description": "ローラーロッカー",
+      "pallet": {
+        "max_x_span": 1106.0,
+        "max_y_span": 1036.0,
+        "max_height": 845.0
+      },
+      "box_list": [
+        {
+          "part_number": "138012501000",
+          "count": 16
+        },
+        {
+          "part_number": "137507002100",
+          "count": 8
+        },
+        {
+          "part_number": "234702501000",
+          "count": 4
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "R4-1012-4_1200x1000x100"
+    },
+    "othics_2_m10": {
+      "name": "othics_2_m10",
+      "description": "ローラーロッカー（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1106.0,
+        "max_y_span": 1036.0,
+        "max_height": 845.0
+      },
+      "box_list": [
+        {
+          "part_number": "138012501000",
+          "count": 14
+        },
+        {
+          "part_number": "137507002100",
+          "count": 7
+        },
+        {
+          "part_number": "234702501000",
+          "count": 4
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "R4-1012-4_1200x1000x100"
+    },
+    "othics_2_m20": {
+      "name": "othics_2_m20",
+      "description": "ローラーロッカー（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1106.0,
+        "max_y_span": 1036.0,
+        "max_height": 845.0
+      },
+      "box_list": [
+        {
+          "part_number": "138012501000",
+          "count": 13
+        },
+        {
+          "part_number": "137507002100",
+          "count": 6
+        },
+        {
+          "part_number": "234702501000",
+          "count": 3
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "R4-1012-4_1200x1000x100"
+    },
+    "othics_2_p10": {
+      "name": "othics_2_p10",
+      "description": "ローラーロッカー（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1106.0,
+        "max_y_span": 1036.0,
+        "max_height": 845.0
+      },
+      "box_list": [
+        {
+          "part_number": "138012501000",
+          "count": 18
+        },
+        {
+          "part_number": "137507002100",
+          "count": 9
+        },
+        {
+          "part_number": "234702501000",
+          "count": 4
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "R4-1012-4_1200x1000x100"
+    },
+    "othics_2_p20": {
+      "name": "othics_2_p20",
+      "description": "ローラーロッカー（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1106.0,
+        "max_y_span": 1036.0,
+        "max_height": 845.0
+      },
+      "box_list": [
+        {
+          "part_number": "138012501000",
+          "count": 19
+        },
+        {
+          "part_number": "137507002100",
+          "count": 10
+        },
+        {
+          "part_number": "234702501000",
+          "count": 5
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_3": {
+      "name": "othics_3",
+      "description": "バランサー",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 15
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_3_m10": {
+      "name": "othics_3_m10",
+      "description": "バランサー（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 14
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_3_m20": {
+      "name": "othics_3_m20",
+      "description": "バランサー（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 12
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_3_p10": {
+      "name": "othics_3_p10",
+      "description": "バランサー（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 17
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_3_p20": {
+      "name": "othics_3_p20",
+      "description": "バランサー（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 18
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_4": {
+      "name": "othics_4",
+      "description": "ドライブギア",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 492.0
+      },
+      "box_list": [
+        {
+          "part_number": "136311501000",
+          "count": 5
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_4_m10": {
+      "name": "othics_4_m10",
+      "description": "ドライブギア（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 492.0
+      },
+      "box_list": [
+        {
+          "part_number": "136311501000",
+          "count": 5
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_4_m20": {
+      "name": "othics_4_m20",
+      "description": "ドライブギア（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 492.0
+      },
+      "box_list": [
+        {
+          "part_number": "136311501000",
+          "count": 4
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_4_p10": {
+      "name": "othics_4_p10",
+      "description": "ドライブギア（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 492.0
+      },
+      "box_list": [
+        {
+          "part_number": "136311501000",
+          "count": 6
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_4_p20": {
+      "name": "othics_4_p20",
+      "description": "ドライブギア（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 492.0
+      },
+      "box_list": [
+        {
+          "part_number": "136311501000",
+          "count": 6
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_5": {
+      "name": "othics_5",
+      "description": "ﾊｳｼﾞﾝｸﾞ　1.5L",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 42
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_5_m10": {
+      "name": "othics_5_m10",
+      "description": "ﾊｳｼﾞﾝｸﾞ　1.5L（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 38
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_5_m20": {
+      "name": "othics_5_m20",
+      "description": "ﾊｳｼﾞﾝｸﾞ　1.5L（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 34
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_5_p10": {
+      "name": "othics_5_p10",
+      "description": "ﾊｳｼﾞﾝｸﾞ　1.5L（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 46
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_5_p20": {
+      "name": "othics_5_p20",
+      "description": "ﾊｳｼﾞﾝｸﾞ　1.5L（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 50
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_6": {
+      "name": "othics_6",
+      "description": "ハウジング　2.0L",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 15
+        },
+        {
+          "part_number": "111032401100",
+          "count": 15
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_6_m10": {
+      "name": "othics_6_m10",
+      "description": "ハウジング　2.0L（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 14
+        },
+        {
+          "part_number": "111032401100",
+          "count": 14
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_6_m20": {
+      "name": "othics_6_m20",
+      "description": "ハウジング　2.0L（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 12
+        },
+        {
+          "part_number": "111032401100",
+          "count": 12
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_6_p10": {
+      "name": "othics_6_p10",
+      "description": "ハウジング　2.0L（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 17
+        },
+        {
+          "part_number": "111032401100",
+          "count": 17
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_6_p20": {
+      "name": "othics_6_p20",
+      "description": "ハウジング　2.0L（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 18
+        },
+        {
+          "part_number": "111032401100",
+          "count": 18
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_7": {
+      "name": "othics_7",
+      "description": "ハウジング　2.0L",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 15
+        },
+        {
+          "part_number": "111032401100",
+          "count": 14
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_7_m10": {
+      "name": "othics_7_m10",
+      "description": "ハウジング　2.0L（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 14
+        },
+        {
+          "part_number": "111032401100",
+          "count": 13
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_7_m20": {
+      "name": "othics_7_m20",
+      "description": "ハウジング　2.0L（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 12
+        },
+        {
+          "part_number": "111032401100",
+          "count": 11
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_7_p10": {
+      "name": "othics_7_p10",
+      "description": "ハウジング　2.0L（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 17
+        },
+        {
+          "part_number": "111032401100",
+          "count": 15
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_7_p20": {
+      "name": "othics_7_p20",
+      "description": "ハウジング　2.0L（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 18
+        },
+        {
+          "part_number": "111032401100",
+          "count": 17
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_8": {
+      "name": "othics_8",
+      "description": "ハウジング　2.0L",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 20
+        },
+        {
+          "part_number": "111032401100",
+          "count": 15
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_8_m10": {
+      "name": "othics_8_m10",
+      "description": "ハウジング　2.0L（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 18
+        },
+        {
+          "part_number": "111032401100",
+          "count": 14
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_8_m20": {
+      "name": "othics_8_m20",
+      "description": "ハウジング　2.0L（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 16
+        },
+        {
+          "part_number": "111032401100",
+          "count": 12
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_8_p10": {
+      "name": "othics_8_p10",
+      "description": "ハウジング　2.0L（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 22
+        },
+        {
+          "part_number": "111032401100",
+          "count": 17
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_8_p20": {
+      "name": "othics_8_p20",
+      "description": "ハウジング　2.0L（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1220.0,
+        "max_y_span": 980.0,
+        "max_height": 1026.0
+      },
+      "box_list": [
+        {
+          "part_number": "111032402200",
+          "count": 24
+        },
+        {
+          "part_number": "111032401100",
+          "count": 18
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_9": {
+      "name": "othics_9",
+      "description": "ハウジング　1.5L",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 34
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_9_m10": {
+      "name": "othics_9_m10",
+      "description": "ハウジング　1.5L（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 31
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_9_m20": {
+      "name": "othics_9_m20",
+      "description": "ハウジング　1.5L（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 27
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_9_p10": {
+      "name": "othics_9_p10",
+      "description": "ハウジング　1.5L（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 37
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_9_p20": {
+      "name": "othics_9_p20",
+      "description": "ハウジング　1.5L（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1107.0,
+        "max_y_span": 950.0,
+        "max_height": 1014.0
+      },
+      "box_list": [
+        {
+          "part_number": "111031502100",
+          "count": 41
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_m10": {
+      "name": "othics_m10",
+      "description": "オティックス　ｴﾝﾄﾞｷｬｯﾌﾟ（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 309.0
+      },
+      "box_list": [
+        {
+          "part_number": "137162501000",
+          "count": 4
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_m20": {
+      "name": "othics_m20",
+      "description": "オティックス　ｴﾝﾄﾞｷｬｯﾌﾟ（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 309.0
+      },
+      "box_list": [
+        {
+          "part_number": "137162501000",
+          "count": 3
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_p10": {
+      "name": "othics_p10",
+      "description": "オティックス　ｴﾝﾄﾞｷｬｯﾌﾟ（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 309.0
+      },
+      "box_list": [
+        {
+          "part_number": "137162501000",
+          "count": 4
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "othics_p20": {
+      "name": "othics_p20",
+      "description": "オティックス　ｴﾝﾄﾞｷｬｯﾌﾟ（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1200.0,
+        "max_y_span": 1005.0,
+        "max_height": 309.0
+      },
+      "box_list": [
+        {
+          "part_number": "137162501000",
+          "count": 5
+        }
+      ],
+      "supplier_name": "オティックス",
+      "pallet_id": "D4-1012-4_1200x1000x130"
+    },
+    "roki": {
+      "name": "roki",
+      "description": "ROKI",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 894.0
+      },
+      "box_list": [
+        {
+          "part_number": "256012403000",
+          "count": 28
+        }
+      ],
+      "supplier_name": "ROKI",
+      "pallet_id": "D4-1111-14_1100x1100x122"
+    },
+    "roki_2": {
+      "name": "roki_2",
+      "description": "ROKI",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 894.0
+      },
+      "box_list": [
+        {
+          "part_number": "256012403000",
+          "count": 18
+        }
+      ],
+      "supplier_name": "ROKI",
+      "pallet_id": "D4-1111-14_1100x1100x122"
+    },
+    "roki_2_m10": {
+      "name": "roki_2_m10",
+      "description": "ROKI（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1005.0,
+        "max_y_span": 1005.0,
+        "max_height": 1200.0
+      },
+      "box_list": [
+        {
+          "part_number": "256012403000",
+          "count": 16
+        }
+      ],
+      "supplier_name": "ROKI",
+      "pallet_id": "__STANDARD_1200_1000_130__"
+    },
+    "roki_2_m20": {
+      "name": "roki_2_m20",
+      "description": "ROKI（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 894.0
+      },
+      "box_list": [
+        {
+          "part_number": "256012403000",
+          "count": 14
+        }
+      ],
+      "supplier_name": "ROKI",
+      "pallet_id": "D4-1111-14_1100x1100x122"
+    },
+    "roki_2_p10": {
+      "name": "roki_2_p10",
+      "description": "ROKI（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 894.0
+      },
+      "box_list": [
+        {
+          "part_number": "256012403000",
+          "count": 20
+        }
+      ],
+      "supplier_name": "ROKI",
+      "pallet_id": "D4-1111-14_1100x1100x122"
+    },
+    "roki_2_p20": {
+      "name": "roki_2_p20",
+      "description": "ROKI（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 894.0
+      },
+      "box_list": [
+        {
+          "part_number": "256012403000",
+          "count": 22
+        }
+      ],
+      "supplier_name": "ROKI",
+      "pallet_id": "D4-1111-14_1100x1100x122"
+    },
+    "roki_m10": {
+      "name": "roki_m10",
+      "description": "ROKI（箱数-10%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 894.0
+      },
+      "box_list": [
+        {
+          "part_number": "256012403000",
+          "count": 25
+        }
+      ],
+      "supplier_name": "ROKI",
+      "pallet_id": "D4-1111-14_1100x1100x122"
+    },
+    "roki_m20": {
+      "name": "roki_m20",
+      "description": "ROKI（箱数-20%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 894.0
+      },
+      "box_list": [
+        {
+          "part_number": "256012403000",
+          "count": 22
+        }
+      ],
+      "supplier_name": "ROKI",
+      "pallet_id": "D4-1111-14_1100x1100x122"
+    },
+    "roki_p10": {
+      "name": "roki_p10",
+      "description": "ROKI（箱数+10%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 894.0
+      },
+      "box_list": [
+        {
+          "part_number": "256012403000",
+          "count": 31
+        }
+      ],
+      "supplier_name": "ROKI",
+      "pallet_id": "D4-1111-14_1100x1100x122"
+    },
+    "roki_p20": {
+      "name": "roki_p20",
+      "description": "ROKI（箱数+20%評価）",
+      "pallet": {
+        "max_x_span": 1172.5,
+        "max_y_span": 1005.0,
+        "max_height": 894.0
+      },
+      "box_list": [
+        {
+          "part_number": "256012403000",
+          "count": 34
+        }
+      ],
+      "supplier_name": "ROKI",
+      "pallet_id": "D4-1111-14_1100x1100x122"
+    }
+  },
+  "approval_state": {
+    "aisin": true,
+    "aisin_10": true,
+    "aisin_10_m10": true,
+    "aisin_10_m20": true,
+    "aisin_10_p10": true,
+    "aisin_10_p20": true,
+    "aisin_11": true,
+    "aisin_11_m10": true,
+    "aisin_11_m20": true,
+    "aisin_11_p10": true,
+    "aisin_11_p20": true,
+    "aisin_2": true,
+    "aisin_2_m10": true,
+    "aisin_2_m20": true,
+    "aisin_2_p10": true,
+    "aisin_2_p20": true,
+    "aisin_3": true,
+    "aisin_3_m10": true,
+    "aisin_3_m20": true,
+    "aisin_3_p10": true,
+    "aisin_3_p20": true,
+    "aisin_4": true,
+    "aisin_4_m10": true,
+    "aisin_4_m20": true,
+    "aisin_4_p10": true,
+    "aisin_4_p20": true,
+    "aisin_5": true,
+    "aisin_5_m10": true,
+    "aisin_5_m20": true,
+    "aisin_5_p10": true,
+    "aisin_5_p20": true,
+    "aisin_6": true,
+    "aisin_6_m10": true,
+    "aisin_6_m20": true,
+    "aisin_6_p10": true,
+    "aisin_6_p20": true,
+    "aisin_7": true,
+    "aisin_7_m10": true,
+    "aisin_7_m20": true,
+    "aisin_7_p10": true,
+    "aisin_7_p20": true,
+    "aisin_8": true,
+    "aisin_8_m10": true,
+    "aisin_8_m20": true,
+    "aisin_8_p10": true,
+    "aisin_8_p20": true,
+    "aisin_9": true,
+    "aisin_9_m10": true,
+    "aisin_9_m20": true,
+    "aisin_9_p10": true,
+    "aisin_9_p20": true,
+    "aisin_m10": true,
+    "aisin_m20": true,
+    "aisin_p10": true,
+    "aisin_p20": true,
+    "arresuthi": true,
+    "arresuthi_2": true,
+    "arresuthi_2_m10": true,
+    "arresuthi_2_m20": true,
+    "arresuthi_2_p10": true,
+    "arresuthi_2_p20": true,
+    "arresuthi_m10": true,
+    "arresuthi_m20": true,
+    "arresuthi_p10": true,
+    "arresuthi_p20": true,
+    "art": true,
+    "art_m10": true,
+    "art_m20": true,
+    "art_p10": true,
+    "art_p20": true,
+    "guze": true,
+    "guze_m10": true,
+    "guze_m20": true,
+    "guze_p10": true,
+    "guze_p20": true,
+    "nittan": true,
+    "nittan_2": true,
+    "nittan_2_m10": true,
+    "nittan_2_m20": true,
+    "nittan_2_p10": true,
+    "nittan_2_p20": true,
+    "nittan_m10": true,
+    "nittan_m20": true,
+    "nittan_p10": true,
+    "nittan_p20": true,
+    "nok": true,
+    "nok_2": true,
+    "nok_2_m10": true,
+    "nok_2_m20": true,
+    "nok_2_p10": true,
+    "nok_2_p20": true,
+    "nok_m10": true,
+    "nok_m20": true,
+    "nok_p10": true,
+    "nok_p20": true,
+    "othics": true,
+    "othics_2": true,
+    "othics_2_m10": true,
+    "othics_2_m20": true,
+    "othics_2_p10": true,
+    "othics_2_p20": true,
+    "othics_3": true,
+    "othics_3_m10": true,
+    "othics_3_m20": true,
+    "othics_3_p10": true,
+    "othics_3_p20": true,
+    "othics_4": true,
+    "othics_4_m10": true,
+    "othics_4_m20": true,
+    "othics_4_p10": true,
+    "othics_4_p20": true,
+    "othics_5": true,
+    "othics_5_m10": true,
+    "othics_5_m20": true,
+    "othics_5_p10": true,
+    "othics_5_p20": true,
+    "othics_6": true,
+    "othics_6_m10": true,
+    "othics_6_m20": true,
+    "othics_6_p10": true,
+    "othics_6_p20": true,
+    "othics_7": true,
+    "othics_7_m10": true,
+    "othics_7_m20": true,
+    "othics_7_p10": true,
+    "othics_7_p20": true,
+    "othics_8": true,
+    "othics_8_m10": true,
+    "othics_8_m20": true,
+    "othics_8_p10": true,
+    "othics_8_p20": true,
+    "othics_9": true,
+    "othics_9_m10": true,
+    "othics_9_m20": true,
+    "othics_9_p10": true,
+    "othics_9_p20": true,
+    "othics_m10": true,
+    "othics_m20": true,
+    "othics_p10": true,
+    "othics_p20": true,
+    "roki": true,
+    "roki_2": true,
+    "roki_2_m10": true,
+    "roki_2_m20": true,
+    "roki_2_p10": true,
+    "roki_2_p20": true,
+    "roki_m10": true,
+    "roki_m20": true,
+    "roki_p10": true,
+    "roki_p20": true
+  }
+}

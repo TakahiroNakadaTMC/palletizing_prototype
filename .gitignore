@@ -105,6 +105,8 @@ temp/
 
 # Generated palletizing results (recreate with tester/run_tests.py)
 /tester/results/result_*.json
+/tester/catalog_results/
+/supervisor/catalog_reports/
 
 # Individual generated HTML viewers in visualizer (keep index.html & viewer_template)
 visualizer/viewer_*.html

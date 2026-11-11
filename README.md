@@ -62,6 +62,84 @@ GitHub Copilot CLI から `/agent <name>` または `@<name>` で直接呼び出
 
 ## 2. 共通データ仕様
 
+### 品番DB移行・第5段階（独立検証・結果表示）
+
+- [Supervisor](supervisor/catalog_validation.py) が品番結果を正式に読み込みます。
+  品番・モデル・固定蓋・仕入先・数量・パレット条件を現在のDBとケースで照合してから、
+  共通モデルによる段積み・干渉・支持等を再検証します。保存済みのPASS表示だけでは合格にしません。
+- [統合3D画面](visualizer/index.html)と[単独HTML生成](visualizer/visualize.py)は
+  品番・箱名称・仕入先・共通モデル・固定蓋・品番別数量に対応しました。旧結果も表示できます。
+  表示は計算時点の記録であり、現在のDBで勝手に書き換えません。
+- 150件を再計算・正式検証し、**148件PASS／2件FAIL、実行エラー0件**。
+  投入3132箱・配置2588箱・未配置544箱、全件で品番数量と計算／検証の判定が一致しました。
+  FAILの `aisin_10_m20` / `othics_m20` は以前と同じ配置0箱です。
+- 今回の[結果](tester/catalog_results/phase5_verified/)と
+  [独立検証レポート](supervisor/catalog_reports/phase5_verified/validation_report.md)を別保存しました
+  （生成物はGit管理外）。既存DB・旧ケース・旧結果・旧レポートは上書きしていません。
+
+```powershell
+# 次回の実行では、結果・レポートとも未使用のフォルダ名に変更してください
+python .\tester\run_tests.py --catalog --output-dir .\tester\catalog_results\my_run
+python .\supervisor\validate.py --catalog-results .\tester\catalog_results\my_run --report-dir .\supervisor\catalog_reports\my_run
+python .\visualizer\serve_3d_viewer.py --results-dir .\tester\catalog_results\my_run
+```
+
+DB・品番ケースを編集した場合は再計算してください。古い結果は表示できますが、
+現在のDBと照合値が異なる結果は検証を止め、再計算を案内します。
+従来コマンドの既定動作は旧方式のままです。品番方式は上記のように明示指定します。
+詳細は[検証ガイド](supervisor/README.md#品番方式の独立検証第5段階)と
+[表示ガイド](visualizer/README.md#品番方式の結果表示第5段階)を参照してください。
+
+### 品番DB移行・第4段階（品番方式の計算）
+
+- [品番方式の計算処理](algorithm_programmer/catalog.py)を追加しました。
+  共通モデルと蓋が同じ品番はまとめて単載計算し、確定した積み順に入力順で品番を配分します。
+  品番・仕入先・現場の箱名称・モデル名・蓋、品番別の投入／配置／未配置数を結果に残します。
+- 既存の嵌合・支持・箱蓋外形・TP箱の異モデル段積みの安全条件は変更していません。
+  返却数量の割合をそろえる処理は未実装です。
+- `python .\algorithm_programmer\cli.py --catalog-case othics_6 -o .\tester\catalog_results\othics_6.json`
+  で明示的に新方式を選択します。一括実行は
+  `python .\tester\run_tests.py --catalog --output-dir .\tester\catalog_results\review_phase4`
+  です。出力先は未使用のフォルダを指定します。
+- 150ケースを別出力で実行し、投入3132箱・配置2588箱・未配置544箱、実行エラー0件。
+  制約判定は148件PASS・2件FAILで、品番別数量は150件とも一致しました。
+  FAILの `aisin_10_m20` / `othics_m20` は旧方式でも配置0箱・FAILです。
+  全150件で旧方式より配置数が減っていないこと、およびテスト用に品番をDB上のモデルへ解決して
+  既存Supervisorで独立検証した判定が全件一致することも確認しました。
+- 旧DB・ケース・採用状態・結果、従来コマンドの参照先は維持します。
+  新結果をSupervisorや3D表示へ渡す対応は第5段階で実装済みです。既定動作は旧方式を維持しています。
+  [計算・結果項目の説明](algorithm_programmer/README.md#品番方式の計算第4段階)を参照してください。
+
+### 品番DB移行・第3段階（編集画面対応）
+
+- [新DB編集画面](box_research/catalog_viewer.html)で品番・箱モデル・蓋を編集し、
+  モデル名変更時には関連品番・蓋・ケースを確認します。パレットタブは参照表示で、
+  既存のパレット編集機能は従来画面で維持します。
+- 同じ画面の品番ケース編集では仕入先→品番→数量で選び、箱と蓋を自動表示します。
+  [準備用ケース](box_research/catalog/test_cases.json)に150ケース・200箱行を別保存しました。
+- 既存DB・CSV原本・ケース・採用状態・計算結果は変更していません。
+  第4段階のCLI・計算への接続は、ユーザーの合意を受けて上記のとおり実装しました。
+- 両既存サーバーから新画面へのリンクを利用できます。
+  操作手順は[第3段階ガイド](box_research/README.md#db品番ケース編集画面第3段階計算への切替前)を参照してください。
+
+### 品番DB移行・第2段階（新DB登録・既存処理へ未接続）
+
+- [新DB](box_research/catalog/)へ362品番・81箱モデル・24種類の蓋と移行対応表を登録しました。
+- [保存処理](box_research/catalog_store.py)と[共通検証](box_research/database_validation.py)で、
+  参照整合性・文字統一・重複・寸法を確認し、モデル名の変更前確認と関連参照の一括更新を行います。
+- 既存画面・CLI・Supervisorを壊さないため、新DBは切替前の専用フォルダに分離しています。
+  第2段階では旧DB・ケース・計算結果は変更しておらず、画面変更・計算への反映も行っていません。
+- 第3段階はユーザーの合意を受けて上記のとおり実装しました。
+  操作と制限は[第2段階のガイド](box_research/README.md#品番モデルdbの登録と検証第2段階既存処理へ未接続)を参照してください。
+
+### 品番DB移行・第1段階（事前確認のみ）
+
+- [移行確認ツール](box_research/preview_migration.py)で、CSV・現DB・全ケースから、
+  品番／箱モデル／固定蓋の対応案と、ケースに割り当てる品番の確認資料を生成します。
+- DB・CSV原本・ケース・採用状態・計算結果は変更せず、計算処理やビューアへの反映も行いません。
+- 出力をユーザーと確認し、第2段階の実装に合意するまで適用しません。
+  実行手順と各資料の読み方は[箱DBの事前確認ガイド](box_research/README.md#品番db移行の事前確認第1段階未適用)を参照してください。
+
 ### ビューア起動修正・保存前チェックの共通化（2026-11-06）
 
 - テストケースビューアはWindowsで `py .\test_programmer\serve_testcase_viewer.py` による

@@ -29,11 +29,88 @@ algorithm_programmer/
 
 ### DBから計算エンジンへ渡す情報
 
+以下は旧方式の説明です。品番方式は次節を参照してください。
+
 - [cli.py](./cli.py) が箱DB・蓋DB・パレットDBを読み、テストケースに選ばれた箱ID・蓋ID・パレットIDのレコードを解決する。
 - CLIは箱・蓋の互換性を確認し、箱と蓋の寸法などをまとめた `BoxSpec` と、選択されたパレットの `PalletSpec` を作る。
 - [palletizer.py](./palletizer.py) の `Palletizer` は、選択済みの仕様だけを受け取る。DBファイルの読み込みやDB全件の検索は行わない。
 - 蓋IDが省略されたケースは、CLIが蓋DBの「蓋なし (NONE)」レコードを選び、計算用データに明示してから渡す。
 - 箱IDがDBにない場合は未配置情報として結果に記録する。蓋IDがない、または箱との互換性がない場合は、計算を始める前にエラーにする。
+
+### 品番方式の計算（第4段階）
+
+```powershell
+# 保存済みケースを名前で指定（採否にかかわらず明示した1件を実行）
+python .\algorithm_programmer\cli.py --catalog-case othics_6 -o .\tester\catalog_results\othics_6.json
+
+# box_listがpart_numberとcountのケースJSONも実行可能
+python .\algorithm_programmer\cli.py .\my_part_case.json -o .\tester\catalog_results\my_case.json
+
+# 採用済み品番ケースを一括実行（毎回、未使用の出力フォルダを指定）
+python .\tester\run_tests.py --catalog --output-dir .\tester\catalog_results\review_phase4
+```
+
+箱・蓋は [品番DB](../box_research/catalog/box_type_db.json) から自動決定します。
+品番ケースと旧方式の `box_id` 行を混ぜることや、ケース側で蓋を上書きすることはできません。
+`--box-db` で旧DBを差し替える操作も品番方式とは併用できません。
+パレット本体寸法はパレットDB、荷山上限はケースを正とし、仕入先との対応も検証します。
+不明な品番、非互換の蓋、不正な数量等は計算前にエラーにします。
+
+[catalog.py](catalog.py) は、品番数量の管理と形状の計算を分離します。
+
+1. 同じ「共通モデル名＋蓋ID」を集計して、既存エンジンにモデル名で渡します。
+   1組なら単載、複数組なら混載です。同寸法でも異なるモデルを勝手に同一視しません。
+2. 既存エンジンで配置、嵌合、支持、センタリング、積み順、最終制約判定を確定します。
+   非TP箱は共通モデルでコラム積みを判定します。外嵌めTP箱の同一蓋・外形一致・単一支持、
+   通常TP箱の異モデル間段積み、上段箱の嵌合深さ・支持点数等の条件は維持します。
+3. 確定した積み順に、入力で先に現れた品番から投入数を上限として割り当てます。
+   同じ品番が複数行にある場合は先頭出現位置で数量を合計します。
+   外形計算の集計とは別に品番別の残数を持ち、投入＝配置＋未配置を確認します。
+   返却率の平準化や割当て比率の最適化はまだ行いません。
+
+**新結果は `schema_version: 2` / `input_mode: "part_number"` です。**
+座標基準・寸法・積み順・支持番号は従来と同じです。
+
+| 項目 | 内容 |
+| --- | --- |
+| 配置箱の `part_number` / `supplier_name` | 元の品番と仕入先 |
+| `box_id` / `box_name` | 従来の運用上の箱名称（例: NP22C）。品番ではありません |
+| `box_model_id` / `lid_id` | 計算に使った共通モデルと固定蓋 |
+| `input_parts` / `part_counts` | 品番別の入力、および投入・配置・未配置数量 |
+| `unplaced_boxes` | 品番・箱名称・モデル・蓋・未配置数・計算上の理由 |
+| `algorithm_mode` / `allocation_method` | single/mixed、およびinput_order（入力順配分） |
+| `catalog_revision` | 使用したDB・品番ケース一式の照合値。変更後は別の値になります |
+
+`input_box_variants` と最高層支持サマリーの箱情報にも品番・モデルを記録します。
+一括実行は [run_tests.py](../tester/run_tests.py) の説明を参照してください。
+品番方式は旧 `tester/results/` への保存を拒否し、一括実行では既存フォルダも再利用しません。
+単発CLIの他の出力先は従来どおり上書きするため、残したい結果とは別名を指定してください。
+品番方式では入力／実行エラーまたは制約FAILで終了コード1、制約PASSなら0です。
+未配置があっても配置済みの荷姿が制約PASSなら0となるため、数量も必ず確認してください。
+旧方式のコマンドと結果形式は変更していません。
+
+**第5段階で正式接続済み:** 新結果をそのままSupervisorと3D表示へ渡せます。
+Supervisorは現在のDBと保存済みケースで品番・固定蓋・数量・パレット設定・照合値を確認し、
+共通モデルで独立に形状判定します。計算エンジンはimportせず、サマリーのPASSは信用しません。
+テスト内だけでモデルへ置換する従来の仮接続は使わず、正式な読込経路で全150ケースを確認します。
+操作は[独立検証](../supervisor/README.md#品番方式の独立検証第5段階)・
+[結果表示](../visualizer/README.md#品番方式の結果表示第5段階)を参照してください。
+
+**確認結果:** 品番方式150件で148件PASS／2件FAIL・エラー0件、
+投入3132箱・配置2588箱・未配置544箱。数量照合と独立判定は150件とも一致。
+2件のFAILは `aisin_10_m20` と `othics_m20` で、旧方式でも0箱配置・FAILです。
+旧方式150件との比較では配置数の減少・PASSからFAILへの変化はありませんでした。
+関連テストでは既存の配置期待値不一致3件
+（`palletizer_test` のaisin_10、`top_support_test` のothics_9／othics_3）があり、
+HEAD版CLIと未変更のエンジンでも再現しています。今回のDB接続では変更していません。
+
+```powershell
+python -m unittest algorithm_programmer.catalog_test algorithm_programmer.cli_test
+```
+
+品番方式テストは同モデル・同蓋、異モデル同寸法、同モデル異蓋、異モデルTP、
+外形ずれ・複数支持の拒否、モデル名変更、品番配分、未配置、単発／一括CLI、全保存ケースを含みます。
+全保存ケースの旧方式比較を含むため、約1～2分かかります。
 
 ## 3. 主要ロジックと実装機能
 

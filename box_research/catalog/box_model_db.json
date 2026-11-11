@@ -1,0 +1,1183 @@
+{
+  "TP-131": {
+    "id": "TP-131",
+    "type": "TP",
+    "length": 335,
+    "width": 167.5,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 12,
+    "module_ratio": "1x0.5",
+    "description": "TP-130系 1型 ハーフモジュール (有効内寸291x123, 側面厚22.0mm)",
+    "compatible_lids": [
+      "TP130フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-331": {
+    "id": "TP-331",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": "1x1",
+    "description": "TP-330系 1型 基準モジュール浅型 (内寸300x300/有効内寸291x291, 側面厚22.0mm)",
+    "compatible_lids": [
+      "TP330フタ",
+      "サンボックス330フタ"
+    ],
+    "top_support_points": 5
+  },
+  "TP-331.5": {
+    "id": "TP-331.5",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 148.75,
+    "fitting_depth": 10,
+    "rib_thickness": 22,
+    "module_ratio": "1x1",
+    "description": "TP-330系 1.5型 基準モジュール中浅型 (有効内寸291x291, 側面厚22.0mm)",
+    "compatible_lids": [
+      "TP330フタ",
+      "サンボックス330フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-332": {
+    "id": "TP-332",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 15,
+    "module_ratio": "1x1",
+    "description": "TP-330系 2型 基準モジュール標準型 (内寸300x300/有効内寸291x291, 側面厚22.0mm)",
+    "compatible_lids": [
+      "TP330フタ",
+      "サンボックス330フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-333": {
+    "id": "TP-333",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 287.5,
+    "fitting_depth": 10,
+    "rib_thickness": 22,
+    "module_ratio": "1x1",
+    "description": "TP-330系 3型 基準モジュール深型 (有効内寸291x291, 側面厚22.0mm)",
+    "compatible_lids": [
+      "TP330フタ",
+      "サンボックス330フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-341": {
+    "id": "TP-341",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": "1.5x1",
+    "description": "TP-340系 1型 1.5モジュール浅型 (内寸468x300/有効内寸458x290, 側面厚22.5mm)",
+    "compatible_lids": [
+      "TP340フタ",
+      "サンボックス340フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-341.5": {
+    "id": "TP-341.5",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 148.75,
+    "fitting_depth": 10,
+    "rib_thickness": 22.5,
+    "module_ratio": "1.5x1",
+    "description": "TP-340系 1.5型 1.5モジュール中浅型 (有効内寸458x290, 側面厚22.5mm)",
+    "compatible_lids": [
+      "TP340フタ",
+      "サンボックス340フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-342": {
+    "id": "TP-342",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 22.5,
+    "module_ratio": "1.5x1",
+    "description": "TP-340系 2型 1.5モジュール標準型 (内寸468x300/有効内寸458x290, 側面厚22.5mm)",
+    "compatible_lids": [
+      "TP340フタ",
+      "サンボックス340フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-343": {
+    "id": "TP-343",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 287.5,
+    "fitting_depth": 10,
+    "rib_thickness": 22.5,
+    "module_ratio": "1.5x1",
+    "description": "TP-340系 3型 1.5モジュール深型 (有効内寸458x290, 側面厚22.5mm)",
+    "compatible_lids": [
+      "TP340フタ",
+      "サンボックス340フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-362": {
+    "id": "TP-362",
+    "type": "TP",
+    "length": 670,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 22.5,
+    "module_ratio": "2x1",
+    "description": "TP-360系 2型 2倍モジュール標準型 (内寸635x300/有効内寸625x290, 側面厚22.5mm)",
+    "compatible_lids": [
+      "TP360フタ",
+      "サンボックス360フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-363": {
+    "id": "TP-363",
+    "type": "TP",
+    "length": 670,
+    "width": 335,
+    "height": 287.5,
+    "fitting_depth": 10,
+    "rib_thickness": 22.5,
+    "module_ratio": "2x1",
+    "description": "TP-360系 3型 2倍モジュール深型 (有効内寸625x290, 側面厚22.5mm)",
+    "compatible_lids": [
+      "TP360フタ",
+      "サンボックス360フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-462": {
+    "id": "TP-462",
+    "type": "TP",
+    "length": 670,
+    "width": 502.5,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 22,
+    "module_ratio": "2x1.5",
+    "description": "TP-460系 2型 大型モジュール標準型 (内寸635x468/有効内寸626x458, 側面厚22.0mm)",
+    "compatible_lids": [
+      "TP460フタ",
+      "サンボックス460フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-463": {
+    "id": "TP-463",
+    "type": "TP",
+    "length": 670,
+    "width": 502.5,
+    "height": 287.5,
+    "fitting_depth": 10,
+    "rib_thickness": 22,
+    "module_ratio": "2x1.5",
+    "description": "TP-460系 3型 大型モジュール深型 (有効内寸626x458, 側面厚22.0mm)",
+    "compatible_lids": [
+      "TP460フタ",
+      "サンボックス460フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP-361": {
+    "id": "TP-361",
+    "type": "TP",
+    "length": 670,
+    "width": 335,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 22.5,
+    "module_ratio": "2x1",
+    "description": "TP-360系 1型 2倍モジュール浅型 (内寸635x300/有効内寸625x290, 側面厚22.5mm)",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "TP-461": {
+    "id": "TP-461",
+    "type": "TP",
+    "length": 670,
+    "width": 502.5,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 22,
+    "module_ratio": "2x1.5",
+    "description": "TP-460系 1型 大型モジュール浅型 (内寸635x468/有効内寸626x458, 側面厚22.0mm)",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "TP-482": {
+    "id": "TP-482",
+    "type": "TP",
+    "length": 837.5,
+    "width": 502.5,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 22,
+    "module_ratio": "2.5x1.5",
+    "description": "TP-480系 特大モジュール (内寸803x468/有効内寸794x459, 側面厚22.0mm)",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NP000002": {
+    "id": "NP000002",
+    "type": "NON_TP",
+    "length": 424,
+    "width": 292,
+    "height": 168,
+    "fitting_depth": 8,
+    "rib_thickness": 10,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NP000003": {
+    "id": "NP000003",
+    "type": "NON_TP",
+    "length": 476,
+    "width": 360,
+    "height": 223,
+    "fitting_depth": 14,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NP015": {
+    "id": "NP015",
+    "type": "NON_TP",
+    "length": 610,
+    "width": 370,
+    "height": 125,
+    "fitting_depth": 8,
+    "rib_thickness": 18,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "PC-7110P",
+      "RB41"
+    ],
+    "top_support_points": 4
+  },
+  "NP000008": {
+    "id": "NP000008",
+    "type": "NON_TP",
+    "length": 606,
+    "width": 369,
+    "height": 96,
+    "fitting_depth": 8,
+    "rib_thickness": 18,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス#22Bフタ"
+    ],
+    "top_support_points": 4
+  },
+  "NP20B": {
+    "id": "NP20B",
+    "type": "NON_TP",
+    "length": 475,
+    "width": 369,
+    "height": 154,
+    "fitting_depth": 10,
+    "rib_thickness": 22,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス#20"
+    ],
+    "top_support_points": 4
+  },
+  "サンボックス#22H": {
+    "id": "サンボックス#22H",
+    "type": "NON_TP",
+    "length": 610,
+    "width": 370,
+    "height": 156,
+    "fitting_depth": 7,
+    "rib_thickness": 18,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス#22Bフタ"
+    ],
+    "top_support_points": 4
+  },
+  "NP262D": {
+    "id": "NP262D",
+    "type": "NON_TP",
+    "length": 518,
+    "width": 436,
+    "height": 147,
+    "fitting_depth": 6,
+    "rib_thickness": 17,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス#26"
+    ],
+    "top_support_points": 4
+  },
+  "NPAP5": {
+    "id": "NPAP5",
+    "type": "NON_TP",
+    "length": 518,
+    "width": 436,
+    "height": 80,
+    "fitting_depth": 7,
+    "rib_thickness": 17,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NPF33": {
+    "id": "NPF33",
+    "type": "NON_TP",
+    "length": 342,
+    "width": 266,
+    "height": 48,
+    "fitting_depth": 8,
+    "rib_thickness": 10,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NPH025": {
+    "id": "NPH025",
+    "type": "NON_TP",
+    "length": 727,
+    "width": 420,
+    "height": 233,
+    "fitting_depth": 10,
+    "rib_thickness": 18,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NPHAPP9Y": {
+    "id": "NPHAPP9Y",
+    "type": "NON_TP",
+    "length": 361,
+    "width": 272,
+    "height": 81,
+    "fitting_depth": 8,
+    "rib_thickness": 13,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NPP03005": {
+    "id": "NPP03005",
+    "type": "NON_TP",
+    "length": 478,
+    "width": 358,
+    "height": 168,
+    "fitting_depth": 10,
+    "rib_thickness": 17,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス#14C"
+    ],
+    "top_support_points": 4
+  },
+  "NPP23006": {
+    "id": "NPP23006",
+    "type": "NON_TP",
+    "length": 516,
+    "width": 345,
+    "height": 166,
+    "fitting_depth": 10,
+    "rib_thickness": 18,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "RB36・23"
+    ],
+    "top_support_points": 4
+  },
+  "NPSB3": {
+    "id": "NPSB3",
+    "type": "NON_TP",
+    "length": 339,
+    "width": 264,
+    "height": 48,
+    "fitting_depth": 7,
+    "rib_thickness": 9,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "S66": {
+    "id": "S66",
+    "type": "NON_TP",
+    "length": 361,
+    "width": 272,
+    "height": 81,
+    "fitting_depth": 7,
+    "rib_thickness": 14,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "SM000004": {
+    "id": "SM000004",
+    "type": "NON_TP",
+    "length": 365,
+    "width": 285,
+    "height": 125,
+    "fitting_depth": 10,
+    "rib_thickness": 21,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "SP004A5K": {
+    "id": "SP004A5K",
+    "type": "NON_TP",
+    "length": 670,
+    "width": 503,
+    "height": 380,
+    "fitting_depth": 8,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス460フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP129Y01": {
+    "id": "SP129Y01",
+    "type": "NON_TP",
+    "length": 503,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 7,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP340フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP3315": {
+    "id": "SP3315",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 149,
+    "fitting_depth": 7,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス330フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP331V": {
+    "id": "SP331V",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "SP341": {
+    "id": "SP341",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 17,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP340フタ",
+      "サンボックス340フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP3415": {
+    "id": "SP3415",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 148.75,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス340フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP342": {
+    "id": "SP342",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス340フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP3425": {
+    "id": "SP3425",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 241.25,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "SP342501": {
+    "id": "SP342501",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 241.25,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP340フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP361": {
+    "id": "SP361",
+    "type": "TP",
+    "length": 670,
+    "width": 335,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス360フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP4615": {
+    "id": "SP4615",
+    "type": "TP",
+    "length": 670,
+    "width": 502.5,
+    "height": 165,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP460フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP464": {
+    "id": "SP464",
+    "type": "TP",
+    "length": 670,
+    "width": 502.5,
+    "height": 380,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス460フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SPG34229": {
+    "id": "SPG34229",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP34蓋(IC)"
+    ],
+    "top_support_points": 4
+  },
+  "SPG34230": {
+    "id": "SPG34230",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP34蓋(IC)"
+    ],
+    "top_support_points": 4
+  },
+  "SPT59000": {
+    "id": "SPT59000",
+    "type": "NON_TP",
+    "length": 530,
+    "width": 440,
+    "height": 320,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "STP342B": {
+    "id": "STP342B",
+    "type": "NON_TP",
+    "length": 503,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 7,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP340フタ"
+    ],
+    "top_support_points": 4
+  },
+  "NP000001": {
+    "id": "NP000001",
+    "type": "NON_TP",
+    "length": 435,
+    "width": 327,
+    "height": 207,
+    "fitting_depth": 14,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NP00012N": {
+    "id": "NP00012N",
+    "type": "NON_TP",
+    "length": 390,
+    "width": 260,
+    "height": 143,
+    "fitting_depth": 7,
+    "rib_thickness": 10,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NPH00002": {
+    "id": "NPH00002",
+    "type": "NON_TP",
+    "length": 358,
+    "width": 358,
+    "height": 103,
+    "fitting_depth": 9,
+    "rib_thickness": 17,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NPH010": {
+    "id": "NPH010",
+    "type": "NON_TP",
+    "length": 684,
+    "width": 423,
+    "height": 160,
+    "fitting_depth": 9,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "SP331330": {
+    "id": "SP331330",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 19,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP330フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP3315B": {
+    "id": "SP3315B",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 148.75,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP330フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP332S08": {
+    "id": "SP332S08",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "SP332S09": {
+    "id": "SP332S09",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "SP362C01": {
+    "id": "SP362C01",
+    "type": "TP",
+    "length": 670,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP360フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP4625": {
+    "id": "SP4625",
+    "type": "TP",
+    "length": 670,
+    "width": 502.5,
+    "height": 241.25,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP460フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SP6363B3": {
+    "id": "SP6363B3",
+    "type": "TP",
+    "length": 670,
+    "width": 335,
+    "height": 287.5,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP36蓋"
+    ],
+    "top_support_points": 4
+  },
+  "SPK10F18": {
+    "id": "SPK10F18",
+    "type": "TP",
+    "length": 358,
+    "width": 358,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 17,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "#10-5"
+    ],
+    "top_support_points": 4
+  },
+  "SPPS2": {
+    "id": "SPPS2",
+    "type": "NON_TP",
+    "length": 690,
+    "width": 423,
+    "height": 159,
+    "fitting_depth": 6,
+    "rib_thickness": 10,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "SPZ36403": {
+    "id": "SPZ36403",
+    "type": "TP",
+    "length": 670,
+    "width": 335,
+    "height": 380,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP360フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP364": {
+    "id": "TP364",
+    "type": "TP",
+    "length": 670,
+    "width": 335,
+    "height": 380,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP360フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SPZ36408": {
+    "id": "SPZ36408",
+    "type": "TP",
+    "length": 670,
+    "width": 335,
+    "height": 380,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP360フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SPZ46404": {
+    "id": "SPZ46404",
+    "type": "TP",
+    "length": 670,
+    "width": 502.5,
+    "height": 380,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP460フタ"
+    ],
+    "top_support_points": 4
+  },
+  "SPZ46405": {
+    "id": "SPZ46405",
+    "type": "TP",
+    "length": 670,
+    "width": 502.5,
+    "height": 380,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP460フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP3315": {
+    "id": "TP3315",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 148.75,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP330フタ",
+      "TP33蓋(IC)"
+    ],
+    "top_support_points": 4
+  },
+  "TP3415": {
+    "id": "TP3415",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 148.75,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP34蓋ロック付き"
+    ],
+    "top_support_points": 4
+  },
+  "TP131": {
+    "id": "TP131",
+    "type": "TP",
+    "length": 335,
+    "width": 167.5,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "TP331": {
+    "id": "TP331",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP330フタ",
+      "サンボックス330フタ",
+      "TP33蓋(IC)"
+    ],
+    "top_support_points": 5
+  },
+  "TP332": {
+    "id": "TP332",
+    "type": "TP",
+    "length": 335,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP330フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP341": {
+    "id": "TP341",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP340フタ",
+      "サンボックス340フタ",
+      "TP34蓋"
+    ],
+    "top_support_points": 4
+  },
+  "TP342": {
+    "id": "TP342",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP340フタ",
+      "サンボックス340フタ",
+      "TP34蓋",
+      "TP34蓋(IC)"
+    ],
+    "top_support_points": 4
+  },
+  "TP3425": {
+    "id": "TP3425",
+    "type": "TP",
+    "length": 502.5,
+    "width": 335,
+    "height": 241.25,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP340フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP361": {
+    "id": "TP361",
+    "type": "TP",
+    "length": 670,
+    "width": 335,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP36蓋"
+    ],
+    "top_support_points": 4
+  },
+  "TP362": {
+    "id": "TP362",
+    "type": "TP",
+    "length": 670,
+    "width": 335,
+    "height": 195,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "TP461": {
+    "id": "TP461",
+    "type": "TP",
+    "length": 670,
+    "width": 502.5,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP460フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TP464": {
+    "id": "TP464",
+    "type": "TP",
+    "length": 670,
+    "width": 502.5,
+    "height": 380,
+    "fitting_depth": 10,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "TP460フタ"
+    ],
+    "top_support_points": 4
+  },
+  "TZFB": {
+    "id": "TZFB",
+    "type": "TP",
+    "length": 335,
+    "width": 275,
+    "height": 165,
+    "fitting_depth": 10,
+    "rib_thickness": 3,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NEUAD9": {
+    "id": "NEUAD9",
+    "type": "NON_TP",
+    "length": 540,
+    "width": 365,
+    "height": 70,
+    "fitting_depth": 5,
+    "rib_thickness": 15,
+    "module_ratio": null,
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "NS80858": {
+    "id": "NS80858",
+    "type": "NON_TP",
+    "length": 1400,
+    "width": 1000,
+    "height": 800,
+    "fitting_depth": 10,
+    "rib_thickness": 15,
+    "module_ratio": null,
+    "compatible_lids": [],
+    "top_support_points": 4
+  }
+}

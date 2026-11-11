@@ -13,6 +13,7 @@ import sys
 import tempfile
 import webbrowser
 import urllib.parse
+from pathlib import Path
 from typing import Any, Dict, List
 
 if __package__ in (None, ""):
@@ -26,6 +27,8 @@ from box_research.database_validation import (
     validate_pallet_database as _validate_pallet_database,
     validate_record_database,
 )
+from box_research.catalog_http import handle_catalog
+from box_research.catalog_store import catalog_pallets, load_catalog, validate_staged_cases
 
 PORT = 8081
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -171,6 +174,11 @@ def _validate_databases(data: Dict[str, Any]) -> Dict[str, Any]:
                 with open(os.path.join(TEST_CASES_DIR, filename), "r", encoding="utf-8") as source:
                     test_cases[os.path.splitext(filename)[0]] = json.load(source)
         _validate_pallet_case_references(test_cases, data["pallets"])
+        root = Path(BASE_DIR).parent
+        if (root / "box_research" / "catalog" / "test_cases.json").exists():
+            catalog, _ = load_catalog(root)
+            validate_staged_cases(catalog["cases"], catalog["parts"],
+                                  catalog_pallets(root, data["pallets"]))
     return data
 
 
@@ -238,6 +246,8 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+        if handle_catalog(self, Path(BASE_DIR).parent, "GET", parsed.path):
+            return
         if parsed.path == "/" or parsed.path == "/index.html":
             with open(VIEWER_HTML_PATH, "rb") as source:
                 body = source.read()
@@ -278,6 +288,8 @@ class ViewerRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
+        if handle_catalog(self, Path(BASE_DIR).parent, "POST", parsed.path):
+            return
         if parsed.path in ("/api/save", "/api/lids/save_all", "/api/pallets/save_all", "/api/databases/save"):
             try:
                 content_len = int(self.headers.get("Content-Length", 0))

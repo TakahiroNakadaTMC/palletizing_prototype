@@ -1,0 +1,2536 @@
+{
+  "111032402200": {
+    "id": "111032402200",
+    "supplier_name": "オティックス",
+    "box_name": "NP22C",
+    "box_model_id": "サンボックス#22H",
+    "lid_id": "サンボックス#22Bフタ"
+  },
+  "111031502100": {
+    "id": "111031502100",
+    "supplier_name": "オティックス",
+    "box_name": "NP20B",
+    "box_model_id": "NP20B",
+    "lid_id": "サンボックス#20"
+  },
+  "134512408100": {
+    "id": "134512408100",
+    "supplier_name": "アイシン高丘",
+    "box_name": "SPK10F18",
+    "box_model_id": "SPK10F18",
+    "lid_id": "#10-5"
+  },
+  "134511511100": {
+    "id": "134511511100",
+    "supplier_name": "アイシン高丘",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "TP330フタ"
+  },
+  "31270K001300": {
+    "id": "31270K001300",
+    "supplier_name": "アイシン",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "TP330フタ"
+  },
+  "312706301000": {
+    "id": "312706301000",
+    "supplier_name": "シェフラーJP",
+    "box_name": "SP331330",
+    "box_model_id": "SP331330",
+    "lid_id": "TP330フタ"
+  },
+  "122812503000": {
+    "id": "122812503000",
+    "supplier_name": "中央可鍛工業",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "122822501000": {
+    "id": "122822501000",
+    "supplier_name": "中央可鍛工業",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "132111507002": {
+    "id": "132111507002",
+    "supplier_name": "アート金属",
+    "box_name": "NPAP5",
+    "box_model_id": "NPAP5",
+    "lid_id": "無蓋"
+  },
+  "130902501000": {
+    "id": "130902501000",
+    "supplier_name": "DENSO",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "TP34蓋"
+  },
+  "162601501000": {
+    "id": "162601501000",
+    "supplier_name": "住友理工",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "111912501000": {
+    "id": "111912501000",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "238142401100": {
+    "id": "238142401100",
+    "supplier_name": "マルヤス工業",
+    "box_name": "TP461",
+    "box_model_id": "TP461",
+    "lid_id": "TP460フタ"
+  },
+  "132812403002": {
+    "id": "132812403002",
+    "supplier_name": "大豊工業",
+    "box_name": "NPSB3",
+    "box_model_id": "NPSB3",
+    "lid_id": "無蓋"
+  },
+  "232092401000": {
+    "id": "232092401000",
+    "supplier_name": "DENSO",
+    "box_name": "TP3315",
+    "box_model_id": "TP3315",
+    "lid_id": "無蓋"
+  },
+  "256802403000": {
+    "id": "256802403000",
+    "supplier_name": "マルヤス工業",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "TP340フタ"
+  },
+  "163041501000": {
+    "id": "163041501000",
+    "supplier_name": "ニフコ",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "TP34蓋"
+  },
+  "134701515000": {
+    "id": "134701515000",
+    "supplier_name": "NOK",
+    "box_name": "NP000008",
+    "box_model_id": "NP000008",
+    "lid_id": "サンボックス#22Bフタ"
+  },
+  "115112401000": {
+    "id": "115112401000",
+    "supplier_name": "アイシン高丘",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "TP330フタ"
+  },
+  "123152401100": {
+    "id": "123152401100",
+    "supplier_name": "中央可鍛工業",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "909190227700": {
+    "id": "909190227700",
+    "supplier_name": "DENSO",
+    "box_name": "TP3425",
+    "box_model_id": "TP3425",
+    "lid_id": "TP340フタ"
+  },
+  "132112406001": {
+    "id": "132112406001",
+    "supplier_name": "アート金属",
+    "box_name": "NPAP5",
+    "box_model_id": "NPAP5",
+    "lid_id": "無蓋"
+  },
+  "134702402000": {
+    "id": "134702402000",
+    "supplier_name": "フコク",
+    "box_name": "NP000008",
+    "box_model_id": "NP000008",
+    "lid_id": "サンボックス#22Bフタ"
+  },
+  "123151510000": {
+    "id": "123151510000",
+    "supplier_name": "佐藤鋳工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "TP330フタ"
+  },
+  "231012504000": {
+    "id": "231012504000",
+    "supplier_name": "DENSO",
+    "box_name": "TP3315",
+    "box_model_id": "TP3315",
+    "lid_id": "TP33蓋(IC)"
+  },
+  "13211F204002": {
+    "id": "13211F204002",
+    "supplier_name": "輸入部品",
+    "box_name": "NEUAD9",
+    "box_model_id": "NEUAD9",
+    "lid_id": "無蓋"
+  },
+  "909100219700": {
+    "id": "909100219700",
+    "supplier_name": "青山製作所",
+    "box_name": "SP331V",
+    "box_model_id": "SP331V",
+    "lid_id": "無蓋"
+  },
+  "113102401000": {
+    "id": "113102401000",
+    "supplier_name": "アイシン",
+    "box_name": "SPZ36408",
+    "box_model_id": "SPZ36408",
+    "lid_id": "TP360フタ"
+  },
+  "113202401000": {
+    "id": "113202401000",
+    "supplier_name": "アイシン",
+    "box_name": "SPZ36406",
+    "box_model_id": "TP364",
+    "lid_id": "TP360フタ"
+  },
+  "153702502000": {
+    "id": "153702502000",
+    "supplier_name": "DENSO",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "TP340フタ"
+  },
+  "113201502100": {
+    "id": "113201502100",
+    "supplier_name": "アイシン",
+    "box_name": "SPZ36403",
+    "box_model_id": "SPZ36403",
+    "lid_id": "TP360フタ"
+  },
+  "115111502000": {
+    "id": "115111502000",
+    "supplier_name": "アイシン高丘",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "TP330フタ"
+  },
+  "138012501000": {
+    "id": "138012501000",
+    "supplier_name": "オティックス",
+    "box_name": "TP3415",
+    "box_model_id": "TP3415",
+    "lid_id": "TP34蓋ロック付き"
+  },
+  "132512403002": {
+    "id": "132512403002",
+    "supplier_name": "アート金属",
+    "box_name": "NPHAPP9Y",
+    "box_model_id": "NPHAPP9Y",
+    "lid_id": "無蓋"
+  },
+  "909151000900": {
+    "id": "909151000900",
+    "supplier_name": "DENSO",
+    "box_name": "NP015",
+    "box_model_id": "NP015",
+    "lid_id": "RB41"
+  },
+  "256012403000": {
+    "id": "256012403000",
+    "supplier_name": "ROKI",
+    "box_name": "TP3415",
+    "box_model_id": "TP3415",
+    "lid_id": "無蓋"
+  },
+  "117112402105": {
+    "id": "117112402105",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "163512402000": {
+    "id": "163512402000",
+    "supplier_name": "京浜精密",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "サンボックス340フタ"
+  },
+  "117112402103": {
+    "id": "117112402103",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "238012407000": {
+    "id": "238012407000",
+    "supplier_name": "臼井国際産業",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "無蓋"
+  },
+  "193152401000": {
+    "id": "193152401000",
+    "supplier_name": "ムロ",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "サンボックス330フタ"
+  },
+  "909190128900": {
+    "id": "909190128900",
+    "supplier_name": "DENSO",
+    "box_name": "NP015",
+    "box_model_id": "NP015",
+    "lid_id": "無蓋"
+  },
+  "163051502000": {
+    "id": "163051502000",
+    "supplier_name": "ニフコ",
+    "box_name": "TP361",
+    "box_model_id": "TP361",
+    "lid_id": "TP36蓋"
+  },
+  "113101501000": {
+    "id": "113101501000",
+    "supplier_name": "アイシン",
+    "box_name": "SPZ36404",
+    "box_model_id": "TP364",
+    "lid_id": "TP360フタ"
+  },
+  "130702503000": {
+    "id": "130702503000",
+    "supplier_name": "DENSO",
+    "box_name": "SP341",
+    "box_model_id": "SP341",
+    "lid_id": "TP340フタ"
+  },
+  "256801501000": {
+    "id": "256801501000",
+    "supplier_name": "マルヤス工業",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "TP340フタ"
+  },
+  "160312404000": {
+    "id": "160312404000",
+    "supplier_name": "日本サーモ",
+    "box_name": "SP342501",
+    "box_model_id": "SP342501",
+    "lid_id": "TP340フタ"
+  },
+  "909100220200": {
+    "id": "909100220200",
+    "supplier_name": "青山製作所",
+    "box_name": "SP331V",
+    "box_model_id": "SP331V",
+    "lid_id": "無蓋"
+  },
+  "163042401000": {
+    "id": "163042401000",
+    "supplier_name": "内山工業",
+    "box_name": "SP3315",
+    "box_model_id": "SP3315",
+    "lid_id": "サンボックス330フタ"
+  },
+  "232092403000": {
+    "id": "232092403000",
+    "supplier_name": "DENSO",
+    "box_name": "TP3315",
+    "box_model_id": "TP3315",
+    "lid_id": "無蓋"
+  },
+  "160311502000": {
+    "id": "160311502000",
+    "supplier_name": "グゼー",
+    "box_name": "STP342B",
+    "box_model_id": "STP342B",
+    "lid_id": "TP340フタ"
+  },
+  "238352401000": {
+    "id": "238352401000",
+    "supplier_name": "豊生ブレーキ",
+    "box_name": "SP332S08",
+    "box_model_id": "SP332S08",
+    "lid_id": "無蓋"
+  },
+  "238351501000": {
+    "id": "238351501000",
+    "supplier_name": "豊生ブレーキ",
+    "box_name": "SP332S09",
+    "box_model_id": "SP332S09",
+    "lid_id": "無蓋"
+  },
+  "234772501000": {
+    "id": "234772501000",
+    "supplier_name": "住友電工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "293002401100": {
+    "id": "293002401100",
+    "supplier_name": "大豊工業",
+    "box_name": "SP3415",
+    "box_model_id": "SP3415",
+    "lid_id": "サンボックス340フタ"
+  },
+  "111352402000": {
+    "id": "111352402000",
+    "supplier_name": "ファインシンタ",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "111213104100": {
+    "id": "111213104100",
+    "supplier_name": "旭鉄工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "111213109000": {
+    "id": "111213109000",
+    "supplier_name": "旭鉄工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "122111506100": {
+    "id": "122111506100",
+    "supplier_name": "トヨタ紡織",
+    "box_name": "SP362C01",
+    "box_model_id": "SP362C01",
+    "lid_id": "TP360フタ"
+  },
+  "122112402000": {
+    "id": "122112402000",
+    "supplier_name": "小島プレス",
+    "box_name": "SP6363B3",
+    "box_model_id": "SP6363B3",
+    "lid_id": "TP36蓋"
+  },
+  "220301501000": {
+    "id": "220301501000",
+    "supplier_name": "愛三工業",
+    "box_name": "SP342",
+    "box_model_id": "SP342",
+    "lid_id": "サンボックス340フタ"
+  },
+  "220302401000": {
+    "id": "220302401000",
+    "supplier_name": "愛三工業",
+    "box_name": "SP342",
+    "box_model_id": "SP342",
+    "lid_id": "サンボックス340フタ"
+  },
+  "905013103500": {
+    "id": "905013103500",
+    "supplier_name": "サンコール",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "901260805200": {
+    "id": "901260805200",
+    "supplier_name": "杉浦製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "117111504005": {
+    "id": "117111504005",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "117111504003": {
+    "id": "117111504003",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "894483301000": {
+    "id": "894483301000",
+    "supplier_name": "DENSO",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "無蓋"
+  },
+  "160321519000": {
+    "id": "160321519000",
+    "supplier_name": "アイシン",
+    "box_name": "SPG34229",
+    "box_model_id": "SPG34229",
+    "lid_id": "TP34蓋(IC)"
+  },
+  "160322402000": {
+    "id": "160322402000",
+    "supplier_name": "アイシン",
+    "box_name": "SPG34230",
+    "box_model_id": "SPG34230",
+    "lid_id": "TP34蓋(IC)"
+  },
+  "909190509600": {
+    "id": "909190509600",
+    "supplier_name": "DENSO",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "無蓋"
+  },
+  "256201535000": {
+    "id": "256201535000",
+    "supplier_name": "愛三工業",
+    "box_name": "SP3415",
+    "box_model_id": "SP3415",
+    "lid_id": "サンボックス340フタ"
+  },
+  "256202405000": {
+    "id": "256202405000",
+    "supplier_name": "愛三工業",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "サンボックス340フタ"
+  },
+  "162811501000": {
+    "id": "162811501000",
+    "supplier_name": "住友理工",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "132112407002": {
+    "id": "132112407002",
+    "supplier_name": "アート金属",
+    "box_name": "NPAP5",
+    "box_model_id": "NPAP5",
+    "lid_id": "無蓋"
+  },
+  "137112404000": {
+    "id": "137112404000",
+    "supplier_name": "愛三工業",
+    "box_name": "SPPS2",
+    "box_model_id": "SPPS2",
+    "lid_id": "無蓋"
+  },
+  "151042401000": {
+    "id": "151042401000",
+    "supplier_name": "ダイキョー",
+    "box_name": "SP129Y01",
+    "box_model_id": "SP129Y01",
+    "lid_id": "TP340フタ"
+  },
+  "162602411000": {
+    "id": "162602411000",
+    "supplier_name": "豊田合成",
+    "box_name": "TP362",
+    "box_model_id": "TP362",
+    "lid_id": "無蓋"
+  },
+  "232091507000": {
+    "id": "232091507000",
+    "supplier_name": "DENSO",
+    "box_name": "TP3315",
+    "box_model_id": "TP3315",
+    "lid_id": "無蓋"
+  },
+  "231912505000": {
+    "id": "231912505000",
+    "supplier_name": "中央可鍛工業",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "909100220500": {
+    "id": "909100220500",
+    "supplier_name": "青山製作所",
+    "box_name": "SP331V",
+    "box_model_id": "SP331V",
+    "lid_id": "無蓋"
+  },
+  "91551G086500": {
+    "id": "91551G086500",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "111032401100": {
+    "id": "111032401100",
+    "supplier_name": "オティックス",
+    "box_name": "NPP24",
+    "box_model_id": "サンボックス#22H",
+    "lid_id": "サンボックス#22Bフタ"
+  },
+  "136201501000": {
+    "id": "136201501000",
+    "supplier_name": "オティックス",
+    "box_name": "NP20B",
+    "box_model_id": "NP20B",
+    "lid_id": "サンボックス#20"
+  },
+  "111031501000": {
+    "id": "111031501000",
+    "supplier_name": "オティックス",
+    "box_name": "NP20B",
+    "box_model_id": "NP20B",
+    "lid_id": "サンボックス#20"
+  },
+  "130502501000": {
+    "id": "130502501000",
+    "supplier_name": "DENSO",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "TP340フタ"
+  },
+  "151002402000": {
+    "id": "151002402000",
+    "supplier_name": "アイシン",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "TP34蓋(IC)"
+  },
+  "135062402000": {
+    "id": "135062402000",
+    "supplier_name": "椿本チェイン",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "905013004300": {
+    "id": "905013004300",
+    "supplier_name": "サンコール",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "901191602000": {
+    "id": "901191602000",
+    "supplier_name": "メイドー",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "901051239900": {
+    "id": "901051239900",
+    "supplier_name": "メイドー",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "114522402000": {
+    "id": "114522402000",
+    "supplier_name": "大橋鉄工",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "909190509500": {
+    "id": "909190509500",
+    "supplier_name": "DENSO",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "無蓋"
+  },
+  "114201502000": {
+    "id": "114201502000",
+    "supplier_name": "アーレスティ",
+    "box_name": "SP4625",
+    "box_model_id": "SP4625",
+    "lid_id": "TP460フタ"
+  },
+  "171202402000": {
+    "id": "171202402000",
+    "supplier_name": "アイシン",
+    "box_name": "SPZ46405",
+    "box_model_id": "SPZ46405",
+    "lid_id": "TP460フタ"
+  },
+  "130501502000": {
+    "id": "130501502000",
+    "supplier_name": "DENSO",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "TP340フタ"
+  },
+  "132812403001": {
+    "id": "132812403001",
+    "supplier_name": "大豊工業",
+    "box_name": "NPSB3",
+    "box_model_id": "NPSB3",
+    "lid_id": "無蓋"
+  },
+  "132812403003": {
+    "id": "132812403003",
+    "supplier_name": "大豊工業",
+    "box_name": "NPSB3",
+    "box_model_id": "NPSB3",
+    "lid_id": "無蓋"
+  },
+  "137413601000": {
+    "id": "137413601000",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "137507002100": {
+    "id": "137507002100",
+    "supplier_name": "オティックス",
+    "box_name": "NP262D",
+    "box_model_id": "NP262D",
+    "lid_id": "サンボックス#26"
+  },
+  "902531400300": {
+    "id": "902531400300",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "151041511000": {
+    "id": "151041511000",
+    "supplier_name": "ダイキョー",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "TP340フタ"
+  },
+  "901051058200": {
+    "id": "901051058200",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "903411401500": {
+    "id": "903411401500",
+    "supplier_name": "杉浦製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "321011212000": {
+    "id": "321011212000",
+    "supplier_name": "サンコール",
+    "box_name": "NPH00002",
+    "box_model_id": "NPH00002",
+    "lid_id": "無蓋"
+  },
+  "117212401005": {
+    "id": "117212401005",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "321015210000": {
+    "id": "321015210000",
+    "supplier_name": "アイシン",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "TP330フタ"
+  },
+  "238142402000": {
+    "id": "238142402000",
+    "supplier_name": "臼井国際産業",
+    "box_name": "SP4615",
+    "box_model_id": "SP4615",
+    "lid_id": "TP460フタ"
+  },
+  "894915008200": {
+    "id": "894915008200",
+    "supplier_name": "DENSO",
+    "box_name": "NP015",
+    "box_model_id": "NP015",
+    "lid_id": "PC-7110P"
+  },
+  "135A02502000": {
+    "id": "135A02502000",
+    "supplier_name": "DENSO",
+    "box_name": "SP341",
+    "box_model_id": "SP341",
+    "lid_id": "TP340フタ"
+  },
+  "135A07002000": {
+    "id": "135A07002000",
+    "supplier_name": "DENSO",
+    "box_name": "SP341",
+    "box_model_id": "SP341",
+    "lid_id": "TP340フタ"
+  },
+  "256241501000": {
+    "id": "256241501000",
+    "supplier_name": "川崎工業",
+    "box_name": "SP342",
+    "box_model_id": "SP342",
+    "lid_id": "サンボックス340フタ"
+  },
+  "91552F109000": {
+    "id": "91552F109000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "91551F082500": {
+    "id": "91551F082500",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "115122401100": {
+    "id": "115122401100",
+    "supplier_name": "アイシン高丘",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "TP330フタ"
+  },
+  "894913305200": {
+    "id": "894913305200",
+    "supplier_name": "DENSO",
+    "box_name": "NP015",
+    "box_model_id": "NP015",
+    "lid_id": "PC-7110P"
+  },
+  "135212402000": {
+    "id": "135212402000",
+    "supplier_name": "ファインシンタ",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "162702402000": {
+    "id": "162702402000",
+    "supplier_name": "マルヤス工業",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "TP340フタ"
+  },
+  "162821502000": {
+    "id": "162821502000",
+    "supplier_name": "住友理工",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "112011504000": {
+    "id": "112011504000",
+    "supplier_name": "トヨタ紡織",
+    "box_name": "SP004A5K",
+    "box_model_id": "SP004A5K",
+    "lid_id": "サンボックス460フタ"
+  },
+  "171201513000": {
+    "id": "171201513000",
+    "supplier_name": "愛三工業",
+    "box_name": "SP464",
+    "box_model_id": "SP464",
+    "lid_id": "サンボックス460フタ"
+  },
+  "137346202000": {
+    "id": "137346202000",
+    "supplier_name": "中庸スプリング",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "137152404000": {
+    "id": "137152404000",
+    "supplier_name": "ニッタン",
+    "box_name": "NPH010",
+    "box_model_id": "NPH010",
+    "lid_id": "無蓋"
+  },
+  "256011505000": {
+    "id": "256011505000",
+    "supplier_name": "ROKI",
+    "box_name": "TP3415",
+    "box_model_id": "TP3415",
+    "lid_id": "無蓋"
+  },
+  "115121502000": {
+    "id": "115121502000",
+    "supplier_name": "アイシン高丘",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "TP330フタ"
+  },
+  "157092501000": {
+    "id": "157092501000",
+    "supplier_name": "伊藤金属工業",
+    "box_name": "TZFB",
+    "box_model_id": "TZFB",
+    "lid_id": "無蓋"
+  },
+  "121803801000": {
+    "id": "121803801000",
+    "supplier_name": "小島プレス",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "無蓋"
+  },
+  "961384150100": {
+    "id": "961384150100",
+    "supplier_name": "東郷製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "157082501000": {
+    "id": "157082501000",
+    "supplier_name": "伊藤金属工業",
+    "box_name": "TZFB",
+    "box_model_id": "TZFB",
+    "lid_id": "無蓋"
+  },
+  "238141509000": {
+    "id": "238141509000",
+    "supplier_name": "臼井国際産業",
+    "box_name": "SP4615",
+    "box_model_id": "SP4615",
+    "lid_id": "TP460フタ"
+  },
+  "112012404000": {
+    "id": "112012404000",
+    "supplier_name": "マーレ",
+    "box_name": "TP464",
+    "box_model_id": "TP464",
+    "lid_id": "TP460フタ"
+  },
+  "111152404000": {
+    "id": "111152404000",
+    "supplier_name": "日本ガスケット",
+    "box_name": "NPP23006",
+    "box_model_id": "NPP23006",
+    "lid_id": "RB36・23"
+  },
+  "171692401000": {
+    "id": "171692401000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "157081501000": {
+    "id": "157081501000",
+    "supplier_name": "伊藤金属工業",
+    "box_name": "TZFB",
+    "box_model_id": "TZFB",
+    "lid_id": "無蓋"
+  },
+  "117212401003": {
+    "id": "117212401003",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "894583304200": {
+    "id": "894583304200",
+    "supplier_name": "DENSO",
+    "box_name": "SP341",
+    "box_model_id": "SP341",
+    "lid_id": "サンボックス340フタ"
+  },
+  "91552F104000": {
+    "id": "91552F104000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "91551F083000": {
+    "id": "91551F083000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "162961502000": {
+    "id": "162961502000",
+    "supplier_name": "住友理工",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "117112402101": {
+    "id": "117112402101",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "117112402106": {
+    "id": "117112402106",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "903119001000": {
+    "id": "903119001000",
+    "supplier_name": "NOK",
+    "box_name": "NP000003",
+    "box_model_id": "NP000003",
+    "lid_id": "無蓋"
+  },
+  "117911503000": {
+    "id": "117911503000",
+    "supplier_name": "大同メタル工業",
+    "box_name": "S66",
+    "box_model_id": "S66",
+    "lid_id": "無蓋"
+  },
+  "117111504002": {
+    "id": "117111504002",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "114201501000": {
+    "id": "114201501000",
+    "supplier_name": "アーレスティ",
+    "box_name": "SP4625",
+    "box_model_id": "SP4625",
+    "lid_id": "TP460フタ"
+  },
+  "256802401000": {
+    "id": "256802401000",
+    "supplier_name": "マルヤス工業",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "TP340フタ"
+  },
+  "114202401000": {
+    "id": "114202401000",
+    "supplier_name": "アイシン",
+    "box_name": "NS80858",
+    "box_model_id": "NS80858",
+    "lid_id": "無蓋"
+  },
+  "121021501000": {
+    "id": "121021501000",
+    "supplier_name": "太平洋工業",
+    "box_name": "TP464",
+    "box_model_id": "TP464",
+    "lid_id": "TP460フタ"
+  },
+  "121022401000": {
+    "id": "121022401000",
+    "supplier_name": "太平洋工業",
+    "box_name": "TP464",
+    "box_model_id": "TP464",
+    "lid_id": "TP460フタ"
+  },
+  "130111515000": {
+    "id": "130111515000",
+    "supplier_name": "帝国ピストン",
+    "box_name": "SPT59000",
+    "box_model_id": "SPT59000",
+    "lid_id": "無蓋"
+  },
+  "130112404000": {
+    "id": "130112404000",
+    "supplier_name": "帝国ピストン",
+    "box_name": "SPT59000",
+    "box_model_id": "SPT59000",
+    "lid_id": "無蓋"
+  },
+  "111151510000": {
+    "id": "111151510000",
+    "supplier_name": "日本ガスケット",
+    "box_name": "NPP23006",
+    "box_model_id": "NPP23006",
+    "lid_id": "RB36・23"
+  },
+  "114452401000": {
+    "id": "114452401000",
+    "supplier_name": "内山工業",
+    "box_name": "SP3425",
+    "box_model_id": "SP3425",
+    "lid_id": "無蓋"
+  },
+  "902011207900": {
+    "id": "902011207900",
+    "supplier_name": "中庸スプリング",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "162812403000": {
+    "id": "162812403000",
+    "supplier_name": "豊田合成",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "903019200500": {
+    "id": "903019200500",
+    "supplier_name": "NOK",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "135192401000": {
+    "id": "135192401000",
+    "supplier_name": "ファインシンタ",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "135211503000": {
+    "id": "135211503000",
+    "supplier_name": "ファインシンタ",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "905201901900": {
+    "id": "905201901900",
+    "supplier_name": "東郷製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "157032501100": {
+    "id": "157032501100",
+    "supplier_name": "光精工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "162962404000": {
+    "id": "162962404000",
+    "supplier_name": "豊田合成",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "無蓋"
+  },
+  "162822403000": {
+    "id": "162822403000",
+    "supplier_name": "豊田合成",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "238512401000": {
+    "id": "238512401000",
+    "supplier_name": "住友電工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "117111504004": {
+    "id": "117111504004",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "134781501000": {
+    "id": "134781501000",
+    "supplier_name": "ファインシンタ",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "238141507100": {
+    "id": "238141507100",
+    "supplier_name": "マルヤス工業",
+    "box_name": "TP461",
+    "box_model_id": "TP461",
+    "lid_id": "TP460フタ"
+  },
+  "91551F084500": {
+    "id": "91551F084500",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "117212401001": {
+    "id": "117212401001",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "117212401006": {
+    "id": "117212401006",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "114451501000": {
+    "id": "114451501000",
+    "supplier_name": "内山工業",
+    "box_name": "SP3425",
+    "box_model_id": "SP3425",
+    "lid_id": "無蓋"
+  },
+  "135611501000": {
+    "id": "135611501000",
+    "supplier_name": "椿本チェイン",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "151632501000": {
+    "id": "151632501000",
+    "supplier_name": "ファインシンタ",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "901260804700": {
+    "id": "901260804700",
+    "supplier_name": "杉浦製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "13211F204001": {
+    "id": "13211F204001",
+    "supplier_name": "輸入部品",
+    "box_name": "NEUAD9",
+    "box_model_id": "NEUAD9",
+    "lid_id": "無蓋"
+  },
+  "13211F204003": {
+    "id": "13211F204003",
+    "supplier_name": "輸入部品",
+    "box_name": "NEUAD9",
+    "box_model_id": "NEUAD9",
+    "lid_id": "無蓋"
+  },
+  "135191501000": {
+    "id": "135191501000",
+    "supplier_name": "ファインシンタ",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "901051058300": {
+    "id": "901051058300",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "132112407001": {
+    "id": "132112407001",
+    "supplier_name": "アート金属",
+    "box_name": "NPAP5",
+    "box_model_id": "NPAP5",
+    "lid_id": "無蓋"
+  },
+  "132112407003": {
+    "id": "132112407003",
+    "supplier_name": "アート金属",
+    "box_name": "NPAP5",
+    "box_model_id": "NPAP5",
+    "lid_id": "無蓋"
+  },
+  "901090638400": {
+    "id": "901090638400",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "8271533L4000": {
+    "id": "8271533L4000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "135402502000": {
+    "id": "135402502000",
+    "supplier_name": "椿本チェイン",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "171202401000": {
+    "id": "171202401000",
+    "supplier_name": "アイシン",
+    "box_name": "SPZ46404",
+    "box_model_id": "SPZ46404",
+    "lid_id": "TP460フタ"
+  },
+  "163312403000": {
+    "id": "163312403000",
+    "supplier_name": "川崎工業",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "TP330フタ"
+  },
+  "137162501000": {
+    "id": "137162501000",
+    "supplier_name": "オティックス",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "91551G082000": {
+    "id": "91551G082000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "232912802000": {
+    "id": "232912802000",
+    "supplier_name": "NOK",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "91552F103000": {
+    "id": "91552F103000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "894583303000": {
+    "id": "894583303000",
+    "supplier_name": "DENSO",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "サンボックス340フタ"
+  },
+  "117112402102": {
+    "id": "117112402102",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "238021501000": {
+    "id": "238021501000",
+    "supplier_name": "臼井国際産業",
+    "box_name": "SP341",
+    "box_model_id": "SP341",
+    "lid_id": "TP340フタ"
+  },
+  "122731501000": {
+    "id": "122731501000",
+    "supplier_name": "NOK",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "122732401000": {
+    "id": "122732401000",
+    "supplier_name": "NOK",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "964111250000": {
+    "id": "964111250000",
+    "supplier_name": "小島プレス",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "117212401004": {
+    "id": "117212401004",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "909130302800": {
+    "id": "909130302800",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "171631501000": {
+    "id": "171631501000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "117111504001": {
+    "id": "117111504001",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "117111504006": {
+    "id": "117111504006",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "234702501000": {
+    "id": "234702501000",
+    "supplier_name": "オティックス",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "サンボックス330フタ"
+  },
+  "118111501000": {
+    "id": "118111501000",
+    "supplier_name": "大豊工業",
+    "box_name": "NPSB3",
+    "box_model_id": "NPSB3",
+    "lid_id": "無蓋"
+  },
+  "118211501000": {
+    "id": "118211501000",
+    "supplier_name": "大豊工業",
+    "box_name": "NPSB3",
+    "box_model_id": "NPSB3",
+    "lid_id": "無蓋"
+  },
+  "166202404000": {
+    "id": "166202404000",
+    "supplier_name": "ユニッタ",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "無蓋"
+  },
+  "909100219900": {
+    "id": "909100219900",
+    "supplier_name": "メイドー",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "135072402000": {
+    "id": "135072402000",
+    "supplier_name": "椿本チェイン",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "238512503000": {
+    "id": "238512503000",
+    "supplier_name": "フセラシ",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "TP330フタ"
+  },
+  "153012402000": {
+    "id": "153012402000",
+    "supplier_name": "大橋鉄工",
+    "box_name": "TP362",
+    "box_model_id": "TP362",
+    "lid_id": "無蓋"
+  },
+  "256271501000": {
+    "id": "256271501000",
+    "supplier_name": "ニチアス",
+    "box_name": "TP3315",
+    "box_model_id": "TP3315",
+    "lid_id": "無蓋"
+  },
+  "256272401000": {
+    "id": "256272401000",
+    "supplier_name": "ニチアス",
+    "box_name": "TP3315",
+    "box_model_id": "TP3315",
+    "lid_id": "無蓋"
+  },
+  "256341501000": {
+    "id": "256341501000",
+    "supplier_name": "ニチアス",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "122042501000": {
+    "id": "122042501000",
+    "supplier_name": "愛三工業",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "909040400600": {
+    "id": "909040400600",
+    "supplier_name": "メイドー",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "903411202600": {
+    "id": "903411202600",
+    "supplier_name": "杉浦製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "903600900100": {
+    "id": "903600900100",
+    "supplier_name": "日本精工",
+    "box_name": "NP00012N",
+    "box_model_id": "NP00012N",
+    "lid_id": "無蓋"
+  },
+  "903411802300": {
+    "id": "903411802300",
+    "supplier_name": "杉浦製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "135401501000": {
+    "id": "135401501000",
+    "supplier_name": "椿本チェイン",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "117112402104": {
+    "id": "117112402104",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "901190693800": {
+    "id": "901190693800",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "134701514000": {
+    "id": "134701514000",
+    "supplier_name": "NOK",
+    "box_name": "NP000008",
+    "box_model_id": "NP000008",
+    "lid_id": "サンボックス#22Bフタ"
+  },
+  "136311501000": {
+    "id": "136311501000",
+    "supplier_name": "オティックス",
+    "box_name": "SP3315B",
+    "box_model_id": "SP3315B",
+    "lid_id": "TP330フタ"
+  },
+  "117212401002": {
+    "id": "117212401002",
+    "supplier_name": "大同メタル工業",
+    "box_name": "NPF33",
+    "box_model_id": "NPF33",
+    "lid_id": "無蓋"
+  },
+  "902500600300": {
+    "id": "902500600300",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "909130211200": {
+    "id": "909130211200",
+    "supplier_name": "荒井製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "909130210100": {
+    "id": "909130210100",
+    "supplier_name": "NOK",
+    "box_name": "NP000002",
+    "box_model_id": "NP000002",
+    "lid_id": "無蓋"
+  },
+  "153011507000": {
+    "id": "153011507000",
+    "supplier_name": "大橋鉄工",
+    "box_name": "TP362",
+    "box_model_id": "TP362",
+    "lid_id": "無蓋"
+  },
+  "163452402000": {
+    "id": "163452402000",
+    "supplier_name": "ニチアス",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "171382402000": {
+    "id": "171382402000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "162672502000": {
+    "id": "162672502000",
+    "supplier_name": "豊田合成",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "91551G084000": {
+    "id": "91551G084000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "135591501000": {
+    "id": "135591501000",
+    "supplier_name": "椿本チェイン",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "901050635200": {
+    "id": "901050635200",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "134702401000": {
+    "id": "134702401000",
+    "supplier_name": "フコク",
+    "box_name": "NP000008",
+    "box_model_id": "NP000008",
+    "lid_id": "サンボックス#22Bフタ"
+  },
+  "162602403000": {
+    "id": "162602403000",
+    "supplier_name": "豊田合成",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "無蓋"
+  },
+  "123151509000": {
+    "id": "123151509000",
+    "supplier_name": "佐藤鋳工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "TP330フタ"
+  },
+  "821261201000": {
+    "id": "821261201000",
+    "supplier_name": "矢崎総業",
+    "box_name": "NPH025",
+    "box_model_id": "NPH025",
+    "lid_id": "無蓋"
+  },
+  "896157801000": {
+    "id": "896157801000",
+    "supplier_name": "日本特殊陶業",
+    "box_name": "NP000001",
+    "box_model_id": "NP000001",
+    "lid_id": "無蓋"
+  },
+  "941518080000": {
+    "id": "941518080000",
+    "supplier_name": "杉浦製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "964116350000": {
+    "id": "964116350000",
+    "supplier_name": "小島プレス",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "902501011300": {
+    "id": "902501011300",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "903114004400": {
+    "id": "903114004400",
+    "supplier_name": "荒井製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "902800400100": {
+    "id": "902800400100",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "903412001200": {
+    "id": "903412001200",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "135592401000": {
+    "id": "135592401000",
+    "supplier_name": "椿本チェイン",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "894223304000": {
+    "id": "894223304000",
+    "supplier_name": "日本サーモ",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "TP330フタ"
+  },
+  "238912401000": {
+    "id": "238912401000",
+    "supplier_name": "レゾナック",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "166202401000": {
+    "id": "166202401000",
+    "supplier_name": "ユニッタ",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "無蓋"
+  },
+  "113201501000": {
+    "id": "113201501000",
+    "supplier_name": "アイシン",
+    "box_name": "SPZ36403",
+    "box_model_id": "SPZ36403",
+    "lid_id": "TP360フタ"
+  },
+  "821251266000": {
+    "id": "821251266000",
+    "supplier_name": "矢崎総業",
+    "box_name": "NPH025",
+    "box_model_id": "NPH025",
+    "lid_id": "無蓋"
+  },
+  "256851501000": {
+    "id": "256851501000",
+    "supplier_name": "日本ガスケット",
+    "box_name": "NPP03005",
+    "box_model_id": "NPP03005",
+    "lid_id": "サンボックス#14C"
+  },
+  "163251503000": {
+    "id": "163251503000",
+    "supplier_name": "NOK",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "9011906A1200": {
+    "id": "9011906A1200",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "916718083500": {
+    "id": "916718083500",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "163051501000": {
+    "id": "163051501000",
+    "supplier_name": "ニフコ",
+    "box_name": "TP361",
+    "box_model_id": "TP361",
+    "lid_id": "TP36蓋"
+  },
+  "163052401000": {
+    "id": "163052401000",
+    "supplier_name": "内山工業",
+    "box_name": "SP361",
+    "box_model_id": "SP361",
+    "lid_id": "サンボックス360フタ"
+  },
+  "901050851000": {
+    "id": "901050851000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "238011507000": {
+    "id": "238011507000",
+    "supplier_name": "臼井国際産業",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "無蓋"
+  },
+  "232092402000": {
+    "id": "232092402000",
+    "supplier_name": "DENSO",
+    "box_name": "TP3315",
+    "box_model_id": "TP3315",
+    "lid_id": "無蓋"
+  },
+  "905013303400": {
+    "id": "905013303400",
+    "supplier_name": "中央発条",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "905013303500": {
+    "id": "905013303500",
+    "supplier_name": "東郷製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "822197602000": {
+    "id": "822197602000",
+    "supplier_name": "矢崎総業",
+    "box_name": "NPH025",
+    "box_model_id": "NPH025",
+    "lid_id": "無蓋"
+  },
+  "256852501100": {
+    "id": "256852501100",
+    "supplier_name": "日本ガスケット",
+    "box_name": "NPP03005",
+    "box_model_id": "NPP03005",
+    "lid_id": "サンボックス#14C"
+  },
+  "902500812000": {
+    "id": "902500812000",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "232242501100": {
+    "id": "232242501100",
+    "supplier_name": "内山工業",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "160311501000": {
+    "id": "160311501000",
+    "supplier_name": "グゼー",
+    "box_name": "STP342B",
+    "box_model_id": "STP342B",
+    "lid_id": "TP340フタ"
+  },
+  "901050635300": {
+    "id": "901050635300",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "239011504000": {
+    "id": "239011504000",
+    "supplier_name": "住友理工",
+    "box_name": "TP362",
+    "box_model_id": "TP362",
+    "lid_id": "無蓋"
+  },
+  "821255219000": {
+    "id": "821255219000",
+    "supplier_name": "矢崎総業",
+    "box_name": "NPH025",
+    "box_model_id": "NPH025",
+    "lid_id": "無蓋"
+  },
+  "152502501000": {
+    "id": "152502501000",
+    "supplier_name": "アイシン",
+    "box_name": "SP342",
+    "box_model_id": "SP342",
+    "lid_id": "無蓋"
+  },
+  "163252501000": {
+    "id": "163252501000",
+    "supplier_name": "NOK",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "901090831700": {
+    "id": "901090831700",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "901050635900": {
+    "id": "901050635900",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "9011906A2900": {
+    "id": "9011906A2900",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "916718082000": {
+    "id": "916718082000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "909190227600": {
+    "id": "909190227600",
+    "supplier_name": "DENSO",
+    "box_name": "TP3425",
+    "box_model_id": "TP3425",
+    "lid_id": "TP340フタ"
+  },
+  "901100700200": {
+    "id": "901100700200",
+    "supplier_name": "青山製作所",
+    "box_name": "SP331V",
+    "box_model_id": "SP331V",
+    "lid_id": "無蓋"
+  },
+  "166202402100": {
+    "id": "166202402100",
+    "supplier_name": "ユニッタ",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "無蓋"
+  },
+  "827157609000": {
+    "id": "827157609000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "961384210100": {
+    "id": "961384210100",
+    "supplier_name": "東郷製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "961384250100": {
+    "id": "961384250100",
+    "supplier_name": "東郷製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "82219K006000": {
+    "id": "82219K006000",
+    "supplier_name": "矢崎総業",
+    "box_name": "NPH025",
+    "box_model_id": "NPH025",
+    "lid_id": "無蓋"
+  },
+  "153703601000": {
+    "id": "153703601000",
+    "supplier_name": "DENSO",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "TP340フタ"
+  },
+  "238451501100": {
+    "id": "238451501100",
+    "supplier_name": "住友理工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "901050850500": {
+    "id": "901050850500",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "901260805000": {
+    "id": "901260805000",
+    "supplier_name": "杉浦製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "151472501000": {
+    "id": "151472501000",
+    "supplier_name": "NOK",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "91552G102500": {
+    "id": "91552G102500",
+    "supplier_name": "メイドー",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "8271512X5000": {
+    "id": "8271512X5000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "964111200000": {
+    "id": "964111200000",
+    "supplier_name": "小島プレス",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "902531301700": {
+    "id": "902531301700",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "902531200200": {
+    "id": "902531200200",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "901790632600": {
+    "id": "901790632600",
+    "supplier_name": "杉浦製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "901260602600": {
+    "id": "901260602600",
+    "supplier_name": "杉浦製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "916718082500": {
+    "id": "916718082500",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "904681500700": {
+    "id": "904681500700",
+    "supplier_name": "東郷製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "967411901000": {
+    "id": "967411901000",
+    "supplier_name": "日本バルカー",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "151931501000": {
+    "id": "151931501000",
+    "supplier_name": "NOK",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "151971504000": {
+    "id": "151971504000",
+    "supplier_name": "NOK",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "902500603500": {
+    "id": "902500603500",
+    "supplier_name": "水野鉄工",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "905013207600": {
+    "id": "905013207600",
+    "supplier_name": "サンコール",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "909190129700": {
+    "id": "909190129700",
+    "supplier_name": "DENSO",
+    "box_name": "NP015",
+    "box_model_id": "NP015",
+    "lid_id": "無蓋"
+  },
+  "121211505000": {
+    "id": "121211505000",
+    "supplier_name": "太平洋工業",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "321173301000": {
+    "id": "321173301000",
+    "supplier_name": "中庸スプリング",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "162962402000": {
+    "id": "162962402000",
+    "supplier_name": "豊田合成",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "915510084500": {
+    "id": "915510084500",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "8271533L0000": {
+    "id": "8271533L0000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "9011906A2300": {
+    "id": "9011906A2300",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "9011906A6500": {
+    "id": "9011906A6500",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "901260602800": {
+    "id": "901260602800",
+    "supplier_name": "杉浦製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "961384270100": {
+    "id": "961384270100",
+    "supplier_name": "東郷製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "162702401000": {
+    "id": "162702401000",
+    "supplier_name": "マルヤス工業",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "TP340フタ"
+  },
+  "162672404000": {
+    "id": "162672404000",
+    "supplier_name": "豊田合成",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "132112406003": {
+    "id": "132112406003",
+    "supplier_name": "アート金属",
+    "box_name": "NPAP5",
+    "box_model_id": "NPAP5",
+    "lid_id": "無蓋"
+  },
+  "901100604000": {
+    "id": "901100604000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "112011503000": {
+    "id": "112011503000",
+    "supplier_name": "トヨタ紡織",
+    "box_name": "SP004A5K",
+    "box_model_id": "SP004A5K",
+    "lid_id": "サンボックス460フタ"
+  },
+  "171201512000": {
+    "id": "171201512000",
+    "supplier_name": "愛三工業",
+    "box_name": "SP464",
+    "box_model_id": "SP464",
+    "lid_id": "サンボックス460フタ"
+  },
+  "130501501000": {
+    "id": "130501501000",
+    "supplier_name": "DENSO",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "TP340フタ"
+  },
+  "135492502000": {
+    "id": "135492502000",
+    "supplier_name": "椿本チェイン",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "904061703600": {
+    "id": "904061703600",
+    "supplier_name": "富士金属",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "111593104000": {
+    "id": "111593104000",
+    "supplier_name": "内山工業",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "112012403200": {
+    "id": "112012403200",
+    "supplier_name": "マーレ",
+    "box_name": "TP464",
+    "box_model_id": "TP464",
+    "lid_id": "TP460フタ"
+  },
+  "8271533N1000": {
+    "id": "8271533N1000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "162821501000": {
+    "id": "162821501000",
+    "supplier_name": "住友理工",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "162961501000": {
+    "id": "162961501000",
+    "supplier_name": "住友理工",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "162822402000": {
+    "id": "162822402000",
+    "supplier_name": "豊田合成",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "132512403003": {
+    "id": "132512403003",
+    "supplier_name": "アート金属",
+    "box_name": "NPHAPP9Y",
+    "box_model_id": "NPHAPP9Y",
+    "lid_id": "無蓋"
+  },
+  "904301800800": {
+    "id": "904301800800",
+    "supplier_name": "伊藤金属工業",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "166202403000": {
+    "id": "166202403000",
+    "supplier_name": "ユニッタ",
+    "box_name": "TP342",
+    "box_model_id": "TP342",
+    "lid_id": "無蓋"
+  },
+  "909190509400": {
+    "id": "909190509400",
+    "supplier_name": "DENSO",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "無蓋"
+  },
+  "156784602000": {
+    "id": "156784602000",
+    "supplier_name": "ニフコ",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "915518083500": {
+    "id": "915518083500",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "132111507001": {
+    "id": "132111507001",
+    "supplier_name": "アート金属",
+    "box_name": "NPAP5",
+    "box_model_id": "NPAP5",
+    "lid_id": "無蓋"
+  },
+  "132111507003": {
+    "id": "132111507003",
+    "supplier_name": "アート金属",
+    "box_name": "NPAP5",
+    "box_model_id": "NPAP5",
+    "lid_id": "無蓋"
+  },
+  "901050635000": {
+    "id": "901050635000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "8271512T4000": {
+    "id": "8271512T4000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "901050636500": {
+    "id": "901050636500",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "155202501000": {
+    "id": "155202501000",
+    "supplier_name": "マツオ",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "941512084100": {
+    "id": "941512084100",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "901050636600": {
+    "id": "901050636600",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "132512403001": {
+    "id": "132512403001",
+    "supplier_name": "アート金属",
+    "box_name": "NPHAPP9Y",
+    "box_model_id": "NPHAPP9Y",
+    "lid_id": "無蓋"
+  },
+  "135652501000": {
+    "id": "135652501000",
+    "supplier_name": "椿本チェイン",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "904301203100": {
+    "id": "904301203100",
+    "supplier_name": "内山工業",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "901090832200": {
+    "id": "901090832200",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "257592401000": {
+    "id": "257592401000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "157102401000": {
+    "id": "157102401000",
+    "supplier_name": "マーレ",
+    "box_name": "TP341",
+    "box_model_id": "TP341",
+    "lid_id": "無蓋"
+  },
+  "153011506000": {
+    "id": "153011506000",
+    "supplier_name": "大橋鉄工",
+    "box_name": "TP362",
+    "box_model_id": "TP362",
+    "lid_id": "無蓋"
+  },
+  "163412401000": {
+    "id": "163412401000",
+    "supplier_name": "ニチアス",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "82715K020000": {
+    "id": "82715K020000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "901050637600": {
+    "id": "901050637600",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "941518060000": {
+    "id": "941518060000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "964116200000": {
+    "id": "964116200000",
+    "supplier_name": "ムロ",
+    "box_name": "SM000004",
+    "box_model_id": "SM000004",
+    "lid_id": "無蓋"
+  },
+  "171382401000": {
+    "id": "171382401000",
+    "supplier_name": "高木製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "162682401000": {
+    "id": "162682401000",
+    "supplier_name": "伊藤金属工業",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "135A03102000": {
+    "id": "135A03102000",
+    "supplier_name": "DENSO",
+    "box_name": "TP3315",
+    "box_model_id": "TP3315",
+    "lid_id": "TP330フタ"
+  },
+  "132112406002": {
+    "id": "132112406002",
+    "supplier_name": "アート金属",
+    "box_name": "NPAP5",
+    "box_model_id": "NPAP5",
+    "lid_id": "無蓋"
+  },
+  "904681404400": {
+    "id": "904681404400",
+    "supplier_name": "日本サーモ",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "TP330フタ"
+  },
+  "82219K005000": {
+    "id": "82219K005000",
+    "supplier_name": "矢崎総業",
+    "box_name": "NPH025",
+    "box_model_id": "NPH025",
+    "lid_id": "無蓋"
+  },
+  "82126K004000": {
+    "id": "82126K004000",
+    "supplier_name": "矢崎総業",
+    "box_name": "NPH025",
+    "box_model_id": "NPH025",
+    "lid_id": "無蓋"
+  },
+  "903015000300": {
+    "id": "903015000300",
+    "supplier_name": "NOK",
+    "box_name": "TP131",
+    "box_model_id": "TP131",
+    "lid_id": "無蓋"
+  },
+  "915518082000": {
+    "id": "915518082000",
+    "supplier_name": "青山製作所",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "162642406000": {
+    "id": "162642406000",
+    "supplier_name": "豊田合成",
+    "box_name": "TP362",
+    "box_model_id": "TP362",
+    "lid_id": "無蓋"
+  },
+  "162612408000": {
+    "id": "162612408000",
+    "supplier_name": "豊田合成",
+    "box_name": "TP332",
+    "box_model_id": "TP332",
+    "lid_id": "無蓋"
+  },
+  "162582401000": {
+    "id": "162582401000",
+    "supplier_name": "ニチアス",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  },
+  "157852501000": {
+    "id": "157852501000",
+    "supplier_name": "NOK",
+    "box_name": "TP331",
+    "box_model_id": "TP331",
+    "lid_id": "無蓋"
+  }
+}

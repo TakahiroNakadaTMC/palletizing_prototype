@@ -1,0 +1,7642 @@
+{
+  "schema_version": 1,
+  "phase": "phase5_ready",
+  "source_sha256": {
+    "box_research\\box_list.csv": "45e02d0015666523abdc445adf2a921908d7f540baa672a8beb9cf2a23d207b9",
+    "box_research\\box_db.json": "a652daecac32107666848d86d9af6bc3db22583e6fcc108b7df8701e744abeea",
+    "box_research\\lid_db.json": "db2bd71c63c63cfdad70ba19f90556deb95e8b5b6fc54f5f7ab306327a089892",
+    "test_programmer\\test_cases\\aisin.json": "992097714702762a3839749149dc3e9c198d57bd38b64cdd5b4292fa0ceb521f",
+    "test_programmer\\test_cases\\aisin_10.json": "427edd45eced41a552fcfc7a29c8d2ddbccfd06ee653519c0693c15a1b5127ff",
+    "test_programmer\\test_cases\\aisin_10_m10.json": "5592b898167ee62af34bf3ac67886645f8ce4535f90c4290af163c41f2c65bb8",
+    "test_programmer\\test_cases\\aisin_10_m20.json": "2d1687d8719c3fbfe1f2a3c238d666820ba52e95bc4bcd272a1462b42f3c3a9c",
+    "test_programmer\\test_cases\\aisin_10_p10.json": "a4c60937ba6710d7ab7a531aa9026fbacc77e99984321ffc352a671bd8ccff5c",
+    "test_programmer\\test_cases\\aisin_10_p20.json": "2da98b14f965ecc807c31db76d5d7f3b7fff875621892c7243d3121c50172cbc",
+    "test_programmer\\test_cases\\aisin_11.json": "aff9101edc517b628a7339375793e0b0d1f01c332c094e0a8c81d7ab64cf432c",
+    "test_programmer\\test_cases\\aisin_11_m10.json": "9c419376e035d78a4f72a82982f3519d476ea6a6e09a652acc58a467515461fb",
+    "test_programmer\\test_cases\\aisin_11_m20.json": "e2772b3e107ce4bf36249b4e44d1717fbfde9a94e3ec4384806808a73c9e4627",
+    "test_programmer\\test_cases\\aisin_11_p10.json": "f4d0e2be423a5fae45410a6290afa9018c7e8d64d3bf44a7620521d859ae4175",
+    "test_programmer\\test_cases\\aisin_11_p20.json": "6bfa653950f818cd843b7698d9e4ccb1193f727f7724b70e697ba12c2ec6b862",
+    "test_programmer\\test_cases\\aisin_2.json": "66c5bb5ff053c98326772e1893c36c5a01925d6ca0c779b3222170adff9014ce",
+    "test_programmer\\test_cases\\aisin_2_m10.json": "9471aa6e98c0f4b4895d6aa07e28326a4935c326299010f072e0d64a3c230d23",
+    "test_programmer\\test_cases\\aisin_2_m20.json": "86b209f08c4d028f4441c0909c35642fc53271b1f8ab4d929e3e3eec33cf1e3a",
+    "test_programmer\\test_cases\\aisin_2_p10.json": "4a9ca66be89cb97b95d8b7afb5296d20e545e0a6125ccb5e31444bf74377b6a3",
+    "test_programmer\\test_cases\\aisin_2_p20.json": "f21d698e170b134d74fbcc0db1b98bc7346514b2f32d490a5e122103fc8a2a41",
+    "test_programmer\\test_cases\\aisin_3.json": "98ea4a97fbf6b60de11adae7c42e10aa5df8361aa05a07a0c91050fda1efa618",
+    "test_programmer\\test_cases\\aisin_3_m10.json": "980018e4063419ddf03de5dac649242d822be41e5cc775ae33764a36189a8b75",
+    "test_programmer\\test_cases\\aisin_3_m20.json": "4beef27a9ca6ea4aaa6d6fb8f3873d508c9dac65e881b62c3a30f0dfc2be72b6",
+    "test_programmer\\test_cases\\aisin_3_p10.json": "16599aae7b62b6491aef5bf77d3fc673b4f572965312bad32dd78fa369b0e873",
+    "test_programmer\\test_cases\\aisin_3_p20.json": "8a307d02d9da88351aa61765aa9e538fe864689ffc0e1e3fc4b92a911a5c0e33",
+    "test_programmer\\test_cases\\aisin_4.json": "1b53a9e137e42e43baf2d04814f4a3f798347ae8feb3dd67bc77c513b6c84401",
+    "test_programmer\\test_cases\\aisin_4_m10.json": "d06d05f6cb81a7ea6ced758fdedcfbfbf1ddf14329b2310c4eddb563e71badfd",
+    "test_programmer\\test_cases\\aisin_4_m20.json": "eca6b27d7636036e9773a7e0ccbac2ad136298bc96b6b5e663cecc2a3acf2d0f",
+    "test_programmer\\test_cases\\aisin_4_p10.json": "a0311eab57042b23862838e4a4f86416adf8adecc1d3b2277cd828b7e2c6bfe1",
+    "test_programmer\\test_cases\\aisin_4_p20.json": "97e366d1f2b7a3f59d4ccb1559ae442b192e67ea2affee558f15d20944e350b5",
+    "test_programmer\\test_cases\\aisin_5.json": "216da726ee35f4e39fd9425fb78930bd5d339668564c4b6e56094e9231111ee6",
+    "test_programmer\\test_cases\\aisin_5_m10.json": "d60fbbf31eed35d37695aa3b32339a36e9803060dfdfad2f1997c81b879021d7",
+    "test_programmer\\test_cases\\aisin_5_m20.json": "060f6692b85307253c307788ab04177c4d5113dc355e70dc688a5fdd68f6fae8",
+    "test_programmer\\test_cases\\aisin_5_p10.json": "5b5884463ad9cb2e4ba097a498ad7223f279faf92e9ad916c4c296a5bde7794f",
+    "test_programmer\\test_cases\\aisin_5_p20.json": "8e9d461913dbcd90ce6e4b4ef10890cd808ed27ab00c1d2a7df2add73609e14c",
+    "test_programmer\\test_cases\\aisin_6.json": "290212efebb33055e7f14405860b9bd2379088ad2e7536b5c06ca2d57781f511",
+    "test_programmer\\test_cases\\aisin_6_m10.json": "8c273157203817e06179cdf7cea2165647c33f10cbc830e7db8de1295f00d4d1",
+    "test_programmer\\test_cases\\aisin_6_m20.json": "d6a68b32f5b637e49489cb059a48bf3397d427e6cf8bd28be93bf15e640d1e75",
+    "test_programmer\\test_cases\\aisin_6_p10.json": "5b8d0a3005f83f61a207cd2420b75477d035bd3a1b2aa654d3e590c3d7f91922",
+    "test_programmer\\test_cases\\aisin_6_p20.json": "6cb28d28b29363be83fe9bbb978a10a41ed8a140f3a6e6034cf377d49454a373",
+    "test_programmer\\test_cases\\aisin_7.json": "dccb567c144e1308745f951024e62262cd77515cf5fae07fddd889e000c62b05",
+    "test_programmer\\test_cases\\aisin_7_m10.json": "0f687434e0631687fa5c76ffaf37d7871d0cee35d3f3922dcada59252342cd10",
+    "test_programmer\\test_cases\\aisin_7_m20.json": "9c58aacb822e40a570087187f6c54c706e9817bac27ed43698b7c8512d1688ad",
+    "test_programmer\\test_cases\\aisin_7_p10.json": "87d6438a1045e4b4d7c72c30567347f8a7e460264008cf114ae630f65aa3da92",
+    "test_programmer\\test_cases\\aisin_7_p20.json": "5b779e391bcbac6952ec6c270f46b9b2ff783041578b8ab9600cc20cd5a5308c",
+    "test_programmer\\test_cases\\aisin_8.json": "0b196a8bac5ca724c2ca5eff9e68aa8c1a3e6aa25d670a3aef5005bdf4cd23bd",
+    "test_programmer\\test_cases\\aisin_8_m10.json": "8310e2d65ceb1be01f01769cc17f336c4d94a6aad7dd7738604d13daf7d7db77",
+    "test_programmer\\test_cases\\aisin_8_m20.json": "bdafda4220d288c6cf617d8e3d85b5111469bde9731f800208c0db4ea31ae726",
+    "test_programmer\\test_cases\\aisin_8_p10.json": "85e52d458bb5f0bfc436ca9c606edc0c8138547a20fc17565c802171177db570",
+    "test_programmer\\test_cases\\aisin_8_p20.json": "d05d82e1ba7c9f76bc781ca9dffa39d27466a1a6fad07001fc8d2bd24ad4b2f7",
+    "test_programmer\\test_cases\\aisin_9.json": "f5562b21f0b1117de84ffb1d54295976a67b45d3b2d9f950df1a0e9d4be63692",
+    "test_programmer\\test_cases\\aisin_9_m10.json": "ff67c26fb13f661f460ba2f2864f4f2fefb0eccf4354c7df672d8260ff351c90",
+    "test_programmer\\test_cases\\aisin_9_m20.json": "2eb4c76bd1f79d261da9f51cc1d1709429d0e005312351ec5afebf5e9ce3754d",
+    "test_programmer\\test_cases\\aisin_9_p10.json": "0ae94db5530ecad9f5a9c2cc540e287052b8892a6e79843ddd731233ff6cb00f",
+    "test_programmer\\test_cases\\aisin_9_p20.json": "ff6072bb5f17e021d9289270f5b0dd69c505902fa139db8d687d60b7c028caa9",
+    "test_programmer\\test_cases\\aisin_m10.json": "9bb54e519fc693edd2f6361bf24e5e8eb0c8ae1dedcd7b65d4ddc9b3ff00fe42",
+    "test_programmer\\test_cases\\aisin_m20.json": "178298bd337d0678c74bcb81fad2b1a923c5983dd493c04106f971f4c404484d",
+    "test_programmer\\test_cases\\aisin_p10.json": "2357f37218624d7a6e28d35db9dba26bca8fd1b22366fae8459ef0a4c502a1da",
+    "test_programmer\\test_cases\\aisin_p20.json": "a9bd598a202f9b74c7cbdcbc3875e9b34b468cacc160970bda7b325b482c25e2",
+    "test_programmer\\test_cases\\arresuthi.json": "8f661c57d9fc4a98913bc08da0c3f7cd5ffda91552de7a5dc2f6405b3ca8d513",
+    "test_programmer\\test_cases\\arresuthi_2.json": "9b671406b09b285f6639c8c9030e735732821149c97d05672d67e15b01a39f01",
+    "test_programmer\\test_cases\\arresuthi_2_m10.json": "44954959e44a1bddc9bf21cbdbf94d2becf848547eeef2575be72d1c42ff5a41",
+    "test_programmer\\test_cases\\arresuthi_2_m20.json": "f7f6c15ed24ad4cbf401afc348a90a5faae44a19db8ae8718606c617e83325a4",
+    "test_programmer\\test_cases\\arresuthi_2_p10.json": "7688023ffbd323ea26cfd111ef70bf53df490b989019653427cb84b1141b4653",
+    "test_programmer\\test_cases\\arresuthi_2_p20.json": "2e46ab52f5dc4d10a80f1f954f3e8beffc05a75ca9ee07862eea4f0932894c09",
+    "test_programmer\\test_cases\\arresuthi_m10.json": "9e53a786b42f614e38dcd0fc482e6c859c7104de40cdfa126aa66ce4df5b1dd6",
+    "test_programmer\\test_cases\\arresuthi_m20.json": "882b9ac0594f47552ac577774aaccea04801aa14a94ff30e22ad8f50735430d1",
+    "test_programmer\\test_cases\\arresuthi_p10.json": "86ea40be8a431958bb328aed1b90901e2067eb6d64babddd68d5dfe4df250dfe",
+    "test_programmer\\test_cases\\arresuthi_p20.json": "0e790128ff439fead481e7f485629215e8b29cc1259f6d4a567910764043f1f8",
+    "test_programmer\\test_cases\\art.json": "3b6fd6159a5c63dcdcfb203f7b85b433c30d2be195054498147497a192a61742",
+    "test_programmer\\test_cases\\art_m10.json": "bcbe4cada5a31c43c121e8fcb90c80d4d76a28c7c5fc00dc789341ac93c4afeb",
+    "test_programmer\\test_cases\\art_m20.json": "775adfb4ddcaab92ef67030a69b2d568e145f13617c2b93f4091b48e9fe3e376",
+    "test_programmer\\test_cases\\art_p10.json": "b6d23564182fce4a523223f7c961ba6aad5eb0e0ff223c24a0e88deeab8521f2",
+    "test_programmer\\test_cases\\art_p20.json": "9534db1c8fe977839b1de463750912857b4a0e81cc3abe0ae1eb4f0198f2496e",
+    "test_programmer\\test_cases\\guze.json": "1597155db636cd08629509f9b21bf5678447047aa6fdc48cce6187e57fc5e1fa",
+    "test_programmer\\test_cases\\guze_m10.json": "33189907be6210e6696643edac3e9dde676264232117cf9dad2d6ca18cf85479",
+    "test_programmer\\test_cases\\guze_m20.json": "0a268e67bbb51e023cc6b2f6540a39a25dc46443d03f94d512bcc0e171f35ed4",
+    "test_programmer\\test_cases\\guze_p10.json": "0a27a354cc7ac1fa19774d741c1d2487f8b0959ac74df49aea9492f92fe30904",
+    "test_programmer\\test_cases\\guze_p20.json": "816aca73883407ce37cd72545d92c394425cfa9a3cd2d3fd6144b5b18e1a7042",
+    "test_programmer\\test_cases\\nittan.json": "a01627717373535af7f971f8df5cdb028e27bd093ecf0646b2c303df8b121c11",
+    "test_programmer\\test_cases\\nittan_2.json": "d01c029f305af48681566aee1d89d78ef7bcb1435a68960b969b0a03771c8c0b",
+    "test_programmer\\test_cases\\nittan_2_m10.json": "5bfaf4e6e23ba462f56a01218ec79f5f912ec88f10e197fe2f2e5bf40a7f3d05",
+    "test_programmer\\test_cases\\nittan_2_m20.json": "88a7bbca41008286e83d84949897f9880bf5f51a63adc453a6baa3dfb845266a",
+    "test_programmer\\test_cases\\nittan_2_p10.json": "5fa0e607e4908f73a4a0cd5875ea80f78a742f217426f3e24b02caea136a349c",
+    "test_programmer\\test_cases\\nittan_2_p20.json": "04cc3464115d7f0e4e4027636d0ac5cc425314bcd2e70212e263d60987fa2378",
+    "test_programmer\\test_cases\\nittan_m10.json": "1bee0b5278f29e930bd83d3edb5483e97f47bfb0031eab60023a8bdbc4b192e2",
+    "test_programmer\\test_cases\\nittan_m20.json": "e761d04799fadc9078702c389600bc148a50a285d7b2fb38e651123db1c9132c",
+    "test_programmer\\test_cases\\nittan_p10.json": "061b69df712bb00f442e601ad7913542e3c68a7cf61fc60c56ae0423882174ed",
+    "test_programmer\\test_cases\\nittan_p20.json": "c7cb969eac815b5981592499e4e50358fb800833baab61fa9a318964c5843843",
+    "test_programmer\\test_cases\\nok.json": "b7edda4c492620ec6f5431717871dfc7b669b9f8c85c47f2d1135ad1c4fe6f38",
+    "test_programmer\\test_cases\\nok_2.json": "1a5eb899dbf9fad8ad80768729e3c9678262ec6215b46ef52645c88f1c4c27d1",
+    "test_programmer\\test_cases\\nok_2_m10.json": "dd297896444560ea5dc586903c980585eee8513ba1f770f1c7ba74a9f6f8456c",
+    "test_programmer\\test_cases\\nok_2_m20.json": "d745cb783f1a024eeae6f27168b7d184a66f102d4e251afa77bb69ab455d9210",
+    "test_programmer\\test_cases\\nok_2_p10.json": "af551b92a6d50ebbfab5ee693061cbda60423b94d835cb43c3be8b4a6c595a0f",
+    "test_programmer\\test_cases\\nok_2_p20.json": "467e7745461f44218fa5d63398988a0bb00496ec90f7836de9ca1c8bb928f85c",
+    "test_programmer\\test_cases\\nok_m10.json": "687b9a2aafd838121c1c4718cd6523a516eef26e3b5c91921e1f1c5cedf3e362",
+    "test_programmer\\test_cases\\nok_m20.json": "7541932e4ee73f58ae0a3988ffe27ada7af2947ce8cef299df02ce1dec9018d9",
+    "test_programmer\\test_cases\\nok_p10.json": "e525f720259881cc08b2bccecd69639c4ceae35a8e03fee9682202b11c838520",
+    "test_programmer\\test_cases\\nok_p20.json": "f344face9ceb3c52290f40a071a0c64e6f2a68ee45b77e5ca67c8a1b786c22b1",
+    "test_programmer\\test_cases\\othics.json": "5b251ba7bd26a8cce8527680b069e8bffed79f8d661a8c830533a1fae05f6044",
+    "test_programmer\\test_cases\\othics_2.json": "b8b318aa0ce96a855ae1bca4b0b000e4084b23de41703f84a7ec58cf45c813f3",
+    "test_programmer\\test_cases\\othics_2_m10.json": "e12a364ba2f57ea2df60e314f2d5d228ccacadf3475d94cbc18f8ed6ac14c6ac",
+    "test_programmer\\test_cases\\othics_2_m20.json": "857c2f543d154f6f6d2b5af3767d28ab802c9789264f7d1ce23b84f7b6658aca",
+    "test_programmer\\test_cases\\othics_2_p10.json": "93406ddd0be11e5c1270d14407f4b2bf8abfe5d5ddbe7ba426d34cb6c04c008e",
+    "test_programmer\\test_cases\\othics_2_p20.json": "7461902d5ac86f297e1d5ddb279abbd1fc7f8c30d707206de14dcbb1e0bea26b",
+    "test_programmer\\test_cases\\othics_3.json": "41d5ca36b4cb31332cf4eb7886b34129cee20b7e3d54a312e00a95ff54c6625b",
+    "test_programmer\\test_cases\\othics_3_m10.json": "f203fc85af2f4f634b9b0a31218014f97707c57308bd262022034fe62d3a74d5",
+    "test_programmer\\test_cases\\othics_3_m20.json": "c0bc74fd9f7b12c981dd0b769662532b9d025a5645cd74fea2ece65a3ac37d1a",
+    "test_programmer\\test_cases\\othics_3_p10.json": "68137ad0303f373006c8c013cc6f18148d1ce07077a22b6f6f161ee54fbe8401",
+    "test_programmer\\test_cases\\othics_3_p20.json": "576eb13e4283a55a601a0faa817918b2a1d6ea4d871e9382e20f24d858222462",
+    "test_programmer\\test_cases\\othics_4.json": "42165eead14bf65df09400c0d2d28fe76bedb22292b9947acf0f60cd4b083659",
+    "test_programmer\\test_cases\\othics_4_m10.json": "166ed45a90a1ffe7fcd417592dc68287244094d3379b940284666b1a9867d53f",
+    "test_programmer\\test_cases\\othics_4_m20.json": "f57e3b7b5b61b7cd3ab2f17853ca475ce3751697b858e9b2dc9a74707c81c666",
+    "test_programmer\\test_cases\\othics_4_p10.json": "a2c0f74a0ba42b684830afae2aa704fc49714469c0ffa6b790e38942c7386c9d",
+    "test_programmer\\test_cases\\othics_4_p20.json": "c32c5e18acbf87fef35193436e83497166a08bc18fcf8a823679c87309e197d0",
+    "test_programmer\\test_cases\\othics_5.json": "5588f9a5f7b4d9ab572d5e945527a7d46ca60eab3bbdbc70e0a41b4840123bec",
+    "test_programmer\\test_cases\\othics_5_m10.json": "fa962adf646850df78ba3803a62d9fd4a21eccd6c48ebbeb83b066bf9f7cc003",
+    "test_programmer\\test_cases\\othics_5_m20.json": "5ead519d06702e57144e67e9a880f70ba4101b8f29f9bdf5806d46a168054165",
+    "test_programmer\\test_cases\\othics_5_p10.json": "0ff4c38912612008dd222ab38b44e93620663e63c3d104d5cacbca6e74bea809",
+    "test_programmer\\test_cases\\othics_5_p20.json": "f71ccc2f12364fc18e5f8647dd1cc69dc4099199738d3f2f67e9765ac0bed8a2",
+    "test_programmer\\test_cases\\othics_6.json": "257bd5db8a1a26a17ff9d4e97e57c4bb19bf28c621edec087bca2779f3a090ab",
+    "test_programmer\\test_cases\\othics_6_m10.json": "458141df5891abfcca15662594dcbcb18fe4ffd9b80b6f4cae48e7c6d51c5596",
+    "test_programmer\\test_cases\\othics_6_m20.json": "c01f07671e9c5fe148d97e9b4588a13b6c07fd72505ba871979dfb949875fb5d",
+    "test_programmer\\test_cases\\othics_6_p10.json": "5c5b21c174f7abd16e9e2fe9c35c5d5e2aff2ea864962d3a9407e44aa963b5d2",
+    "test_programmer\\test_cases\\othics_6_p20.json": "a7673752e94cb856eac42ed8831b9bb81319f56937aa9881ac4fcfab50d63aff",
+    "test_programmer\\test_cases\\othics_7.json": "310afd2557f8b58238e3130dcb60e41ffc77ace32e1532e9eac2da7877a3f771",
+    "test_programmer\\test_cases\\othics_7_m10.json": "24de235ddbd23b52712222738a6f04f8271dcc531b56480105d48a5d39d1cd2c",
+    "test_programmer\\test_cases\\othics_7_m20.json": "cac4aca043abedc1d3f78b5fa5a0000df9113000da14cab65c0a071ddd9c21d4",
+    "test_programmer\\test_cases\\othics_7_p10.json": "9df6e5166acf99cbf788b2be225a8b425de27e317c576196b6f5d1b04d25b8ad",
+    "test_programmer\\test_cases\\othics_7_p20.json": "4861a717bbd812c135192052249f44d2ecd3bb492d3688bd0e3d689a55d54bce",
+    "test_programmer\\test_cases\\othics_8.json": "cdcb92eae013ddf781239ecfe6b5c39231c502bc47e1458170bb248499d5e4ff",
+    "test_programmer\\test_cases\\othics_8_m10.json": "071666e5b642c0dd442295b981c8ca5ec0f087a9254bbd45dbc44bc57937c25f",
+    "test_programmer\\test_cases\\othics_8_m20.json": "e0577ed42b80d4fa093cdf103ed7802c79603e1258429f8bf43f63395f492cfc",
+    "test_programmer\\test_cases\\othics_8_p10.json": "168577aa558546f7c3f63c2c515304019c7b99257074f4fcb80b28932d579dd6",
+    "test_programmer\\test_cases\\othics_8_p20.json": "a86a4bcb6b71f951b97e4d18c88ddb464b0e6fac055fef3f49811d30f94bade0",
+    "test_programmer\\test_cases\\othics_9.json": "33bf6c26fa588b54c83cc3001b227e026af633cec26a9faa0d29c7f4dbd1f6f1",
+    "test_programmer\\test_cases\\othics_9_m10.json": "431ce5ae10c3c0cb913acb36b02ac3ea37991036e4823be15e5b7e738b71b69d",
+    "test_programmer\\test_cases\\othics_9_m20.json": "c9be1d9f964bfc45a0b958f9c7f197f9bde96bdc185014b7bb5d154f7337594c",
+    "test_programmer\\test_cases\\othics_9_p10.json": "4eb62fe484ea36d7f501c4311a1a0bb29a75da4414c55e91418e338a919d237c",
+    "test_programmer\\test_cases\\othics_9_p20.json": "d9263fb39fa3b9061be8e64be8e9092ae0b1150c7cecf53a145c660e2063c6f2",
+    "test_programmer\\test_cases\\othics_m10.json": "71afde502bd261e7aa691f27fb08bff9963b71e9ded5d3ae11420507d6883269",
+    "test_programmer\\test_cases\\othics_m20.json": "888649b7c321826a2298f594b03cf0004378506f99ea40dafdbd302b1bc72295",
+    "test_programmer\\test_cases\\othics_p10.json": "6130475efea110c71e98d25c6696275be1f149971215c6a0f740a0ae64039b5f",
+    "test_programmer\\test_cases\\othics_p20.json": "00fa6bda75779bbddc00afccaa887513c8215342915995f62272e0a066d745a9",
+    "test_programmer\\test_cases\\roki.json": "fe2bdef59fd7547fe9db0e8d6b8ba993ef024791c5e3ea9462fdeeb30c80e065",
+    "test_programmer\\test_cases\\roki_2.json": "f7fb61843f6a70c08ed15fcfcb640889fc23f15ed0940fa317459b1a2bfc1468",
+    "test_programmer\\test_cases\\roki_2_m10.json": "dc3b2c8a32bf20f7685640f3c52e185871a43dbbf12f089f5fc44a8b58099f58",
+    "test_programmer\\test_cases\\roki_2_m20.json": "940af1595f504a7b9ab62d8fc8c6b9188121b81579932a77f9f0384d27c0d2ca",
+    "test_programmer\\test_cases\\roki_2_p10.json": "0eb545d71883509fc6ab72d95e013de68d995f7d9456c817e155cdb56abf343c",
+    "test_programmer\\test_cases\\roki_2_p20.json": "9ca04ebd991df363d220d4932e252a0d6fdb33b1a6dabbb8d2a549e597b0575a",
+    "test_programmer\\test_cases\\roki_m10.json": "ab86302c5ddcf1e13ee9933fb54094a5f30acc53ad328de033a2da58cdfe2de5",
+    "test_programmer\\test_cases\\roki_m20.json": "4124a5ed37bc585441c7069a4db29fa81892d4715962e24ac4af8ac66b32498b",
+    "test_programmer\\test_cases\\roki_p10.json": "ff2d5e180c83650b1a078aaf855ee88ca8516cf582c6117c081b4c6d0fffcbce",
+    "test_programmer\\test_cases\\roki_p20.json": "e1899385280e8dbf92aae4f2911c4111037ae065c166436b373680d785dcf4c4"
+  },
+  "legacy_model_mapping": {
+    "TP-131": "TP-131",
+    "TP-331": "TP-331",
+    "TP-331.5": "TP-331.5",
+    "TP-332": "TP-332",
+    "TP-333": "TP-333",
+    "TP-341": "TP-341",
+    "TP-341.5": "TP-341.5",
+    "TP-342": "TP-342",
+    "TP-343": "TP-343",
+    "TP-362": "TP-362",
+    "TP-363": "TP-363",
+    "TP-462": "TP-462",
+    "TP-463": "TP-463",
+    "TP-361": "TP-361",
+    "TP-461": "TP-461",
+    "TP-482": "TP-482",
+    "NP000002": "NP000002",
+    "NP000003": "NP000003",
+    "NP015": "NP015",
+    "NP000008": "NP000008",
+    "NP20B": "NP20B",
+    "NP22C": "サンボックス#22H",
+    "NP262D": "NP262D",
+    "NPAP5": "NPAP5",
+    "NPF33": "NPF33",
+    "NPH025": "NPH025",
+    "NPHAPP9Y": "NPHAPP9Y",
+    "NPP03005": "NPP03005",
+    "NPP23006": "NPP23006",
+    "NPP24": "サンボックス#22H",
+    "NPSB3": "NPSB3",
+    "S66": "S66",
+    "SM000004": "SM000004",
+    "SP004A5K": "SP004A5K",
+    "SP129Y01": "SP129Y01",
+    "SP3315": "SP3315",
+    "SP331V": "SP331V",
+    "SP341": "SP341",
+    "SP3415": "SP3415",
+    "SP342": "SP342",
+    "SP3425": "SP3425",
+    "SP342501": "SP342501",
+    "SP361": "SP361",
+    "SP4615": "SP4615",
+    "SP464": "SP464",
+    "SPG34229": "SPG34229",
+    "SPG34230": "SPG34230",
+    "SPT59000": "SPT59000",
+    "STP342B": "STP342B",
+    "NP000001": "NP000001",
+    "NP00012N": "NP00012N",
+    "NPH00002": "NPH00002",
+    "NPH010": "NPH010",
+    "SP331330": "SP331330",
+    "SP3315B": "SP3315B",
+    "SP332S08": "SP332S08",
+    "SP332S09": "SP332S09",
+    "SP362C01": "SP362C01",
+    "SP4625": "SP4625",
+    "SP6363B3": "SP6363B3",
+    "SPK10F18": "SPK10F18",
+    "SPPS2": "SPPS2",
+    "SPZ36403": "SPZ36403",
+    "SPZ36404": "TP364",
+    "SPZ36406": "TP364",
+    "SPZ36408": "SPZ36408",
+    "SPZ46404": "SPZ46404",
+    "SPZ46405": "SPZ46405",
+    "TP3315": "TP3315",
+    "TP3415": "TP3415",
+    "TP131": "TP131",
+    "TP331": "TP331",
+    "TP332": "TP332",
+    "TP341": "TP341",
+    "TP342": "TP342",
+    "TP3425": "TP3425",
+    "TP361": "TP361",
+    "TP362": "TP362",
+    "TP461": "TP461",
+    "TP464": "TP464",
+    "TZFB": "TZFB"
+  },
+  "model_name_history": {},
+  "case_assignments": [
+    {
+      "case_file": "aisin.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ46405",
+      "box_name": "SPZ46405",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 11,
+      "part_number": "171202402000",
+      "status": "unique",
+      "candidates": [
+        "171202402000"
+      ]
+    },
+    {
+      "case_file": "aisin_10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36403",
+      "box_name": "SPZ36403",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 4,
+      "part_number": "113201502100",
+      "status": "first_candidate",
+      "candidates": [
+        "113201502100",
+        "113201501000"
+      ]
+    },
+    {
+      "case_file": "aisin_10_m10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36403",
+      "box_name": "SPZ36403",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 4,
+      "part_number": "113201502100",
+      "status": "first_candidate",
+      "candidates": [
+        "113201502100",
+        "113201501000"
+      ]
+    },
+    {
+      "case_file": "aisin_10_m20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36403",
+      "box_name": "SPZ36403",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 3,
+      "part_number": "113201502100",
+      "status": "first_candidate",
+      "candidates": [
+        "113201502100",
+        "113201501000"
+      ]
+    },
+    {
+      "case_file": "aisin_10_p10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36403",
+      "box_name": "SPZ36403",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 4,
+      "part_number": "113201502100",
+      "status": "first_candidate",
+      "candidates": [
+        "113201502100",
+        "113201501000"
+      ]
+    },
+    {
+      "case_file": "aisin_10_p20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36403",
+      "box_name": "SPZ36403",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 5,
+      "part_number": "113201502100",
+      "status": "first_candidate",
+      "candidates": [
+        "113201502100",
+        "113201501000"
+      ]
+    },
+    {
+      "case_file": "aisin_11.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36403",
+      "box_name": "SPZ36403",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 15,
+      "part_number": "113201502100",
+      "status": "first_candidate",
+      "candidates": [
+        "113201502100",
+        "113201501000"
+      ]
+    },
+    {
+      "case_file": "aisin_11_m10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36403",
+      "box_name": "SPZ36403",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 14,
+      "part_number": "113201502100",
+      "status": "first_candidate",
+      "candidates": [
+        "113201502100",
+        "113201501000"
+      ]
+    },
+    {
+      "case_file": "aisin_11_m20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36403",
+      "box_name": "SPZ36403",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 12,
+      "part_number": "113201502100",
+      "status": "first_candidate",
+      "candidates": [
+        "113201502100",
+        "113201501000"
+      ]
+    },
+    {
+      "case_file": "aisin_11_p10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36403",
+      "box_name": "SPZ36403",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 17,
+      "part_number": "113201502100",
+      "status": "first_candidate",
+      "candidates": [
+        "113201502100",
+        "113201501000"
+      ]
+    },
+    {
+      "case_file": "aisin_11_p20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36403",
+      "box_name": "SPZ36403",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 18,
+      "part_number": "113201502100",
+      "status": "first_candidate",
+      "candidates": [
+        "113201502100",
+        "113201501000"
+      ]
+    },
+    {
+      "case_file": "aisin_2.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 63,
+      "part_number": "31270K001300",
+      "status": "first_candidate",
+      "candidates": [
+        "31270K001300",
+        "321015210000"
+      ]
+    },
+    {
+      "case_file": "aisin_2_m10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 57,
+      "part_number": "31270K001300",
+      "status": "first_candidate",
+      "candidates": [
+        "31270K001300",
+        "321015210000"
+      ]
+    },
+    {
+      "case_file": "aisin_2_m20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 50,
+      "part_number": "31270K001300",
+      "status": "first_candidate",
+      "candidates": [
+        "31270K001300",
+        "321015210000"
+      ]
+    },
+    {
+      "case_file": "aisin_2_p10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 69,
+      "part_number": "31270K001300",
+      "status": "first_candidate",
+      "candidates": [
+        "31270K001300",
+        "321015210000"
+      ]
+    },
+    {
+      "case_file": "aisin_2_p20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 76,
+      "part_number": "31270K001300",
+      "status": "first_candidate",
+      "candidates": [
+        "31270K001300",
+        "321015210000"
+      ]
+    },
+    {
+      "case_file": "aisin_3.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP342",
+      "box_name": "TP342",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 12,
+      "part_number": "151002402000",
+      "status": "unique",
+      "candidates": [
+        "151002402000"
+      ]
+    },
+    {
+      "case_file": "aisin_3_m10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP342",
+      "box_name": "TP342",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 11,
+      "part_number": "151002402000",
+      "status": "unique",
+      "candidates": [
+        "151002402000"
+      ]
+    },
+    {
+      "case_file": "aisin_3_m20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP342",
+      "box_name": "TP342",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 10,
+      "part_number": "151002402000",
+      "status": "unique",
+      "candidates": [
+        "151002402000"
+      ]
+    },
+    {
+      "case_file": "aisin_3_p10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP342",
+      "box_name": "TP342",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 13,
+      "part_number": "151002402000",
+      "status": "unique",
+      "candidates": [
+        "151002402000"
+      ]
+    },
+    {
+      "case_file": "aisin_3_p20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP342",
+      "box_name": "TP342",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 14,
+      "part_number": "151002402000",
+      "status": "unique",
+      "candidates": [
+        "151002402000"
+      ]
+    },
+    {
+      "case_file": "aisin_4.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPG34229",
+      "box_name": "SPG34229",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 14,
+      "part_number": "160321519000",
+      "status": "unique",
+      "candidates": [
+        "160321519000"
+      ]
+    },
+    {
+      "case_file": "aisin_4.json",
+      "row": 2,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPG34230",
+      "box_name": "SPG34230",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 14,
+      "part_number": "160322402000",
+      "status": "unique",
+      "candidates": [
+        "160322402000"
+      ]
+    },
+    {
+      "case_file": "aisin_4.json",
+      "row": 3,
+      "supplier_name": "アイシン",
+      "old_box_id": "SP342",
+      "box_name": "SP342",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 2,
+      "part_number": "152502501000",
+      "status": "unique",
+      "candidates": [
+        "152502501000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_m10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPG34229",
+      "box_name": "SPG34229",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 13,
+      "part_number": "160321519000",
+      "status": "unique",
+      "candidates": [
+        "160321519000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_m10.json",
+      "row": 2,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPG34230",
+      "box_name": "SPG34230",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 13,
+      "part_number": "160322402000",
+      "status": "unique",
+      "candidates": [
+        "160322402000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_m10.json",
+      "row": 3,
+      "supplier_name": "アイシン",
+      "old_box_id": "SP342",
+      "box_name": "SP342",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 2,
+      "part_number": "152502501000",
+      "status": "unique",
+      "candidates": [
+        "152502501000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_m20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPG34229",
+      "box_name": "SPG34229",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 11,
+      "part_number": "160321519000",
+      "status": "unique",
+      "candidates": [
+        "160321519000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_m20.json",
+      "row": 2,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPG34230",
+      "box_name": "SPG34230",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 11,
+      "part_number": "160322402000",
+      "status": "unique",
+      "candidates": [
+        "160322402000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_m20.json",
+      "row": 3,
+      "supplier_name": "アイシン",
+      "old_box_id": "SP342",
+      "box_name": "SP342",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 2,
+      "part_number": "152502501000",
+      "status": "unique",
+      "candidates": [
+        "152502501000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_p10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPG34229",
+      "box_name": "SPG34229",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 15,
+      "part_number": "160321519000",
+      "status": "unique",
+      "candidates": [
+        "160321519000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_p10.json",
+      "row": 2,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPG34230",
+      "box_name": "SPG34230",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 15,
+      "part_number": "160322402000",
+      "status": "unique",
+      "candidates": [
+        "160322402000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_p10.json",
+      "row": 3,
+      "supplier_name": "アイシン",
+      "old_box_id": "SP342",
+      "box_name": "SP342",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 2,
+      "part_number": "152502501000",
+      "status": "unique",
+      "candidates": [
+        "152502501000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_p20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPG34229",
+      "box_name": "SPG34229",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 17,
+      "part_number": "160321519000",
+      "status": "unique",
+      "candidates": [
+        "160321519000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_p20.json",
+      "row": 2,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPG34230",
+      "box_name": "SPG34230",
+      "old_lid_id": "TP34蓋(IC)",
+      "lid_id": "TP34蓋(IC)",
+      "count": 17,
+      "part_number": "160322402000",
+      "status": "unique",
+      "candidates": [
+        "160322402000"
+      ]
+    },
+    {
+      "case_file": "aisin_4_p20.json",
+      "row": 3,
+      "supplier_name": "アイシン",
+      "old_box_id": "SP342",
+      "box_name": "SP342",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 2,
+      "part_number": "152502501000",
+      "status": "unique",
+      "candidates": [
+        "152502501000"
+      ]
+    },
+    {
+      "case_file": "aisin_5.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 10,
+      "part_number": "31270K001300",
+      "status": "first_candidate",
+      "candidates": [
+        "31270K001300",
+        "321015210000"
+      ]
+    },
+    {
+      "case_file": "aisin_5_m10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 9,
+      "part_number": "31270K001300",
+      "status": "first_candidate",
+      "candidates": [
+        "31270K001300",
+        "321015210000"
+      ]
+    },
+    {
+      "case_file": "aisin_5_m20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 8,
+      "part_number": "31270K001300",
+      "status": "first_candidate",
+      "candidates": [
+        "31270K001300",
+        "321015210000"
+      ]
+    },
+    {
+      "case_file": "aisin_5_p10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 11,
+      "part_number": "31270K001300",
+      "status": "first_candidate",
+      "candidates": [
+        "31270K001300",
+        "321015210000"
+      ]
+    },
+    {
+      "case_file": "aisin_5_p20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 12,
+      "part_number": "31270K001300",
+      "status": "first_candidate",
+      "candidates": [
+        "31270K001300",
+        "321015210000"
+      ]
+    },
+    {
+      "case_file": "aisin_6.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36408",
+      "box_name": "SPZ36408",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 23,
+      "part_number": "113102401000",
+      "status": "unique",
+      "candidates": [
+        "113102401000"
+      ]
+    },
+    {
+      "case_file": "aisin_6_m10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36408",
+      "box_name": "SPZ36408",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 21,
+      "part_number": "113102401000",
+      "status": "unique",
+      "candidates": [
+        "113102401000"
+      ]
+    },
+    {
+      "case_file": "aisin_6_m20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36408",
+      "box_name": "SPZ36408",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 18,
+      "part_number": "113102401000",
+      "status": "unique",
+      "candidates": [
+        "113102401000"
+      ]
+    },
+    {
+      "case_file": "aisin_6_p10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36408",
+      "box_name": "SPZ36408",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 25,
+      "part_number": "113102401000",
+      "status": "unique",
+      "candidates": [
+        "113102401000"
+      ]
+    },
+    {
+      "case_file": "aisin_6_p20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36408",
+      "box_name": "SPZ36408",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 28,
+      "part_number": "113102401000",
+      "status": "unique",
+      "candidates": [
+        "113102401000"
+      ]
+    },
+    {
+      "case_file": "aisin_7.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36406",
+      "box_name": "SPZ36406",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 17,
+      "part_number": "113202401000",
+      "status": "unique",
+      "candidates": [
+        "113202401000"
+      ]
+    },
+    {
+      "case_file": "aisin_7_m10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36406",
+      "box_name": "SPZ36406",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 15,
+      "part_number": "113202401000",
+      "status": "unique",
+      "candidates": [
+        "113202401000"
+      ]
+    },
+    {
+      "case_file": "aisin_7_m20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36406",
+      "box_name": "SPZ36406",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 14,
+      "part_number": "113202401000",
+      "status": "unique",
+      "candidates": [
+        "113202401000"
+      ]
+    },
+    {
+      "case_file": "aisin_7_p10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36406",
+      "box_name": "SPZ36406",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 19,
+      "part_number": "113202401000",
+      "status": "unique",
+      "candidates": [
+        "113202401000"
+      ]
+    },
+    {
+      "case_file": "aisin_7_p20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36406",
+      "box_name": "SPZ36406",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 20,
+      "part_number": "113202401000",
+      "status": "unique",
+      "candidates": [
+        "113202401000"
+      ]
+    },
+    {
+      "case_file": "aisin_8.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ46404",
+      "box_name": "SPZ46404",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 4,
+      "part_number": "171202401000",
+      "status": "unique",
+      "candidates": [
+        "171202401000"
+      ]
+    },
+    {
+      "case_file": "aisin_8_m10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ46404",
+      "box_name": "SPZ46404",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 4,
+      "part_number": "171202401000",
+      "status": "unique",
+      "candidates": [
+        "171202401000"
+      ]
+    },
+    {
+      "case_file": "aisin_8_m20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ46404",
+      "box_name": "SPZ46404",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 3,
+      "part_number": "171202401000",
+      "status": "unique",
+      "candidates": [
+        "171202401000"
+      ]
+    },
+    {
+      "case_file": "aisin_8_p10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ46404",
+      "box_name": "SPZ46404",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 4,
+      "part_number": "171202401000",
+      "status": "unique",
+      "candidates": [
+        "171202401000"
+      ]
+    },
+    {
+      "case_file": "aisin_8_p20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ46404",
+      "box_name": "SPZ46404",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 5,
+      "part_number": "171202401000",
+      "status": "unique",
+      "candidates": [
+        "171202401000"
+      ]
+    },
+    {
+      "case_file": "aisin_9.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36404",
+      "box_name": "SPZ36404",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 8,
+      "part_number": "113101501000",
+      "status": "unique",
+      "candidates": [
+        "113101501000"
+      ]
+    },
+    {
+      "case_file": "aisin_9_m10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36404",
+      "box_name": "SPZ36404",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 7,
+      "part_number": "113101501000",
+      "status": "unique",
+      "candidates": [
+        "113101501000"
+      ]
+    },
+    {
+      "case_file": "aisin_9_m20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36404",
+      "box_name": "SPZ36404",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 6,
+      "part_number": "113101501000",
+      "status": "unique",
+      "candidates": [
+        "113101501000"
+      ]
+    },
+    {
+      "case_file": "aisin_9_p10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36404",
+      "box_name": "SPZ36404",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 9,
+      "part_number": "113101501000",
+      "status": "unique",
+      "candidates": [
+        "113101501000"
+      ]
+    },
+    {
+      "case_file": "aisin_9_p20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ36404",
+      "box_name": "SPZ36404",
+      "old_lid_id": "TP360フタ",
+      "lid_id": "TP360フタ",
+      "count": 10,
+      "part_number": "113101501000",
+      "status": "unique",
+      "candidates": [
+        "113101501000"
+      ]
+    },
+    {
+      "case_file": "aisin_m10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ46405",
+      "box_name": "SPZ46405",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 10,
+      "part_number": "171202402000",
+      "status": "unique",
+      "candidates": [
+        "171202402000"
+      ]
+    },
+    {
+      "case_file": "aisin_m20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ46405",
+      "box_name": "SPZ46405",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 9,
+      "part_number": "171202402000",
+      "status": "unique",
+      "candidates": [
+        "171202402000"
+      ]
+    },
+    {
+      "case_file": "aisin_p10.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ46405",
+      "box_name": "SPZ46405",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 12,
+      "part_number": "171202402000",
+      "status": "unique",
+      "candidates": [
+        "171202402000"
+      ]
+    },
+    {
+      "case_file": "aisin_p20.json",
+      "row": 1,
+      "supplier_name": "アイシン",
+      "old_box_id": "SPZ46405",
+      "box_name": "SPZ46405",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 13,
+      "part_number": "171202402000",
+      "status": "unique",
+      "candidates": [
+        "171202402000"
+      ]
+    },
+    {
+      "case_file": "arresuthi.json",
+      "row": 1,
+      "supplier_name": "アーレスティ",
+      "old_box_id": "SP4625",
+      "box_name": "SP4625",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 6,
+      "part_number": "114201502000",
+      "status": "first_candidate",
+      "candidates": [
+        "114201502000",
+        "114201501000"
+      ]
+    },
+    {
+      "case_file": "arresuthi_2.json",
+      "row": 1,
+      "supplier_name": "アーレスティ",
+      "old_box_id": "SP4625",
+      "box_name": "SP4625",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 11,
+      "part_number": "114201502000",
+      "status": "first_candidate",
+      "candidates": [
+        "114201502000",
+        "114201501000"
+      ]
+    },
+    {
+      "case_file": "arresuthi_2_m10.json",
+      "row": 1,
+      "supplier_name": "アーレスティ",
+      "old_box_id": "SP4625",
+      "box_name": "SP4625",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 10,
+      "part_number": "114201502000",
+      "status": "first_candidate",
+      "candidates": [
+        "114201502000",
+        "114201501000"
+      ]
+    },
+    {
+      "case_file": "arresuthi_2_m20.json",
+      "row": 1,
+      "supplier_name": "アーレスティ",
+      "old_box_id": "SP4625",
+      "box_name": "SP4625",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 9,
+      "part_number": "114201502000",
+      "status": "first_candidate",
+      "candidates": [
+        "114201502000",
+        "114201501000"
+      ]
+    },
+    {
+      "case_file": "arresuthi_2_p10.json",
+      "row": 1,
+      "supplier_name": "アーレスティ",
+      "old_box_id": "SP4625",
+      "box_name": "SP4625",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 12,
+      "part_number": "114201502000",
+      "status": "first_candidate",
+      "candidates": [
+        "114201502000",
+        "114201501000"
+      ]
+    },
+    {
+      "case_file": "arresuthi_2_p20.json",
+      "row": 1,
+      "supplier_name": "アーレスティ",
+      "old_box_id": "SP4625",
+      "box_name": "SP4625",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 13,
+      "part_number": "114201502000",
+      "status": "first_candidate",
+      "candidates": [
+        "114201502000",
+        "114201501000"
+      ]
+    },
+    {
+      "case_file": "arresuthi_m10.json",
+      "row": 1,
+      "supplier_name": "アーレスティ",
+      "old_box_id": "SP4625",
+      "box_name": "SP4625",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 5,
+      "part_number": "114201502000",
+      "status": "first_candidate",
+      "candidates": [
+        "114201502000",
+        "114201501000"
+      ]
+    },
+    {
+      "case_file": "arresuthi_m20.json",
+      "row": 1,
+      "supplier_name": "アーレスティ",
+      "old_box_id": "SP4625",
+      "box_name": "SP4625",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 5,
+      "part_number": "114201502000",
+      "status": "first_candidate",
+      "candidates": [
+        "114201502000",
+        "114201501000"
+      ]
+    },
+    {
+      "case_file": "arresuthi_p10.json",
+      "row": 1,
+      "supplier_name": "アーレスティ",
+      "old_box_id": "SP4625",
+      "box_name": "SP4625",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 7,
+      "part_number": "114201502000",
+      "status": "first_candidate",
+      "candidates": [
+        "114201502000",
+        "114201501000"
+      ]
+    },
+    {
+      "case_file": "arresuthi_p20.json",
+      "row": 1,
+      "supplier_name": "アーレスティ",
+      "old_box_id": "SP4625",
+      "box_name": "SP4625",
+      "old_lid_id": "TP460フタ",
+      "lid_id": "TP460フタ",
+      "count": 7,
+      "part_number": "114201502000",
+      "status": "first_candidate",
+      "candidates": [
+        "114201502000",
+        "114201501000"
+      ]
+    },
+    {
+      "case_file": "art.json",
+      "row": 1,
+      "supplier_name": "アート金属",
+      "old_box_id": "NPAP5",
+      "box_name": "NPAP5",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 44,
+      "part_number": "132111507002",
+      "status": "first_candidate",
+      "candidates": [
+        "132111507002",
+        "132112406001",
+        "132112407002",
+        "132112407001",
+        "132112407003",
+        "132112406003",
+        "132111507001",
+        "132111507003",
+        "132112406002"
+      ]
+    },
+    {
+      "case_file": "art_m10.json",
+      "row": 1,
+      "supplier_name": "アート金属",
+      "old_box_id": "NPAP5",
+      "box_name": "NPAP5",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 40,
+      "part_number": "132111507002",
+      "status": "first_candidate",
+      "candidates": [
+        "132111507002",
+        "132112406001",
+        "132112407002",
+        "132112407001",
+        "132112407003",
+        "132112406003",
+        "132111507001",
+        "132111507003",
+        "132112406002"
+      ]
+    },
+    {
+      "case_file": "art_m20.json",
+      "row": 1,
+      "supplier_name": "アート金属",
+      "old_box_id": "NPAP5",
+      "box_name": "NPAP5",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 35,
+      "part_number": "132111507002",
+      "status": "first_candidate",
+      "candidates": [
+        "132111507002",
+        "132112406001",
+        "132112407002",
+        "132112407001",
+        "132112407003",
+        "132112406003",
+        "132111507001",
+        "132111507003",
+        "132112406002"
+      ]
+    },
+    {
+      "case_file": "art_p10.json",
+      "row": 1,
+      "supplier_name": "アート金属",
+      "old_box_id": "NPAP5",
+      "box_name": "NPAP5",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 48,
+      "part_number": "132111507002",
+      "status": "first_candidate",
+      "candidates": [
+        "132111507002",
+        "132112406001",
+        "132112407002",
+        "132112407001",
+        "132112407003",
+        "132112406003",
+        "132111507001",
+        "132111507003",
+        "132112406002"
+      ]
+    },
+    {
+      "case_file": "art_p20.json",
+      "row": 1,
+      "supplier_name": "アート金属",
+      "old_box_id": "NPAP5",
+      "box_name": "NPAP5",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 53,
+      "part_number": "132111507002",
+      "status": "first_candidate",
+      "candidates": [
+        "132111507002",
+        "132112406001",
+        "132112407002",
+        "132112407001",
+        "132112407003",
+        "132112406003",
+        "132111507001",
+        "132111507003",
+        "132112406002"
+      ]
+    },
+    {
+      "case_file": "guze.json",
+      "row": 1,
+      "supplier_name": "グゼー",
+      "old_box_id": "STP342B",
+      "box_name": "STP342B",
+      "old_lid_id": "TP340フタ",
+      "lid_id": "TP340フタ",
+      "count": 18,
+      "part_number": "160311502000",
+      "status": "first_candidate",
+      "candidates": [
+        "160311502000",
+        "160311501000"
+      ]
+    },
+    {
+      "case_file": "guze_m10.json",
+      "row": 1,
+      "supplier_name": "グゼー",
+      "old_box_id": "STP342B",
+      "box_name": "STP342B",
+      "old_lid_id": "TP340フタ",
+      "lid_id": "TP340フタ",
+      "count": 16,
+      "part_number": "160311502000",
+      "status": "first_candidate",
+      "candidates": [
+        "160311502000",
+        "160311501000"
+      ]
+    },
+    {
+      "case_file": "guze_m20.json",
+      "row": 1,
+      "supplier_name": "グゼー",
+      "old_box_id": "STP342B",
+      "box_name": "STP342B",
+      "old_lid_id": "TP340フタ",
+      "lid_id": "TP340フタ",
+      "count": 14,
+      "part_number": "160311502000",
+      "status": "first_candidate",
+      "candidates": [
+        "160311502000",
+        "160311501000"
+      ]
+    },
+    {
+      "case_file": "guze_p10.json",
+      "row": 1,
+      "supplier_name": "グゼー",
+      "old_box_id": "STP342B",
+      "box_name": "STP342B",
+      "old_lid_id": "TP340フタ",
+      "lid_id": "TP340フタ",
+      "count": 20,
+      "part_number": "160311502000",
+      "status": "first_candidate",
+      "candidates": [
+        "160311502000",
+        "160311501000"
+      ]
+    },
+    {
+      "case_file": "guze_p20.json",
+      "row": 1,
+      "supplier_name": "グゼー",
+      "old_box_id": "STP342B",
+      "box_name": "STP342B",
+      "old_lid_id": "TP340フタ",
+      "lid_id": "TP340フタ",
+      "count": 22,
+      "part_number": "160311502000",
+      "status": "first_candidate",
+      "candidates": [
+        "160311502000",
+        "160311501000"
+      ]
+    },
+    {
+      "case_file": "nittan.json",
+      "row": 1,
+      "supplier_name": "ニッタン",
+      "old_box_id": "NPH010",
+      "box_name": "NPH010",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 8,
+      "part_number": "137152404000",
+      "status": "unique",
+      "candidates": [
+        "137152404000"
+      ]
+    },
+    {
+      "case_file": "nittan_2.json",
+      "row": 1,
+      "supplier_name": "ニッタン",
+      "old_box_id": "NPH010",
+      "box_name": "NPH010",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 9,
+      "part_number": "137152404000",
+      "status": "unique",
+      "candidates": [
+        "137152404000"
+      ]
+    },
+    {
+      "case_file": "nittan_2_m10.json",
+      "row": 1,
+      "supplier_name": "ニッタン",
+      "old_box_id": "NPH010",
+      "box_name": "NPH010",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 8,
+      "part_number": "137152404000",
+      "status": "unique",
+      "candidates": [
+        "137152404000"
+      ]
+    },
+    {
+      "case_file": "nittan_2_m20.json",
+      "row": 1,
+      "supplier_name": "ニッタン",
+      "old_box_id": "NPH010",
+      "box_name": "NPH010",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 7,
+      "part_number": "137152404000",
+      "status": "unique",
+      "candidates": [
+        "137152404000"
+      ]
+    },
+    {
+      "case_file": "nittan_2_p10.json",
+      "row": 1,
+      "supplier_name": "ニッタン",
+      "old_box_id": "NPH010",
+      "box_name": "NPH010",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 10,
+      "part_number": "137152404000",
+      "status": "unique",
+      "candidates": [
+        "137152404000"
+      ]
+    },
+    {
+      "case_file": "nittan_2_p20.json",
+      "row": 1,
+      "supplier_name": "ニッタン",
+      "old_box_id": "NPH010",
+      "box_name": "NPH010",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 11,
+      "part_number": "137152404000",
+      "status": "unique",
+      "candidates": [
+        "137152404000"
+      ]
+    },
+    {
+      "case_file": "nittan_m10.json",
+      "row": 1,
+      "supplier_name": "ニッタン",
+      "old_box_id": "NPH010",
+      "box_name": "NPH010",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 7,
+      "part_number": "137152404000",
+      "status": "unique",
+      "candidates": [
+        "137152404000"
+      ]
+    },
+    {
+      "case_file": "nittan_m20.json",
+      "row": 1,
+      "supplier_name": "ニッタン",
+      "old_box_id": "NPH010",
+      "box_name": "NPH010",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 6,
+      "part_number": "137152404000",
+      "status": "unique",
+      "candidates": [
+        "137152404000"
+      ]
+    },
+    {
+      "case_file": "nittan_p10.json",
+      "row": 1,
+      "supplier_name": "ニッタン",
+      "old_box_id": "NPH010",
+      "box_name": "NPH010",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 9,
+      "part_number": "137152404000",
+      "status": "unique",
+      "candidates": [
+        "137152404000"
+      ]
+    },
+    {
+      "case_file": "nittan_p20.json",
+      "row": 1,
+      "supplier_name": "ニッタン",
+      "old_box_id": "NPH010",
+      "box_name": "NPH010",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 10,
+      "part_number": "137152404000",
+      "status": "unique",
+      "candidates": [
+        "137152404000"
+      ]
+    },
+    {
+      "case_file": "nok.json",
+      "row": 1,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000002",
+      "box_name": "NP000002",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 3,
+      "part_number": "909130210100",
+      "status": "unique",
+      "candidates": [
+        "909130210100"
+      ]
+    },
+    {
+      "case_file": "nok.json",
+      "row": 2,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000003",
+      "box_name": "NP000003",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 7,
+      "part_number": "903119001000",
+      "status": "unique",
+      "candidates": [
+        "903119001000"
+      ]
+    },
+    {
+      "case_file": "nok.json",
+      "row": 3,
+      "supplier_name": "NOK",
+      "old_box_id": "TP131",
+      "box_name": "TP131",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 6,
+      "part_number": "232912802000",
+      "status": "first_candidate",
+      "candidates": [
+        "232912802000",
+        "151931501000",
+        "151971504000",
+        "903015000300"
+      ]
+    },
+    {
+      "case_file": "nok.json",
+      "row": 4,
+      "supplier_name": "NOK",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 17,
+      "part_number": "903019200500",
+      "status": "first_candidate",
+      "candidates": [
+        "903019200500",
+        "122731501000",
+        "122732401000",
+        "163251503000",
+        "163252501000",
+        "151472501000",
+        "157852501000"
+      ]
+    },
+    {
+      "case_file": "nok_2.json",
+      "row": 1,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000008",
+      "box_name": "NP000008",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 31,
+      "part_number": "134701515000",
+      "status": "first_candidate",
+      "candidates": [
+        "134701515000",
+        "134701514000"
+      ]
+    },
+    {
+      "case_file": "nok_2_m10.json",
+      "row": 1,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000008",
+      "box_name": "NP000008",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 28,
+      "part_number": "134701515000",
+      "status": "first_candidate",
+      "candidates": [
+        "134701515000",
+        "134701514000"
+      ]
+    },
+    {
+      "case_file": "nok_2_m20.json",
+      "row": 1,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000008",
+      "box_name": "NP000008",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 25,
+      "part_number": "134701515000",
+      "status": "first_candidate",
+      "candidates": [
+        "134701515000",
+        "134701514000"
+      ]
+    },
+    {
+      "case_file": "nok_2_p10.json",
+      "row": 1,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000008",
+      "box_name": "NP000008",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 34,
+      "part_number": "134701515000",
+      "status": "first_candidate",
+      "candidates": [
+        "134701515000",
+        "134701514000"
+      ]
+    },
+    {
+      "case_file": "nok_2_p20.json",
+      "row": 1,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000008",
+      "box_name": "NP000008",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 37,
+      "part_number": "134701515000",
+      "status": "first_candidate",
+      "candidates": [
+        "134701515000",
+        "134701514000"
+      ]
+    },
+    {
+      "case_file": "nok_m10.json",
+      "row": 1,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000002",
+      "box_name": "NP000002",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 3,
+      "part_number": "909130210100",
+      "status": "unique",
+      "candidates": [
+        "909130210100"
+      ]
+    },
+    {
+      "case_file": "nok_m10.json",
+      "row": 2,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000003",
+      "box_name": "NP000003",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 6,
+      "part_number": "903119001000",
+      "status": "unique",
+      "candidates": [
+        "903119001000"
+      ]
+    },
+    {
+      "case_file": "nok_m10.json",
+      "row": 3,
+      "supplier_name": "NOK",
+      "old_box_id": "TP131",
+      "box_name": "TP131",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 5,
+      "part_number": "232912802000",
+      "status": "first_candidate",
+      "candidates": [
+        "232912802000",
+        "151931501000",
+        "151971504000",
+        "903015000300"
+      ]
+    },
+    {
+      "case_file": "nok_m10.json",
+      "row": 4,
+      "supplier_name": "NOK",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 15,
+      "part_number": "903019200500",
+      "status": "first_candidate",
+      "candidates": [
+        "903019200500",
+        "122731501000",
+        "122732401000",
+        "163251503000",
+        "163252501000",
+        "151472501000",
+        "157852501000"
+      ]
+    },
+    {
+      "case_file": "nok_m20.json",
+      "row": 1,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000002",
+      "box_name": "NP000002",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 2,
+      "part_number": "909130210100",
+      "status": "unique",
+      "candidates": [
+        "909130210100"
+      ]
+    },
+    {
+      "case_file": "nok_m20.json",
+      "row": 2,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000003",
+      "box_name": "NP000003",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 6,
+      "part_number": "903119001000",
+      "status": "unique",
+      "candidates": [
+        "903119001000"
+      ]
+    },
+    {
+      "case_file": "nok_m20.json",
+      "row": 3,
+      "supplier_name": "NOK",
+      "old_box_id": "TP131",
+      "box_name": "TP131",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 5,
+      "part_number": "232912802000",
+      "status": "first_candidate",
+      "candidates": [
+        "232912802000",
+        "151931501000",
+        "151971504000",
+        "903015000300"
+      ]
+    },
+    {
+      "case_file": "nok_m20.json",
+      "row": 4,
+      "supplier_name": "NOK",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 14,
+      "part_number": "903019200500",
+      "status": "first_candidate",
+      "candidates": [
+        "903019200500",
+        "122731501000",
+        "122732401000",
+        "163251503000",
+        "163252501000",
+        "151472501000",
+        "157852501000"
+      ]
+    },
+    {
+      "case_file": "nok_p10.json",
+      "row": 1,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000002",
+      "box_name": "NP000002",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 3,
+      "part_number": "909130210100",
+      "status": "unique",
+      "candidates": [
+        "909130210100"
+      ]
+    },
+    {
+      "case_file": "nok_p10.json",
+      "row": 2,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000003",
+      "box_name": "NP000003",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 8,
+      "part_number": "903119001000",
+      "status": "unique",
+      "candidates": [
+        "903119001000"
+      ]
+    },
+    {
+      "case_file": "nok_p10.json",
+      "row": 3,
+      "supplier_name": "NOK",
+      "old_box_id": "TP131",
+      "box_name": "TP131",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 7,
+      "part_number": "232912802000",
+      "status": "first_candidate",
+      "candidates": [
+        "232912802000",
+        "151931501000",
+        "151971504000",
+        "903015000300"
+      ]
+    },
+    {
+      "case_file": "nok_p10.json",
+      "row": 4,
+      "supplier_name": "NOK",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 19,
+      "part_number": "903019200500",
+      "status": "first_candidate",
+      "candidates": [
+        "903019200500",
+        "122731501000",
+        "122732401000",
+        "163251503000",
+        "163252501000",
+        "151472501000",
+        "157852501000"
+      ]
+    },
+    {
+      "case_file": "nok_p20.json",
+      "row": 1,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000002",
+      "box_name": "NP000002",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 4,
+      "part_number": "909130210100",
+      "status": "unique",
+      "candidates": [
+        "909130210100"
+      ]
+    },
+    {
+      "case_file": "nok_p20.json",
+      "row": 2,
+      "supplier_name": "NOK",
+      "old_box_id": "NP000003",
+      "box_name": "NP000003",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 8,
+      "part_number": "903119001000",
+      "status": "unique",
+      "candidates": [
+        "903119001000"
+      ]
+    },
+    {
+      "case_file": "nok_p20.json",
+      "row": 3,
+      "supplier_name": "NOK",
+      "old_box_id": "TP131",
+      "box_name": "TP131",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 7,
+      "part_number": "232912802000",
+      "status": "first_candidate",
+      "candidates": [
+        "232912802000",
+        "151931501000",
+        "151971504000",
+        "903015000300"
+      ]
+    },
+    {
+      "case_file": "nok_p20.json",
+      "row": 4,
+      "supplier_name": "NOK",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 20,
+      "part_number": "903019200500",
+      "status": "first_candidate",
+      "candidates": [
+        "903019200500",
+        "122731501000",
+        "122732401000",
+        "163251503000",
+        "163252501000",
+        "151472501000",
+        "157852501000"
+      ]
+    },
+    {
+      "case_file": "othics.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP131",
+      "box_name": "TP131",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 4,
+      "part_number": "137162501000",
+      "status": "unique",
+      "candidates": [
+        "137162501000"
+      ]
+    },
+    {
+      "case_file": "othics_2.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "TP34蓋ロック付き",
+      "lid_id": "TP34蓋ロック付き",
+      "count": 16,
+      "part_number": "138012501000",
+      "status": "unique",
+      "candidates": [
+        "138012501000"
+      ]
+    },
+    {
+      "case_file": "othics_2.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP262D",
+      "box_name": "NP262D",
+      "old_lid_id": "サンボックス＃26",
+      "lid_id": "サンボックス#26",
+      "count": 8,
+      "part_number": "137507002100",
+      "status": "unique",
+      "candidates": [
+        "137507002100"
+      ]
+    },
+    {
+      "case_file": "othics_2.json",
+      "row": 3,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "サンボックス330フタ",
+      "lid_id": "サンボックス330フタ",
+      "count": 4,
+      "part_number": "234702501000",
+      "status": "unique",
+      "candidates": [
+        "234702501000"
+      ]
+    },
+    {
+      "case_file": "othics_2_m10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "TP34蓋ロック付き",
+      "lid_id": "TP34蓋ロック付き",
+      "count": 14,
+      "part_number": "138012501000",
+      "status": "unique",
+      "candidates": [
+        "138012501000"
+      ]
+    },
+    {
+      "case_file": "othics_2_m10.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP262D",
+      "box_name": "NP262D",
+      "old_lid_id": "サンボックス＃26",
+      "lid_id": "サンボックス#26",
+      "count": 7,
+      "part_number": "137507002100",
+      "status": "unique",
+      "candidates": [
+        "137507002100"
+      ]
+    },
+    {
+      "case_file": "othics_2_m10.json",
+      "row": 3,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "サンボックス330フタ",
+      "lid_id": "サンボックス330フタ",
+      "count": 4,
+      "part_number": "234702501000",
+      "status": "unique",
+      "candidates": [
+        "234702501000"
+      ]
+    },
+    {
+      "case_file": "othics_2_m20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "TP34蓋ロック付き",
+      "lid_id": "TP34蓋ロック付き",
+      "count": 13,
+      "part_number": "138012501000",
+      "status": "unique",
+      "candidates": [
+        "138012501000"
+      ]
+    },
+    {
+      "case_file": "othics_2_m20.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP262D",
+      "box_name": "NP262D",
+      "old_lid_id": "サンボックス＃26",
+      "lid_id": "サンボックス#26",
+      "count": 6,
+      "part_number": "137507002100",
+      "status": "unique",
+      "candidates": [
+        "137507002100"
+      ]
+    },
+    {
+      "case_file": "othics_2_m20.json",
+      "row": 3,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "サンボックス330フタ",
+      "lid_id": "サンボックス330フタ",
+      "count": 3,
+      "part_number": "234702501000",
+      "status": "unique",
+      "candidates": [
+        "234702501000"
+      ]
+    },
+    {
+      "case_file": "othics_2_p10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "TP34蓋ロック付き",
+      "lid_id": "TP34蓋ロック付き",
+      "count": 18,
+      "part_number": "138012501000",
+      "status": "unique",
+      "candidates": [
+        "138012501000"
+      ]
+    },
+    {
+      "case_file": "othics_2_p10.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP262D",
+      "box_name": "NP262D",
+      "old_lid_id": "サンボックス＃26",
+      "lid_id": "サンボックス#26",
+      "count": 9,
+      "part_number": "137507002100",
+      "status": "unique",
+      "candidates": [
+        "137507002100"
+      ]
+    },
+    {
+      "case_file": "othics_2_p10.json",
+      "row": 3,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "サンボックス330フタ",
+      "lid_id": "サンボックス330フタ",
+      "count": 4,
+      "part_number": "234702501000",
+      "status": "unique",
+      "candidates": [
+        "234702501000"
+      ]
+    },
+    {
+      "case_file": "othics_2_p20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "TP34蓋ロック付き",
+      "lid_id": "TP34蓋ロック付き",
+      "count": 19,
+      "part_number": "138012501000",
+      "status": "unique",
+      "candidates": [
+        "138012501000"
+      ]
+    },
+    {
+      "case_file": "othics_2_p20.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP262D",
+      "box_name": "NP262D",
+      "old_lid_id": "サンボックス＃26",
+      "lid_id": "サンボックス#26",
+      "count": 10,
+      "part_number": "137507002100",
+      "status": "unique",
+      "candidates": [
+        "137507002100"
+      ]
+    },
+    {
+      "case_file": "othics_2_p20.json",
+      "row": 3,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP331",
+      "box_name": "TP331",
+      "old_lid_id": "サンボックス330フタ",
+      "lid_id": "サンボックス330フタ",
+      "count": 5,
+      "part_number": "234702501000",
+      "status": "unique",
+      "candidates": [
+        "234702501000"
+      ]
+    },
+    {
+      "case_file": "othics_3.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 15,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_3_m10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 14,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_3_m20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 12,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_3_p10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 17,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_3_p20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 18,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_4.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "SP3315B",
+      "box_name": "SP3315B",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 5,
+      "part_number": "136311501000",
+      "status": "unique",
+      "candidates": [
+        "136311501000"
+      ]
+    },
+    {
+      "case_file": "othics_4_m10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "SP3315B",
+      "box_name": "SP3315B",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 5,
+      "part_number": "136311501000",
+      "status": "unique",
+      "candidates": [
+        "136311501000"
+      ]
+    },
+    {
+      "case_file": "othics_4_m20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "SP3315B",
+      "box_name": "SP3315B",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 4,
+      "part_number": "136311501000",
+      "status": "unique",
+      "candidates": [
+        "136311501000"
+      ]
+    },
+    {
+      "case_file": "othics_4_p10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "SP3315B",
+      "box_name": "SP3315B",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 6,
+      "part_number": "136311501000",
+      "status": "unique",
+      "candidates": [
+        "136311501000"
+      ]
+    },
+    {
+      "case_file": "othics_4_p20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "SP3315B",
+      "box_name": "SP3315B",
+      "old_lid_id": "TP330フタ",
+      "lid_id": "TP330フタ",
+      "count": 6,
+      "part_number": "136311501000",
+      "status": "unique",
+      "candidates": [
+        "136311501000"
+      ]
+    },
+    {
+      "case_file": "othics_5.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 42,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_5_m10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 38,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_5_m20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 34,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_5_p10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 46,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_5_p20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 50,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_6.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 15,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_6.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 15,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_6_m10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 14,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_6_m10.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 14,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_6_m20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 12,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_6_m20.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 12,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_6_p10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 17,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_6_p10.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 17,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_6_p20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 18,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_6_p20.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 18,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_7.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 15,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_7.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 14,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_7_m10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 14,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_7_m10.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 13,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_7_m20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 12,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_7_m20.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 11,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_7_p10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 17,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_7_p10.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 15,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_7_p20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 18,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_7_p20.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 17,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_8.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 20,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_8.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 15,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_8_m10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 18,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_8_m10.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 14,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_8_m20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 16,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_8_m20.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 12,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_8_p10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 22,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_8_p10.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 17,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_8_p20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP22C",
+      "box_name": "NP22C",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 24,
+      "part_number": "111032402200",
+      "status": "unique",
+      "candidates": [
+        "111032402200"
+      ]
+    },
+    {
+      "case_file": "othics_8_p20.json",
+      "row": 2,
+      "supplier_name": "オティックス",
+      "old_box_id": "NPP24",
+      "box_name": "NPP24",
+      "old_lid_id": "サンボックス＃22B",
+      "lid_id": "サンボックス#22Bフタ",
+      "count": 18,
+      "part_number": "111032401100",
+      "status": "unique",
+      "candidates": [
+        "111032401100"
+      ]
+    },
+    {
+      "case_file": "othics_9.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 34,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_9_m10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 31,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_9_m20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 27,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_9_p10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 37,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_9_p20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "NP20B",
+      "box_name": "NP20B",
+      "old_lid_id": "サンボックス＃20",
+      "lid_id": "サンボックス#20",
+      "count": 41,
+      "part_number": "111031502100",
+      "status": "first_candidate",
+      "candidates": [
+        "111031502100",
+        "136201501000",
+        "111031501000"
+      ]
+    },
+    {
+      "case_file": "othics_m10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP131",
+      "box_name": "TP131",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 4,
+      "part_number": "137162501000",
+      "status": "unique",
+      "candidates": [
+        "137162501000"
+      ]
+    },
+    {
+      "case_file": "othics_m20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP131",
+      "box_name": "TP131",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 3,
+      "part_number": "137162501000",
+      "status": "unique",
+      "candidates": [
+        "137162501000"
+      ]
+    },
+    {
+      "case_file": "othics_p10.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP131",
+      "box_name": "TP131",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 4,
+      "part_number": "137162501000",
+      "status": "unique",
+      "candidates": [
+        "137162501000"
+      ]
+    },
+    {
+      "case_file": "othics_p20.json",
+      "row": 1,
+      "supplier_name": "オティックス",
+      "old_box_id": "TP131",
+      "box_name": "TP131",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 5,
+      "part_number": "137162501000",
+      "status": "unique",
+      "candidates": [
+        "137162501000"
+      ]
+    },
+    {
+      "case_file": "roki.json",
+      "row": 1,
+      "supplier_name": "ROKI",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 28,
+      "part_number": "256012403000",
+      "status": "first_candidate",
+      "candidates": [
+        "256012403000",
+        "256011505000"
+      ]
+    },
+    {
+      "case_file": "roki_2.json",
+      "row": 1,
+      "supplier_name": "ROKI",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 18,
+      "part_number": "256012403000",
+      "status": "first_candidate",
+      "candidates": [
+        "256012403000",
+        "256011505000"
+      ]
+    },
+    {
+      "case_file": "roki_2_m10.json",
+      "row": 1,
+      "supplier_name": "ROKI",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 16,
+      "part_number": "256012403000",
+      "status": "first_candidate",
+      "candidates": [
+        "256012403000",
+        "256011505000"
+      ]
+    },
+    {
+      "case_file": "roki_2_m20.json",
+      "row": 1,
+      "supplier_name": "ROKI",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 14,
+      "part_number": "256012403000",
+      "status": "first_candidate",
+      "candidates": [
+        "256012403000",
+        "256011505000"
+      ]
+    },
+    {
+      "case_file": "roki_2_p10.json",
+      "row": 1,
+      "supplier_name": "ROKI",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 20,
+      "part_number": "256012403000",
+      "status": "first_candidate",
+      "candidates": [
+        "256012403000",
+        "256011505000"
+      ]
+    },
+    {
+      "case_file": "roki_2_p20.json",
+      "row": 1,
+      "supplier_name": "ROKI",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 22,
+      "part_number": "256012403000",
+      "status": "first_candidate",
+      "candidates": [
+        "256012403000",
+        "256011505000"
+      ]
+    },
+    {
+      "case_file": "roki_m10.json",
+      "row": 1,
+      "supplier_name": "ROKI",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 25,
+      "part_number": "256012403000",
+      "status": "first_candidate",
+      "candidates": [
+        "256012403000",
+        "256011505000"
+      ]
+    },
+    {
+      "case_file": "roki_m20.json",
+      "row": 1,
+      "supplier_name": "ROKI",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 22,
+      "part_number": "256012403000",
+      "status": "first_candidate",
+      "candidates": [
+        "256012403000",
+        "256011505000"
+      ]
+    },
+    {
+      "case_file": "roki_p10.json",
+      "row": 1,
+      "supplier_name": "ROKI",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 31,
+      "part_number": "256012403000",
+      "status": "first_candidate",
+      "candidates": [
+        "256012403000",
+        "256011505000"
+      ]
+    },
+    {
+      "case_file": "roki_p20.json",
+      "row": 1,
+      "supplier_name": "ROKI",
+      "old_box_id": "TP3415",
+      "box_name": "TP3415",
+      "old_lid_id": "無蓋",
+      "lid_id": "無蓋",
+      "count": 34,
+      "part_number": "256012403000",
+      "status": "first_candidate",
+      "candidates": [
+        "256012403000",
+        "256011505000"
+      ]
+    }
+  ],
+  "approved_changes": [
+    {
+      "kind": "lid_id",
+      "source": "サンボックス＃14C",
+      "before": "サンボックス＃14C",
+      "after": "サンボックス#14C"
+    },
+    {
+      "kind": "lid_id",
+      "source": "サンボックス＃20",
+      "before": "サンボックス＃20",
+      "after": "サンボックス#20"
+    },
+    {
+      "kind": "lid_id",
+      "source": "サンボックス＃26",
+      "before": "サンボックス＃26",
+      "after": "サンボックス#26"
+    },
+    {
+      "kind": "lid_id",
+      "source": "サンボックス＃22B",
+      "before": "サンボックス＃22B",
+      "after": "サンボックス#22Bフタ"
+    },
+    {
+      "kind": "model_mapping",
+      "source": "NP22C",
+      "before": "NP22C",
+      "after": "サンボックス#22H"
+    },
+    {
+      "kind": "model_mapping",
+      "source": "NPP24",
+      "before": "NPP24",
+      "after": "サンボックス#22H"
+    },
+    {
+      "kind": "model_mapping",
+      "source": "SPZ36404",
+      "before": "SPZ36404",
+      "after": "TP364"
+    },
+    {
+      "kind": "model_mapping",
+      "source": "SPZ36406",
+      "before": "SPZ36406",
+      "after": "TP364"
+    },
+    {
+      "kind": "new_model",
+      "source": "NEUAD9",
+      "before": "",
+      "after": "NEUAD9"
+    },
+    {
+      "kind": "new_model",
+      "source": "NS80858",
+      "before": "",
+      "after": "NS80858"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:2:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22B"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:2",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22Bフタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:3:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃20",
+      "after": "サンボックス#20"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:3",
+      "before": "ｻﾝﾎﾞｯｸｽ＃20",
+      "after": "サンボックス#20"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:4:型式",
+      "before": "＃10－5",
+      "after": "#10-5"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:4",
+      "before": "＃10－5",
+      "after": "#10-5"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:5",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:6",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:7:仕入先名",
+      "before": "シェフラーＪＰ",
+      "after": "シェフラーJP"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:7",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:8:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:8",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:9:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:9",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:10:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:10",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:11:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:11",
+      "before": "TP34蓋(IC)",
+      "after": "TP34蓋"
+    },
+    {
+      "kind": "approved_lid_override",
+      "source": "130902501000",
+      "before": "TP34蓋(IC)",
+      "after": "TP34蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:12:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:12",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:13:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:13",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:14",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:15:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:15",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:16:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:16:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:16",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:17",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:19:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:19:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22B"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:19",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22Bフタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:20",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:21:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:21",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:22:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:22",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:23:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:23",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:24:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22B"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:24",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22Bフタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:25",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:26:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:27:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:27",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:28:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:28",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:29",
+      "before": "TP360",
+      "after": "TP360フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:30",
+      "before": "TP360",
+      "after": "TP360フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:31:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:31",
+      "before": "TP330",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "approved_lid_override",
+      "source": "153702502000",
+      "before": "TP330フタ",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:32",
+      "before": "TP360",
+      "after": "TP360フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:33",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:35:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:35",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:36:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:37:仕入先名",
+      "before": "ＲＯＫＩ",
+      "after": "ROKI"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:37:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:37",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:38:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:38",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:39:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:39",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:40:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:40",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:41:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:41",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:42:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ330",
+      "after": "サンボックス330"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:42",
+      "before": "ｻﾝﾎﾞｯｸｽ330",
+      "after": "サンボックス330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:43:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:43:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:43",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:45",
+      "before": "TP360",
+      "after": "TP360フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:46:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:46",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:47",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:48",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:49:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:49",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:50:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ330",
+      "after": "サンボックス330"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:50",
+      "before": "ｻﾝﾎﾞｯｸｽ330",
+      "after": "サンボックス330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:51:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:51:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:51",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:52",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "supplier_alias",
+      "source": "box_list.csv:52",
+      "before": "クゼー",
+      "after": "グゼー"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:53:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:53",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:54:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:54",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:55:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:55",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:56:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:56",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:57:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:57",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:58:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:58",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:59:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:59",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:60",
+      "before": "TP360",
+      "after": "TP360フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:62:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:62",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:63:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:63",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:64:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:64",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:65:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:65",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:66:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:66",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:67:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:67",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:68:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:68:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:68",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:71:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:71:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:71",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:72:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:72",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:73:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:73",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:74:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:74",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:75:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:75",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:76:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:76",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:77",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:78:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:78",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:79:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:79:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:79",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:80:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:80",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:81:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:81",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:82:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:82",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:83:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22B"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:83",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22Bフタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:84:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃20",
+      "after": "サンボックス#20"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:84",
+      "before": "ｻﾝﾎﾞｯｸｽ＃20",
+      "after": "サンボックス#20"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:85:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃20",
+      "after": "サンボックス#20"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:85",
+      "before": "ｻﾝﾎﾞｯｸｽ＃20",
+      "after": "サンボックス#20"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:86:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:86",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:88:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:88",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:89:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:89",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:90:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:90",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:91:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:91",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:92:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:92",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:93:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:93:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:93",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:94",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:95",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:96:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:96",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:97:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:97",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:98:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:98",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:99:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:99",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:100:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃26",
+      "after": "サンボックス#26"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:100",
+      "before": "ｻﾝﾎﾞｯｸｽ＃26",
+      "after": "サンボックス#26"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:101:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:101",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:102",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:103:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:103",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:104:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:104",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:105:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:105",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:106:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:106",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:107",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:108",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:109:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:110:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:110",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:111:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:111",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:112:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:112",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:113:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:113",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:114:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:114",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:115",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:116:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:117:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:117",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:118",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:119:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:119",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:120:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ460",
+      "after": "サンボックス460"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:120",
+      "before": "ｻﾝﾎﾞｯｸｽ460",
+      "after": "サンボックス460フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:121:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ460",
+      "after": "サンボックス460"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:121",
+      "before": "ｻﾝﾎﾞｯｸｽ460",
+      "after": "サンボックス460フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:122:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:122",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:123:仕入先名",
+      "before": "ＮＩＴＴＡＮ",
+      "after": "NITTAN"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:123:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:123",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "supplier_alias",
+      "source": "box_list.csv:123",
+      "before": "NITTAN",
+      "after": "ニッタン"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:124:仕入先名",
+      "before": "ＲＯＫＩ",
+      "after": "ROKI"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:124:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:124",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:125",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:126:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:126",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:127:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:127",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:128:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:128",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:129:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:129",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:130",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:131",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:133:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:133",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:134:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:134",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:135:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:135",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:136:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:136:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:136",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:137:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:137",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:138:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:138",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:139:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:139",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:140:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:140",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:141:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:141",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:142:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:142",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:143:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:143:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:143",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:144:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:144",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:145:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:145",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:146",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:147",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:148:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:148",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:149",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:150",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:151:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:151",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:152:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:152",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:154:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:154",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:155:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:155",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:156:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:156",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:157:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:157:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:157",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:158:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:158",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:159:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:159",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:160:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:160",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:161:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:161",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:162:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:162",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:163:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:163",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:164:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:164",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:165:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:165",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:166:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:166",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:167",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:168:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:168",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:169:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:169",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:170:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:170",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:171:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:171",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:172:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:172",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:173:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:173",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:174:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:174",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:175:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:175",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:176:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:176",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:177:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:177",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:178:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:178",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:179:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:179",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:180:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:180",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:181:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:181",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:182:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:182",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:183:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:183",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:184",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:185",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:186:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:186",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:187:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:187",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:188:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:188",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:189:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:189:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:189",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:190:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:190",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:191:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:191:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:191",
+      "before": "ｻﾝﾎﾞｯｸｽ340",
+      "after": "サンボックス340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:192:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:192",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:193",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:194:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:194:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:194",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:195:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:195:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:195",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:196:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:196",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:197:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:197",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:198:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:198",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:199:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:199",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:200:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:200",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:201:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:201",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:202:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ330",
+      "after": "サンボックス330"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:202",
+      "before": "ｻﾝﾎﾞｯｸｽ330",
+      "after": "サンボックス330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:203:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:203",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:204:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:204",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:205:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:205",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:206:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:206",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:207:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:207",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:208",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:209:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:209",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:210:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:210",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:211:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:211",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:212:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:212",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:213:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:213",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:214:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:214",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:215:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:215",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:216:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:216",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:217:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:217",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:218:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:218",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:219:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:219",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:220:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:220",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:221:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:221:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22B"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:221",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22Bフタ"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:222",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:223:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:223",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:224:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:224",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:225:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:225",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:226:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:226:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:226",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:227:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:227",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:228:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:228",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:229:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:229",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:230:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:230",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:231:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:231",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:232:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:232",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:233:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:233",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:234:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22B"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:234",
+      "before": "ｻﾝﾎﾞｯｸｽ＃22B",
+      "after": "サンボックス#22Bフタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:235:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:235",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:236",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:237:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:237",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:238:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:238",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:239:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:239",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:240:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:240",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:241:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:241",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:242:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:242",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:243:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:243",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:244:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:244",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:245:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:245",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:246",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:247:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:247",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:248:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:248",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:249",
+      "before": "TP360",
+      "after": "TP360フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:250:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:250",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:251:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃14C",
+      "after": "サンボックス#14C"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:251",
+      "before": "ｻﾝﾎﾞｯｸｽ＃14C",
+      "after": "サンボックス#14C"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:252:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:252:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:252",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:253:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:253",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:254:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:254",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:256:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ360",
+      "after": "サンボックス360"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:256",
+      "before": "ｻﾝﾎﾞｯｸｽ360",
+      "after": "サンボックス360フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:257:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:257",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:258:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:258",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:259:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:259:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:259",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:260:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:260",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:261:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:261",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:262:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:262",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:263:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ＃14C",
+      "after": "サンボックス#14C"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:263",
+      "before": "ｻﾝﾎﾞｯｸｽ＃14C",
+      "after": "サンボックス#14C"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:264:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:264",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:265:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:265",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:266",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "supplier_alias",
+      "source": "box_list.csv:266",
+      "before": "クゼー",
+      "after": "グゼー"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:267:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:267",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:268:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:268",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:269:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:269",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:270:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:270",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:271:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:271:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:271",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:272:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:272",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:273:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:273",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:274:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:274",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:275:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:275",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:276:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:276",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:277:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:277",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:278:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:278",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:279:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:279",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:280:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:280",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:281:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:281",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:282:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:282",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:283:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:283",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:284:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:284",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:285:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:285",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:286:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:286",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:287:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:287:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:287",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:288:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:288",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:289:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:289",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:290:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:290",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:291:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:291",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:292:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:292",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:293:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:293",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:294:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:294",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:295:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:295",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:296:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:296",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:297:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:297",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:298:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:298:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:298",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:299:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:299:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:299",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:300:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:300",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:301:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:301",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:302:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:302:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:302",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:303:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:303",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:304:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:304",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:305:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:305",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:306:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:306",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:307:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:307",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:308:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:308",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:309:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:309",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:310:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:310",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:311:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:311",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:312",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:313:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:313",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:314:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:314",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:315:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:315",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:316:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ460",
+      "after": "サンボックス460"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:316",
+      "before": "ｻﾝﾎﾞｯｸｽ460",
+      "after": "サンボックス460フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:317:型式",
+      "before": "ｻﾝﾎﾞｯｸｽ460",
+      "after": "サンボックス460"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:317",
+      "before": "ｻﾝﾎﾞｯｸｽ460",
+      "after": "サンボックス460フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:318:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:318",
+      "before": "TP340",
+      "after": "TP340フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:319:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:319",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:320:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:320",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:321:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:321",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:322",
+      "before": "TP460",
+      "after": "TP460フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:323:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:323",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:324:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:324",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:325:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:325",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:326:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:326",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:327:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:327",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:328:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:328",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:329:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:329",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:330:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:330:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:330",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:331:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:331",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:332:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:332",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:333:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:333",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:334:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:334",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:335:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:335",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:336:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:336",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:337:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:337",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:338",
+      "before": "MT-273",
+      "after": "無蓋"
+    },
+    {
+      "kind": "approved_lid_override",
+      "source": "155202501000",
+      "before": "MT-273",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:339:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:339",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:340:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:340",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:341:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:341",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:342:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:342",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:343:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:343",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:344:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:344",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:345:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:345",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:346:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:346",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:347:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:347",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:348:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:348",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:349:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:349",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:350:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:350",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:351:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:351",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:352:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:352",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:353:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:353",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:354:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:354",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:355:仕入先名",
+      "before": "ＤＥＮＳＯ",
+      "after": "DENSO"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:355",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:356:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:356",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:357",
+      "before": "TP330",
+      "after": "TP330フタ"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:358:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:358",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:359:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:359",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:360:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:360:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:360",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:361:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:361",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:362:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:362",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:363:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:363",
+      "before": "　",
+      "after": "無蓋"
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:364",
+      "before": "",
+      "after": "無蓋"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:365:仕入先名",
+      "before": "ＮＯＫ",
+      "after": "NOK"
+    },
+    {
+      "kind": "csv_normalization",
+      "source": "box_list.csv:365:型式",
+      "before": "　",
+      "after": ""
+    },
+    {
+      "kind": "lid_resolution",
+      "source": "box_list.csv:365",
+      "before": "　",
+      "after": "無蓋"
+    }
+  ]
+}

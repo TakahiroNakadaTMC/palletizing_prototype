@@ -9,19 +9,23 @@ import os
 import sys
 import json
 import argparse
+import html
+from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 
 def generate_html(result_data: dict, output_html_path: str):
-    result_json_str = json.dumps(result_data, ensure_ascii=False)
+    result_json_str = json.dumps(result_data, ensure_ascii=False, allow_nan=False).replace("<", "\\u003c")
+    title = html.escape(str(result_data.get("test_name", "Palletize Result")))
+    identity_script = (Path(BASE_DIR) / "result_identity.js").read_text(encoding="utf-8")
 
     html_content = f"""<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>パレタイズ荷姿ビューワ - {result_data.get('test_name', 'Palletize Viewer')}</title>
+  <title>パレタイズ荷姿ビューワ - {title}</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -56,7 +60,7 @@ def generate_html(result_data: dict, output_html_path: str):
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <h1 class="text-sm font-bold text-white">{result_data.get('test_name', 'Palletize Result')}</h1>
+          <h1 class="text-sm font-bold text-white">{title}</h1>
           <span id="badge-valid" class="text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider"></span>
         </div>
         <p class="text-[11px] text-slate-400 mt-0.5">荷姿シミュレーション ＆ 積み順（Step-by-Step）可視化</p>
@@ -152,6 +156,10 @@ def generate_html(result_data: dict, output_html_path: str):
       <p class="text-center py-10 text-slate-500">荷姿の箱をクリックすると、詳細パラメータが表示されます。</p>
     </div>
 
+    <details open class="border-t border-slate-800 pt-2">
+      <summary class="cursor-pointer text-[11px] font-bold text-indigo-300">品番別数量・結果の方式</summary>
+      <div id="part-summary" class="mt-2 max-h-32 overflow-y-auto space-y-2 text-[10px] text-slate-300"></div>
+    </details>
     <details id="unplaced-details" open class="border-t border-slate-800 pt-2">
       <summary class="cursor-pointer text-[11px] font-bold text-amber-300">未配置の箱と理由</summary>
       <div id="unplaced-summary" class="mt-2 max-h-28 overflow-y-auto space-y-2 text-[10px] text-slate-300"></div>
@@ -212,6 +220,7 @@ def generate_html(result_data: dict, output_html_path: str):
   </script>
 
   <!-- Universal 2D/3D Canvas Renderer Script -->
+  <script>{identity_script}</script>
   <script>
     const COLOR_PALETTE = [
       {{ fill: '#4f46e5', top: '#6366f1', side: '#3730a3', stroke: '#818cf8' }},
@@ -309,9 +318,10 @@ def generate_html(result_data: dict, output_html_path: str):
     }}
 
     function processData(data) {{
+      ResultIdentity.renderSummary(data);
       boxColorMap = {{}};
       const boxes = data.boxes || [];
-      const uniqueIds = Array.from(new Set(boxes.map(b => b.box_id)));
+      const uniqueIds = Array.from(new Set(boxes.map(b => ResultIdentity.key(b))));
       uniqueIds.forEach((id, idx) => {{
         boxColorMap[id] = COLOR_PALETTE[idx % COLOR_PALETTE.length];
       }});
@@ -332,7 +342,7 @@ def generate_html(result_data: dict, output_html_path: str):
         item.className = 'flex items-center gap-2 text-slate-300';
         item.innerHTML = `
           <span class="w-3 h-3 rounded-md shadow inline-block" style="background-color: ${{c.fill}}; border: 1px solid ${{c.stroke}}"></span>
-          <span class="font-mono font-medium">${{id}}</span>
+          <span class="font-mono font-medium">${{ResultIdentity.escape(ResultIdentity.label(boxes.find(b => ResultIdentity.key(b) === id)))}}</span>
         `;
         legendList.appendChild(item);
       }});
@@ -497,7 +507,7 @@ def generate_html(result_data: dict, output_html_path: str):
           entry.className = 'border-b border-slate-800 pb-1.5';
           const heading = document.createElement('div');
           heading.className = 'font-mono text-white';
-          heading.textContent = `${{item.box_id}} × ${{item.count}}`;
+          heading.textContent = `${{ResultIdentity.label(item)}} × ${{item.count}}`;
           const reason = document.createElement('p');
           reason.className = 'mt-0.5 text-slate-400';
           reason.textContent = item.reason || '理由情報なし（古い結果データ）';
@@ -684,7 +694,7 @@ def generate_html(result_data: dict, output_html_path: str):
 
       renderList.forEach(item => {{
         const b = item.box;
-        const colors = boxColorMap[b.box_id] || COLOR_PALETTE[0];
+        const colors = boxColorMap[ResultIdentity.key(b)] || COLOR_PALETTE[0];
         const isSelected = (b.order === selectedBoxOrder);
         const lid = getLidGeometry(b);
 
@@ -697,7 +707,7 @@ def generate_html(result_data: dict, output_html_path: str):
           b.dimensions.width, b.dimensions.length, b.dimensions.height - (lid?.thickness || 0),
           customColors,
           showLabels && !lid,
-          `${{b.order}}: ${{b.box_id}}`
+          `${{b.order}}: ${{ResultIdentity.label(b)}}`
         );
 
         if (lid) {{
@@ -706,7 +716,7 @@ def generate_html(result_data: dict, output_html_path: str):
           }});
           if (showLabels) {{
             const labelPoint = project3D(lid.x + lid.width / 2, lid.y + lid.length / 2, lid.z + lid.thickness);
-            drawBadge(labelPoint.x, labelPoint.y, `${{b.order}}: ${{b.box_id}}`);
+            drawBadge(labelPoint.x, labelPoint.y, `${{b.order}}: ${{ResultIdentity.label(b)}}`);
           }}
         }}
       }});
@@ -888,7 +898,7 @@ def generate_html(result_data: dict, output_html_path: str):
       content.innerHTML = `
         <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-mono font-bold text-white text-sm">${{b.box_id}}</span>
+            <span class="font-mono font-bold text-white text-sm">${{ResultIdentity.escape(ResultIdentity.label(b))}}</span>
             <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Order #${{b.order}}</span>
           </div>
           <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
@@ -899,7 +909,7 @@ def generate_html(result_data: dict, output_html_path: str):
           </div>
           <div class="pt-2 border-t border-slate-700 text-[11px]">
             <span class="text-slate-500">蓋:</span>
-            <span class="font-mono text-amber-300 font-bold">${{b.lid_id || 'LID-010'}}</span>
+            <span class="font-mono text-amber-300 font-bold">${{ResultIdentity.escape(b.lid_id || 'LID-010')}}</span>
             <span class="text-slate-400">${{lid ? `${{Math.max(lid.width, lid.length)}}×${{Math.min(lid.width, lid.length)}}×${{lid.thickness}} mm` : 'なし'}}</span>
             ${{b.lid_fit_type && b.lid_fit_type !== 'なし' ? `<span class="ml-1 text-slate-500">(${{b.lid_fit_type}})</span>` : ''}}
           </div>
@@ -911,6 +921,7 @@ def generate_html(result_data: dict, output_html_path: str):
           ` : '<div class="pt-1 text-[11px] text-slate-500">パレット直置き</div>'}}
         </div>
       `;
+      ResultIdentity.inspect(content, b);
     }}
 
     function setupUIEvents() {{

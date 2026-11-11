@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>品番・箱モデルDB／ケース編集（切替準備用）</title>
+  <link rel="stylesheet" href="/catalog_viewer.css">
+  <script src="/catalog_viewer.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>品番・箱モデルDB／ケース編集</h1>
+    <p class="notice"><strong>品番方式の計算に対応しました。</strong>
+      保存した内容は、次回の品番方式CLI・一括実行に反映されます。元のDB・ケース・採用状態は変更しません。
+      品番方式の独立検証・3D表示も専用コマンドで利用できます。従来コマンドの既定動作は旧方式のままです。</p>
+    <nav aria-label="編集画面">
+      <a href="/catalog_viewer.html">DB編集</a>
+      <a href="/catalog_cases.html">品番ケース編集</a>
+      <a href="/">従来の画面へ戻る</a>
+    </nav>
+    <div class="toolbar">
+      <button id="reload" type="button">保存済みデータを再読み込み</button>
+      <button id="save" type="button" disabled>品番方式の変更をまとめて保存</button>
+      <span id="dirty" role="status">読み込み中</span>
+    </div>
+    <p id="feedback" role="status" aria-live="polite"></p>
+  </header>
+  <main>
+    <div id="db-tabs" role="tablist" aria-label="DBの種類">
+      <button type="button" role="tab" data-tab="parts" aria-controls="records">品番・箱種DB</button>
+      <button type="button" role="tab" data-tab="models" aria-controls="records">箱モデルDB</button>
+      <button type="button" role="tab" data-tab="lids" aria-controls="records">蓋DB</button>
+      <button type="button" role="tab" data-tab="pallets" aria-controls="records">パレットDB</button>
+    </div>
+    <h2 id="section-title">読み込み中</h2>
+    <p id="help"></p>
+    <div class="toolbar">
+      <label>検索 <input id="search" type="search" placeholder="品番・仕入先・箱名称など"></label>
+      <button id="add" type="button" disabled>追加</button>
+      <button id="approve-all" type="button" hidden>全て採用（準備用）</button>
+      <button id="approve-none" type="button" hidden>全て解除（準備用）</button>
+    </div>
+    <p id="counts"></p>
+    <div id="records" class="table-wrap" role="tabpanel" aria-label="登録一覧" tabindex="0">
+      <table><thead id="table-head"></thead><tbody id="table-body"></tbody></table>
+    </div>
+  </main>
+  <dialog id="editor" aria-labelledby="editor-title">
+    <form id="edit-form">
+      <h2 id="editor-title"></h2>
+      <p>入力を確定しても、上の「まとめて保存」を押すまではファイルに保存されません。</p>
+      <p id="form-error" role="alert"></p>
+      <div id="fields" class="fields"></div>
+      <section id="case-lines" hidden>
+        <h3>投入品番と数量</h3>
+        <p>箱・モデル・蓋は品番DBから自動表示します。ケースで蓋を変更することはできません。</p>
+        <div id="line-list"></div>
+        <button id="add-line" type="button">品番行を追加</button>
+        <p id="assignment-help"></p>
+      </section>
+      <div class="toolbar">
+        <button id="submit-edit" type="submit">入力を確定</button>
+        <button id="cancel-edit" type="button">キャンセル</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

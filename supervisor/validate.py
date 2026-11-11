@@ -20,6 +20,8 @@ import os
 import sys
 import glob
 import json
+import argparse
+from pathlib import Path
 from datetime import date
 from typing import List, Dict, Tuple, Any, Optional
 
@@ -237,11 +239,16 @@ def resolve_pallet_dims(pallet_data: Any, violations: List[str]) -> Dict[str, fl
 
 
 class PalletizeValidator:
-    def __init__(self, box_db: Dict[str, Any], lid_db: Dict[str, Any]):
-        self.box_db = box_db
-        self.lid_db = lid_db
+    def __init__(self, box_db: Dict[str, Any], lid_db: Dict[str, Any],
+                 catalog: Optional[Dict[str, Any]] = None, revision: Optional[str] = None,
+                 pallet_db: Optional[Dict[str, Any]] = None):
+        self.box_db = catalog["models"] if catalog is not None else box_db
+        self.lid_db = catalog["lids"] if catalog is not None else lid_db
+        self.catalog = catalog
+        self.revision = revision
+        self.pallet_db = pallet_db
         self.default_lid_id = next(
-            (lid_id for lid_id, lid in lid_db.items() if lid.get("type") == "NONE"),
+            (lid_id for lid_id, lid in self.lid_db.items() if lid.get("type") == "NONE"),
             "LID-010"
         )
 
@@ -289,8 +296,46 @@ class PalletizeValidator:
                 test_name, ["結果データがオブジェクト形式ではありません"], []
             )
 
+        if "test_name" not in data and data.get("input_mode") != "part_number" and data.get("schema_version") != 2:
+            data["test_name"] = test_name
+        return self.validate_data(data)
+
+    def validate_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """結果スナップショットを検証する。品番の主張はDBとケースで照合する。"""
+        if data.get("input_mode") == "part_number" or data.get("schema_version") == 2:
+            from supervisor.catalog_validation import resolve_catalog_result
+            try:
+                resolved, part_counts = resolve_catalog_result(
+                    data, self.catalog, self.revision, self.pallet_db)
+                identity_valid = True
+                report = self._validate_geometry(resolved)
+            except (ValueError, KeyError, TypeError, OverflowError) as error:
+                report = self._empty_report(
+                    data.get("test_name", "unknown"), ["品番結果の検証エラー: " + str(error)], [])
+                part_counts = []
+                identity_valid = False
+            report.update(input_mode="part_number", part_counts=part_counts,
+                          identity_valid=identity_valid,
+                          catalog_revision=data.get("catalog_revision"),
+                          unplaced_boxes=data.get("unplaced_boxes") if identity_valid else [],
+                          input_boxes_count=data.get("input_boxes_count") if identity_valid else None,
+                          unplaced_boxes_count=data.get("unplaced_boxes_count") if identity_valid else None)
+            if part_counts:
+                identities = {box["order"]: box for box in data["boxes"]}
+                for field in ("support_boxes", "multi_corner_boxes"):
+                    for item in report["top_support"].get(field, []):
+                        source = identities[item["order"]]
+                        item.update({key: source[key] for key in (
+                            "box_id", "part_number", "supplier_name", "box_name", "box_model_id", "lid_id")})
+            return report
+        if self.catalog is not None:
+            return self._empty_report(data.get("test_name", "unknown"),
+                                      ["品番方式の検証では旧方式の結果を受け付けません"], [])
+        return self._validate_geometry(data)
+
+    def _validate_geometry(self, data: Dict[str, Any]) -> Dict[str, Any]:
         data = normalize_result_coordinates(data)
-        test_name = data.get("test_name", test_name)
+        test_name = data.get("test_name", "unknown")
 
         violations: List[str] = []
         warnings: List[str] = []
@@ -497,6 +542,23 @@ class PalletizeValidator:
             if not supporting_boxes and pallet_support_area <= 0.0:
                 violations.append(f"Order #{order} ({b['box_id']}): 空中浮遊エラー（パレットまたは下段に支持する箱が存在しません）")
                 continue
+
+            if data.get("input_mode") == "part_number":
+                upper_bounds = get_footprint_bounds(b)
+                actual_support = []
+                if not is_on_pallet:
+                    for other in boxes:
+                        lower_bounds = get_footprint_bounds(other)
+                        if (other["order"] < order
+                                and abs(other["position"]["z"] + other["dimensions"]["height"] - (z + fitting)) <= 1.0
+                                and intersects_2d_rect(
+                                    upper_bounds[0], upper_bounds[1],
+                                    upper_bounds[2] - upper_bounds[0], upper_bounds[3] - upper_bounds[1],
+                                    lower_bounds[0], lower_bounds[1],
+                                    lower_bounds[2] - lower_bounds[0], lower_bounds[3] - lower_bounds[1])):
+                            actual_support.append(other["order"])
+                if sorted(b["supported_by"]) != actual_support:
+                    violations.append(f"Order #{order}: 下段支持番号が配置座標と一致しません")
 
             if not is_on_pallet:
                 upper_group = self._column_stack_group(b)
@@ -732,4 +794,18 @@ def run_supervisor_validation():
     print(f"📄 総合検証レポートを出力しました: {REPORT_PATH}")
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="荷姿制約の独立検証")
+    parser.add_argument("--catalog-results", type=Path, help="品番方式の一括結果フォルダ")
+    parser.add_argument("--report-dir", type=Path, help="品番方式レポートの新規保存フォルダ")
+    args = parser.parse_args()
+    if args.catalog_results is not None:
+        if args.report_dir is None:
+            parser.error("--catalog-resultsでは--report-dirを指定してください")
+        from supervisor.catalog_validation import validate_catalog_run
+        try:
+            sys.exit(validate_catalog_run(Path(PROJECT_ROOT), args.catalog_results, args.report_dir))
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            parser.exit(1, "品番方式の独立検証エラー: {}\n".format(error))
+    if args.report_dir is not None:
+        parser.error("--report-dirは--catalog-resultsと併用してください")
     run_supervisor_validation()

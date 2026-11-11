@@ -15,6 +15,7 @@ import re
 import math
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import urllib.parse
+from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
@@ -26,6 +27,7 @@ from box_research.database_validation import (
     validate_case_references,
     validate_pallet_database,
 )
+from box_research.catalog_http import handle_catalog
 
 BOX_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "box_db.json")
 LID_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "lid_db.json")
@@ -121,6 +123,8 @@ class TestCaseViewerHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+        if handle_catalog(self, Path(PROJECT_ROOT), "GET", parsed.path):
+            return
 
         # API: 箱DBの取得
         if parsed.path == "/api/boxes":
@@ -195,6 +199,8 @@ class TestCaseViewerHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
+        if handle_catalog(self, Path(PROJECT_ROOT), "POST", parsed.path):
+            return
 
         if parsed.path == "/api/testcase/save_all":
             content_length = int(self.headers.get("Content-Length", 0))

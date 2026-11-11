@@ -1,0 +1,36 @@
+:root { color-scheme: light; font-family: "Segoe UI", "Meiryo", sans-serif; color: #17233b; background: #f2f5fa; }
+body { margin: 0; }
+header, main { max-width: 1440px; margin: auto; padding: 1rem 1.5rem; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.2rem; }
+.notice { border-left: 5px solid #b66b00; background: #fff3d4; padding: 1rem; }
+nav, .toolbar, [role="tablist"] { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin: 1rem 0; }
+a { color: #1740a6; }
+button, input, select, textarea { font: inherit; border: 1px solid #8b97ab; border-radius: 5px; padding: .5rem; background: white; color: inherit; }
+button { cursor: pointer; }
+button:hover { background: #e3ecff; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button[aria-selected="true"], #save { background: #2548a8; color: white; }
+:focus-visible { outline: 3px solid #b66b00; outline-offset: 2px; }
+.table-wrap { overflow: auto; background: white; border: 1px solid #c6cfdf; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+th, td { padding: .65rem; border-bottom: 1px solid #d5dce7; text-align: left; vertical-align: top; }
+th { background: #e8eef8; white-space: nowrap; }
+td button { margin: 0 .3rem .3rem 0; white-space: nowrap; }
+.error, #form-error { color: #a71c24; white-space: pre-wrap; }
+.success { color: #166239; }
+#feedback { min-height: 1.5em; white-space: pre-wrap; }
+dialog { max-width: 900px; width: calc(100% - 4rem); max-height: 85vh; border: 1px solid #8593aa; border-radius: 8px; }
+dialog::backdrop { background: #17233b88; }
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.fields > label { display: flex; flex-direction: column; gap: .4rem; }
+fieldset { border: 1px solid #c6cfdf; }
+.check-list { max-height: 200px; overflow: auto; }
+.check-list label { display: block; margin: .4rem; }
+.case-line { padding: .75rem; border: 1px solid #c6cfdf; margin: .75rem 0; }
+.case-line select { max-width: 100%; width: 32rem; }
+.case-line input[type="number"] { width: 5rem; }
+.case-line p { margin: .4rem 0; }
+.muted { color: #586278; font-size: .9rem; }
+[hidden] { display: none !important; }
+@media (max-width: 600px) { header, main { padding: .75rem; } dialog { width: calc(100% - 2rem); } }
