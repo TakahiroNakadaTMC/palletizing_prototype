@@ -13,7 +13,7 @@ from collections import Counter
 from unittest.mock import patch
 
 from algorithm_programmer.catalog import run_catalog_case
-from algorithm_programmer.cli import resolve_box_specs, resolve_pallet_spec
+from algorithm_programmer.cli import resolve_pallet_spec
 from algorithm_programmer.models import BoxSpec, PlacedBox
 from algorithm_programmer.palletizer import Palletizer
 from box_research.catalog_store import catalog_pallets, load_catalog
@@ -259,7 +259,7 @@ class CatalogCalculationTests(unittest.TestCase):
                     box["box_model_id"] != result["boxes"][order - 1]["box_model_id"]
                     for box in result["boxes"] for order in box["supported_by"]))
 
-    def test_cli_saved_and_standalone_part_cases_and_legacy(self):
+    def test_cli_saved_and_standalone_part_cases(self):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory) / "result.json"
             command = [sys.executable, str(ROOT / "algorithm_programmer" / "cli.py")]
@@ -275,10 +275,18 @@ class CatalogCalculationTests(unittest.TestCase):
                                         capture_output=True, encoding="utf-8")
             self.assertEqual(standalone.returncode, 0, standalone.stderr)
             self.assertEqual(json.loads(target.read_text(encoding="utf-8")), saved_data)
-            legacy = subprocess.run(command + [str(ROOT / "test_programmer" / "test_cases" / "othics_6.json"),
-                                               "-o", str(target)], capture_output=True, encoding="utf-8")
-            self.assertEqual(legacy.returncode, 0, legacy.stderr)
-            self.assertNotIn("schema_version", json.loads(target.read_text(encoding="utf-8")))
+            legacy_case = Path(directory) / "legacy_case.json"
+            legacy_case.write_text(json.dumps({
+                "name": "legacy",
+                "supplier_name": case["supplier_name"],
+                "pallet_id": case["pallet_id"],
+                "pallet": case["pallet"],
+                "box_list": [{"box_id": "TP-331", "count": 1}],
+            }, ensure_ascii=False), encoding="utf-8")
+            legacy = subprocess.run(command + [str(legacy_case), "-o", str(target)],
+                                    capture_output=True, encoding="utf-8")
+            self.assertNotEqual(legacy.returncode, 0)
+            self.assertIn("廃止", legacy.stderr)
             invalid = subprocess.run(command + ["--catalog-case", "UNKNOWN"],
                                      capture_output=True, encoding="utf-8")
             self.assertNotEqual(invalid.returncode, 0)
@@ -291,12 +299,6 @@ class CatalogCalculationTests(unittest.TestCase):
                 capture_output=True, encoding="utf-8")
             self.assertEqual(invalid_geometry.returncode, 1, invalid_geometry.stderr)
             self.assertFalse(json.loads(target.read_text(encoding="utf-8"))["summary"]["is_valid"])
-            protected = subprocess.run(
-                command + ["--catalog-case", "othics_6", "-o",
-                           str(ROOT / "tester" / "results" / "protected_test.json")],
-                capture_output=True, encoding="utf-8")
-            self.assertNotEqual(protected.returncode, 0)
-            self.assertIn("旧結果フォルダ", protected.stderr)
 
     def test_batch_isolated_outputs_adoption_errors_and_manifest(self):
         data = copy.deepcopy(self.catalog)
@@ -344,10 +346,7 @@ class CatalogCalculationTests(unittest.TestCase):
                 self.assertEqual(manifest["counts"]["errors"], 0)
                 self.assertTrue((output / "result_one.json").exists())
 
-    def test_all_saved_cases_conserve_parts_and_match_independent_safety_and_legacy(self):
-        boxes = json.loads((ROOT / "box_research" / "box_db.json").read_text(encoding="utf-8"))
-        lids = json.loads((ROOT / "box_research" / "lid_db.json").read_text(encoding="utf-8"))
-        pallets = json.loads((ROOT / "box_research" / "pallet_db.json").read_text(encoding="utf-8"))
+    def test_all_saved_cases_conserve_parts_and_match_independent_safety(self):
         for name, case in self.catalog["cases"]["test_cases"].items():
             with self.subTest(case=name):
                 result = self.calculate(case)
@@ -355,13 +354,8 @@ class CatalogCalculationTests(unittest.TestCase):
                 independent = self.independently_validate(result)
                 self.assertEqual(independent["is_pass"], result["summary"]["is_valid"],
                                  independent["violations"])
-                original = json.loads(
-                    (ROOT / "test_programmer" / "test_cases" / (name + ".json")).read_text(encoding="utf-8"))
-                specs, rows = resolve_box_specs(original["box_list"], boxes, lids)
-                baseline = Palletizer(specs, resolve_pallet_spec(original, pallets)).run(name, rows).to_dict()
-                if baseline["summary"]["is_valid"]:
-                    self.assertTrue(result["summary"]["is_valid"], result["summary"]["violations"])
-                self.assertGreaterEqual(result["placed_boxes_count"], baseline["placed_boxes_count"])
+                self.assertEqual(result["input_mode"], "part_number")
+                self.assertEqual(result["schema_version"], 2)
 
 
 if __name__ == "__main__":

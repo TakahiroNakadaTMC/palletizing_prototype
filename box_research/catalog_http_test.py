@@ -6,7 +6,7 @@ import threading
 import unittest
 from unittest.mock import patch
 
-from box_research.catalog_store import prepare_cases
+from box_research.catalog_store import FILES
 from box_research.catalog_store_test import CatalogFixture
 from box_research import serve_viewer
 from test_programmer import serve_testcase_viewer
@@ -15,20 +15,16 @@ from test_programmer import serve_testcase_viewer
 class CatalogHttpTest(CatalogFixture, unittest.TestCase):
     def setUp(self):
         super().setUp()
-        prepare_cases(self.root)
-        for name, value in {
-            "BASE_DIR": str(self.db),
-            "BOX_DB_PATH": str(self.db / "box_db.json"),
-            "LID_DB_PATH": str(self.db / "lid_db.json"),
-            "PALLET_DB_PATH": str(self.db / "pallet_db.json"),
-            "TEST_CASES_DIR": str(self.root / "test_programmer" / "test_cases"),
-        }.items():
-            patcher = patch.object(serve_viewer, name, value)
+        self.test_programmer_dir = self.root / "test_programmer"
+        self.test_programmer_dir.mkdir()
+        patches = (
+            patch.object(serve_viewer, "BASE_DIR", str(self.root / "box_research")),
+            patch.object(serve_testcase_viewer, "BASE_DIR", str(self.test_programmer_dir)),
+            patch.object(serve_testcase_viewer, "PROJECT_ROOT", str(self.root)),
+        )
+        for patcher in patches:
             patcher.start()
             self.addCleanup(patcher.stop)
-        patcher = patch.object(serve_testcase_viewer, "PROJECT_ROOT", str(self.root))
-        patcher.start()
-        self.addCleanup(patcher.stop)
         self.servers = []
         for handler in (serve_viewer.ViewerRequestHandler, serve_testcase_viewer.TestCaseViewerHandler):
             server = socketserver.TCPServer(("127.0.0.1", 0), handler)
@@ -57,12 +53,12 @@ class CatalogHttpTest(CatalogFixture, unittest.TestCase):
         finally:
             connection.close()
 
-    def read_catalog(self):
-        status, _, result = self.request("GET", "/api/catalog")
+    def read_catalog(self, server_index=0):
+        status, _, result = self.request("GET", "/api/catalog", server_index=server_index)
         self.assertEqual(status, 200)
         return result
 
-    def test_assets_and_catalog_available_on_both_servers(self):
+    def test_new_catalog_assets_and_data_are_available_on_both_servers(self):
         for index in (0, 1):
             for path, text in (
                 ("/catalog_viewer.html", b'lang="ja"'),
@@ -74,49 +70,57 @@ class CatalogHttpTest(CatalogFixture, unittest.TestCase):
                 self.assertEqual(status, 200)
                 self.assertEqual(headers["Cache-Control"], "no-store")
                 self.assertIn(text, body)
-            status, _, data = self.request("GET", "/api/catalog", server_index=index)
-            self.assertEqual(status, 200)
+            data = self.read_catalog(index)
             self.assertEqual(data["cases"]["test_cases"]["case"]["box_list"],
                              [{"part_number": "00001", "count": 10}])
+            self.assertIn("PALLET-A", data["pallets"])
 
-    def test_crlf_checkout_loads_on_both_servers_and_real_edits_are_rejected(self):
-        before = self.read_catalog()
-        for path in self.root.rglob("*"):
-            if path.is_file() and path.suffix in (".json", ".csv"):
-                path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
-        for index in (0, 1):
-            status, _, data = self.request("GET", "/api/catalog", server_index=index)
-            self.assertEqual(status, 200)
-            self.assertEqual(data, before)
-        path = self.db / "box_db.json"
-        changed = json.loads(path.read_text(encoding="utf-8"))
-        changed["NP22C"]["height"] += 1
-        self.write_json(path, changed)
-        for index in (0, 1):
-            status, _, data = self.request("GET", "/api/catalog", server_index=index)
-            self.assertEqual(status, 400)
-            self.assertIn("元データが変更", data["message"])
+    def test_default_and_legacy_ui_urls_open_the_new_editors(self):
+        for index, expected in ((0, "/catalog_viewer.html"), (1, "/catalog_cases.html")):
+            for path in ("/", "/index.html"):
+                status, headers, _ = self.request("GET", path, server_index=index)
+                self.assertEqual(status, 302)
+                self.assertEqual(headers["Location"], expected)
+        for index, old_path, expected in (
+            (0, "/box_db_viewer.html", "/catalog_viewer.html"),
+            (0, "/lid_db_viewer.html", "/catalog_viewer.html"),
+            (1, "/testcase_viewer.html", "/catalog_cases.html"),
+        ):
+            status, headers, _ = self.request("GET", old_path, server_index=index)
+            self.assertEqual(status, 302)
+            self.assertEqual(headers["Location"], expected)
 
-    def test_case_save_preserves_legacy_and_reports_stale_revisions(self):
+    def test_old_apis_are_explicitly_retired(self):
+        for index, route in (
+            (0, "/api/boxes"), (0, "/api/lids"), (0, "/api/pallets"),
+            (1, "/api/testcases"), (1, "/api/testcase/approval_state"),
+        ):
+            status, _, body = self.request("GET", route, server_index=index)
+            self.assertEqual(status, 410)
+            self.assertEqual(body["status"], "error")
+        for index, route in (
+            (0, "/api/save"), (0, "/api/pallets/save_all"),
+            (1, "/api/testcase/save_all"),
+        ):
+            status, _, body = self.request("POST", route, {}, server_index=index)
+            self.assertEqual(status, 410)
+            self.assertEqual(body["status"], "error")
+
+    def test_case_save_uses_catalog_and_rejects_stale_revisions(self):
         data = self.read_catalog()
-        before = {path: path.read_bytes() for path in
-                  (self.root / "test_programmer").rglob("*.json")}
         data["cases"]["test_cases"]["case"]["box_list"][0]["count"] = 7
         payload = {"revision": data["revision"], "cases": data["cases"]}
         self.assertEqual(self.request("POST", "/api/catalog/save", payload)[0], 200)
         saved = self.read_catalog()
         self.assertEqual(saved["cases"]["test_cases"]["case"]["box_list"][0]["count"], 7)
         self.assertEqual(self.request("POST", "/api/catalog/save", payload)[0], 400)
-        self.assertEqual(before, {path: path.read_bytes() for path in before})
 
     def test_invalid_saves_are_rejected_without_writing(self):
         data = self.read_catalog()
         before = self.snapshot()
         for key, update in (
             ("parts", lambda records: records["00001"].update(lid_id="UNKNOWN")),
-            ("cases", lambda bundle: bundle["test_cases"]["case"]["box_list"][0].update(lid_id="無蓋")),
-            ("cases", lambda bundle: bundle["test_cases"]["case"]["box_list"][0].update(lid_id="サンボックス#22Bフタ")),
-            ("cases", lambda bundle: bundle["test_cases"]["case"].update(supplier_name="別会社")),
+            ("cases", lambda bundle: bundle["test_cases"]["case"]["box_list"][0].update(count=501)),
             ("cases", lambda bundle: bundle["approval_state"].clear()),
         ):
             draft = copy.deepcopy(data[key])
@@ -146,7 +150,7 @@ class CatalogHttpTest(CatalogFixture, unittest.TestCase):
                                      {"revision": saved["revision"], "parts": saved["parts"]})[0], 200)
 
     def test_model_rename_requires_confirmed_plan(self):
-        payload = {"old_name": "サンボックス#22H", "new_name": "変更後"}
+        payload = {"old_name": "MODEL-A", "new_name": "MODEL-B"}
         before = self.snapshot()
         status, _, plan = self.request("POST", "/api/catalog/rename-preview", payload)
         self.assertEqual(status, 200)
@@ -156,15 +160,106 @@ class CatalogHttpTest(CatalogFixture, unittest.TestCase):
             **payload, "confirmation": "invalid"})[0], 400)
         self.assertEqual(self.request("POST", "/api/catalog/rename", {
             **payload, "confirmation": plan["confirmation"]})[0], 200)
-        self.assertEqual(self.read_catalog()["parts"]["00001"]["box_model_id"], "変更後")
+        self.assertEqual(self.read_catalog()["parts"]["00001"]["box_model_id"], "MODEL-B")
 
-    def test_deleting_used_part_or_lid_is_rejected(self):
+    def test_regular_api_rejects_coordinated_rename_and_bypass_fields(self):
         data = self.read_catalog()
-        for key, identifier in (("parts", "00001"), ("lids", "サンボックス#22Bフタ")):
-            draft = copy.deepcopy(data[key])
-            del draft[identifier]
-            self.assertEqual(self.request("POST", "/api/catalog/save",
-                                         {"revision": data["revision"], key: draft})[0], 400)
+        before = self.snapshot()
+        models, parts = copy.deepcopy(data["models"]), copy.deepcopy(data["parts"])
+        model = models.pop("MODEL-A")
+        model["id"] = "MODEL-B"
+        models["MODEL-B"] = model
+        parts["00001"]["box_model_id"] = "MODEL-B"
+        payload = {"revision": data["revision"], "models": models, "parts": parts}
+        status, _, body = self.request("POST", "/api/catalog/save", payload)
+        self.assertEqual(status, 400)
+        self.assertIn("名前変更", body["message"])
+        self.assertEqual(self.snapshot(), before)
+        for field in ("rename", "confirmation", "migration"):
+            status, _, _ = self.request("POST", "/api/catalog/save", {**payload, field: {}})
+            self.assertEqual(status, 400)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_api_rejects_reversed_pallet_dimensions_without_writing(self):
+        data = self.read_catalog()
+        pallets = copy.deepcopy(data["pallets"])
+        pallets["PALLET-A"].update(length=900, width=1000)
+        before = self.snapshot()
+        status, _, body = self.request("POST", "/api/catalog/save", {
+            "revision": data["revision"], "pallets": pallets,
+        })
+        self.assertEqual(status, 400)
+        self.assertIn("length L", body["message"])
+        self.assertEqual(self.snapshot(), before)
+
+    def test_pallet_crud_persists_to_existing_database(self):
+        data = self.read_catalog()
+        pallets = copy.deepcopy(data["pallets"])
+        pallets["PALLET-B"] = {
+            "id": "PALLET-B", "model": "Pallet B", "length": 1100,
+            "width": 900, "height": 125, "suppliers": ["Supplier A"],
+        }
+        status, _, _ = self.request("POST", "/api/catalog/save", {
+            "revision": data["revision"], "pallets": pallets,
+        })
+        self.assertEqual(status, 200)
+        on_disk = json.loads(self.pallet_path.read_text(encoding="utf-8"))
+        self.assertEqual(on_disk["pallets"]["PALLET-B"]["length"], 1100)
+
+        updated = self.read_catalog()
+        pallets = copy.deepcopy(updated["pallets"])
+        pallets["PALLET-B"]["height"] = 140
+        self.assertEqual(self.request("POST", "/api/catalog/save", {
+            "revision": updated["revision"], "pallets": pallets,
+        })[0], 200)
+        updated = self.read_catalog()
+        pallets = copy.deepcopy(updated["pallets"])
+        del pallets["PALLET-B"]
+        self.assertEqual(self.request("POST", "/api/catalog/save", {
+            "revision": updated["revision"], "pallets": pallets,
+        })[0], 200)
+        self.assertNotIn("PALLET-B", json.loads(
+            self.pallet_path.read_text(encoding="utf-8"))["pallets"])
+
+    def test_pallet_deletion_and_supplier_changes_respect_case_references(self):
+        data = self.read_catalog()
+        case_bundle = copy.deepcopy(data["cases"])
+        case_bundle["test_cases"]["case"]["pallet_id"] = "PALLET-A"
+        self.assertEqual(self.request("POST", "/api/catalog/save", {
+            "revision": data["revision"], "cases": case_bundle,
+        })[0], 200)
+        referenced = self.read_catalog()
+        pallets = copy.deepcopy(referenced["pallets"])
+        del pallets["PALLET-A"]
+        before = self.pallet_path.read_bytes()
+        status, _, body = self.request("POST", "/api/catalog/save", {
+            "revision": referenced["revision"], "pallets": pallets,
+        })
+        self.assertEqual(status, 400)
+        self.assertIn("パレット", body["message"])
+        self.assertEqual(self.pallet_path.read_bytes(), before)
+
+        pallets = copy.deepcopy(referenced["pallets"])
+        pallets["PALLET-A"]["suppliers"] = ["Other supplier"]
+        self.assertEqual(self.request("POST", "/api/catalog/save", {
+            "revision": referenced["revision"], "pallets": pallets,
+        })[0], 400)
+
+    def test_stale_catalog_revision_rejects_pallet_edit_from_other_server(self):
+        first = self.read_catalog(0)
+        second = self.read_catalog(1)
+        pallets = copy.deepcopy(first["pallets"])
+        pallets["PALLET-A"]["height"] += 1
+        self.assertEqual(self.request("POST", "/api/catalog/save", {
+            "revision": first["revision"], "pallets": pallets,
+        }, server_index=0)[0], 200)
+        stale = copy.deepcopy(second["pallets"])
+        stale["PALLET-A"]["height"] += 2
+        status, _, body = self.request("POST", "/api/catalog/save", {
+            "revision": second["revision"], "pallets": stale,
+        }, server_index=1)
+        self.assertEqual(status, 400)
+        self.assertIn("別の画面", body["message"])
 
     def test_storage_and_read_errors_are_explicit(self):
         data = self.read_catalog()
@@ -173,7 +268,7 @@ class CatalogHttpTest(CatalogFixture, unittest.TestCase):
                                            {"revision": data["revision"], "parts": data["parts"]})
             self.assertEqual(status, 500)
             self.assertIn("disk failure", body["message"])
-        path = self.db / "catalog" / "box_type_db.json"
+        path = self.catalog_dir / FILES["parts"]
         path.write_text("{", encoding="utf-8")
         status, _, body = self.request("GET", "/api/catalog")
         self.assertEqual(status, 400)
@@ -192,25 +287,6 @@ class CatalogHttpTest(CatalogFixture, unittest.TestCase):
             self.assertIn("重複", body["message"])
         finally:
             connection.close()
-
-    def test_legacy_pallet_save_protects_staged_case_references(self):
-        path = self.db / "pallet_db.json"
-        pallets = json.loads(path.read_text(encoding="utf-8"))
-        pallets["pallets"]["NEW"] = {
-            "id": "NEW", "model": "NEW", "length": 1200, "width": 1000,
-            "height": 130, "suppliers": ["オティックス"],
-        }
-        self.write_json(path, pallets)
-        data = self.read_catalog()
-        data["cases"]["test_cases"]["case"]["pallet_id"] = "NEW"
-        self.assertEqual(self.request("POST", "/api/catalog/save",
-                                     {"revision": data["revision"], "cases": data["cases"]})[0], 200)
-        del pallets["pallets"]["NEW"]
-        before = path.read_bytes()
-        status, _, body = self.request("POST", "/api/pallets/save_all", pallets)
-        self.assertEqual(status, 400)
-        self.assertIn("パレット", body["message"])
-        self.assertEqual(path.read_bytes(), before)
 
 
 if __name__ == "__main__":

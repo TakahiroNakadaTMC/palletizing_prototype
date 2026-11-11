@@ -2,7 +2,6 @@ import json
 import unittest
 from collections import Counter
 from dataclasses import asdict, replace
-from unittest.mock import mock_open, patch
 
 from algorithm_programmer.models import BoxSpec, PlacedBox
 from algorithm_programmer.palletizer import Palletizer
@@ -45,8 +44,7 @@ class CornerSupportTests(unittest.TestCase):
         if current:
             data['coordinate_reference'] = 'combined_footprint_min_xy_top_z'
             data['boxes'] = [b.to_dict() for b in lowers + [upper]]
-        with patch('builtins.open', mock_open(read_data=json.dumps(data))):
-            return validator.validate_case('fixture.json')['violations']
+        return validator.validate_geometry_data(data)['violations']
 
     def test_zero_one_two_four_corners(self):
         lower = box()

@@ -1,306 +1,68 @@
 # GitHub Copilot Instructions
 
-<!-- markdownlint-configure-file { "MD013": { "tables": false } } -->
+このプロジェクトは嵌合・リブ付き空箱のパレタイズ試作です。
+現行仕様は [README](../README.md) と [荷姿制約](../constraints/constraints.md) を正とします。
 
-このドキュメントは、パレタイズアルゴリズム試作プロジェクト全体に対して GitHub Copilot が常時適用すべき開発規約、制約、ループエンジニアリング手順、およびコーディング規約を定義する。
+## 運用データ
 
-詳細な仕様・制約については [`README.md`](../README.md) を参照。
+- 品番方式だけを使用します。旧DB・旧ケース・旧結果の編集、実行、検証、閲覧は廃止済みです。
+- 品番DB：`box_research/catalog/box_type_db.json`
+- 共通モデルDB：`box_research/catalog/box_model_db.json`
+- 蓋DB：`box_research/catalog/lid_db.json`
+- ケース・採用状態：`box_research/catalog/test_cases.json`
+- パレットDB：`box_research/pallet_db.json`
+- 移行・モデル名称変更履歴：`box_research/catalog/migration.json`
+- 元CSVと移行時の対応表は資料です。運用データの自動再生成に使用しません。
+- ケースの `box_list` は `part_number` と `count` を指定します。蓋は品番から自動決定します。
+- 品番は全仕入先を通じて一意です。箱名称の重複は許可します。
+- 共通モデル名はIDと表示名を兼ねます。変更は影響確認付きの保存処理を利用します。
+- DB編集では正規化・参照検証・版照合・保存失敗時の復元を迂回しません。
+- 英数字は半角、半角カタカナは全角にします。記号等の扱いは既存の `normalize_id` に従います。
+- LF/CRLFの違いでは内容変更と判断しません。実際の内容変更は照合エラーとして扱います。
 
----
+## 実行・検証
 
-## Build, Test & Validation
-
-### Running the Full Loop
-
-```bash
-# 全フェーズ一括実行（テスト生成→テスト実行→検証→可視化）
-./scripts/run_loop_cycle.sh
+```powershell
+python .\box_research\serve_viewer.py
+python .\test_programmer\serve_testcase_viewer.py
+python .\tester\run_tests.py --output-dir .\tester\catalog_results\my_run
+python .\supervisor\validate.py --results-dir .\tester\catalog_results\my_run --report-dir .\supervisor\catalog_reports\my_run
+python .\visualizer\serve_3d_viewer.py --results-dir .\tester\catalog_results\my_run
 ```
 
-実行時間: 約2～5分（テストケース数・アルゴリズムの複雑さに依存）
+- 結果・レポートの出力先は実行ごとに新規フォルダを使います。
+- 採用状態は実行対象を示し、制約PASSを意味しません。
+- 終了コードだけでなく実行一覧、PASS/FAIL/ERROR、投入・配置・未配置数を確認します。
+- 独立検証は実行一覧と現在のDB・ケース・パレットとの整合性を確認します。
+- 既存の古い結果を今回の結果として使いません。DB編集後は再計算します。
+- 単一ケースは `python .\algorithm_programmer\cli.py --catalog-case othics_6 -o <出力JSON>`。
+- 廃止済みのケース生成、一括ループ、旧形式への変換手順を復活させません。
 
-### Individual Commands
+## 計算と安全条件
 
-| コマンド | 説明 | 入力 | 出力 |
-|---------|------|------|------|
-| `python box_research/serve_viewer.py` | 箱・蓋DBビューア起動 | — | ブラウザで `http://localhost:8081` |
-| `python tester/run_tests.py` | 採用済みテストケースを実行 | `test_programmer/test_cases/`、採用状態 | `tester/results/result_*.json` |
-| `python3 supervisor/validate.py` | 制約バリデーション | `tester/results/*.json` | `supervisor/reports/validation_report.md` |
-| `python3 visualizer/visualize.py <result.json> [-o <output.html>]` | 結果1件の3D可視化（スタンドアロンHTML生成） | 結果JSON | HTMLファイル |
-| `python3 visualizer/serve_3d_viewer.py` | 統合ビューワサーバー起動 | — | ブラウザで `http://localhost:8082` |
+- 物理的な段積み判定には共通モデルを使い、結果には品番・箱名称・仕入先・モデル・蓋を残します。
+- 同モデル・同蓋をまとめて計算し、積み順へ入力順で品番を配分します。比率平準化は未実装です。
+- TP箱の異モデル段積みを一律禁止しません。嵌合・支持・干渉条件は維持します。
+- 非TP箱は同モデル・外形位置一致・適切な単一支持が必要です。
+- 外嵌め蓋付きTP箱は同蓋・箱蓋外形位置一致・単一支持が必要です。異モデルも許可されます。
+- 回転は0/90度のみ、天地固定。上段箱の `fitting_depth` を使います。
+- 最大外形L/W/Hはケース設定以下で境界値を含みます。固定800mm下限はありません。
+- はみ出しは確認情報。底面支持率85%以上、センタリング各方向0.01mm以内は必須です。
+- 直接支持する下段が幅・奥行きの両方で上段より1.0mm超大きい組合せは禁止です。
+- 上載せ平パレットの支持・高さ差・連続辺・中央接触条件は制約仕様に従います。
+- Supervisorは計算エンジンの合否を信用せず、独立して再検証します。
+- 実耐荷重・たわみ・輸送安定性を保証するものではありません。
 
-### Lid Database Management **[NEW: Phase 2]**
+## 開発規約
 
-蓋データベースを管理するUIツール：
-
-```bash
-# サーバー起動
-python box_research/serve_viewer.py
-
-# ブラウザで以下のURLにアクセス:
-# - 箱DBビューア: http://localhost:8081/box_db_viewer.html
-# - 蓋DBビューア: http://localhost:8081/lid_db_viewer.html
-```
-
-**蓋DBビューアの機能**:
-
-- 蓋一覧表示・追加・編集・削除
-- 嵌め方（fit_type）の選択: 外嵌め / 内嵌め / なし
-- 蓋仕様（寸法・厚み等）の管理
-- サーバーへの永続化保存
-
-**箱DBビューアの新機能**:
-
-- 箱編集時に互換蓋（compatible_lids）をチェックボックスで選択
-- 蓋を箱に紐付けて保存
-
-### Running Approved Test Cases
-
-```bash
-# 採用済みテストケースを実行
-python tester/run_tests.py
-
-# 生成された結果を制約検証
-python3 supervisor/validate.py
-```
-
----
-
-## High-Level Architecture
-
-### System Overview
-
-```text
-【入力層】
-  - box_research/box_db.json          ← 箱仕様DB（寸法・嵌合深さ・リブ）
-  - test_programmer/test_cases/       ← テストケース群（投入箱リスト）
-  - constraints/constraints.md        ← 荷姿制約仕様
-
-【処理層】
-  - algorithm_programmer/
-    ├─ models.py                      ← データクラス (BoxSpec, PlacedBox, PalletSpec)
-    ├─ palletizer.py                  ← パレタイズ計算エンジン (HM-Palletizer)
-    └─ cli.py                         ← CLI実行インターフェース
-  
-  - tester/run_tests.py               ← テスト一括実行
-  - supervisor/validate.py            ← 制約バリデーション
-
-【出力・可視化層】
-  - tester/results/result_*.json      ← パレタイズ結果（配置座標・積み順）
-  - supervisor/reports/               ← 検証レポート
-  - visualizer/                       ← 3D/2D可視化ツール
-```
-
-### Data Flow: Phase 3 Loop (Run-Validate-Improve)
-
-```text
-test_programmer/test_cases/*.json
-  ↓
-tester/run_tests.py
-  ├→ algorithm_programmer/palletizer.py（嵌合・配置計算）
-  └→ tester/results/result_*.json（パレタイズ結果）
-  
-tester/results/result_*.json
-  ├→ visualizer/visualize.py（3D描画）→ visualizer/*.html
-  └→ supervisor/validate.py
-    ├→ 10 constraint checks (積載高さ、荷姿幅、四隅高さ、段積みサイズ、嵌合整合性、干渉検出等)
-    └→ supervisor/reports/validation_report.md（PASS/NG判定）
-
-[検証結果がNG] → algorithm-programmer に改善指示 → palletizer.py修正 → ループ再開
-[検証結果がOK] → 次テストケースへ
-```
-
-### Key Algorithms & Logic
-
-#### **palletizer.py** (パレタイズ計算エンジン)
-
-1. **単載エンジン (`palletize_single`)**
-   - 0度/90度グリッド + スプリット（レンガ）分割パターンを自動生成・比較
-   - 長辺荷姿幅 $800\text{ mm} \le X_{span} < 1360\text{ mm}$、
-     短辺荷姿幅 $800\text{ mm} \le Y_{span} < 1100\text{ mm}$ の境界フィルタリング
-   - `fitting_depth` を考慮した最大段数・Z座標計算
-   - 偶数/奇数段の反転によるインターロッキング（荷崩れ防止）
-
-2. **混載エンジン (`palletize_mixed`)**
-   - 拡張 Extreme Points (EP) 法 ＋ Best-Fit Decreasing 配置
-   - 嵌合Z座標ソルバー: `Z = max(Z_top of support - fitting_depth)`
-   - 支持面判定: 広面積85%以上が接地（空中浮き排除）
-   - TP規格モジュール嵌合ボーナス・境界ペナルティ付き多目的評価関数
-
-3. **積み順決定 (`assign_loading_orders`)**
-   - トポロジカルソート (Z昇順 → Y昇順 → X昇順)
-   - 下段優先・干渉フリーな `order` (1..N) 付番
-   - `supported_by` (支持下段箱リスト) を記録
-
-#### **validate.py** (制約バリデータ)
-
-12個の厳格なチェック項目 (詳細は [constraints/constraints.md](../constraints/constraints.md)):
-
-1. 積載全高 ≤ 1200mm
-2. 長辺荷姿幅 $800\text{ mm} \le X_{span} < 1360\text{ mm}$
-3. 短辺荷姿幅 $800\text{ mm} \le Y_{span} < 1100\text{ mm}$
-4. 方向別はみ出し（全段・蓋込みで片側20mm以下、X/Y別設定。投入単載の箱本体底面辺が670mm以上となる方向のみ例外）
-5. 最高層四隅高さ一致 (各コーナーの誤差 3.0mm以内)
-6. 3D干渉検出（嵌合沈み込みを許容）
-7. 嵌合・段積み整合性
-8. 広面支持率 ≥85%
-9. 下段支持箱サイズ制限（幅・奥行きの両方が上段箱より1.0mmを超えて大きい直接支持箱は禁止）
-10. 回転角度 0° or 90° のみ
-11. 積み順トポロジカル整合性
-12. 荷姿センタリング（箱・蓋外形の外接矩形中心とパレット中心が各方向0.01mm以内で一致）
-
----
-
-## Key Conventions & Patterns
-
-寸法の表示・記載順は **L × W × H（長手方向 × 短手方向 × 高さ）** に統一する。
-箱・蓋DBでは `length` がL、`width` がW。
-配置結果の `width` / `length` は回転後のX/Y寸法であり、
-表示時に長辺をL、短辺をWとする。既存キーと座標の意味、保存値は変更しない。
-
-### Data Schemas
-
-#### Box Database (`box_research/box_db.json`)
-
-```json
-{
-  "boxes": [
-    {
-      "id": "TP-332",
-      "name": "TP-330系 (335×335×195)",
-      "type": "TP",
-      "length": 335,
-      "width": 335,
-      "height": 195,
-      "fitting_depth": 10,
-      "rib_thickness": 22,
-      "module_ratio": "1x1",
-      "description": "基準モジュール"
-    }
-  ]
-}
-```
-
-#### Palletize Result (`tester/results/result_*.json`)
-
-```json
-{
-  "test_name": "single_tp332",
-  "pallet": {"length": 1200, "width": 1000, "max_height": 1200},
-  "input_boxes": [...],
-  "result": [
-    {
-      "order": 1,
-      "box_id": "TP-332",
-      "position": {"x": 0, "y": 0, "z": 0},
-      "rotation": 0,
-      "width": 335, "length": 335, "height": 195,
-      "fitting_depth": 10,
-      "supported_by": null
-    }
-  ],
-  "summary": {
-    "total_boxes": 60,
-    "max_height": 1120,
-    "loadable_footprint": {...}
-  }
-}
-```
-
-### Naming Conventions
-
-- **関数・変数**: `snake_case` (例: `calculate_max_layers`, `placed_boxes`)
-- **クラス**: `PascalCase` (例: `PlacedBox`, `PalletSpec`)
-- **定数**: `UPPER_SNAKE_CASE` (例: `MAX_HEIGHT_MM`, `PALLET_WIDTH_MM`)
-- **テストファイル**: `*_test.py`
-- **テストケース名**: `{single|mixed|boundary}_{category}_{suffix}.json`
-
-### Python Code Style
-
-- **Python 3.8+** をターゲット
-- **型ヒント**: `from typing import List, Dict, Optional, Tuple` で明示的に記述
-- **Dataclass**: `models.py` でデータ構造を定義（`@dataclass`）
-- **ドキュメント**: Google形式 docstring の使用
-
-  ```python
-  def calculate_max_layers(
-      height: float, fitting_depth: float, max_height: float
-  ) -> int:
-      """嵌合沈み込みを考慮した最大積載段数を算出
-      
-      Args:
-          height: 箱の高さ [mm]
-          fitting_depth: 嵌合沈み込み深さ [mm]
-          max_height: パレット最大積載高さ [mm]
-      
-      Returns:
-          最大積載段数
-      """
-  ```
-
-### Directory Structure & Ownership
-
-各エージェントが管理する独立領域（**破壊的変更を避ける**）:
-
-- **`box_research/`** → box-research エージェントが箱仕様を調査・DB化
-- **`algorithm_research/`** → algorithm-research が方式を提案
-- **`test_programmer/`** → test-programmer がテストケースを生成
-- **`algorithm_programmer/`** → algorithm-programmer がパレタイズエンジンを実装
-- **`visualizer/`** → visualizer が3D/2D可視化ツールを開発
-- **`tester/`** → tester がテスト実行・結果を管理
-- **`supervisor/`** → supervisor が制約検証を実行
-- **`constraints/`** → constraints.md（荷姿仕様書）は orchestrator と協議で策定
-
-### Critical Constraints
-
-#### 🚫 Absolute Limits
-
-- **積載高さ**: 1200mm を **絶対に超えない** (物理的上限)
-- **回転角**: 0° または 90° のみ（45°等は禁止）
-- **上下反転**: 禁止（天地固定）
-- **最高層四隅**: 各コーナーの高さ誤差 3.0mm以内で一致（安定性確保）
-
-#### ⚠️ Fitting Logic
-
-- **Z座標計算**: `Z_upper = Z_lower + H_lower - fitting_depth`
-- **嵌合沈み込み許容**: 3D衝突判定時に `fitting_depth` ぶん沈み込んだ状態を正常と判定
-- **TP規格**: モジュール倍数関係にある箱同士の嵌合段積みが許可される
-- **外嵌め蓋付きTP箱**: 積み方の判定上はコラム積み限定。同一蓋IDで箱・蓋外形の位置と範囲を揃えれば、箱IDが異なるTP箱同士も積載可能
-- **非TP規格**: 同一型番のコラム積みのみ許可
-
-#### 📏 Boundary Rules
-
-- **長辺**: 荷姿の長辺方向スパン $800\text{ mm} \le X_{span} < 1360\text{ mm}$
-- **短辺**: 荷姿の短辺方向スパン $800\text{ mm} \le Y_{span} < 1100\text{ mm}$
-- **方向別はみ出し**: 全段・箱と蓋の外形の片側はみ出しをX/Y別の設定値以下とする
-  （`max_overhang_x_mm` / `max_overhang_y_mm`、既定各20mm、境界値を含む）。
-  投入時に同一箱型番・同一蓋条件の単載で、回転後の箱本体底面辺が670mm以上となる方向のみ通常制限を免除する。
-  例外でも荷姿幅上限は維持する。結果の `input_box_variants` で投入種類を記録し、
-  未配置により1種類になった混載には例外を適用しない。旧30mm制限・旧設定項目は廃止。
-- **荷姿センタリング**: 箱・蓋外形の外接矩形中心をパレット中心に合わせる（各方向の誤差0.01mm以内）
-- **支持率**: 箱の底面積の85%以上がパレット/下段箱に接地（空中浮きを排除）
-
----
-
-## Repository References
-
-- **[README.md](../README.md)** — GitHub Copilot 版プロジェクト構成・ルール・エージェント役割定義
-- **[constraints/constraints.md](../constraints/constraints.md)** — 荷姿制約仕様書
-- **[.agent/README.md](../.agent/README.md)** — エージェント設定ファイル
-- **[.github/prompts/](../github/prompts/)** — 各ロール別プロンプト群
-
----
-
-**バージョン**: 2.0  
-**作成日**: 2026-09-20  
-**最終更新**: 2026-09-20
-
-**主な改善点**:
-
-- ✅ Build/test/lint コマンド（全フェーズループ・個別実行）を追加
-- ✅ Single-test 実行フロー例を追加
-- ✅ 高レベルアーキテクチャと data flow を図解
-- ✅ Key algorithms（単載/混載エンジン、制約検証）の説明を簡潔にまとめた
-- ✅ Data schema, naming conventions, Python style を実装ベースで具体化
-- ✅ Critical constraints（絶対制約）と boundary rules を可視化
-- ✅ README.md への参照を明確化
+- Python 3.8以降の構文を対象に、既存の型ヒント・dataclass・命名規約を守ります。
+- 関数・変数は `snake_case`、クラスは `PascalCase`、定数は `UPPER_SNAKE_CASE`。
+- テストは `*_test.py`。関連する最小のテストを実行し、必要なら全体へ広げます。
+- 寸法は **L × W × H**。DBでは `length` がL、`width` がWです。
+- 結果の `dimensions.width/length` は回転後X/Y寸法です。保存値や座標の意味を変えません。
+- 結果は `schema_version: 2`、`input_mode: "part_number"`、
+  `coordinate_reference: "combined_footprint_min_xy_top_z"` を使用します。
+- 結果XYは箱・蓋外接形状の最小角、Zは蓋込み上面です。
+- 実荷姿の数量・品番・固定蓋・パレット条件は根拠なく変更しません。
+- 不正な入力・保存失敗を黙って無視せず、利用者へ明示します。
+- 仕様変更は利用者の合意を得て、関連README・指示書・テストを同期します。

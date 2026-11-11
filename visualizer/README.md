@@ -1,133 +1,57 @@
-# 3D/2D 可視化ツール (visualizer/)
+# visualizer
 
-**文書番号:** VZ-DOC-2026-001  
-**作成日:** 2026-08-19  
-**担当エージェント:** `visualizer`  
-**対象読者:** `orchestrator`, `tester`, `supervisor`, `algorithm-programmer`  
+品番方式（`schema_version: 2` / `input_mode: "part_number"`）専用の 3D/2D 可視化ツールです。
+旧結果（legacy）は表示対象外で、読み込み時に明示的にエラーになります。
 
----
+## 構成
 
-## 1. 概要
+- `serve_3d_viewer.py` 統合ビューア HTTP サーバー
+- `index.html` 統合ビューア UI
+- `visualize.py` 単体結果 JSON → スタンドアロン HTML 生成
+- `result_identity.js` 品番メタデータ検証・表示補助
+- `part_result_support.py` 実行フォルダ選択・結果検証ヘルパー
 
-本ディレクトリは、パレタイズアルゴリズムが出力した荷姿結果データ（配置座標、回転、積み順、支持関係）を
-Web ブラウザ上で直感的に確認・検証できる
-**Three.js ベースの3Dインタラクティブ可視化ツール** を提供します。
+## 使い方
 
----
-
-## 2. ツール構成
-
-```text
-visualizer/
-├── visualize.py          # スタンドアロン3D HTML生成スクリプト
-├── index.html            # 統合3Dビューワ Webフロントエンド
-├── serve_3d_viewer.py    # 統合3Dビューワ用ローカルHTTPサーバー
-└── README.md             # 本ドキュメント
-```
-
----
-
-## 3. 主な機能と特徴
-
-1. **リアルタイム 3D レンダリング**:
-   - パレット（既定 $1200 \times 1000 \times 130\text{ mm}$）を **z=-height〜0** の物理厚みで描画。
-   - 制約枠は `pallet.max_x_span / max_y_span / max_height`（既定 1360/1100/1200）を表示。
-   - 箱型番ごとの自動カラーパレット色分け、エッジワイヤーフレーム強調。
-   - 積み順番号と型番の 3D スプライトラベル表示。
-
-2. **積み順 Step-by-Step コントロール**:
-   - **タイムラインスライダー**: 1箱目から全箱配置までを自由にスライド確認。
-   - **自動再生 / 一時停止**: 積み上げ工程をアニメーション再生（再生速度: 0.5x, 1x, 3x）。
-
-3. **視点操作 & プリセットカメラ**:
-   - マウスドラッグによる 360 度自由回転、パン、ズーム（OrbitControls）。
-   - ワンクリック視点切替（俯瞰 ISO、上面 Top、正面 Front、側面 Side）。
-
-4. **箱詳細インスペクタ**:
-   - 3D 空間上の任意の箱をクリックすると、型番、配置座標 $(X, Y, Z)$、外寸、回転角、勘合深さ、
-     および **下段支持箱の Order 番号（`supported_by`）** を即座に表示。
-5. **蓋の可視化**:
-   - 蓋厚を箱本体の高さから分離し、蓋を黄系の薄いスラブとして描画。
-   - 外嵌め蓋の幅・奥行きと箱中央位置を描画に反映し、箱をクリックすると蓋ID・寸法・厚さ・嵌め方を表示。
-   - 統合ビューワとスタンドアロンHTMLの両方に対応。
-6. **投入数と未配置理由**:
-   - ヘッダーに「配置数 / 投入総数」と未配置数を表示。
-   - 未配置一覧に箱型番、数量、配置できなかった理由を表示。
-7. **制約検証結果**:
-   - 合否バッジに加えて、結果データに含まれる制約違反理由を右側パネルに表示。
-   - 未配置理由とは別に表示し、どの制約で不合格になったか確認可能。
-
-8. **制約・寸法メトリクス（2026-11更新）**:
-   - オーバーハング実測（左/右/前/後）は箱+蓋の外接境界から情報表示します（警告用途のみ）。
-   - 荷姿外寸（X×Y）、物理H、荷物H、総H を表示します。
-   - `summary.warnings` を表示しますが、**警告表示は安全性を保証しません**。
-   - 物理安定性の判定は別途で、**支持率85%要件は必須**です。
-   - 統合画面とスタンドアロンの両方に適用します。明示的な不正設定値は読み込みエラーを表示し、
-     省略された項目だけ初期値を使います。
-   - 視点リセット時は本体下面から荷山最大Hまでと最大L/W枠が収まるよう、
-     ISO・上面・正面・側面の4視点で表示倍率と中心を調整します。
-
-回帰検証: `node visualizer/guide_logic.test.js`（15件）と
-`node test_programmer/overhang_ui_test.js`（編集・保存検証）。
-本環境では追加インストールせず、VS Code同梱のNode実行機能で合格を確認しました。
-
----
-
-## 4. 起動・利用方法
-
-### 品番方式の結果表示（第5段階）
+### 統合ビューア
 
 ```powershell
-# 今回確認した結果を表示
+python .\visualizer\serve_3d_viewer.py
+```
+
+- 引数なし: `tester/catalog_results` から **最新 run_manifest 実行フォルダ** を選択して厳密検証
+  - 最新 run が不正なら起動エラー（古い run へフォールバックしない）
+- `--results-dir` 指定可（run_manifest.json を含む実行フォルダ）
+
+```powershell
 python .\visualizer\serve_3d_viewer.py --results-dir .\tester\catalog_results\phase5_verified
-
-# 任意の品番方式結果を単独HTMLへ（以後はサーバー不要）
-python .\visualizer\visualize.py .\tester\catalog_results\phase5_verified\result_othics_6.json -o .\tester\catalog_results\phase5_verified\othics_6.html
 ```
 
-統合画面は指定フォルダの `result_*.json` だけを一覧化し、実行一覧等はケースに含めません。
-ポートは従来どおり位置引数（例: `8085`）で変更できます。
-引数なしは旧 `tester/results/` のままで、旧結果も引き続き表示します。
-結果の読み込みエラーは画面に表示し、壊れたファイルを黙って一覧から除きません。
-
-統合画面・単独HTMLの両方に対応:
-
-- 色・ラベル・凡例を品番で区別し、現場の箱名称を併記します。
-- 箱をクリックすると品番・仕入先・箱名称・共通モデル・固定蓋を表示します。
-- 「品番別数量・結果の方式」に投入／配置／未配置数を品番別に表示します。
-- 未配置欄に品番と箱名称、数量、理由を表示します。
-- 積み順スライダー、再生、3D／2D視点、蓋形状・座標の扱いは維持します。
-- 旧結果は「旧方式の結果（品番情報なし）」と表示し、存在しない品番を補いません。
-
-表示は計算時点のスナップショットです。現在のDBを読み直してモデル名等を差し替えないので、
-DBを変更しても旧結果の確認が可能です。
-品番別集計と箱一覧の数量が違う等の壊れた新結果は読み込みエラーにします。
-**バッジは計算時の合否で、独立検証の合格を意味しません。**
-[Supervisorレポート](../supervisor/README.md#品番方式の独立検証第5段階)も確認してください。
-返却割合の平準化はまだなく、品番配分は入力順です。
-
-共通の表示補助は [result_identity.js](result_identity.js) にまとめ、
-単独HTMLには生成時に埋め込みます。別ファイルの持ち運びは不要です。
-名前に記号やHTMLに似た文字があっても文字列として表示します。
-実Edgeブラウザで、新旧結果・統合／単独表示・品番数量・箱詳細・積み順・3D／2D切替・入力エラーを確認します。
+### スタンドアロン HTML 生成
 
 ```powershell
-python -m unittest visualizer.catalog_viewer_test
+python .\visualizer\visualize.py .\tester\catalog_results\phase5_verified\result_othics_6.json -o .\visualizer\generated_viewers\othics_6.html
 ```
 
-### (1) 統合ビューワサーバーの起動（推奨）
+- 直接 JSON を指定して生成できます
+- ただし入力は品番方式のみ（旧結果は拒否）
 
-```bash
-python3 visualizer/serve_3d_viewer.py
-```
+## 検証ルール（表示前）
 
-ブラウザで `http://localhost:8082` を開くと、`tester/results/` にある全テスト結果をプルダウンで切り替えて 3D 荷姿を確認できます。
+- `schema_version == 2`
+- `input_mode == "part_number"`
+- `run_manifest.source == "catalog_store"`
+- `run_manifest.catalog_revision` は空でない文字列
+- `run_manifest.started_at/completed_at` は ISO 日時かつ時系列整合
+- `run_manifest.cases` は case 名・result_file 重複なし
+- `run_manifest.status` は `PASS` / `FAIL` / `ERROR` のみ
+  - `ERROR` ケースが含まれる run は明示エラーとして表示停止（黙って除外しない）
+- `coordinate_reference == "combined_footprint_min_xy_top_z"`（現対応）
+- `part_counts` / `boxes` / `unplaced_boxes` の数量・メタデータ整合
+- manifest 件数・数量集計・result JSON (`test_name` / `catalog_revision` / 件数 / FAIL整合) を相互照合
 
-### (2) スタンドアロン HTML の個別生成
+## 備考
 
-```bash
-python3 visualizer/visualize.py \
-  tester/results/result_mixed_tp_same_height.json -o visualizer/viewer.html
-```
-
-生成された `visualizer/viewer.html` をブラウザで直接開いて確認できます。
+- 箱メタデータは結果 JSON スナップショットをそのまま使用（DB 再参照しない）
+- 文字列はエスケープして表示（HTML 注入防止）
+- 3D/2D 切替、積み順スライダー、再生、サマリ表示は継続

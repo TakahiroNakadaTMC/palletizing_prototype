@@ -31,7 +31,7 @@ def resolve_catalog_result(
 ) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]:
     """数量・品番・固定蓋等を検証後、幾何判定用のモデルIDに解決する。"""
     if catalog is None or revision is None or pallets is None:
-        raise ValueError("品番DBを読み込んで検証してください（--catalog-results）")
+        raise ValueError("品番DBを読み込んで検証してください（--results-dir）")
     if (data.get("schema_version") != 2 or data.get("input_mode") != "part_number"
             or data.get("coordinate_reference") != "combined_footprint_min_xy_top_z"):
         raise ValueError("品番結果の形式・座標基準が不正です")
@@ -170,45 +170,90 @@ def validate_catalog_run(root: Path, results_dir: Path, report_dir: Path) -> int
     """今回の一括実行一覧を照合し、採用済み全件の独立レポートを別保存する。"""
     from supervisor.validate import PalletizeValidator
 
+    results_dir = results_dir.resolve()
+    if not results_dir.exists() or not results_dir.is_dir():
+        raise ValueError("結果フォルダが存在しません: " + str(results_dir))
     catalog, revision = load_catalog(root)
-    pallets = catalog_pallets(root)
+    pallets = catalog_pallets(root, catalog["pallets"])
     manifest = json.loads((results_dir / "run_manifest.json").read_text(encoding="utf-8"))
-    if manifest.get("input_mode") != "part_number" or manifest.get("catalog_revision") != revision:
+    if (manifest.get("input_mode") != "part_number"
+            or manifest.get("source") != "catalog_store"
+            or manifest.get("catalog_revision") != revision):
         raise ValueError("実行一覧と現在の品番DBの照合値が一致しません。再計算してください")
     approved = {name for name, state in catalog["cases"]["approval_state"].items() if state}
     rows = manifest.get("cases")
     if (not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows)
             or len(rows) != len(approved) or {row.get("name") for row in rows} != approved):
         raise ValueError("実行一覧が現在の採用済みケース全件と一致しません")
-    validator = PalletizeValidator(catalog["models"], catalog["lids"], catalog, revision, pallets)
-    reports = []
-    errors = 0
+    runner_counts = dict(cases=0, passed=0, failed=0, errors=0, input=0, placed=0, unplaced=0)
     for row in rows:
         name = row["name"]
+        status = row.get("status")
+        if status not in ("PASS", "FAIL", "ERROR"):
+            raise ValueError(name + ": 実行一覧の判定が不正です")
+        runner_counts["cases"] += 1
+        if status == "PASS":
+            runner_counts["passed"] += 1
+        elif status == "FAIL":
+            runner_counts["failed"] += 1
+        else:
+            runner_counts["errors"] += 1
+            if not isinstance(row.get("error"), str) or not row["error"].strip():
+                raise ValueError(name + ": ERROR行の内容が不正です")
+            continue
+        filename = "result_" + name + ".json"
+        if row.get("result_file") != filename:
+            raise ValueError(name + ": 実行一覧の結果ファイル名が不正です")
+        for key in ("input", "placed", "unplaced"):
+            runner_counts[key] += _integer(row.get(key), name + "." + key)
+    manifest_counts = manifest.get("counts")
+    if not isinstance(manifest_counts, dict):
+        raise ValueError("実行一覧の件数集計が不正です")
+    if set(manifest_counts) != set(runner_counts):
+        raise ValueError("実行一覧の件数集計キーが不正です")
+    for key, expected in runner_counts.items():
+        actual = _integer(manifest_counts.get(key), "counts." + key)
+        if actual != expected:
+            raise ValueError("実行一覧の件数集計が実行一覧行と一致しません: " + key)
+
+    validator = PalletizeValidator(catalog["models"], catalog["lids"], catalog, revision, pallets)
+    reports = []
+    independent_statuses: Dict[str, str] = {}
+    independent_counts = dict(cases=0, passed=0, failed=0, errors=0, input=0, placed=0, unplaced=0)
+    for row in rows:
+        name = row["name"]
+        status = row["status"]
+        independent_counts["cases"] += 1
         if row.get("status") == "ERROR":
             report = validator._empty_report(name, ["計算時エラー: " + str(row.get("error"))], [])
-            errors += 1
-        elif row.get("status") in ("PASS", "FAIL"):
-            filename = "result_" + name + ".json"
-            if row.get("result_file") != filename:
-                raise ValueError(name + ": 実行一覧の結果ファイル名が不正です")
+            independent_status = "ERROR"
+        elif status in ("PASS", "FAIL"):
+            filename = row["result_file"]
             try:
                 data = json.loads((results_dir / filename).read_text(encoding="utf-8"))
                 if not isinstance(data, dict) or data.get("test_name") != name:
                     raise ValueError("結果のケース名が実行一覧と一致しません")
                 report = validator.validate_data(data)
+                independent_status = "PASS" if report["is_pass"] else "FAIL"
             except (OSError, ValueError, TypeError, KeyError) as error:
                 report = validator._empty_report(name, ["結果読込エラー: " + str(error)], [])
-                errors += 1
+                independent_status = "ERROR"
         else:
             raise ValueError(name + ": 実行一覧の判定が不正です")
+        independent_statuses[name] = independent_status
+        if independent_status == "PASS":
+            independent_counts["passed"] += 1
+        elif independent_status == "FAIL":
+            independent_counts["failed"] += 1
+        else:
+            independent_counts["errors"] += 1
+        if independent_status != "ERROR":
+            independent_counts["input"] += report.get("input_boxes_count") or 0
+            independent_counts["placed"] += report["total_boxes"]
+            independent_counts["unplaced"] += report.get("unplaced_boxes_count") or 0
         reports.append(report)
-        print("{} [{}]".format("PASS" if report["is_pass"] else "FAIL", name))
-    counts = dict(cases=len(reports), passed=sum(r["is_pass"] for r in reports),
-                  failed=sum(not r["is_pass"] for r in reports), errors=errors,
-                  input=sum(r.get("input_boxes_count") or 0 for r in reports),
-                  placed=sum(r["total_boxes"] for r in reports),
-                  unplaced=sum(r.get("unplaced_boxes_count") or 0 for r in reports))
+        print("{} [{}]".format(independent_status, name))
+
     report_dir = report_dir.resolve()
     if report_dir == (root / "supervisor" / "reports").resolve():
         raise ValueError("旧方式のレポートフォルダを上書きできません")
@@ -216,9 +261,15 @@ def validate_catalog_run(root: Path, results_dir: Path, report_dir: Path) -> int
     for report in reports:
         (report_dir / ("report_" + report["test_name"] + ".json")).write_text(
             json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False), encoding="utf-8")
+    summary = dict(
+        catalog_revision=revision,
+        source="catalog_store",
+        counts=independent_counts,
+        independent_counts=independent_counts,
+        runner_counts=runner_counts,
+    )
     (report_dir / "validation_summary.json").write_text(
-        json.dumps(dict(catalog_revision=revision, counts=counts), ensure_ascii=False, indent=2),
-        encoding="utf-8")
+        json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     def cell(value: Any) -> str:
         return str(value).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace(
             "|", "&#124;").replace("\n", " ").replace("\r", " ")
@@ -226,14 +277,19 @@ def validate_catalog_run(root: Path, results_dir: Path, report_dir: Path) -> int
     lines = ["# 品番方式・独立検証レポート", "",
              "判定は結果内のsummaryではなく、現在のDB・ケースと配置座標から再計算しています。",
              "照合値: `" + revision + "`", "",
-             "件数: {cases} / PASS: {passed} / FAIL: {failed} / エラー: {errors}".format(**counts),
-             "投入: {input} / 配置: {placed} / 未配置: {unplaced}".format(**counts),
+             "独立判定 件数: {cases} / PASS: {passed} / FAIL: {failed} / エラー: {errors}".format(
+                 **independent_counts),
+             "独立判定 投入: {input} / 配置: {placed} / 未配置: {unplaced}".format(**independent_counts),
+             "実行一覧 件数: {cases} / PASS: {passed} / FAIL: {failed} / ERROR: {errors}".format(
+                 **runner_counts),
+             "実行一覧 投入: {input} / 配置: {placed} / 未配置: {unplaced}".format(**runner_counts),
              "未配置が0かどうかは制約合否とは別に確認してください。", "",
              "| ケース | 判定 | 投入 | 配置 | 未配置 | 違反 |", "|---|---|---:|---:|---:|---|"]
     for report in reports:
         messages = cell(" / ".join(report["violations"]))
+        status = independent_statuses.get(report["test_name"], "FAIL")
         lines.append("| {} | {} | {} | {} | {} | {} |".format(
-            report["test_name"], "PASS" if report["is_pass"] else "FAIL",
+            report["test_name"], status,
             report.get("input_boxes_count", "—"), report["total_boxes"],
             report.get("unplaced_boxes_count", "—"), messages))
     lines.extend(["", "## 品番別数量", "",
@@ -249,5 +305,5 @@ def validate_catalog_run(root: Path, results_dir: Path, report_dir: Path) -> int
         for warning in report["warnings"]:
             lines.append("- {}: {}".format(report["test_name"], cell(warning)))
     (report_dir / "validation_report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(json.dumps(counts, ensure_ascii=False))
-    return 1 if counts["failed"] or errors else 0
+    print(json.dumps(independent_counts, ensure_ascii=False))
+    return 1 if independent_counts["failed"] or independent_counts["errors"] else 0

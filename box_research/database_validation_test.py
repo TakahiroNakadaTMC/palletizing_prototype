@@ -64,6 +64,14 @@ class DatabaseValidationTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     validate_pallet_database(data)
 
+    def test_pallet_length_must_be_at_least_width(self):
+        data = copy.deepcopy(self.pallet_db)
+        data["pallets"]["MODEL"].update(length=999, width=1000)
+        with self.assertRaisesRegex(ValueError, "length L.*width W"):
+            validate_pallet_database(data)
+        data["pallets"]["MODEL"]["length"] = 1000
+        validate_pallet_database(data)
+
     def test_rejects_invalid_pallet_records(self):
         for update in (
             {"id": "OTHER"}, {"model": ""}, {"standard": True},

@@ -1,6 +1,9 @@
 'use strict';
 
 const ResultIdentity = {
+  supportedCoordinateReferences: new Set([
+    'combined_footprint_min_xy_top_z',
+  ]),
   key(box) { return box.part_number || box.box_id; },
   label(box) {
     return box.part_number ? `${box.part_number} / ${box.box_name}` : box.box_id;
@@ -11,10 +14,14 @@ const ResultIdentity = {
     })[char]);
   },
   validate(data) {
-    if (data.input_mode !== 'part_number' && data.schema_version !== 2) return;
-    if (data.schema_version !== 2 || data.input_mode !== 'part_number' ||
-        !Array.isArray(data.boxes) || !Array.isArray(data.part_counts) ||
-        !Array.isArray(data.unplaced_boxes)) throw new Error('品番結果の形式が不正です');
+    if (data?.schema_version !== 2) throw new Error('schema_version=2 の品番結果のみ表示できます');
+    if (data?.input_mode !== 'part_number') throw new Error("input_mode='part_number' の結果のみ表示できます");
+    if (!this.supportedCoordinateReferences.has(data?.coordinate_reference)) {
+      throw new Error(`coordinate_reference が未対応です: ${data?.coordinate_reference ?? '(未設定)'}`);
+    }
+    if (!Array.isArray(data.boxes) || !Array.isArray(data.part_counts) || !Array.isArray(data.unplaced_boxes)) {
+      throw new Error('品番結果の形式が不正です');
+    }
     const parts = new Map();
     for (const row of data.part_counts) {
       if (!row.part_number || parts.has(row.part_number) ||
@@ -49,11 +56,8 @@ const ResultIdentity = {
     const target = document.getElementById('part-summary');
     target.replaceChildren();
     const notice = document.createElement('p');
-    notice.textContent = data.input_mode === 'part_number'
-      ? '品番方式・計算時点の記録です。合否バッジは計算判定です。独立検証レポートも確認してください。'
-      : '旧方式の結果（品番情報なし）';
+    notice.textContent = '品番方式・計算時点の記録です。合否バッジは計算判定です。独立検証レポートも確認してください。';
     target.appendChild(notice);
-    if (data.input_mode !== 'part_number') return;
     for (const row of data.part_counts) {
       const entry = document.createElement('p');
       entry.textContent = `${this.label(row)} / 仕入先: ${row.supplier_name} / 共通モデル: ${row.box_model_id} / 蓋: ${row.lid_id} / 投入${row.input_count}・配置${row.placed_count}・未配置${row.unplaced_count}`;

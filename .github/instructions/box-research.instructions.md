@@ -2,55 +2,20 @@
 description: "箱仕様の調査、箱DBの追加・更新、箱と蓋の互換性確認時に使用します。"
 ---
 
-# 箱仕様調査の指針
-## パレタイズ対象となる箱の仕様調査・データベース構築
+# 箱仕様調査・DB管理
 
-### ロール・責務
-- パレタイズ対象となる箱（TP規格箱、オリコン、通い箱等）の寸法・嵌合深さ・上縁幅を調査・整理
-- 空箱を前提としたデータベース（box_db.json）を構築
-- 各箱型番の外寸（L × W × H：長手方向・短手方向・高さ）、嵌合深さ、上縁幅を正確に把握
-- 箱DBでは `length` を長手方向L、`width` を短手方向Wとして記録する
-- 現行の箱DB形式に従い、保存形式や既存値を無断で変更しない
+現行の品番方式を対象にします。旧方式の編集・実行・検証・閲覧は廃止済みです。
+共通規約は [copilot-instructions](../copilot-instructions.md)、
+仕様は [README](../../README.md) と [制約仕様](../../constraints/constraints.md) を参照してください。
 
-### 主要入力ファイル
-- `constraints/constraints.md` - 荷姿制約（参考）
-- `box_research/box_db.json` - 現行の箱仕様とDB形式
-- `box_research/lid_db.json` - 箱に登録された互換蓋IDの参照先
+## 担当範囲と確認事項
+- 箱本体の仕様は `box_research/catalog/box_model_db.json`、蓋は同フォルダの `lid_db.json` に記録する。
+- `box_type_db.json` は品番・仕入先・現場の箱名称・共通モデル・固定蓋の対応表。
+- 品番は全体で一意、箱名称は重複可能。モデル名はIDと表示名を兼ねる。
+- 寸法・嵌合深さ・上縁幅を公開メーカー資料等で調べ、情報源と不確実性を `box_research/README.md` に記録する。
+- `length` はL、`width` はW。寸法表示はL × W × H。既存値を推測で変更しない。
+- 蓋はモデルの `compatible_lids` に存在し、品番の固定蓋と整合することを確認する。
+- ID正規化・参照検証・版照合付き保存・モデル名変更確認を迂回しない。
+- 移行CSVは資料であり、現在のDBを上書き生成しない。
 
-### 主要出力ファイル
-- `box_research/box_db.json` - 箱仕様データベース（id, length, width, height, fitting_depth, rib_thickness〔上縁幅〕, module_ratio等）
-- `box_research/README.md` - 調査サマリー・各箱の特徴説明
-
-### データ形式（box_db.json）
-各箱エントリ：
-```json
-{
-  "id": "TP-331",
-  "name": "TP-331",
-  "type": "TP",
-  "length": 335,
-  "width": 335,
-  "height": 102.5,
-  "fitting_depth": 10,
-  "rib_thickness": 16,
-  "module_ratio": "1x1",
-  "description": "TP-330系 1型 基準モジュール浅型 (内寸300x300/有効内寸291x291, 側面厚22.0mm)",
-  "compatible_lids": [
-    "TP330フタ",
-    "サンボックス330フタ"
-  ]
-}
-```
-
-`compatible_lids` に登録する蓋IDは、すべて `box_research/lid_db.json` に存在することを確認する。
-
-### 利用可能なツール
-- ファイル読み書き（box_research/ ディレクトリ）
-- Webサーチ機能（JIS規格、サンコー等製造メーカー仕様の検索）
-- シェルコマンド実行
-
-### 行動指針
-1. JIS、サンコー、日本ロジスティックシステム協会等の公開情報から箱寸法・嵌合深さを調査
-2. 各箱型番の正確な外寸・嵌合深さ・上縁幅を記録
-3. TP規格箱の場合、モジュール比率は現行箱DBの値を確認して記録する
-4. 調査結果の情報源と不確実性を `box_research/README.md` に記録
+作業後は関連テストで動作を確認し、関係するREADMEを更新してください。

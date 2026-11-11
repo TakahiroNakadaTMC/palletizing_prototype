@@ -2,7 +2,7 @@
 """
 独立制約バリデータ (validate.py)
 constraints/constraints.md の全制約項目に基づき、
-tester/results/ 配下の全パレタイズ結果データを独立・厳格に検証します。
+品番方式ランナーが生成した results-dir 配下の結果を独立・厳格に検証します。
 
 v2026-11-03: 新パレット6項目 (length, width, height, max_x_span, max_y_span,
 max_height) 方式に対応。下限(min800)・軸別オーバーハング上限(max_overhang_x_mm /
@@ -18,11 +18,9 @@ max_overhang_y_mm)・670mm例外・旧 max_small_edge_overhang_mm は廃止。
 import math
 import os
 import sys
-import glob
 import json
 import argparse
 from pathlib import Path
-from datetime import date
 from typing import List, Dict, Tuple, Any, Optional
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -33,11 +31,6 @@ PROJECT_ROOT = os.path.dirname(BASE_DIR)
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 from constraints.top_support import TopSurface, evaluate_top_support, required_support_points
-BOX_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "box_db.json")
-LID_DB_PATH = os.path.join(PROJECT_ROOT, "box_research", "lid_db.json")
-RESULTS_DIR = os.path.join(PROJECT_ROOT, "tester", "results")
-APPROVAL_STATE_PATH = os.path.join(PROJECT_ROOT, "test_programmer", "test_case_approval.json")
-REPORT_PATH = os.path.join(BASE_DIR, "reports", "validation_report.md")
 
 # 荷姿制約パラメータの既定値 (constraints/constraints.md より、PalletSpecの既定値と同一)
 # パレットは6項目のみ: 物理寸法(length/width/height)と荷山上限(max_x_span/max_y_span/max_height)。
@@ -67,29 +60,6 @@ EPS = 1e-3                 # 浮動小数点誤差マージン
 # 荷山スパン・高さの上限比較は、engine 側(1e-9)と揃えて僅かな丸め誤差のみ許容する。
 SPAN_FLOAT_EPS = 1e-9
 POSITION_REFERENCE = "combined_footprint_min_xy_top_z"
-
-def load_box_db() -> Dict[str, Any]:
-    with open(BOX_DB_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-def load_lid_db() -> Dict[str, Any]:
-    with open(LID_DB_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-def select_approved_results(result_files: List[str]) -> List[str]:
-    if not os.path.exists(APPROVAL_STATE_PATH):
-        return result_files
-
-    with open(APPROVAL_STATE_PATH, "r", encoding="utf-8") as f:
-        approval_state = json.load(f)
-    if not isinstance(approval_state, dict):
-        raise ValueError("test_case_approval.json must contain an object")
-
-    return [
-        path for path in result_files
-        if approval_state.get(os.path.basename(path)[len("result_"):-len(".json")]) is True
-        and os.path.basename(path).startswith("result_")
-    ]
 
 def get_footprint_bounds(box: Dict[str, Any]) -> Tuple[float, float, float, float]:
     pos = box["position"]
@@ -295,42 +265,45 @@ class PalletizeValidator:
             return self._empty_report(
                 test_name, ["結果データがオブジェクト形式ではありません"], []
             )
-
-        if "test_name" not in data and data.get("input_mode") != "part_number" and data.get("schema_version") != 2:
-            data["test_name"] = test_name
+        data.setdefault("test_name", test_name)
         return self.validate_data(data)
 
     def validate_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """結果スナップショットを検証する。品番の主張はDBとケースで照合する。"""
-        if data.get("input_mode") == "part_number" or data.get("schema_version") == 2:
-            from supervisor.catalog_validation import resolve_catalog_result
-            try:
-                resolved, part_counts = resolve_catalog_result(
-                    data, self.catalog, self.revision, self.pallet_db)
-                identity_valid = True
-                report = self._validate_geometry(resolved)
-            except (ValueError, KeyError, TypeError, OverflowError) as error:
-                report = self._empty_report(
-                    data.get("test_name", "unknown"), ["品番結果の検証エラー: " + str(error)], [])
-                part_counts = []
-                identity_valid = False
-            report.update(input_mode="part_number", part_counts=part_counts,
-                          identity_valid=identity_valid,
-                          catalog_revision=data.get("catalog_revision"),
-                          unplaced_boxes=data.get("unplaced_boxes") if identity_valid else [],
-                          input_boxes_count=data.get("input_boxes_count") if identity_valid else None,
-                          unplaced_boxes_count=data.get("unplaced_boxes_count") if identity_valid else None)
-            if part_counts:
-                identities = {box["order"]: box for box in data["boxes"]}
-                for field in ("support_boxes", "multi_corner_boxes"):
-                    for item in report["top_support"].get(field, []):
-                        source = identities[item["order"]]
-                        item.update({key: source[key] for key in (
-                            "box_id", "part_number", "supplier_name", "box_name", "box_model_id", "lid_id")})
-            return report
-        if self.catalog is not None:
-            return self._empty_report(data.get("test_name", "unknown"),
-                                      ["品番方式の検証では旧方式の結果を受け付けません"], [])
+        """品番方式結果だけを受け付け、照合後に幾何検証を実行する。"""
+        if data.get("input_mode") != "part_number" or data.get("schema_version") != 2:
+            return self._empty_report(
+                data.get("test_name", "unknown"),
+                ["旧方式の結果入力は廃止されました。part_number方式の結果を指定してください"],
+                [],
+            )
+        from supervisor.catalog_validation import resolve_catalog_result
+        try:
+            resolved, part_counts = resolve_catalog_result(
+                data, self.catalog, self.revision, self.pallet_db)
+            identity_valid = True
+            report = self._validate_geometry(resolved)
+        except (ValueError, KeyError, TypeError, OverflowError) as error:
+            report = self._empty_report(
+                data.get("test_name", "unknown"), ["品番結果の検証エラー: " + str(error)], [])
+            part_counts = []
+            identity_valid = False
+        report.update(input_mode="part_number", part_counts=part_counts,
+                      identity_valid=identity_valid,
+                      catalog_revision=data.get("catalog_revision"),
+                      unplaced_boxes=data.get("unplaced_boxes") if identity_valid else [],
+                      input_boxes_count=data.get("input_boxes_count") if identity_valid else None,
+                      unplaced_boxes_count=data.get("unplaced_boxes_count") if identity_valid else None)
+        if part_counts:
+            identities = {box["order"]: box for box in data["boxes"]}
+            for field in ("support_boxes", "multi_corner_boxes"):
+                for item in report["top_support"].get(field, []):
+                    source = identities[item["order"]]
+                    item.update({key: source[key] for key in (
+                        "box_id", "part_number", "supplier_name", "box_name", "box_model_id", "lid_id")})
+        return report
+
+    def validate_geometry_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """品番照合を行わず、幾何制約のみ独立検証するテスト用ヘルパー。"""
         return self._validate_geometry(data)
 
     def _validate_geometry(self, data: Dict[str, Any]) -> Dict[str, Any]:
@@ -681,131 +654,24 @@ class PalletizeValidator:
             "top_support": top_support
         }
 
-def run_supervisor_validation():
-    box_db = load_box_db()
-    lid_db = load_lid_db()
-    validator = PalletizeValidator(box_db, lid_db)
-
-    all_result_files = sorted(glob.glob(os.path.join(RESULTS_DIR, "*.json")))
-    if not all_result_files:
-        print("❌ テスト結果ファイルが見つかりません。先に tester/run_tests.py を実行してください。")
-        return
-
-    result_files = select_approved_results(all_result_files)
-    if not result_files:
-        print("⚠️ 採用済みテストケースの結果がありません。先に tester/run_tests.py を実行してください。")
-        return
-
-    print("="*80)
-    print("🛡️ 【supervisor】荷姿制約 独立バリデーション実行開始")
-    print("="*80)
-
-    reports = []
-    pass_count = 0
-    fail_count = 0
-
-    for rpath in result_files:
-        try:
-            res = validator.validate_case(rpath)
-        except Exception as exc:  # 想定外データでもランナー全体を落とさない
-            res = PalletizeValidator._empty_report(
-                os.path.basename(rpath),
-                [f"検証中に予期しないエラーが発生しました: {exc!r}"],
-                []
-            )
-        reports.append(res)
-        status = "✅ PASS" if res["is_pass"] else "❌ FAIL"
-        if res["is_pass"]:
-            pass_count += 1
-        else:
-            fail_count += 1
-
-        x_span = res.get("x_span", 0.0)
-        y_span = res.get("y_span", 0.0)
-        max_z = res.get("max_z", 0.0)
-        vol_eff = res.get("vol_eff", 0.0)
-
-        print(f"{status} [{res['test_name']:<28}] 箱数:{res['total_boxes']:>3}箱 | 荷姿:{x_span:>4.0f}x{y_span:>4.0f}x{max_z:>4.0f}mm | 充填率:{vol_eff:>5.1f}%")
-        if res.get("warnings"):
-            for w in res["warnings"]:
-                print(f"    - ⚠️ 警告: {w}")
-        if not res["is_pass"]:
-            for v in res["violations"]:
-                print(f"    - 🚨 違反: {v}")
-
-    total_cases = len(reports) if reports else 1
-    print("="*80)
-    print(f"📊 検証結果: 全 {len(reports)} ケース中  合格: {pass_count} 件 / 不合格: {fail_count} 件 (合格率: {pass_count/total_cases*100:.1f}%)")
-    print("="*80)
-
-    # Markdown レポートの出力
-    os.makedirs(os.path.dirname(REPORT_PATH), exist_ok=True)
-    with open(REPORT_PATH, "w", encoding="utf-8") as f:
-        f.write("# 荷姿制約 総合検証レポート (validation_report.md)\n\n")
-        f.write('<!-- markdownlint-configure-file { "MD013": { "tables": false } } -->\n\n')
-        f.write(f"- **作成日:** {date.today().isoformat()}\n")
-        f.write("- **検証エージェント:** `supervisor`\n")
-        f.write(f"- **検証対象:** 採用済み結果JSON ({len(reports)} 件)\n")
-        f.write(f"- **総合判定:** {'✅ **全ケース合格 (100% PASS)**' if fail_count == 0 else '❌ **制約違反あり (要修正)**'}\n\n")
-        f.write("---\n\n")
-        f.write("## 1. 検証結果サマリー\n\n")
-        f.write("| テストケース名 | 判定 | 配置箱数 | 荷姿寸法 (X × Y × Z mm) | 体積充填率 | 備考・検証詳細 |\n")
-        f.write("| :--- | :---: | :---: | :---: | :---: | :--- |\n")
-        for r in reports:
-            status = "✅ PASS" if r["is_pass"] else "❌ FAIL"
-            dims = f"{r.get('x_span', 0.0):.0f} × {r.get('y_span', 0.0):.0f} × {r.get('max_z', 0.0):.0f}"
-            notes_parts = list(r.get("violations", [])) if not r["is_pass"] else []
-            notes_parts.extend(r.get("warnings", []))
-            support = r["top_support"]
-            if support["is_valid"]:
-                mode = "長短4辺670mm支持の例外（荷山4隅不足）" if support["long_edge_exception"] else "外周4隅支持"
-                edges = support["opposing_edge_lengths_mm"]
-                notes_parts.append(
-                    f"上載せ: {mode} / 必要{support['required_points']}点 / "
-                    f"中央接触{'あり' if support['center_supported'] else 'なし'} / "
-                    f"連続X{support['continuous_support_x_mm']:.2f}, "
-                    f"Y{support['continuous_support_y_mm']:.2f}mm / "
-                    f"受け側 前{edges['front']:.2f}, 奥{edges['back']:.2f}, "
-                    f"左{edges['left']:.2f}, 右{edges['right']:.2f}mm / "
-                    f"凸包面積率{support['support_area_ratio'] * 100:.2f}%（設定上限比） / "
-                    f"凸包重心ずれX{support['centroid_offset_mm'][0]:.2f}, "
-                    f"Y{support['centroid_offset_mm'][1]:.2f}mm / "
-                    f"複数隅箱{len(support['multi_corner_boxes'])}個 / "
-                    f"支持短辺{support['contact_short_side_mm']:.2f}mm / 重心支持OK"
-                )
-            notes = "<br>".join(notes_parts) if notes_parts else "制約項目全クリア"
-            f.write(f"| **`{r['test_name']}`** | {status} | {r.get('total_boxes', 0)} 箱 | {dims} | {r.get('vol_eff', 0.0):.1f}% | {notes} |\n")
-        f.write("\n---\n\n")
-        f.write("## 2. 制約別チェック項目と検証基準\n\n")
-        f.write("0. **パレット設定(6項目)検証**: `length`/`width`/`height`/`max_x_span`/`max_y_span`/`max_height` がそれぞれ0より大きい有限数値であること。欠落時は既定値 (1200/1000/130/1360/1100/1200mm) を使用し、無効値は明示的な違反として報告した上で既定値にフォールバックする。旧キー (`min_x_span`/`min_y_span`/`max_overhang_x_mm`/`max_overhang_y_mm`/`max_small_edge_overhang_mm`) はレガシーデータとして無視する。\n")
-        f.write(r"1. **最大積載高さ制約** (ケースごとの `pallet.max_height` 以下、固定キャップなし): 全箱の頂点Z座標がパレット上面からの上限以下であること。" + "\n")
-        f.write(r"2. **長辺荷姿スパン制約** (`pallet.max_x_span` 以下。下限なし): X方向の全幅が上限以下であること。" + "\n")
-        f.write(r"3. **短辺荷姿スパン制約** (`pallet.max_y_span` 以下。下限なし): Y方向の全幅が上限以下であること。" + "\n")
-        f.write(r"4. **天地固定・回転制約**: 全箱の外寸高さがカタログ仕様と一致し、回転角が0度または90度のみであること。" + "\n")
-        f.write(r"5. **嵌合沈み込み計算**: 段積み時の上段箱の底面Z座標が `下段上面Z - fitting_depth` と正確に一致していること。" + "\n")
-        f.write(r"6. **空中配置禁止・底面支持率** ($\ge 85\%$): 底面積の85%以上が、パレット矩形(原点〜length×width)または下段箱の実交差面積によって支持されていること(パレット直置き分も実交差で計算)。" + "\n")
-        f.write(r"7. **3D幾何衝突の完全排除**: 箱同士の不正な空間食い込み（嵌合深さを超える干渉）が0件であること。" + "\n")
-        f.write("8. **積み込み順序（Order）の物理的整合性**: 支持関係にある箱について、\n")
-        f.write(r"   下段箱が上段箱より必ず先に積載されていること ($order_{lower} < order_{upper}$)。" + "\n")
-        f.write("9. **上載せ平パレット支持安定性**: 同寸法・同XY位置の上載せパレットを、最高接触面から3mm以内の露出上面で支持する。荷重重心はパレット中心で支持多角形の内部に必要。原則荷山外周4隅を覆う箱がパレット下面と接触する。四隅が欠ける場合だけ、接触支持領域の外接矩形の前/奥と左/右の4辺すべてで各670mm以上の連続支持を必須とする。四隅支持でも1箱が複数隅を覆う場合は接触支持領域全体の外接短辺670mm以上が必要。支持凸包面積は設定max_x_span×max_y_spanの65%以上、面積重心はパレット中心から各方向の設定幅の1/4未満（境界NG）。凸包には内部空間を含める。TP331/TP-331を含む5点支持指定では中央接触も必須。幾何近似であり耐荷重・たわみは保証しない。\n")
-        f.write(r"10. **下段支持箱サイズ制限**: 直接支持する下段箱の幅・奥行きが、上段箱より両方とも 1.0mm を超えて大きくないこと。" + "\n")
-        f.write(r"11. **オーバーハング(参考情報)**: 合否には影響しない。箱・蓋結合外形のバウンディングボックスとパレット端との左右前後のはみ出し量 (`overhang_mm`) を警告として記録する。" + "\n")
-
-    print(f"📄 総合検証レポートを出力しました: {REPORT_PATH}")
+def _default_report_dir(results_dir: Path) -> Path:
+    return Path(PROJECT_ROOT) / "supervisor" / "catalog_reports" / results_dir.resolve().name
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="荷姿制約の独立検証")
-    parser.add_argument("--catalog-results", type=Path, help="品番方式の一括結果フォルダ")
-    parser.add_argument("--report-dir", type=Path, help="品番方式レポートの新規保存フォルダ")
+    parser.add_argument("--results-dir", type=Path, help="品番方式の一括結果フォルダ")
+    parser.add_argument("--catalog-results", dest="results_dir_alias", type=Path,
+                        help="--results-dir の旧エイリアス")
+    parser.add_argument("--report-dir", type=Path, help="検証レポート出力フォルダ")
     args = parser.parse_args()
-    if args.catalog_results is not None:
-        if args.report_dir is None:
-            parser.error("--catalog-resultsでは--report-dirを指定してください")
-        from supervisor.catalog_validation import validate_catalog_run
-        try:
-            sys.exit(validate_catalog_run(Path(PROJECT_ROOT), args.catalog_results, args.report_dir))
-        except (OSError, ValueError, KeyError, TypeError) as error:
-            parser.exit(1, "品番方式の独立検証エラー: {}\n".format(error))
-    if args.report_dir is not None:
-        parser.error("--report-dirは--catalog-resultsと併用してください")
-    run_supervisor_validation()
+    if args.results_dir is not None and args.results_dir_alias is not None:
+        parser.error("--results-dir と --catalog-results は同時に指定できません")
+    results_dir = args.results_dir or args.results_dir_alias
+    if results_dir is None:
+        parser.error("--results-dir を指定してください")
+    report_dir = args.report_dir or _default_report_dir(results_dir)
+    from supervisor.catalog_validation import validate_catalog_run
+    try:
+        sys.exit(validate_catalog_run(Path(PROJECT_ROOT), results_dir, report_dir))
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        parser.exit(1, "品番方式の独立検証エラー: {}\n".format(error))

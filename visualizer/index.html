@@ -281,7 +281,7 @@
           list.forEach(item => {
             const opt = document.createElement('option');
             opt.value = item.filename;
-            opt.textContent = `[${item.input_mode === 'part_number' ? '品番' : '旧方式'}] ${item.test_name} (${item.boxes_count}箱, ${item.vol_eff}%) ${item.is_valid ? '✅' : '❌'}`;
+            opt.textContent = `[品番] ${item.test_name} (${item.boxes_count}箱, ${item.vol_eff}%) ${item.is_valid ? '✅' : '❌'}`;
             select.appendChild(opt);
           });
           select.selectedIndex = 0;
@@ -321,7 +321,9 @@
     }
 
     function normalizePositionReference(data) {
-      if (data.coordinate_reference !== 'combined_footprint_min_xy_top_z') return data;
+      if (data.coordinate_reference !== 'combined_footprint_min_xy_top_z') {
+        throw new Error(`coordinate_reference が未対応です: ${data.coordinate_reference}`);
+      }
       return {
         ...data,
         boxes: (data.boxes || []).map(box => {
@@ -546,7 +548,7 @@
           heading.textContent = `${ResultIdentity.label(item)} × ${item.count}`;
           const reason = document.createElement('p');
           reason.className = 'mt-0.5 text-slate-400';
-          reason.textContent = item.reason || '理由情報なし（古い結果データ）';
+          reason.textContent = item.reason || '理由情報なし';
           entry.append(heading, reason);
           unplacedSummary.appendChild(entry);
         });

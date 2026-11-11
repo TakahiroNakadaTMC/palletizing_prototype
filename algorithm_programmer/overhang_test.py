@@ -1,7 +1,6 @@
 import json
 import unittest
 from dataclasses import asdict, replace
-from unittest.mock import mock_open, patch
 
 from algorithm_programmer.models import BoxSpec, PalletSpec, PlacedBox
 from algorithm_programmer.palletizer import Palletizer, calculate_max_layers
@@ -17,8 +16,7 @@ class PalletDimensionTests(unittest.TestCase):
             {key: asdict(spec) for key, spec in specs.items()},
             lids or {"": {"type": "NONE", "fit_type": "なし"}}
         )
-        with patch("builtins.open", mock_open(read_data=json.dumps(result.to_dict()))):
-            report = validator.validate_case("dimensions.json")
+        report = validator.validate_geometry_data(result.to_dict())
         self.assertEqual(report["violations"], [], report)
         self.assertEqual(report["overhang_mm"], result.summary["overhang_mm"])
 

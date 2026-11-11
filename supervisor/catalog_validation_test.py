@@ -49,7 +49,7 @@ class CatalogValidationTests(unittest.TestCase):
     def test_no_catalog_is_explicit_failure(self):
         report = PalletizeValidator({}, {}).validate_data(self.result)
         self.assertFalse(report["is_pass"])
-        self.assertIn("--catalog-results", report["violations"][0])
+        self.assertIn("品番結果の検証エラー", report["violations"][0])
 
     def test_identity_forgery_is_rejected(self):
         for field in ("part_number", "supplier_name", "box_id", "box_name", "box_model_id", "lid_id"):
@@ -189,8 +189,18 @@ class CatalogValidationTests(unittest.TestCase):
         path = Path(directory) / "results"
         path.mkdir()
         (path / "result_othics_6.json").write_text(json.dumps(self.result), encoding="utf-8")
+        counts = dict(cases=1, passed=1, failed=0, errors=0,
+                      input=self.result["input_boxes_count"],
+                      placed=self.result["placed_boxes_count"],
+                      unplaced=self.result["unplaced_boxes_count"])
         manifest = dict(input_mode="part_number", catalog_revision=self.revision,
-                        cases=[dict(name="othics_6", result_file="result_othics_6.json", status="PASS")])
+                        source="catalog_store", counts=counts,
+                        cases=[dict(
+                            name="othics_6", result_file="result_othics_6.json", status="PASS",
+                            input=self.result["input_boxes_count"],
+                            placed=self.result["placed_boxes_count"],
+                            unplaced=self.result["unplaced_boxes_count"],
+                        )])
         (path / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
         return catalog, path, manifest
 
@@ -209,7 +219,34 @@ class CatalogValidationTests(unittest.TestCase):
                 data = copy.deepcopy(self.result)
                 data["boxes"][0]["fitting_depth"] += 10
                 (results / "result_othics_6.json").write_text(json.dumps(data), encoding="utf-8")
-                self.assertEqual(validate_catalog_run(ROOT, results, Path(directory) / "bad"), 1)
+                bad = Path(directory) / "bad"
+                self.assertEqual(validate_catalog_run(ROOT, results, bad), 1)
+                report = json.loads((bad / "report_othics_6.json").read_text(encoding="utf-8"))
+                self.assertFalse(report["is_pass"])
+                summary = json.loads((bad / "validation_summary.json").read_text(encoding="utf-8"))
+                self.assertEqual(summary["runner_counts"]["passed"], 1)
+                self.assertEqual(summary["runner_counts"]["failed"], 0)
+                self.assertEqual(summary["independent_counts"]["failed"], 1)
+
+    def test_runner_error_row_failed0_errors1_persists_report(self):
+        with tempfile.TemporaryDirectory() as directory:
+            catalog, results, manifest = self.fixture_run(directory)
+            manifest["cases"] = [dict(name="othics_6", status="ERROR", error="calculation failed")]
+            manifest["counts"] = dict(cases=1, passed=0, failed=0, errors=1, input=0, placed=0, unplaced=0)
+            (results / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            with patch("supervisor.catalog_validation.load_catalog", return_value=(catalog, self.revision)), \
+                 redirect_stdout(StringIO()):
+                target = Path(directory) / "report"
+                self.assertEqual(validate_catalog_run(ROOT, results, target), 1)
+                report = json.loads((target / "report_othics_6.json").read_text(encoding="utf-8"))
+                self.assertFalse(report["is_pass"])
+                self.assertIn("計算時エラー", report["violations"][0])
+                summary = json.loads((target / "validation_summary.json").read_text(encoding="utf-8"))
+                self.assertEqual(summary["runner_counts"]["failed"], 0)
+                self.assertEqual(summary["runner_counts"]["errors"], 1)
+                self.assertEqual(summary["independent_counts"]["failed"], 0)
+                self.assertEqual(summary["independent_counts"]["errors"], 1)
+                self.assertIn("| othics_6 | ERROR |", (target / "validation_report.md").read_text(encoding="utf-8"))
 
     def test_manifest_missing_case_revision_wrong_file_and_stale_error_result(self):
         for change in ("missing", "revision", "filename", "case_name", "error"):
@@ -225,8 +262,15 @@ class CatalogValidationTests(unittest.TestCase):
                     data = copy.deepcopy(self.result)
                     data["test_name"] = "aisin"
                     (results / "result_othics_6.json").write_text(json.dumps(data), encoding="utf-8")
+                    manifest["counts"] = dict(
+                        cases=1, passed=1, failed=0, errors=0,
+                        input=self.result["input_boxes_count"],
+                        placed=self.result["placed_boxes_count"],
+                        unplaced=self.result["unplaced_boxes_count"],
+                    )
                 elif change == "error":
                     manifest["cases"][0].update(status="ERROR", error="calculation failed")
+                    manifest["counts"] = dict(cases=1, passed=0, failed=0, errors=1, input=0, placed=0, unplaced=0)
                 (results / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
                 with patch("supervisor.catalog_validation.load_catalog", return_value=(catalog, self.revision)), \
                      redirect_stdout(StringIO()):
@@ -239,13 +283,36 @@ class CatalogValidationTests(unittest.TestCase):
                         with self.assertRaises(ValueError):
                             validate_catalog_run(ROOT, results, Path(directory) / "report")
 
+    def test_invalid_manifest_counts_are_rejected_explicitly(self):
+        with tempfile.TemporaryDirectory() as directory:
+            catalog, results, manifest = self.fixture_run(directory)
+            manifest["counts"] = dict(cases=1, passed=True, failed=0, errors=0, input=30, placed=24, unplaced=6)
+            (results / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            with patch("supervisor.catalog_validation.load_catalog", return_value=(catalog, self.revision)), \
+                 redirect_stdout(StringIO()), \
+                 self.assertRaisesRegex(ValueError, "counts\\.passed"):
+                validate_catalog_run(ROOT, results, Path(directory) / "report")
+
+    def test_uses_loaded_catalog_pallet_snapshot(self):
+        with tempfile.TemporaryDirectory() as directory:
+            catalog, results, _ = self.fixture_run(directory)
+
+            def _catalog_pallets(_root, pallet_database=None):
+                self.assertEqual(pallet_database, catalog["pallets"])
+                return pallet_database
+
+            with patch("supervisor.catalog_validation.load_catalog", return_value=(catalog, self.revision)), \
+                 patch("supervisor.catalog_validation.catalog_pallets", side_effect=_catalog_pallets), \
+                 redirect_stdout(StringIO()):
+                self.assertEqual(validate_catalog_run(ROOT, results, Path(directory) / "report"), 0)
+
     def test_cli_rejects_stale_manifest_explicitly(self):
         with tempfile.TemporaryDirectory() as directory:
             _, results, manifest = self.fixture_run(directory)
             manifest["catalog_revision"] = "stale"
             (results / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
             run = subprocess.run([sys.executable, str(ROOT / "supervisor" / "validate.py"),
-                                  "--catalog-results", str(results), "--report-dir",
+                                  "--results-dir", str(results), "--report-dir",
                                   str(Path(directory) / "reports")], capture_output=True, encoding="utf-8")
             self.assertEqual(run.returncode, 1)
             self.assertIn("再計算", run.stderr)

@@ -1,6 +1,8 @@
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
-from algorithm_programmer.cli import resolve_box_specs, resolve_pallet_spec
+from algorithm_programmer.cli import main, resolve_box_specs, resolve_pallet_spec
 from algorithm_programmer.models import BoxSpec
 
 
@@ -128,6 +130,50 @@ class ResolveBoxSpecsTest(unittest.TestCase):
                 self.box_database,
                 self.lid_database,
             )
+
+
+class CliMainRuntimeTest(unittest.TestCase):
+    def test_uses_loaded_catalog_pallet_snapshot(self):
+        catalog = dict(
+            parts={"P-1": dict(id="P-1", supplier_name="S", box_name="B", box_model_id="M", lid_id="L")},
+            models={},
+            lids={},
+            cases=dict(
+                test_cases={"c1": dict(
+                    name="c1", description="d", supplier_name="S",
+                    pallet_id="__STANDARD_1200_1000_130__",
+                    pallet=dict(max_x_span=1360, max_y_span=1100, max_height=1200),
+                    box_list=[dict(part_number="P-1", count=1)],
+                )},
+                approval_state={"c1": True},
+            ),
+            pallets={"pallets": {"__STANDARD_1200_1000_130__": {
+                "id": "__STANDARD_1200_1000_130__", "length": 1200, "width": 1000, "height": 130, "suppliers": []
+            }}},
+        )
+        result = dict(
+            summary=dict(
+                total_boxes=1, total_layers=1,
+                bounding_box=dict(x_span=1.0, y_span=1.0, max_z=1.0),
+                volume_efficiency_percent=1.0,
+                is_valid=True, total_height=1.0, warnings=[], violations=[],
+            ),
+            algorithm_mode="single",
+            part_counts=[dict(part_number="P-1", box_name="B", placed_count=1, input_count=1, unplaced_count=0)],
+            unplaced_boxes=[],
+        )
+
+        def _catalog_pallets(_root: Path, pallet_database=None):
+            self.assertEqual(pallet_database, catalog["pallets"])
+            return pallet_database
+
+        with patch("algorithm_programmer.cli.load_catalog", return_value=(catalog, "rev")), \
+             patch("algorithm_programmer.cli.catalog_pallets", side_effect=_catalog_pallets), \
+             patch("algorithm_programmer.cli.validate_staged_cases"), \
+             patch("algorithm_programmer.cli.resolve_pallet_spec", return_value=object()), \
+             patch("algorithm_programmer.cli.run_catalog_case", return_value=result), \
+             patch("sys.argv", ["cli.py", "--catalog-case", "c1"]):
+            main()
 
 
 if __name__ == "__main__":

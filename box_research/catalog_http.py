@@ -1,11 +1,11 @@
-"""両ビューアサーバーから利用する、切替準備DB専用のHTTP入口。"""
+"""HTTP API shared by the catalog and case-editing servers."""
 
 import json
 from pathlib import Path
 from typing import Any
 
 from box_research.catalog_store import (
-    catalog_pallets, load_catalog, preview_model_rename, rename_model, save_catalog,
+    load_catalog, preview_model_rename, rename_model, save_catalog,
 )
 
 ASSETS = {
@@ -45,16 +45,11 @@ def handle_catalog(handler: Any, root: Path, method: str, path: str) -> bool:
         if method == "GET" and path == "/api/catalog":
             data, revision = load_catalog(root)
             if "cases" not in data:
-                raise ValueError("準備用ケースがありません。prepare-casesを実行してください")
+                raise ValueError("ケースデータがありません")
             _reply(handler, 200, {
                 **{key: data[key] for key in ("parts", "models", "lids", "cases")},
-                "revision": revision, "pallets": catalog_pallets(root)["pallets"],
-                "assignments": data["migration"]["case_assignments"],
-                "model_references": {
-                    key: sorted(old for old, current in data["migration"]["legacy_model_mapping"].items()
-                                if current == key)
-                    for key in data["models"]
-                },
+                "revision": revision, "pallets": data["pallets"]["pallets"],
+                "model_name_history": data["migration"]["model_name_history"],
                 "phase": data["migration"]["phase"],
             })
             return True
@@ -78,7 +73,7 @@ def handle_catalog(handler: Any, root: Path, method: str, path: str) -> bool:
         if not isinstance(payload, dict):
             raise ValueError("リクエストはオブジェクトが必要です")
         if path == "/api/catalog/save":
-            if (not payload or set(payload) - {"revision", "parts", "models", "lids", "cases"}
+            if (not payload or set(payload) - {"revision", "parts", "models", "lids", "cases", "pallets"}
                     or not isinstance(payload.get("revision"), str)
                     or len(payload) < 2):
                 raise ValueError("保存対象と読込み時の版が必要です")
@@ -88,13 +83,15 @@ def handle_catalog(handler: Any, root: Path, method: str, path: str) -> bool:
             for key in ("parts", "models", "lids", "cases"):
                 if key in payload:
                     data[key] = payload[key]
+            if "pallets" in payload:
+                data["pallets"]["pallets"] = payload["pallets"]
             save_catalog(root, data, revision)
         elif path == "/api/catalog/rename-preview":
             _reply(handler, 200, preview_model_rename(root, payload["old_name"], payload["new_name"]))
             return True
         else:
             rename_model(root, payload["old_name"], payload["new_name"], payload["confirmation"])
-        _reply(handler, 200, {"status": "ok", "message": "切替準備用の保存が完了しました"})
+        _reply(handler, 200, {"status": "ok", "message": "保存が完了しました"})
     except (ValueError, KeyError, TypeError, AttributeError) as error:
         handler.log_error("Catalog request rejected: %s", error)
         _reply(handler, 400, {"status": "error", "message": str(error)})

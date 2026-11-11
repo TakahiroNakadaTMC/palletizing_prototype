@@ -35,8 +35,8 @@ model: <各エージェントに最適なモデル>
 | `test-programmer` | `read`, `edit`, `search`, `execute` | `constraints/`・`box_research/`読込＋`test_programmer/`へのテストケース生成 |
 | `algorithm-programmer` | `read`, `edit`, `search`, `execute` | `algorithm_programmer/`実装・デバッグ実行 |
 | `visualizer` | `read`, `edit`, `search`, `execute` | 結果JSON読込＋`visualizer/`へのHTML生成・動作確認 |
-| `tester` | `read`, `edit`, `search`, `execute` | テストケース実行・`tester/results/`書き込み |
-| `supervisor` | `read`, `edit`, `search`, `execute` | 制約検証スクリプト実行・`supervisor/reports/`書き込み |
+| `tester` | `read`, `edit`, `search`, `execute` | 品番ケース実行・`tester/catalog_results/`書き込み |
+| `supervisor` | `read`, `edit`, `search`, `execute` | 独立検証・`supervisor/catalog_reports/`書き込み |
 
 - `web`（外部調査）は `box-research` / `algorithm-research` のみに付与
 - `agent`（他エージェント呼び出し）・`todo`（タスク管理）は統括役の `orchestrator` のみに付与

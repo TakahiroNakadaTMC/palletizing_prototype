@@ -117,14 +117,20 @@ test(`${filename}: physical pallet drawing uses configured height below origin`,
 });
 }
 
-test('integrated editor and viewer inline JavaScript parses in full', () => {
+test('current editor and viewer JavaScript parses in full', () => {
   for (const filename of [
     path.join(__dirname, 'index.html'),
-    path.join(__dirname, '..', 'test_programmer', 'testcase_viewer.html'),
+    path.join(__dirname, '..', 'box_research', 'catalog_viewer.html'),
   ]) {
     const html = fs.readFileSync(filename, 'utf8');
     for (const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)) {
       if (match[1].trim()) new vm.Script(match[1], {filename});
     }
+  }
+  for (const filename of [
+    path.join(__dirname, 'result_identity.js'),
+    path.join(__dirname, '..', 'box_research', 'catalog_viewer.js'),
+  ]) {
+    new vm.Script(fs.readFileSync(filename, 'utf8'), {filename});
   }
 });

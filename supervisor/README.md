@@ -33,7 +33,7 @@
 supervisor/
 ├── validate.py       # 独立制約バリデーションスクリプト
 ├── validate_test.py  # 独立バリデーションのユニット・統合テスト
-├── reports/          # 総合検証レポート出力先 (validation_report.md)
+├── catalog_reports/  # 品番方式の検証レポート出力先 (Git管理外)
 └── README.md         # 本ドキュメント
 ```
 
@@ -42,18 +42,19 @@ supervisor/
 ### 品番方式の独立検証（第5段階）
 
 ```powershell
-python .\supervisor\validate.py --catalog-results .\tester\catalog_results\my_run --report-dir .\supervisor\catalog_reports\my_run
+python .\supervisor\validate.py --results-dir .\tester\catalog_results\my_run --report-dir .\supervisor\catalog_reports\my_run
 ```
 
 先に[品番方式の一括計算](../tester/README.md)で結果を作成してください。
-引数なしは従来どおり旧結果だけを検証します。新旧のDB・結果・レポートは混ぜません。
+`--results-dir` は必須です。旧方式結果の直接検証は廃止しました。
 `--report-dir` は未使用のフォルダを指定し、既存レポートを上書きしません。
 `supervisor/catalog_reports/` は再生成可能な生成物としてGit管理外です。
 
 [catalog_validation.py](catalog_validation.py) と [validate.py](validate.py) が次を確認します。
 
 1. 実行一覧 `run_manifest.json` の照合値が現在のDB・品番ケースと一致し、
-   現在の採用済みケース全件が含まれていること。計算エラーのケースの古いファイルは使いません。
+   現在の採用済みケース全件が含まれていること。
+   件数集計は実行一覧行（PASS/FAIL/ERROR）のランナー規約で検証します。
 2. 結果のケース名、品番、仕入先、現場の箱名称、共通モデル、固定蓋がDB・ケースと一致すること。
    パレット本体寸法はパレットDB、荷山上限はケースと照合します。
 3. 品番別の「投入＝配置＋未配置」、全体数量、入力順配分、投入種類、連続した積み順、
@@ -66,14 +67,15 @@ python .\supervisor\validate.py --catalog-results .\tester\catalog_results\my_ru
 形状判定は従来の独立検証を再利用し、上載せ支持だけは以前と同じエンジン非依存の共通幾何規則を使います。
 未登録の品番や固定蓋の偽装はFAIL、DB・ケース一式の照合値が変わった場合は再計算を案内します。
 無関係なケース編集でも一式の照合値が変わるため、全件を再計算する保守的な運用です。
-履歴仕様を復元して再判定する機能ではありません。旧結果の表示は維持します。
+履歴仕様を復元して再判定する機能ではありません。
+計算エラー・結果読込エラー・独立判定不一致でも、独立レポートは必ず保存します。
 
 保存するファイル:
 
 - `report_<ケース名>.json`: 独立判定・違反・警告・上載せ支持・品番別数量・未配置理由。
   上載せ支持箱にも品番・箱名称・モデル・蓋を記録します。
-- `validation_summary.json`: 件数、投入／配置／未配置合計、使用した照合値。
-- `validation_report.md`: ケース別判定、品番別の仕入先・箱名称・モデル・固定蓋・数量、要確認事項。
+- `validation_summary.json`: 独立判定件数、実行一覧件数、投入／配置／未配置合計、使用した照合値。
+- `validation_report.md`: ケース別判定（PASS/FAIL/ERROR）、品番別の仕入先・箱名称・モデル・固定蓋・数量、要確認事項。
 
 FAILが1件でもあれば終了コード1、全件PASSなら0です。
 計算時／読込エラーは別途エラー件数にも記録します。品番照合ができない結果の数量は合計に含めません。
@@ -82,9 +84,7 @@ FAILが1件でもあれば終了コード1、全件PASSなら0です。
 **今回の確認:** [第5段階レポート](catalog_reports/phase5_verified/validation_report.md) は
 150件中148件PASS／2件FAIL、実行・読込エラー0件。
 投入3132箱・配置2588箱・未配置544箱で、計算判定と全件一致しました。
-FAILの `aisin_10_m20` / `othics_m20` は旧方式でも配置0箱になる既知のケースです。
-旧Supervisorの既存テスト2件（異蓋／XYずれのコラム違反メッセージ期待）はHEAD版でも失敗し、
-今回変更していません。品番方式では固定蓋とモデルを先に照合し、危険な段積みを別テストで確認します。
+FAILの `aisin_10_m20` / `othics_m20` は既知のケースです。
 
 ```powershell
 python -m unittest supervisor.catalog_validation_test algorithm_programmer.catalog_test
@@ -116,7 +116,8 @@ python -m unittest supervisor.catalog_validation_test algorithm_programmer.catal
 
 ## 4. 検証項目（バリデーション基準）
 
-結果JSONの `coordinate_reference` が `combined_footprint_min_xy_top_z` の場合、検証前にXYを箱本体基準へ復元し、上面Zから底面Zを求めます。フィールドのない既存結果は従来の底面基準として扱います。
+品番方式の独立検証は `coordinate_reference=combined_footprint_min_xy_top_z` の結果のみ受け付けます。
+検証前にXYを箱本体基準へ復元し、上面Zから底面Zを求めます。
 
 1. **積載貨物高さ制約** ($\le$ `pallet.max_height`、inclusive）
 2. **長辺荷姿スパン制約** ($0 <$ X $\le$ `pallet.max_x_span`、inclusive、下限なし）
@@ -165,15 +166,15 @@ python -m unittest supervisor.catalog_validation_test algorithm_programmer.catal
 ## 5. 実行方法
 
 ```bash
-python3 supervisor/validate.py
+python3 supervisor/validate.py --results-dir tester/catalog_results/my_run
 ```
 
 実行すると、ターミナルに各ケースの合否サマリー（違反だけでなく参考警告も表示）が表示され、
-[検証レポート](reports/validation_report.md) に詳細レポートが出力されます。
+`supervisor/catalog_reports/<results-dir名>/`（または `--report-dir` 指定先）へ詳細レポートが出力されます。
 
 ```bash
 python3 -m unittest supervisor.validate_test -v
 ```
 
-独立したユニット・統合テストスイートを実行します（32テスト。`test_programmer` が提供する
-`outer_cover_test.json` フィクスチャが存在しない環境では `MixedLayerSearchTests` が1件スキップされます）。
+独立したユニット・統合テストスイートを実行します（catalogの保存済みデータだけで完結し、
+`test_programmer` の旧フィクスチャには依存しません）。

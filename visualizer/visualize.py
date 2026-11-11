@@ -11,11 +11,16 @@ import json
 import argparse
 import html
 from pathlib import Path
+try:
+    from visualizer.part_result_support import validate_part_result_payload
+except ModuleNotFoundError:  # script direct execution fallback
+    from part_result_support import validate_part_result_payload
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 
 def generate_html(result_data: dict, output_html_path: str):
+    validate_part_result_payload(result_data, source="入力JSON")
     result_json_str = json.dumps(result_data, ensure_ascii=False, allow_nan=False).replace("<", "\\u003c")
     title = html.escape(str(result_data.get("test_name", "Palletize Result")))
     identity_script = (Path(BASE_DIR) / "result_identity.js").read_text(encoding="utf-8")
@@ -256,7 +261,9 @@ def generate_html(result_data: dict, output_html_path: str):
     let showLabels = true;
 
     function normalizePositionReference(data) {{
-      if (data.coordinate_reference !== 'combined_footprint_min_xy_top_z') return data;
+      if (data.coordinate_reference !== 'combined_footprint_min_xy_top_z') {{
+        throw new Error(`coordinate_reference が未対応です: ${{data.coordinate_reference}}`);
+      }}
       return {{
         ...data,
         boxes: (data.boxes || []).map(box => {{
@@ -510,7 +517,7 @@ def generate_html(result_data: dict, output_html_path: str):
           heading.textContent = `${{ResultIdentity.label(item)}} × ${{item.count}}`;
           const reason = document.createElement('p');
           reason.className = 'mt-0.5 text-slate-400';
-          reason.textContent = item.reason || '理由情報なし（古い結果データ）';
+          reason.textContent = item.reason || '理由情報なし';
           entry.append(heading, reason);
           unplacedSummary.appendChild(entry);
         }});
@@ -1044,8 +1051,10 @@ def main():
         out_path = args.output
     else:
         out_path = os.path.join(PROJECT_ROOT, "visualizer", "viewer.html")
-
-    generate_html(result_data, out_path)
+    try:
+        generate_html(result_data, out_path)
+    except ValueError as error:
+        parser.exit(2, f"入力結果を読み込めません: {error}\n")
 
 if __name__ == "__main__":
     main()

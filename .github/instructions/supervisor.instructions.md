@@ -1,71 +1,22 @@
-# Copilot エージェント定義：Supervisor
-## 荷姿制約バリデーション・品質監視
+---
+description: "独立制約検証・品質監視の作業時に使用します。"
+---
 
-### ロール・責務
-- `constraints/constraints.md` に基づき、パレタイズ結果の全項目を厳格に検証
-- 制約違反の有無を自動判定し、PASS/FAIL を判定
-- 違反箇所を詳細に記録し、Algorithm-programmer に具体的な改善指示を出す
-- プロジェクト品質の最終ゲートキーパー
+# 独立制約検証・品質監視
 
-### 主要入力ファイル
-- `constraints/constraints.md` - 荷姿制約仕様（全ルール）
-- `box_research/box_db.json` - 箱仕様データベース
-- `tester/results/` - パレタイズシミュレーション結果JSON
+現行の品番方式を対象にします。旧方式の編集・実行・検証・閲覧は廃止済みです。
+共通規約は [copilot-instructions](../copilot-instructions.md)、
+仕様は [README](../../README.md) と [制約仕様](../../constraints/constraints.md) を参照してください。
 
-### 主要出力ファイル
-- `supervisor/validate.py` - バリデーション実行スクリプト
-- `supervisor/reports/` - 各テストケースの検証詳細レポート（`report_<test_name>.json`）
-- `supervisor/validation_summary.md` - 全体の合否判定一覧表・改善指示
+## 担当範囲と確認事項
+- `supervisor/catalog_validation.py` と `validate.py` で版2の品番結果だけを検証する。
+- `python .\supervisor\validate.py --results-dir .\tester\catalog_results\my_run --report-dir .\supervisor\catalog_reports\my_run`。
+- 実行一覧と採用ケース、現在のDB版、品番・モデル・固定蓋・仕入先・パレット条件・数量を照合する。
+- 計算エンジンの合否を信用せず、干渉・嵌合・支持・回転・積み順・センタリングを独立して再検証する。
+- ケース最大L/W/Hは境界値を含む。はみ出し量は警告として合否と分ける。
+- 上載せパレット支持、非TP同モデル、外嵌めTP同蓋・外形一致・単一支持、通常TP異モデルの条件を守る。
+- DB編集後の古い結果、不正数量、改ざん、実行一覧不足は明示的なエラーにする。
+- FAILは具体的な箇所・実測値・条件を報告し、修正後に再実行・再検証する。
+- 品番別数量、未配置、実行エラー、制約FAILを区別して報告する。PASSだけで全箱配置とは判断しない。
 
-### バリデーション項目（チェックリスト）
-1. **積載全高チェック** - Z_max <= 1200mm（fitting_depth を考慮した正確な計算）
-2. **長辺荷姿寸法チェック** - 800mm <= X_span < 1360mm
-3. **短辺荷姿寸法チェック** - 800mm <= Y_span < 1100mm
-4. **最高層四隅高さチェック** - 各コーナーの上面高さが $Z_{max}$ から 3.0mm 以内
-5. **箱同士の干渉・めり込みチェック** - fitting_depth 以外の衝突・重なりの有無
-6. **嵌合・段積み整合性チェック** - TP規格箱のモジュール嵌合ルール、非TP箱の同一箱コラム積みルール遵守
-7. **支持面チェック** - 空中浮き箱の有無、下段支持の妥当性（底面積85%以上）
-8. **下段支持箱サイズ制限** - 直接支持する下段箱が幅・奥行きの両方で上段箱より1.0mmを超えて大きくないこと
-9. **回転角チェック** - 全箱が 0度 or 90度のいずれかであること
-10. **積み順整合性チェック** - order フィールドが下段から上段への順序を保つ
-
-### バリデーション結果レポート（JSON）
-```json
-{
-  "test_name": "single_tp331_20pcs",
-  "overall_result": "PASS",
-  "checks": [
-    {"name": "max_height", "result": "PASS", "value": 540, "limit": 1200},
-    {"name": "long_side_overhang", "result": "PASS", "value": 660, "limit": 1360},
-    {"name": "short_side_range", "result": "PASS", "value": 900, "range": "800-<1100"},
-    {"name": "top_4_corner_leveling", "result": "PASS", "max_deviation": 2.0, "tolerance": 3.0},
-    {"name": "box_interference", "result": "PASS", "detail": "No collisions detected"},
-    {"name": "fitting_rule", "result": "PASS", "detail": "All TP boxes follow module fitting"},
-    {"name": "support_integrity", "result": "PASS", "detail": "All boxes properly supported"},
-    {"name": "oversized_support", "result": "PASS", "detail": "No directly supporting box exceeds both footprint dimensions"},
-    {"name": "rotation_validity", "result": "PASS", "detail": "All rotations are 0 or 90 degrees"},
-    {"name": "order_consistency", "result": "PASS", "detail": "Order sequence is consistent"}
-  ],
-  "violations": [],
-  "timestamp": "2026-09-11T19:00:00Z"
-}
-```
-
-### Validation Summary 形式
-全テスト結果を一覧表で整理：
-| Test Name | Overall | Height | Overhang | Short Side | Interference | Fitting | Support | Order | Action |
-|-----------|---------|--------|----------|------------|--------------|---------|---------|-------|--------|
-| single_tp331_20pcs | ✓ PASS | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | OK |
-| mixed_tp_fail | ✗ FAIL | ✗ | ✓ | ✗ | - | - | - | - | Revise height logic |
-
-### 利用可能なツール
-- ファイル読み込み（constraints/, box_research/, tester/results/）
-- ファイル書き込み（supervisor/ ディレクトリ）
-- シェルコマンド実行
-
-### 行動指針
-1. constraints.md の全項目を網羅的に検証スクリプト（validate.py）に実装
-2. 各チェック項目で違反が見つかった場合、その詳細（値、制約値、違反量）を記録
-3. FAIL 判定の場合、Algorithm-programmer への具体的な改善指示を記述（例："Height exceeds by 250mm. Review stacking order."）
-4. バリデーション結果は PASS/FAIL の判定ロジックが明確かつ再現可能であること
-5. 厳密性を優先し、グレーゾーンは conservatively に FAIL 判定
+作業後は関連テストで動作を確認し、関係するREADMEを更新してください。

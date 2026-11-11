@@ -1,13 +1,14 @@
 """追加ライブラリ不要のEdgeヘッドレス検証。テスト用DBだけを編集する。"""
 
 from pathlib import Path
+import os
 import socketserver
 import subprocess
 import threading
 import unittest
 from unittest.mock import patch
 
-from box_research.catalog_store import load_catalog, prepare_cases
+from box_research.catalog_store import load_catalog
 from box_research.catalog_store_test import CatalogFixture
 from box_research import serve_viewer
 
@@ -71,12 +72,12 @@ async function save() {
   const compatible = [...d.querySelectorAll('[name="compatible_lids"]')].find(input => input.value === 'テスト蓋');
   compatible.checked = true; submit(); await save();
   tab('parts'); click('add');
-  field('id','０００１０'); field('supplier_name','オティックス'); field('box_name','表示箱');
+  field('id','０００１０'); field('supplier_name','Supplier A'); field('box_name','表示箱');
   field('box_model_id','サンボックス#99');
   el('field-box_model_id').dispatchEvent(new w.Event('change',{bubbles:true}));
   field('lid_id','テスト蓋'); submit(); await save();
   assert(row('00010').textContent.includes('テスト蓋'), 'fixed lid saved');
-  click('add'); field('id','０００１０'); field('supplier_name','オティックス'); field('box_name','重複');
+  click('add'); field('id','０００１０'); field('supplier_name','Supplier A'); field('box_name','重複');
   submit(); assert(el('form-error').textContent.includes('同じID'), 'duplicate ID rejected');
   click('cancel-edit');
   tab('models');
@@ -87,7 +88,24 @@ async function save() {
   await until(() => Boolean(row('変更後モデル')) && !el('reload').disabled, 'rename failed');
   assert(confirmation.includes('00010'), 'rename impact shows part');
   tab('parts'); assert(row('00010').textContent.includes('変更後モデル'), 'rename updates references');
-  tab('pallets'); assert(el('add').disabled && el('table-body').textContent.includes('標準'), 'pallet view');
+  tab('models'); rowButton('変更後モデル','編集');
+  assert(el('field-id').disabled, 'existing model ID cannot be edited directly');
+  click('cancel-edit');
+  tab('pallets'); assert(!el('add').disabled && el('table-body').textContent.includes('標準'), 'pallet view');
+  click('add'); field('id','PALLET-UI'); field('model','UI pallet');
+  field('length',900); field('width',1100); field('height',125); field('suppliers','Supplier A\nNITTAN');
+  submit(); assert(el('editor').open && el('form-error').textContent.includes('長さL'), 'reversed pallet dimensions rejected');
+  field('length',1100); field('width',900); field('suppliers','Supplier A\nBad\tSupplier');
+  submit(); assert(el('editor').open && el('form-error').textContent.includes('制御文字'), 'supplier control characters rejected per line');
+  field('suppliers',' Supplier A \nＮＩＴＴＡＮ');
+  submit(); await save(); assert(row('PALLET-UI'), 'pallet created');
+  click('reload');
+  await until(() => !el('reload').disabled && el('feedback').textContent.includes('読み込み'), 'pallet reload failed');
+  rowButton('PALLET-UI','編集');
+  assert(el('field-suppliers').value === 'Supplier A\nニッタン', 'multiline suppliers and server alias persisted');
+  click('cancel-edit');
+  rowButton('PALLET-UI','編集'); field('height',135); submit(); await save();
+  assert(row('PALLET-UI').textContent.includes('135'), 'pallet edited');
   frame.src = '/catalog_cases.html';
   await until(() => frame.contentDocument?.getElementById('section-title')?.textContent.includes('品番方式'), 'case page navigation');
   await ready();
@@ -117,11 +135,13 @@ async function save() {
 </script></body></html>"""
 
 
-@unittest.skipUnless(EDGE.exists(), "Edgeがない環境ではHTTP・保存処理のテストを使用します")
+@unittest.skipUnless(
+    EDGE.exists() and os.environ.get("PALLETIZER_RUN_BROWSER_TESTS") == "1",
+    "Set PALLETIZER_RUN_BROWSER_TESTS=1 in a headless-Edge-capable environment",
+)
 class CatalogBrowserTest(CatalogFixture, unittest.TestCase):
     def test_real_browser_editing_workflow(self):
-        prepare_cases(self.root)
-        patcher = patch.object(serve_viewer, "BASE_DIR", str(self.db))
+        patcher = patch.object(serve_viewer, "BASE_DIR", str(self.root / "box_research"))
         patcher.start()
         self.addCleanup(patcher.stop)
 

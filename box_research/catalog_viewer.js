@@ -5,13 +5,13 @@
   const clone = value => JSON.parse(JSON.stringify(value));
   const caseMode = location.pathname === '/catalog_cases.html';
   const state = { data: null, dirty: new Set(), tab: caseMode ? 'cases' : 'parts', busy: false, formDirty: false, editing: null };
-  const titles = { parts: '品番・箱種DB', models: '箱モデルDB', lids: '蓋DB', pallets: 'パレットDB（参照）', cases: '品番方式のケース（切替準備用）' };
+  const titles = { parts: '品番・箱種DB', models: '箱モデルDB', lids: '蓋DB', pallets: 'パレットDB', cases: '品番方式のケース' };
   const hints = {
     parts: '品番ごとに仕入先・箱名称・共通箱モデル・固定蓋を管理します。品番は文字列です。',
     models: '共通モデル名が表示名とIDを兼ねます。名前変更は「名前変更」から、関連品番・ケースを確認して行います。',
     lids: '蓋の仕様と嵌め方を管理します。使用中の蓋は削除できません。蓋IDの変更はこの段階では行いません。',
-    pallets: '既存パレットDBの参照表示です。編集はDBサーバーの従来画面のパレットDBタブで行ってください。ケースで使用できるパレットは仕入先で絞ります。',
-    cases: '仕入先→品番→数量の順で選びます。採用状態も準備用で、現在の実行対象は変わりません。第一候補の割当ては編集画面で確認できます。'
+    pallets: 'パレット型番・本体寸法・利用可能な仕入先を管理します。使用中のパレットは削除できません。標準パレットは固定です。',
+    cases: '仕入先→品番→数量の順で選びます。採用状態はテスト実行対象を示します。'
   };
   function node(tag, text, props = {}) {
     const element = document.createElement(tag);
@@ -29,7 +29,7 @@
     });
     $('reload').disabled = state.busy;
     $('save').disabled = state.busy || !state.data || !state.dirty.size;
-    $('add').disabled = state.busy || !state.data || state.tab === 'pallets';
+    $('add').disabled = state.busy || !state.data;
     $('dirty').textContent = !state.data ? '未読込（再読み込みを押してください）'
       : state.dirty.size ? `未保存: ${[...state.dirty].map(key => titles[key]).join('、')}` : '保存済み';
     const id = $('field-id');
@@ -76,7 +76,7 @@
       case 'parts': return [id, record.supplier_name, record.box_name, record.box_model_id, record.lid_id];
       case 'models': return [id, record.type, dimension(record), record.fitting_depth, record.rib_thickness, record.top_support_points, record.compatible_lids.join('、')];
       case 'lids': return [id, record.type, `${record.length} × ${record.width}`, record.thickness, record.fit_type, record.description || ''];
-      case 'pallets': return [record.model, dimension(record), record.suppliers.join('、') || '全仕入先共通', id];
+      case 'pallets': return [id, record.model, dimension(record), record.suppliers.join('、') || '全仕入先共通'];
       default: return [id, record.description, record.supplier_name, caseLabel(record), `${record.pallet.max_x_span} × ${record.pallet.max_y_span} × ${record.pallet.max_height}`];
     }
   }
@@ -84,7 +84,7 @@
     parts: ['品番', '仕入先', '箱名称', '共通箱モデル', '固定蓋'],
     models: ['共通モデル名', '規格', 'L × W × H (mm)', '嵌合深さ', 'リブ厚', '支持点数', '互換蓋'],
     lids: ['蓋ID', '規格', 'L × W (mm)', '高さ増加 (mm)', '嵌め方', '説明'],
-    pallets: ['型番', 'L × W × H (mm)', '仕入先', '仕様ID'],
+    pallets: ['パレット型番', 'モデル', '本体 L × W × H (mm)', '利用可能な仕入先'],
     cases: ['ケースID', '説明', '仕入先', '品番／箱名称・数量', '荷山最大L × W × H (mm)']
   };
   function render() {
@@ -96,7 +96,7 @@
     $('records').setAttribute('aria-label', titles[state.tab]);
     $('table-head').replaceChildren();
     const head = node('tr');
-    for (const label of [...headers[state.tab], ...(caseMode ? ['採用（準備用）'] : []), ...(state.tab !== 'pallets' ? ['操作'] : [])]) head.append(node('th', label));
+    for (const label of [...headers[state.tab], ...(caseMode ? ['採用'] : []), '操作']) head.append(node('th', label));
     $('table-head').append(head);
     $('table-body').replaceChildren();
     const query = $('search').value.toLowerCase();
@@ -115,8 +115,8 @@
         approved.addEventListener('change', () => { state.data.cases.approval_state[id] = approved.checked; mark('cases'); });
         td.append(approved); tr.append(td);
       }
-      if (state.tab !== 'pallets') {
-        const td = node('td');
+      const td = node('td');
+      if (state.tab !== 'pallets' || !record.standard) {
         const edit = node('button', '編集', { type: 'button' });
         edit.addEventListener('click', () => openEditor(id)); td.append(edit);
         if (state.tab === 'models') {
@@ -124,8 +124,11 @@
           rename.addEventListener('click', () => renameModel(id)); td.append(rename);
         }
         const remove = node('button', '削除', { type: 'button' });
-        remove.addEventListener('click', () => removeRecord(id)); td.append(remove); tr.append(td);
+        remove.addEventListener('click', () => removeRecord(id)); td.append(remove);
+      } else {
+        td.append(node('span', '固定'));
       }
+      tr.append(td);
       $('table-body').append(tr);
     }
     $('counts').textContent = `${visible}件表示 / 全${Object.keys(records()).length}件`;
@@ -136,6 +139,11 @@
     if (state.tab === 'parts') for (const [name, data] of Object.entries(state.data.cases.test_cases)) {
       if (data.box_list.some(row => row.part_number === id)) references.push(name);
     }
+    if (state.tab === 'pallets') {
+      for (const [name, data] of Object.entries(state.data.cases.test_cases)) {
+        if (data.pallet_id === id) references.push(name);
+      }
+    }
     if (state.tab === 'models' || state.tab === 'lids') {
       for (const part of Object.values(state.data.parts)) {
         if ((state.tab === 'models' ? part.box_model_id : part.lid_id) === id) references.push(part.id);
@@ -143,7 +151,6 @@
       if (state.tab === 'lids') for (const model of Object.values(state.data.models)) {
         if (model.compatible_lids.includes(id)) references.push(model.id);
       }
-      if (state.tab === 'models') references.push(...(state.data.model_references[id] || []).map(name => `旧箱名称: ${name}`));
     }
     if (references.length) { feedback(`使用中のため削除できません: ${references.join('、')}`, true); return; }
     if (!confirm(`${id} を削除予定にしますか？ 保存するまではファイルは変わりません。`)) return;
@@ -161,7 +168,7 @@
       const message = `${plan.old_name} → ${plan.new_name}\n関連品番: ${plan.affected_parts.join('、') || 'なし'}\n互換・使用蓋: ${plan.affected_lids.join('、') || 'なし'}\n関連ケース: ${plan.affected_cases.join('、') || 'なし'}\n\n対応付けもまとめて保存します。変更しますか？`;
       if (!confirm(message)) return;
       await api('/rename', { ...plan, confirmation: plan.confirmation });
-      await load(); feedback('モデル名と関連品番を保存しました。次回の品番方式の計算から反映されます。');
+      await load(); feedback('モデル名と関連品番を保存しました。');
     });
   }
   function field(key, label, type, value, options = []) {
@@ -183,8 +190,8 @@
     const record = state.editing.record;
     $('fields').replaceChildren(); $('form-error').textContent = '';
     $('editor-title').textContent = `${titles[state.tab]} ${id ? '編集' : '追加'}`;
-    const idInput = field('id', caseMode ? 'ケースID（英数字・下線・ハイフン）' : state.tab === 'models' ? '共通モデル名' : state.tab === 'parts' ? '品番（文字列）' : '蓋ID', 'text', id);
-    idInput.required = true; idInput.disabled = Boolean(id);
+    const idInput = field('id', caseMode ? 'ケースID（英数字・下線・ハイフン）' : state.tab === 'models' ? '共通モデル名' : state.tab === 'parts' ? '品番（文字列）' : state.tab === 'pallets' ? 'パレット型番' : '蓋ID', 'text', id);
+    idInput.required = true; idInput.disabled = Boolean(id) || Boolean(record.standard);
     if (state.tab === 'parts') {
       field('supplier_name', '仕入先名', 'text', record.supplier_name).required = true;
       field('box_name', '箱名称（現場での呼び名）', 'text', record.box_name).required = true;
@@ -216,6 +223,12 @@
       field('name', '名称・用途', 'text', record.name);
       field('color', '色', 'text', record.color);
       field('description', '説明', 'textarea', record.description);
+    } else if (state.tab === 'pallets') {
+      field('model', 'モデル名', 'text', record.model).required = true;
+      for (const [key, label] of [['length', '長さ L'], ['width', '幅 W'], ['height', '高さ H']]) {
+        field(key, label + ' (mm)', 'number', record[key]);
+      }
+      field('suppliers', '利用可能な仕入先（1行に1件）', 'textarea', (record.suppliers || []).join('\n')).required = true;
     } else {
       setupCase(record);
     }
@@ -254,8 +267,6 @@
       updatePallets(); renderLines();
     });
     updatePallets(record.pallet_id); renderLines();
-    const assignments = state.data.assignments.filter(row => row.case_file === `${state.editing.id}.json` && row.status === 'first_candidate');
-    $('assignment-help').textContent = assignments.length ? '移行時の第一候補（変更可能）: ' + assignments.map(row => `箱行${row.row}: ${row.candidates.join('、')}`).join(' / ') : '';
   }
   function updatePallets(preferred) {
     const input = $('field-pallet_id'); input.replaceChildren();
@@ -310,6 +321,8 @@
         if (input.type === 'number') {
           if (input.value.trim() === '' || !Number.isFinite(Number(input.value))) throw new Error('数値を入力してください');
           record[input.name] = Number(input.value);
+        } else if (input.name === 'suppliers' && state.tab === 'pallets') {
+          record.suppliers = input.value.split(/\r?\n/).map(value => normalized(value)).filter(Boolean);
         } else record[input.name] = ['description', 'name', 'color'].includes(input.name) ? input.value.trim() : normalized(input.value);
       }
       record.id = id;
@@ -317,6 +330,10 @@
         record.compatible_lids = [...$('fields').querySelectorAll('[name="compatible_lids"]:checked')].map(input => input.value);
         record.top_support_points = Number(record.top_support_points);
         record.module_ratio = record.module_ratio || null;
+      }
+      if (state.tab === 'pallets') {
+        if (!record.suppliers.length) throw new Error('利用可能な仕入先を1件以上入力してください');
+        if (record.length < record.width) throw new Error('パレットの長さLは幅W以上にしてください');
       }
       if (caseMode) {
         if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$/.test(id)) throw new Error('ケースIDの形式が不正です');
@@ -355,15 +372,15 @@
     const payload = { revision: state.data.revision };
     for (const key of state.dirty) payload[key] = state.data[key];
     await api('/save', payload);
-    await load(); feedback('品番方式のデータを保存しました。次回の品番方式の計算から反映されます。旧方式のデータは変更していません。');
+    await load(); feedback('変更を保存しました。');
   }));
   for (const [id, approved] of [['approve-all', true], ['approve-none', false]]) $(id).addEventListener('click', () => {
-    if (!confirm(`全ケースを${approved ? '採用' : '不採用'}予定にしますか？ 検索対象以外も含みます。`)) return;
+    if (!confirm(`全ケースを${approved ? '採用' : '不採用'}にしますか？ 検索対象以外も含みます。`)) return;
     for (const key of Object.keys(state.data.cases.approval_state)) state.data.cases.approval_state[key] = approved;
     mark('cases'); render();
   });
   window.addEventListener('beforeunload', event => {
     if (state.dirty.size || state.formDirty || state.busy) { event.preventDefault(); event.returnValue = ''; }
   });
-  busy(async () => { await load(); feedback('品番方式のデータを読み込みました。計算はCLIから明示的に実行してください。'); });
+  busy(async () => { await load(); feedback('品番カタログとケースを読み込みました。'); });
 })();

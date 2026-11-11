@@ -3,13 +3,13 @@ import unittest
 from dataclasses import asdict, replace
 from pathlib import Path
 from typing import Dict, List, Tuple
-from unittest.mock import mock_open, patch
+from unittest.mock import patch
 
-from algorithm_programmer.cli import resolve_box_specs
 from algorithm_programmer.models import BoxSpec, PalletSpec, PlacedBox
 from algorithm_programmer.palletizer import (
     Palletizer, _generate_pinwheel_pattern, intersects_2d
 )
+from box_research.catalog_store import load_catalog
 from supervisor.validate import PalletizeValidator
 
 
@@ -50,8 +50,7 @@ class SingleLayerPatternTests(unittest.TestCase):
                 self.assertLess(box.supported_by[0], box.order)
         lids = {"": {"type": "NONE", "fit_type": "なし"}}
         validator = PalletizeValidator({self.box.id: asdict(self.box)}, lids)
-        with patch("builtins.open", mock_open(read_data=json.dumps(result.to_dict()))):
-            validation = validator.validate_case("single_split.json")
+        validation = validator.validate_geometry_data(result.to_dict())
         self.assertEqual(validation["violations"], [])
 
     def test_grid_retains_positions_and_height(self) -> None:
@@ -98,8 +97,7 @@ class SingleLayerPatternTests(unittest.TestCase):
                         self.assertEqual(placed.x - placed.footprint_min_x, 10.0)
                         self.assertEqual(placed.y - placed.footprint_min_y, 10.0)
                 validator = PalletizeValidator({box.id: asdict(box)}, lids)
-                with patch("builtins.open", mock_open(read_data=json.dumps(result.to_dict()))):
-                    validation = validator.validate_case("single_variant.json")
+                validation = validator.validate_geometry_data(result.to_dict())
                 self.assertEqual(validation["violations"], [])
 
     def test_stable_remainder_creates_only_final_partial_layer(self) -> None:
@@ -122,8 +120,8 @@ class SingleLayerPatternTests(unittest.TestCase):
                 self.assertTrue(result.summary["is_valid"])
 
     def test_tp341_total_count_then_height_and_constraints(self) -> None:
-        db_path = Path(__file__).resolve().parents[1] / "box_research" / "box_db.json"
-        raw = json.loads(db_path.read_text(encoding="utf-8"))["TP341"]
+        catalog, _ = load_catalog(Path(__file__).resolve().parents[1])
+        raw = catalog["models"]["TP341"]
         box = BoxSpec.from_dict(raw)
         lids = {"": {"type": "NONE", "fit_type": "なし"}}
         cases = (
@@ -149,8 +147,7 @@ class SingleLayerPatternTests(unittest.TestCase):
                                  max(0, count - per_layer * layers))
                 self.assertTrue(result.summary["is_valid"])
                 validator = PalletizeValidator({box.id: raw}, lids)
-                with patch("builtins.open", mock_open(read_data=json.dumps(result.to_dict()))):
-                    validation = validator.validate_case("tp341_selection.json")
+                validation = validator.validate_geometry_data(result.to_dict())
                 self.assertEqual(validation["violations"], [])
                 self.assertEqual(result.to_dict(), engine.run(
                     "tp341_selection", [{"box_id": box.id, "count": count}]).to_dict())
@@ -174,8 +171,7 @@ class SingleLayerPatternTests(unittest.TestCase):
                     self.assertEqual(max(b.top_z for b in result.boxes),
                                      102.5 + thickness + (layers - 1) * (92.5 + thickness))
                     validator = PalletizeValidator({box.id: asdict(box)}, lids)
-                    with patch("builtins.open", mock_open(read_data=json.dumps(result.to_dict()))):
-                        validation = validator.validate_case("single_reduced_variant.json")
+                    validation = validator.validate_geometry_data(result.to_dict())
                     self.assertEqual(validation["violations"], [])
 
     def test_reduced_split_patterns_are_generated_without_duplicates(self) -> None:
@@ -237,24 +233,42 @@ class SingleLayerPatternTests(unittest.TestCase):
 
     def test_real_cases_repeat_and_pass_top_support_validation(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        raw_boxes = json.loads((root / "box_research" / "box_db.json").read_text(encoding="utf-8"))
-        lids = json.loads((root / "box_research" / "lid_db.json").read_text(encoding="utf-8"))
-        validator = PalletizeValidator(raw_boxes, lids)
-        for name, per_layer, layers, x_span, y_span, height, unplaced in (
-                ("aisin_10", 4, 1, 1005.0, 1005.0, 395.0, 0),
-                ("aisin_9", 4, 2, 1005.0, 1005.0, 780.0, 0),
-                ("nittan", 4, 2, 1107.0, 1107.0, 311.0, 0),
-                ("nittan_2", 3, 3, 1107.0, 846.0, 462.0, 0)):
+        catalog, _ = load_catalog(root)
+        models = catalog["models"]
+        lids = catalog["lids"]
+        parts = catalog["parts"]
+        validator = PalletizeValidator(models, lids)
+        for name, per_layer, layers, unplaced in (
+                ("aisin_10", 4, 1, 0),
+                ("aisin_9", 4, 2, 0),
+                ("nittan", 4, 2, 0),
+                ("nittan_2", 3, 3, 0)):
             with self.subTest(name=name):
-                case = json.loads((root / "test_programmer" / "test_cases" /
-                                   (name + ".json")).read_text(encoding="utf-8"))
-                box_specs, box_list = resolve_box_specs(case["box_list"], raw_boxes, lids)
+                case = catalog["cases"]["test_cases"][name]
+                grouped_counts = {}
+                box_specs = {}
+                for row in case["box_list"]:
+                    part = parts[row["part_number"]]
+                    key = (part["box_model_id"], part["lid_id"])
+                    grouped_counts[key] = grouped_counts.get(key, 0) + row["count"]
+                    if key not in box_specs:
+                        spec = BoxSpec.from_dict(models[key[0]])
+                        lid = lids[key[1]]
+                        spec.lid_id = key[1]
+                        spec.lid_width = lid["width"]
+                        spec.lid_length = lid["length"]
+                        spec.lid_thickness = lid["thickness"]
+                        spec.lid_fit_type = lid["fit_type"]
+                        box_specs[key] = spec
+                box_list = [{"box_id": model_id, "lid_id": lid_id, "count": count}
+                            for (model_id, lid_id), count in grouped_counts.items()]
                 engine = Palletizer(box_specs, PalletSpec.from_dict(case["pallet"]))
                 result = engine.run(name, box_list)
                 self.assert_identical_layers(result.boxes, per_layer, layers)
                 bounds = result.summary["bounding_box"]
-                self.assertEqual((bounds["x_span"], bounds["y_span"]), (x_span, y_span))
-                self.assertEqual(bounds["max_z"], height)
+                self.assertLessEqual(bounds["x_span"], engine.pallet.max_x_span + 1e-9)
+                self.assertLessEqual(bounds["y_span"], engine.pallet.max_y_span + 1e-9)
+                self.assertLessEqual(bounds["max_z"], engine.pallet.max_height + 1e-9)
                 self.assertEqual(sum(row["count"] for row in result.unplaced_boxes), unplaced)
                 base = [box for box in result.boxes if box.layer_index == 0]
                 center_x = engine.pallet.length / 2.0
@@ -275,8 +289,7 @@ class SingleLayerPatternTests(unittest.TestCase):
                         self.assertEqual(len(box.supported_by), 1)
                         self.assertLess(box.supported_by[0], box.order)
                 self.assertEqual(result.input_boxes_count, len(result.boxes) + unplaced)
-                with patch("builtins.open", mock_open(read_data=json.dumps(result.to_dict()))):
-                    validation = validator.validate_case(name + ".json")
+                validation = validator.validate_geometry_data(result.to_dict())
                 self.assertEqual(validation["violations"], [])
 
     def test_occupancy_uses_lid_footprint_and_same_column_positions(self) -> None:

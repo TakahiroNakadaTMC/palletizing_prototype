@@ -18,7 +18,7 @@
 ```text
 tester/
 ├── run_tests.py     # 全テストケース自動一括実行スクリプト
-├── results/         # パレタイズ結果JSONの生成先 (Git管理外)
+├── catalog_results/ # 品番方式結果JSONの生成先 (Git管理外)
 └── README.md        # 本ドキュメント
 ```
 
@@ -26,16 +26,17 @@ tester/
 
 ## 3. テスト実行方法
 
-### 品番方式（第4段階・明示指定）
+### 品番方式（既定動作）
 
 ```powershell
-python .\tester\run_tests.py --catalog --output-dir .\tester\catalog_results\review_phase4
+python .\tester\run_tests.py
+python .\tester\run_tests.py --output-dir .\tester\catalog_results\review_phase6
 ```
 
 [品番ケース一式](../box_research/catalog/test_cases.json) の `approval_state` が
 trueのケースだけを、読み込み時点の同じDB・ケース一式で計算します。
-旧ケースの採否は使いません。`--output-dir` は毎回新しいフォルダを指定してください。
-既存フォルダや旧 `tester/results/` 配下への保存は拒否し、古い結果との混在を防ぎます。
+旧ケースの採否は使いません。`--output-dir` 省略時は時刻名の新規フォルダを自動作成します。
+既存フォルダは再利用しません。結果は常に新規フォルダへ保存されます。
 `tester/catalog_results/` は生成物としてGit管理外です。
 
 各 `result_<ケース名>.json` と `run_manifest.json`（今回の実行一覧）を保存します。
@@ -45,11 +46,8 @@ FAILとERRORは区別し、どちらかがあれば終了コード1、両方な�
 未配置は制約FAILとは別であり、未配置数が0かどうかも確認してください。
 エラーケースの箱数は算出できないため、実行一覧の数量合計には含みません。
 
-第5段階で新結果の独立検証と3D表示に対応しました。
-
 ```powershell
-python .\supervisor\validate.py --catalog-results .\tester\catalog_results\review_phase4 --report-dir .\supervisor\catalog_reports\review_phase4
-python .\visualizer\serve_3d_viewer.py --results-dir .\tester\catalog_results\review_phase4
+python .\supervisor\validate.py --results-dir .\tester\catalog_results\review_phase6 --report-dir .\supervisor\catalog_reports\review_phase6
 ```
 
 検証は実行一覧を使い、現在の採用済み全件がそろっていることも確認します。
@@ -59,15 +57,4 @@ DBや品番ケースを変更した場合は、新規結果フォルダへ再計
 正式な独立検証も全件で計算判定と一致しました。
 結果項目は [計算モジュールの説明](../algorithm_programmer/README.md#品番方式の計算第4段階) を参照してください。
 
-### 旧方式（既定動作を維持）
-
-```bash
-# 全テストケースの一括実行
-python3 tester/run_tests.py
-```
-
-`test_programmer/test_case_approval.json` の採否状態を参照し、`true` のテストケースのみ実行します。採否状態に登録されていないケースは実行対象外です。supervisor も同じ状態を使い、採用済みケースの結果だけを検証します。
-
-実行が完了すると、`tester/results/` 配下に各テストケースのシミュレーション結果（配置座標、回転、積み順、支持関係、荷姿サマリー）が出力されます。
-これらは `visualizer`（3Dビューワ）および `supervisor`（制約バリデータ）の入力として使用されます。
-結果JSONは再生成可能な出力としてGit管理対象外です。新しいチェックアウト環境では、ビューワや制約バリデータを実行する前にテストを実行して結果を生成してください。
+旧方式ランナーは廃止されました。`tester/run_tests.py` は品番方式のみを実行します。

@@ -2,7 +2,7 @@
 
 **文書番号:** AP-DOC-2026-001  
 **作成日:** 2026-08-19  
-**最終更新日:** 2026-11-05（上載せ平パレットの支持安定性）
+**最終更新日:** 2026-11-11（品番方式への一本化）
 **担当エージェント:** `algorithm-programmer`  
 **対象読者:** `orchestrator`, `tester`, `visualizer`, `supervisor`  
 
@@ -29,13 +29,9 @@ algorithm_programmer/
 
 ### DBから計算エンジンへ渡す情報
 
-以下は旧方式の説明です。品番方式は次節を参照してください。
-
-- [cli.py](./cli.py) が箱DB・蓋DB・パレットDBを読み、テストケースに選ばれた箱ID・蓋ID・パレットIDのレコードを解決する。
-- CLIは箱・蓋の互換性を確認し、箱と蓋の寸法などをまとめた `BoxSpec` と、選択されたパレットの `PalletSpec` を作る。
-- [palletizer.py](./palletizer.py) の `Palletizer` は、選択済みの仕様だけを受け取る。DBファイルの読み込みやDB全件の検索は行わない。
-- 蓋IDが省略されたケースは、CLIが蓋DBの「蓋なし (NONE)」レコードを選び、計算用データに明示してから渡す。
-- 箱IDがDBにない場合は未配置情報として結果に記録する。蓋IDがない、または箱との互換性がない場合は、計算を始める前にエラーにする。
+[cli.py](./cli.py) は品番ケースのみ受け付けます。
+箱・蓋・パレットは [catalog_store](../box_research/catalog_store.py) から解決し、
+共通モデル＋固定蓋単位の `BoxSpec` / `PalletSpec` を作って `Palletizer` に渡します。
 
 ### 品番方式の計算（第4段階）
 
@@ -47,12 +43,12 @@ python .\algorithm_programmer\cli.py --catalog-case othics_6 -o .\tester\catalog
 python .\algorithm_programmer\cli.py .\my_part_case.json -o .\tester\catalog_results\my_case.json
 
 # 採用済み品番ケースを一括実行（毎回、未使用の出力フォルダを指定）
-python .\tester\run_tests.py --catalog --output-dir .\tester\catalog_results\review_phase4
+python .\tester\run_tests.py --output-dir .\tester\catalog_results\review_phase4
 ```
 
 箱・蓋は [品番DB](../box_research/catalog/box_type_db.json) から自動決定します。
 品番ケースと旧方式の `box_id` 行を混ぜることや、ケース側で蓋を上書きすることはできません。
-`--box-db` で旧DBを差し替える操作も品番方式とは併用できません。
+旧方式の `box_id` / `lid_id` 入力と `--box-db` は廃止されました。
 パレット本体寸法はパレットDB、荷山上限はケースを正とし、仕入先との対応も検証します。
 不明な品番、非互換の蓋、不正な数量等は計算前にエラーにします。
 
@@ -83,26 +79,26 @@ python .\tester\run_tests.py --catalog --output-dir .\tester\catalog_results\rev
 
 `input_box_variants` と最高層支持サマリーの箱情報にも品番・モデルを記録します。
 一括実行は [run_tests.py](../tester/run_tests.py) の説明を参照してください。
-品番方式は旧 `tester/results/` への保存を拒否し、一括実行では既存フォルダも再利用しません。
-単発CLIの他の出力先は従来どおり上書きするため、残したい結果とは別名を指定してください。
+一括実行は毎回新規フォルダへ保存します。単発CLIは指定パスへ保存します。
 品番方式では入力／実行エラーまたは制約FAILで終了コード1、制約PASSなら0です。
 未配置があっても配置済みの荷姿が制約PASSなら0となるため、数量も必ず確認してください。
-旧方式のコマンドと結果形式は変更していません。
+旧方式のコマンドと結果形式は提供しません。
 
-**第5段階で正式接続済み:** 新結果をそのままSupervisorと3D表示へ渡せます。
+**独立検証・表示へ正式接続済み:** 一括実行の結果をSupervisorと統合3D表示へ渡せます。
 Supervisorは現在のDBと保存済みケースで品番・固定蓋・数量・パレット設定・照合値を確認し、
 共通モデルで独立に形状判定します。計算エンジンはimportせず、サマリーのPASSは信用しません。
 テスト内だけでモデルへ置換する従来の仮接続は使わず、正式な読込経路で全150ケースを確認します。
-操作は[独立検証](../supervisor/README.md#品番方式の独立検証第5段階)・
-[結果表示](../visualizer/README.md#品番方式の結果表示第5段階)を参照してください。
+操作は[独立検証](../supervisor/README.md)・
+[結果表示](../visualizer/README.md)を参照してください。
+単発CLIの結果は単独HTMLへ変換できますが、一括用の実行一覧は作りません。
+正式な一括検証・統合表示には一括ランナーの出力フォルダを指定してください。
 
 **確認結果:** 品番方式150件で148件PASS／2件FAIL・エラー0件、
 投入3132箱・配置2588箱・未配置544箱。数量照合と独立判定は150件とも一致。
 2件のFAILは `aisin_10_m20` と `othics_m20` で、旧方式でも0箱配置・FAILです。
 旧方式150件との比較では配置数の減少・PASSからFAILへの変化はありませんでした。
-関連テストでは既存の配置期待値不一致3件
-（`palletizer_test` のaisin_10、`top_support_test` のothics_9／othics_3）があり、
-HEAD版CLIと未変更のエンジンでも再現しています。今回のDB接続では変更していません。
+移行中に使っていた旧ケースの配置期待値は廃止し、現行の品番ケースと安全条件を確認する
+テストへ更新済みです。過去の工程別件数・配置比較は以下の変更履歴として扱ってください。
 
 ```powershell
 python -m unittest algorithm_programmer.catalog_test algorithm_programmer.cli_test
@@ -110,7 +106,7 @@ python -m unittest algorithm_programmer.catalog_test algorithm_programmer.cli_te
 
 品番方式テストは同モデル・同蓋、異モデル同寸法、同モデル異蓋、異モデルTP、
 外形ずれ・複数支持の拒否、モデル名変更、品番配分、未配置、単発／一括CLI、全保存ケースを含みます。
-全保存ケースの旧方式比較を含むため、約1～2分かかります。
+旧入力との比較テストは廃止しました。旧形式の拒否と現行ケースの安全条件を確認します。
 
 ## 3. 主要ロジックと実装機能
 
@@ -146,7 +142,8 @@ python -m unittest algorithm_programmer.catalog_test algorithm_programmer.cli_te
 - 今回の更新では単載の端数最上段を許可し、配置数 → 四隅支持 → 低高さ → 端数段なし → 外形占有率 →
   X長手 → 中央接触の順で比較する。短い分割ブロックを中央寄せし、四隅＋中央の定形5点候補を追加した。
   aisin_5専用の未配置ルールは追加していない。`othics_9` の最大Xだけ、ユーザー指定の1135 mmへ訂正した。
-  最新のケース別結果は [検証レポート](../supervisor/reports/validation_report.md) を参照。
+  最新のケース別結果は、今回の実行に対応する独立検証レポートを参照。
+  保存先は [検証手順](../supervisor/README.md) に従う。
 
 #### 短辺670 mm追加前の検証と配置の差分
 
@@ -333,21 +330,26 @@ python -m unittest algorithm_programmer.corner_support_test algorithm_programmer
 箱本体寸法は従来どおり `dimensions.width/length`、蓋込み高さは `dimensions.height` に保持します。
 内部のパレタイズ計算では箱本体底面基準を使用し、シリアライズ時に結果座標へ変換します。
 
-`coordinate_reference` のない既存結果は、従来の箱本体底面角の座標として扱います。
+運用入力・検証・表示では、この座標基準を持つ版2の品番結果だけを受け付けます。
+旧形式の結果は現行ケースから再計算してください。
 
 ```bash
-# 単一テストケースの実行
-python3 algorithm_programmer/cli.py test_programmer/test_cases/aisin.json
+# 保存済みケース名で実行
+python3 algorithm_programmer/cli.py --catalog-case aisin
 
 # 結果をJSONファイルに出力
 python3 algorithm_programmer/cli.py \
-  test_programmer/test_cases/aisin.json \
-  -o tester/results/result_aisin.json
+  --catalog-case aisin \
+  -o tester/catalog_results/manual/result_aisin.json
 ```
 
 ---
 
 ## 5. 変更履歴
+
+以下は各改修時点の記録です。廃止済みの入力形式・制限値・検証件数も含みます。
+現在の実行方法は本書の第2・4節、現在有効なルールは
+[荷姿制約](../constraints/constraints.md) を参照してください。
 
 ### 2026-11-10（ケースで選択された仕様のみを計算エンジンへ渡す）
 

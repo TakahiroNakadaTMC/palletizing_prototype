@@ -175,6 +175,8 @@ def validate_pallet_database(data: Dict[str, Any]) -> Dict[str, Any]:
             if (isinstance(value, bool) or not isinstance(value, (int, float))
                     or not math.isfinite(value) or value <= 0):
                 raise ValueError("Pallet {}.{} must be a positive finite number".format(pallet_id, field))
+        if pallet["length"] < pallet["width"]:
+            raise ValueError("Pallet {}: length L must be greater than or equal to width W".format(pallet_id))
     return data
 
 
