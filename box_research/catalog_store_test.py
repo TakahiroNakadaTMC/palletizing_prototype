@@ -15,7 +15,7 @@ from box_research.catalog_store import (
 from box_research.database_validation import (
     STANDARD_PALLET, STANDARD_PALLET_ID, validate_part_case_references,
 )
-from box_research.preview_migration import build_preview
+from box_research.preview_migration import build_preview, file_sha256
 
 
 class CatalogFixture:
@@ -66,11 +66,62 @@ class CatalogFixture:
 
 
 class CatalogStoreTest(CatalogFixture, unittest.TestCase):
+    def test_source_line_endings_do_not_prevent_loading(self):
+        data, revision = load_catalog(self.root)
+        for ending in (b"\n", b"\r\n"):
+            for relative in data["migration"]["source_sha256"]:
+                path = self.root / relative
+                path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", ending))
+            saved, actual_revision = load_catalog(self.root)
+            self.assertEqual(saved, data)
+            self.assertEqual(actual_revision, revision)
+
+    def test_legacy_source_hashes_accept_lf_and_crlf_without_rewriting_history(self):
+        migration_path = self.db / "catalog" / "migration.json"
+        for recorded_ending in (b"\n", b"\r\n"):
+            data, _ = load_catalog(self.root)
+            for relative in data["migration"]["source_sha256"]:
+                path = self.root / relative
+                raw = path.read_bytes()
+                if path.suffix == ".json":
+                    raw = (json.dumps(json.loads(raw), ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+                raw = raw.replace(b"\r\n", b"\n").replace(b"\n", recorded_ending)
+                path.write_bytes(raw)
+                data["migration"]["source_sha256"][relative] = hashlib.sha256(raw).hexdigest()
+            self.write_json(migration_path, data["migration"])
+            history = migration_path.read_bytes()
+            for working_ending in (b"\n", b"\r\n"):
+                for relative in data["migration"]["source_sha256"]:
+                    path = self.root / relative
+                    path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", working_ending))
+                saved, _ = load_catalog(self.root)
+                self.assertEqual(saved["migration"], data["migration"])
+                self.assertEqual(migration_path.read_bytes(), history)
+
+    def test_catalog_revision_and_save_are_independent_of_line_endings(self):
+        prepare_cases(self.root)
+        data, revision = load_catalog(self.root)
+        for path in (self.db / "catalog").glob("*.json"):
+            path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+        saved, crlf_revision = load_catalog(self.root)
+        self.assertEqual(crlf_revision, revision)
+        self.assertEqual(saved, data)
+        self.assertEqual(save_catalog(self.root, saved, revision), revision)
+
+    def test_real_source_changes_are_rejected_with_crlf(self):
+        source = self.db / "box_db.json"
+        changed = json.loads(source.read_text(encoding="utf-8"))
+        changed["NP22C"]["height"] += 1
+        raw = json.dumps(changed, ensure_ascii=False, indent=2).encode("utf-8")
+        source.write_bytes(raw.replace(b"\n", b"\r\n"))
+        with self.assertRaisesRegex(ValueError, "元データ"):
+            load_catalog(self.root)
+
     def test_initialization_and_round_trip_preserve_sources(self):
         saved, revision = load_catalog(self.root)
         self.assertEqual(saved, self.data)
         for path, digest in saved["migration"]["source_sha256"].items():
-            self.assertEqual(hashlib.sha256((self.root / path).read_bytes()).hexdigest(), digest)
+            self.assertEqual(file_sha256(self.root / path), digest)
         self.assertEqual(saved["parts"]["00001"]["box_model_id"], "サンボックス#22H")
         self.assertEqual(saved["parts"]["00001"]["lid_id"], "サンボックス#22Bフタ")
         self.assertEqual(save_catalog(self.root, saved, revision), revision)

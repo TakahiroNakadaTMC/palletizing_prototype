@@ -18,6 +18,11 @@ from box_research.database_validation import normalize_id, validate_box_lid_data
 from constraints.top_support import required_support_points
 
 
+def file_sha256(path: Path) -> str:
+    """CRLFをLFとして照合し、改行以外のバイトは変更しない。"""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
 MODEL_NAMES = {
     "NP22C": "サンボックス#22H", "NPP24": "サンボックス#22H",
     "SPZ36404": "TP364", "SPZ36406": "TP364",
@@ -83,7 +88,7 @@ def build_preview(root: Path) -> Dict[str, Any]:
     if not case_paths:
         raise ValueError("確認対象のテストケースがありません")
     inputs = [csv_path, box_path, lid_path] + case_paths
-    hashes = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
+    hashes = {str(path.relative_to(root)): file_sha256(path)
               for path in inputs}
     boxes, lids = _read_json(box_path), _read_json(lid_path)
     validate_box_lid_databases(boxes, lids)
@@ -305,7 +310,7 @@ def main() -> int:
     try:
         report = build_preview(ROOT)
         for relative, digest in report["source_sha256"].items():
-            if hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() != digest:
+            if file_sha256(ROOT / relative) != digest:
                 raise ValueError("調査中に入力が変更されました。再実行してください: " + relative)
         write_preview(report, args.output_dir, ROOT)
     except (OSError, ValueError, KeyError, TypeError, csv.Error) as error:

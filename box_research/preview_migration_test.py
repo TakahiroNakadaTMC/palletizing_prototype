@@ -79,6 +79,17 @@ class PreviewMigrationTest(unittest.TestCase):
         self.assertTrue(report["requires_user_approval"])
         self.assertEqual(report["counts"]["blockers"], 0)
 
+    def test_preview_is_unchanged_by_lf_crlf_conversion(self):
+        self.save_inputs()
+        lf_report = build_preview(self.root)
+        paths = [path for path in self.root.rglob("*") if path.is_file()]
+        for path in paths:
+            path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+        self.assertEqual(build_preview(self.root), lf_report)
+        for path in paths:
+            path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
+        self.assertEqual(build_preview(self.root), lf_report)
+
     def test_exact_duplicates_and_blank_rows(self):
         self.rows.extend([self.rows[0][:], ["", "", "", "　"]])
         report = self.preview()

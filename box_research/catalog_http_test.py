@@ -79,6 +79,24 @@ class CatalogHttpTest(CatalogFixture, unittest.TestCase):
             self.assertEqual(data["cases"]["test_cases"]["case"]["box_list"],
                              [{"part_number": "00001", "count": 10}])
 
+    def test_crlf_checkout_loads_on_both_servers_and_real_edits_are_rejected(self):
+        before = self.read_catalog()
+        for path in self.root.rglob("*"):
+            if path.is_file() and path.suffix in (".json", ".csv"):
+                path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+        for index in (0, 1):
+            status, _, data = self.request("GET", "/api/catalog", server_index=index)
+            self.assertEqual(status, 200)
+            self.assertEqual(data, before)
+        path = self.db / "box_db.json"
+        changed = json.loads(path.read_text(encoding="utf-8"))
+        changed["NP22C"]["height"] += 1
+        self.write_json(path, changed)
+        for index in (0, 1):
+            status, _, data = self.request("GET", "/api/catalog", server_index=index)
+            self.assertEqual(status, 400)
+            self.assertIn("元データが変更", data["message"])
+
     def test_case_save_preserves_legacy_and_reports_stale_revisions(self):
         data = self.read_catalog()
         before = {path: path.read_bytes() for path in

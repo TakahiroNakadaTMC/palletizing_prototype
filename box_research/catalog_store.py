@@ -20,7 +20,7 @@ from box_research.database_validation import (
     normalize_id, validate_catalog_databases, validate_part_case_references,
     validate_case_pallet_reference, validate_pallet_database,
 )
-from box_research.preview_migration import _read_json, build_preview, supplier_name
+from box_research.preview_migration import _read_json, build_preview, file_sha256, supplier_name
 
 FILES = {
     "parts": "box_type_db.json", "models": "box_model_db.json",
@@ -39,7 +39,7 @@ def _paths(root: Path) -> Dict[str, Path]:
 
 
 def _revision(root: Path) -> str:
-    hashes = {key: hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None
+    hashes = {key: file_sha256(path) if path.exists() else None
               for key, path in _paths(root).items()}
     return hashlib.sha256(_encoded(hashes)).hexdigest()
 
@@ -172,7 +172,11 @@ def _check_sources(root: Path, migration: Dict[str, Any]) -> None:
         path = (root / relative).resolve()
         if root.resolve() not in path.parents:
             raise ValueError("元データのパスが作業フォルダ外です")
-        if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+        raw = path.read_bytes()
+        lf = raw.replace(b"\r\n", b"\n")
+        # 旧履歴にはLF/CRLFの生バイトの照合値があるため、履歴を書き換えず互換に読む。
+        candidates = (raw, lf, lf.replace(b"\n", b"\r\n"))
+        if not any(hashlib.sha256(candidate).hexdigest() == expected for candidate in candidates):
             raise ValueError("元データが変更されています。移行案の再確認が必要です: " + relative)
     expected_cases = {str(path.relative_to(root)) for path in
                       (root / "test_programmer" / "test_cases").glob("*.json")}
