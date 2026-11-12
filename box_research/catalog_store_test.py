@@ -10,6 +10,7 @@ from box_research.catalog_store import (
     FILES, load_catalog, preview_model_rename, rename_model, save_catalog, validate_catalog,
 )
 from box_research.database_validation import STANDARD_PALLET, STANDARD_PALLET_ID
+from box_research.skid_catalog import skid_snapshot
 
 
 class CatalogFixture:
@@ -24,6 +25,7 @@ class CatalogFixture:
         self.lid_id = "LID-A"
         self.part_id = "00001"
         self.data = {
+            "suppliers": {"0001": {"id": "0001", "supplier_name": "Supplier A"}},
             "parts": {
                 self.part_id: {
                     "id": self.part_id, "supplier_name": "Supplier A",
@@ -64,13 +66,20 @@ class CatalogFixture:
                 }],
                 "approved_changes": [],
             },
+            "skids": {
+                "0001AA": {
+                    "id": "0001AA", "supplier_name": "Supplier A",
+                    "pallet_id": STANDARD_PALLET_ID,
+                    "pallet": {"max_x_span": 1360, "max_y_span": 1100, "max_height": 1200},
+                    "part_numbers": [self.part_id], "updated_at": "", "history": [],
+                },
+            },
             "cases": {
-                "schema_version": 1,
+                "schema_version": 2,
                 "test_cases": {
                     "case": {
                         "name": "case", "description": "Fixture case",
-                        "supplier_name": "Supplier A", "pallet_id": STANDARD_PALLET_ID,
-                        "pallet": {"max_x_span": 1360, "max_y_span": 1100, "max_height": 1200},
+                        "supplier_name": "Supplier A", "skid_id": "0001AA",
                         "box_list": [{"part_number": self.part_id, "count": 10}],
                     }
                 },
@@ -86,6 +95,10 @@ class CatalogFixture:
                 }
             },
         }
+        skid = self.data["skids"]["0001AA"]
+        skid["updated_at"] = "2026-11-12T00:00:00+09:00"
+        skid["history"] = [dict(updated_at=skid["updated_at"], before=None,
+                                after=skid_snapshot(skid), affected_cases=["case"])]
         for key, filename in FILES.items():
             self.write_json(self.catalog_dir / filename, self.data[key])
         self.write_json(self.catalog_dir / "test_cases.json", self.data["cases"])
@@ -276,7 +289,7 @@ class CatalogStoreTest(CatalogFixture, unittest.TestCase):
 
         def fail_second(source, target):
             calls.append(target)
-            if len(calls) == 6:
+            if len(calls) == 2:
                 raise OSError("test replacement failure")
             return replace(source, target)
 

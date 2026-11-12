@@ -67,10 +67,18 @@ class ViewerHandler(SimpleHTTPRequestHandler):
                 return
             results = []
             for entry in entries:
+                row = entry["case"]
+                if row["status"] == "ERROR":
+                    results.append({
+                        "filename": None, "test_name": row["name"],
+                        "status": "ERROR", "error": row["error"], "input_mode": "part_number",
+                    })
+                    continue
                 data = entry["data"]
                 results.append(
                     {
                         "filename": entry["filename"],
+                        "status": row["status"],
                         "test_name": data.get("test_name", entry["filename"]),
                         "boxes_count": data.get("placed_boxes_count", len(data.get("boxes", []))),
                         "is_valid": data.get("summary", {}).get("is_valid", False),
@@ -97,7 +105,7 @@ class ViewerHandler(SimpleHTTPRequestHandler):
             except ValueError as error:
                 self.send_json(422, {"error": str(error)})
                 return
-            index = {entry["filename"]: entry["data"] for entry in entries}
+            index = {entry["filename"]: entry["data"] for entry in entries if entry["data"] is not None}
             if fname not in index:
                 self.send_json(404, {"error": f"{fname} は manifest の品番結果に含まれていません"})
                 return

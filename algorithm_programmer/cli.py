@@ -22,6 +22,7 @@ from algorithm_programmer.models import BoxSpec, PalletSpec
 from box_research.database_validation import STANDARD_PALLET_ID
 from box_research.catalog_store import catalog_pallets, load_catalog, validate_staged_cases
 from algorithm_programmer.catalog import run_catalog_case
+from box_research.skid_catalog import resolve_skid_case
 
 
 def resolve_box_specs(
@@ -146,9 +147,10 @@ def main():
             raise ValueError("品番方式の箱行にはpart_numberとcountだけを指定してください")
         test_name = tc_data.get("name", args.catalog_case or Path(args.testcase).stem)
         validate_staged_cases({
-            "schema_version": 1, "test_cases": {test_name: tc_data},
+            "schema_version": 2, "test_cases": {test_name: tc_data},
             "approval_state": {test_name: True},
-        }, catalog["parts"], pallets)
+        }, catalog["parts"], catalog["skids"])
+        tc_data = resolve_skid_case(tc_data, catalog)
         pallet_spec = resolve_pallet_spec(tc_data, pallets)
         result_dict = run_catalog_case(test_name, tc_data, catalog, pallet_spec, revision)
     except (OSError, ValueError, KeyError, TypeError, RuntimeError) as error:

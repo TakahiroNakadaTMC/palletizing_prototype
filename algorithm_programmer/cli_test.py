@@ -138,11 +138,14 @@ class CliMainRuntimeTest(unittest.TestCase):
             parts={"P-1": dict(id="P-1", supplier_name="S", box_name="B", box_model_id="M", lid_id="L")},
             models={},
             lids={},
+            skids={"KEY-A": dict(
+                supplier_name="S", pallet_id="__STANDARD_1200_1000_130__",
+                pallet=dict(max_x_span=1360, max_y_span=1100, max_height=1200),
+                part_numbers=["P-1"])},
             cases=dict(
                 test_cases={"c1": dict(
                     name="c1", description="d", supplier_name="S",
-                    pallet_id="__STANDARD_1200_1000_130__",
-                    pallet=dict(max_x_span=1360, max_y_span=1100, max_height=1200),
+                    skid_id="KEY-A",
                     box_list=[dict(part_number="P-1", count=1)],
                 )},
                 approval_state={"c1": True},

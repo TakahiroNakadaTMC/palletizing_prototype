@@ -363,10 +363,169 @@ class ViewerCatalogTests(unittest.TestCase):
         manifest["cases"].append({"name": "fixture_error", "status": "ERROR", "error": "runner failed", "elapsed_seconds": 0.03})
         manifest["counts"] = {"cases": 2, "passed": 1, "failed": 0, "errors": 1, "input": 3, "placed": 2, "unplaced": 1}
         (self.results / "run_manifest.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
-        with self.assertRaises(ValueError) as error:
+        entries = load_part_results_from_manifest(self.results)
+        self.assertEqual(len(entries), 2)
+        self.assertEqual(entries[1], {
+            "filename": None, "data": None, "case": manifest["cases"][1],
+        })
+        with urlopen(self.url + "/api/results") as response:
+            listing = json.load(response)
+        self.assertEqual(listing[0]["status"], "PASS")
+        self.assertEqual(listing[1], {
+            "filename": None, "test_name": "fixture_error", "status": "ERROR",
+            "error": "runner failed", "input_mode": "part_number",
+        })
+        with urlopen(self.url + "/api/result/result_fixture_part.json") as response:
+            self.assertEqual(json.load(response)["test_name"], "fixture_part")
+        with self.assertRaises(HTTPError) as error:
+            urlopen(self.url + "/api/result/result_fixture_error.json")
+        self.assertEqual(error.exception.code, 404)
+
+    def test_all_error_run_can_be_listed_and_selected_as_latest(self):
+        manifest = make_manifest()
+        manifest["cases"] = [dict(name="blocked", status="ERROR", error="missing pallet",
+                                  elapsed_seconds=0.01)]
+        manifest["counts"] = dict(cases=1, passed=0, failed=0, errors=1,
+                                   input=0, placed=0, unplaced=0)
+        (self.results / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+        self.assertEqual(resolve_latest_completed_catalog_run(self.directory), self.results)
+        with urlopen(self.url + "/api/results") as response:
+            listing = json.load(response)
+        self.assertEqual([row["status"] for row in listing], ["ERROR"])
+
+    def test_error_rows_do_not_bypass_integrity_checks(self):
+        for field, value in (("error", ""), ("error", None), ("result_file", "result_blocked.json"),
+                             ("input", 1), ("elapsed_seconds", -1)):
+            manifest = make_manifest()
+            row = dict(name="blocked", status="ERROR", error="missing pallet", elapsed_seconds=.01)
+            row[field] = value
+            manifest["cases"].append(row)
+            manifest["counts"].update(cases=2, errors=1)
+            (self.results / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                load_part_results_from_manifest(self.results)
+        manifest = make_manifest()
+        manifest["cases"].append(dict(name="blocked", status="ERROR", error="missing pallet",
+                                      elapsed_seconds=.01))
+        manifest["counts"].update(cases=2, errors=1)
+        (self.results / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+        (self.results / "result_fixture_part.json").unlink()
+        with self.assertRaisesRegex(ValueError, "結果JSONが見つかりません"):
             load_part_results_from_manifest(self.results)
-        self.assertIn("ERROR ケースが含まれるため表示を停止しました", str(error.exception))
-        self.assertIn("fixture_error: runner failed", str(error.exception))
+
+    @unittest.skipUnless(
+        EDGE.exists() and os.environ.get("PALLETIZER_RUN_BROWSER_TESTS") == "1",
+        "Set PALLETIZER_RUN_BROWSER_TESTS=1 with Playwright available",
+    )
+    def test_browser_mixed_and_all_error_runs(self):
+        from playwright.sync_api import sync_playwright
+
+        manifest = make_manifest()
+        fail = copy.deepcopy(self.part_result)
+        fail["test_name"] = "fixture_fail"
+        fail["summary"].update(is_valid=False, violations=["fixture constraint violation"])
+        (self.results / "result_fixture_fail.json").write_text(json.dumps(fail), encoding="utf-8")
+        fail_row = dict(manifest["cases"][0], name="fixture_fail", status="FAIL",
+                        violations=["fixture constraint violation"], result_file="result_fixture_fail.json")
+        blocked = dict(name="blocked", status="ERROR", error="<img src=x onerror=alert(1)> missing pallet",
+                       elapsed_seconds=.01)
+        manifest["cases"] = [blocked, manifest["cases"][0], fail_row]
+        manifest["counts"] = dict(cases=3, passed=1, failed=1, errors=1,
+                                   input=6, placed=4, unplaced=2)
+        manifest_path = self.results / "run_manifest.json"
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        self.fixtures["/index.html"] = re.sub(
+            r'<script src="https://[^"]+"></script>', "",
+            (Path(__file__).resolve().parent / "index.html").read_text(encoding="utf-8"),
+        ).replace("</head>", "<script>const lucide={createIcons(){}};</script></head>")
+        with sync_playwright() as playwright:
+            with tempfile.TemporaryDirectory(dir=str(Path(__file__).resolve().parents[1])) as profile:
+                context = playwright.chromium.launch_persistent_context(
+                    profile, executable_path=str(EDGE), headless=True,
+                    args=["--no-first-run", "--disable-extensions", "--disable-background-networking",
+                          "--no-proxy-server", "--disable-features=msEdgeSidebarV2"],
+                    viewport={"width": 1400, "height": 1000},
+                )
+                try:
+                    page = context.pages[0]
+                    errors = []
+                    page.on("pageerror", lambda error: errors.append(str(error)))
+                    page.goto(self.url + "/index.html")
+                    page.wait_for_function("currentData?.test_name === 'fixture_part'")
+                    self.assertIn("PASS 1 / FAIL 1 / ERROR 1", page.locator("#run-summary").inner_text())
+                    self.assertEqual(page.locator("#select-test-case").input_value(), "1")
+                    page.evaluate("inspectBox(currentData.boxes[0]); togglePlay()")
+                    page.select_option("#select-test-case", "0")
+                    self.assertTrue(page.locator("#case-error").is_visible())
+                    self.assertIn("<img", page.locator("#case-error-message").inner_text())
+                    self.assertEqual(page.locator("#case-error-message img").count(), 0)
+                    self.assertTrue(page.evaluate("currentData === null && !isPlaying && selectedBoxOrder === null"))
+                    self.assertEqual(page.locator("#metric-boxes").inner_text(), "—")
+                    self.assertEqual(page.locator("#part-summary").inner_text(), "")
+                    self.assertEqual(page.locator("#inspector-content").inner_text(), "")
+                    self.assertTrue(page.locator("#step-slider").is_disabled())
+                    self.assertTrue(page.locator("#btn-play-toggle").is_disabled())
+                    page.select_option("#select-test-case", "2")
+                    page.wait_for_function("currentData?.test_name === 'fixture_fail'")
+                    self.assertIn("FAIL", page.locator("#badge-valid").inner_text())
+                    self.assertIn("fixture constraint violation", page.locator("#constraint-summary").inner_text())
+                    self.assertFalse(page.locator("#case-error").is_visible())
+                    self.assertFalse(page.locator("#btn-play-toggle").is_disabled())
+                    for view in ("top", "front", "side", "iso"):
+                        page.locator('[data-view="{}"]'.format(view)).dispatch_event("click")
+                        self.assertEqual(page.evaluate("viewMode"), view)
+                    page.locator("#step-slider").fill("1")
+                    self.assertEqual(page.locator("#step-current").inner_text(), "1")
+
+                    # Hold a successful response until after an ERROR selection.
+                    page.evaluate("""() => {
+                      const original = window.fetch.bind(window);
+                      window.fetch = async (...args) => {
+                        const response = await original(...args);
+                        if (String(args[0]).includes('/api/result/')) {
+                          await new Promise(resolve => { window.releaseResult = resolve; });
+                        }
+                        return response;
+                      };
+                    }""")
+                    page.select_option("#select-test-case", "1")
+                    page.wait_for_function("typeof releaseResult === 'function'")
+                    page.select_option("#select-test-case", "0")
+                    page.evaluate("releaseResult()")
+                    page.wait_for_timeout(200)
+                    self.assertTrue(page.evaluate("currentData === null"))
+                    self.assertTrue(page.locator("#case-error").is_visible())
+
+                    manifest["cases"] = [blocked]
+                    manifest["counts"] = dict(cases=1, passed=0, failed=0, errors=1,
+                                               input=0, placed=0, unplaced=0)
+                    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+                    page.reload()
+                    page.wait_for_selector("#case-error", state="visible")
+                    self.assertIn("PASS 0 / FAIL 0 / ERROR 1", page.locator("#run-summary").inner_text())
+                    self.assertTrue(page.evaluate("currentData === null"))
+                    self.assertEqual(errors, [])
+
+                    actual = (Path(__file__).resolve().parents[1] / "tester" / "catalog_results"
+                              / "skid_20261112_implementation")
+                    if (actual / "run_manifest.json").exists():
+                        self.server.results_dir = str(actual)
+                        page.reload()
+                        page.wait_for_function("currentData !== null")
+                        self.assertIn("150件 / PASS 143 / FAIL 2 / ERROR 5",
+                                      page.locator("#run-summary").inner_text())
+                        self.assertEqual(page.locator("#select-test-case option").count(), 150)
+                        page.evaluate("""() => {
+                          const select = document.getElementById('select-test-case');
+                          select.value = String(resultEntries.findIndex(item => item.status === 'ERROR'));
+                          select.dispatchEvent(new Event('change'));
+                        }""")
+                        self.assertTrue(page.locator("#case-error").is_visible())
+                        self.assertIn("26411F", page.locator("#case-error-message").inner_text())
+                        self.assertTrue(page.evaluate("currentData === null"))
+                        self.assertEqual(errors, [])
+                finally:
+                    context.close()
 
     @unittest.skipUnless(
         (

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from box_research.catalog_store import (
-    load_catalog, preview_model_rename, rename_model, save_catalog,
+    load_catalog, preview_model_rename, preview_skid_changes, rename_model, save_catalog,
 )
 
 ASSETS = {
@@ -47,14 +47,15 @@ def handle_catalog(handler: Any, root: Path, method: str, path: str) -> bool:
             if "cases" not in data:
                 raise ValueError("ケースデータがありません")
             _reply(handler, 200, {
-                **{key: data[key] for key in ("parts", "models", "lids", "cases")},
+                **{key: data[key] for key in ("parts", "models", "lids", "cases", "skids", "suppliers")},
                 "revision": revision, "pallets": data["pallets"]["pallets"],
                 "model_name_history": data["migration"]["model_name_history"],
                 "phase": data["migration"]["phase"],
             })
             return True
         if method != "POST" or path not in (
-                "/api/catalog/save", "/api/catalog/rename-preview", "/api/catalog/rename"):
+                "/api/catalog/save", "/api/catalog/rename-preview", "/api/catalog/rename",
+                "/api/catalog/skid-preview"):
             _reply(handler, 404, {"status": "error", "message": "対応するAPIがありません"})
             return True
         length = int(handler.headers.get("Content-Length", 0))
@@ -72,20 +73,33 @@ def handle_catalog(handler: Any, root: Path, method: str, path: str) -> bool:
                              object_pairs_hook=unique_keys)
         if not isinstance(payload, dict):
             raise ValueError("リクエストはオブジェクトが必要です")
+        if path == "/api/catalog/skid-preview":
+            allowed = {"revision", "parts", "models", "lids", "cases", "pallets",
+                       "skids", "suppliers", "skid_renames"}
+            if (set(payload) - allowed or not isinstance(payload.get("revision"), str)
+                    or not set(payload) & {"skids", "suppliers", "skid_renames"}):
+                raise ValueError("スキッド・仕入先対応表の変更と読込み時の版が必要です")
+            updates = {key: payload[key] for key in ("parts", "models", "lids", "cases", "suppliers")
+                       if key in payload}
+            if "pallets" in payload:
+                updates["pallets"] = {"pallets": payload["pallets"]}
+            _reply(handler, 200, preview_skid_changes(
+                root, payload.get("skids"), payload["revision"], updates, payload.get("skid_renames")))
+            return True
         if path == "/api/catalog/save":
-            if (not payload or set(payload) - {"revision", "parts", "models", "lids", "cases", "pallets"}
+            if (not payload or set(payload) - {"revision", "parts", "models", "lids", "cases", "pallets", "skids", "suppliers", "skid_renames", "confirmation"}
                     or not isinstance(payload.get("revision"), str)
-                    or len(payload) < 2):
+                    or not set(payload) & {"parts", "models", "lids", "cases", "pallets", "skids", "suppliers"}):
                 raise ValueError("保存対象と読込み時の版が必要です")
             data, revision = load_catalog(root)
             if payload["revision"] != revision:
                 raise ValueError("別の画面で更新されています。再読み込みして再確認してください")
-            for key in ("parts", "models", "lids", "cases"):
+            for key in ("parts", "models", "lids", "cases", "skids", "suppliers"):
                 if key in payload:
                     data[key] = payload[key]
             if "pallets" in payload:
                 data["pallets"]["pallets"] = payload["pallets"]
-            save_catalog(root, data, revision)
+            save_catalog(root, data, revision, payload.get("confirmation"), payload.get("skid_renames"))
         elif path == "/api/catalog/rename-preview":
             _reply(handler, 200, preview_model_rename(root, payload["old_name"], payload["new_name"]))
             return True

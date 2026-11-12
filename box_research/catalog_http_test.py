@@ -115,6 +115,31 @@ class CatalogHttpTest(CatalogFixture, unittest.TestCase):
         self.assertEqual(saved["cases"]["test_cases"]["case"]["box_list"][0]["count"], 7)
         self.assertEqual(self.request("POST", "/api/catalog/save", payload)[0], 400)
 
+    def test_skid_preview_confirmation_history_and_db_only_update(self):
+        data = self.read_catalog()
+        skids = copy.deepcopy(data["skids"])
+        skids["0001AA"]["pallet"]["max_height"] = 826
+        payload = {"revision": data["revision"], "skids": skids}
+        before = self.snapshot()
+        self.assertEqual(self.request("POST", "/api/catalog/save", payload)[0], 400)
+        self.assertEqual(self.snapshot(), before)
+        status, _, plan = self.request("POST", "/api/catalog/skid-preview", payload)
+        self.assertEqual(status, 200)
+        self.assertEqual(plan["changes"][0]["affected_cases"], ["case"])
+        self.assertEqual(self.snapshot(), before)
+        self.assertEqual(self.request("POST", "/api/catalog/save", {
+            **payload, "confirmation": plan["confirmation"],
+        })[0], 200)
+        saved = self.read_catalog()
+        self.assertEqual(saved["skids"]["0001AA"]["pallet"]["max_height"], 826)
+        self.assertEqual(len(saved["skids"]["0001AA"]["history"]), 2)
+        self.assertNotIn("pallet", saved["cases"]["test_cases"]["case"])
+        cases_path = self.catalog_dir.relative_to(self.root) / "test_cases.json"
+        self.assertEqual(before[cases_path], self.snapshot()[cases_path])
+        self.assertEqual(self.request("POST", "/api/catalog/save", {
+            **payload, "confirmation": plan["confirmation"],
+        })[0], 400)
+
     def test_invalid_saves_are_rejected_without_writing(self):
         data = self.read_catalog()
         before = self.snapshot()
@@ -132,6 +157,62 @@ class CatalogHttpTest(CatalogFixture, unittest.TestCase):
             self.assertEqual(self.snapshot(), before)
         self.assertEqual(self.request("POST", "/api/catalog/save",
                                      {"revision": data["revision"], "migration": {}})[0], 400)
+
+    def test_confirmed_skid_id_change_updates_references_on_server(self):
+        data = self.read_catalog()
+        skids = copy.deepcopy(data["skids"])
+        skid = skids.pop("0001AA")
+        skid["id"] = "0001A030J"
+        skids[skid["id"]] = skid
+        payload = dict(revision=data["revision"], skids=skids,
+                       skid_renames={"0001AA": "0001A030J"})
+        status, _, plan = self.request("POST", "/api/catalog/skid-preview", payload)
+        self.assertEqual(status, 200)
+        self.assertEqual(plan["changes"][0]["old_skid_id"], "0001AA")
+        self.assertEqual(plan["changes"][0]["affected_cases"], ["case"])
+        before = self.snapshot()
+        self.assertEqual(self.request("POST", "/api/catalog/save", payload)[0], 400)
+        self.assertEqual(self.snapshot(), before)
+        self.assertEqual(self.request("POST", "/api/catalog/save", {
+            **payload, "confirmation": plan["confirmation"],
+        })[0], 200)
+        saved = self.read_catalog(1)
+        self.assertEqual(saved["cases"]["test_cases"]["case"]["skid_id"], "0001A030J")
+        self.assertEqual(saved["skids"]["0001A030J"]["history"][-1]["previous_id"], "0001AA")
+        self.assertEqual(self.request("POST", "/api/catalog/save", {
+            **payload, "confirmation": plan["confirmation"],
+        })[0], 400)
+
+    def test_supplier_mapping_creation_correction_and_used_deletion(self):
+        data = self.read_catalog()
+        mapping = copy.deepcopy(data["suppliers"])
+        mapping["0002"] = dict(id="0002", supplier_name="Supplier B")
+        payload = dict(revision=data["revision"], suppliers=mapping)
+        status, _, plan = self.request("POST", "/api/catalog/skid-preview", payload)
+        self.assertEqual(status, 200)
+        self.assertEqual(plan["supplier_changes"][0]["affected_suppliers"], ["0002"])
+        self.assertEqual(self.request("POST", "/api/catalog/save", {
+            **payload, "confirmation": plan["confirmation"],
+        })[0], 200)
+        data = self.read_catalog()
+        data["suppliers"]["0001"]["supplier_name"] = "Corrected A"
+        payload = dict(revision=data["revision"], suppliers=data["suppliers"])
+        status, _, plan = self.request("POST", "/api/catalog/skid-preview", payload)
+        self.assertEqual(status, 200)
+        self.assertEqual(plan["supplier_changes"][0]["affected_cases"], ["case"])
+        self.assertEqual(self.request("POST", "/api/catalog/save", {
+            **payload, "confirmation": plan["confirmation"],
+        })[0], 200)
+        data = self.read_catalog()
+        self.assertEqual(data["parts"]["00001"]["supplier_name"], "Corrected A")
+        self.assertEqual(data["skids"]["0001AA"]["supplier_name"], "Corrected A")
+        self.assertEqual(data["cases"]["test_cases"]["case"]["supplier_name"], "Corrected A")
+        del data["suppliers"]["0001"]
+        before = self.snapshot()
+        self.assertEqual(self.request("POST", "/api/catalog/skid-preview", {
+            "revision": data["revision"], "suppliers": data["suppliers"],
+        })[0], 400)
+        self.assertEqual(self.snapshot(), before)
 
     def test_catalog_crud_and_normalization(self):
         data = self.read_catalog()
@@ -223,10 +304,14 @@ class CatalogHttpTest(CatalogFixture, unittest.TestCase):
 
     def test_pallet_deletion_and_supplier_changes_respect_case_references(self):
         data = self.read_catalog()
-        case_bundle = copy.deepcopy(data["cases"])
-        case_bundle["test_cases"]["case"]["pallet_id"] = "PALLET-A"
+        skids = copy.deepcopy(data["skids"])
+        skids["0001AA"]["pallet_id"] = "PALLET-A"
+        status, _, plan = self.request("POST", "/api/catalog/skid-preview", {
+            "revision": data["revision"], "skids": skids,
+        })
+        self.assertEqual(status, 200)
         self.assertEqual(self.request("POST", "/api/catalog/save", {
-            "revision": data["revision"], "cases": case_bundle,
+            "revision": data["revision"], "skids": skids, "confirmation": plan["confirmation"],
         })[0], 200)
         referenced = self.read_catalog()
         pallets = copy.deepcopy(referenced["pallets"])

@@ -29,6 +29,8 @@
       <button type="button" role="tab" data-tab="models" aria-controls="records">箱モデルDB</button>
       <button type="button" role="tab" data-tab="lids" aria-controls="records">蓋DB</button>
       <button type="button" role="tab" data-tab="pallets" aria-controls="records">パレットDB</button>
+      <button type="button" role="tab" data-tab="skids" aria-controls="records">スキッドDB</button>
+      <button type="button" role="tab" data-tab="suppliers" aria-controls="records">仕入先対応表</button>
     </div>
     <h2 id="section-title">読み込み中</h2>
     <p id="help"></p>
@@ -51,9 +53,16 @@
       <div id="fields" class="fields"></div>
       <section id="case-lines" hidden>
         <h3>投入品番と数量</h3>
-        <p>箱・モデル・蓋は品番DBから自動表示します。ケースで蓋を変更することはできません。</p>
+        <p>選択したスキッドの候補品番すべてから数量を入力します。空欄・0は投入しません。箱・モデル・蓋は品番DBから自動表示します。</p>
+        <p id="case-skid-info" class="muted"></p>
+        <p id="case-skid-blocked" class="error" hidden></p>
         <div id="line-list"></div>
-        <button id="add-line" type="button">品番行を追加</button>
+        <p id="line-summary" role="status"></p>
+      </section>
+      <section id="skid-history" hidden>
+        <h3>更新履歴</h3>
+        <p id="skid-updated-at" class="muted"></p>
+        <ol id="skid-history-list"></ol>
       </section>
       <div class="toolbar">
         <button id="submit-edit" type="submit">入力を確定</button>

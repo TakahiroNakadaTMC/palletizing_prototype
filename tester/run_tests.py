@@ -52,6 +52,7 @@ def run_catalog_tests(output_dir: Optional[Path] = None) -> int:
     from algorithm_programmer.catalog import run_catalog_case
     from algorithm_programmer.cli import resolve_pallet_spec
     from box_research.catalog_store import catalog_pallets, load_catalog
+    from box_research.skid_catalog import resolve_skid_case
 
     root = PROJECT_ROOT
     data, revision = load_catalog(root)
@@ -79,6 +80,7 @@ def run_catalog_tests(output_dir: Optional[Path] = None) -> int:
     for name, case in selected:
         start = time.monotonic()
         try:
+            case = resolve_skid_case(case, data)
             result = run_catalog_case(name, case, data, resolve_pallet_spec(case, pallets), revision)
             path = output_dir / ("result_" + name + ".json")
             _save_result_atomic(path, result)

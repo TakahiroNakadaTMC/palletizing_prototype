@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from box_research.catalog_store import catalog_pallets, load_catalog
+from box_research.skid_catalog import resolve_skid_case
 
 
 IDENTITY_FIELDS = ("part_number", "supplier_name", "box_name", "box_id", "box_model_id", "lid_id")
@@ -41,7 +42,11 @@ def resolve_catalog_result(
     cases = catalog.get("cases", {}).get("test_cases", {})
     if not isinstance(name, str) or name not in cases:
         raise ValueError("結果のケース名が保存済み品番ケースにありません")
-    case = cases[name]
+    case = resolve_skid_case(cases[name], catalog)
+    skid = catalog["skids"][case["skid_id"]]
+    if (data.get("skid_id") != case["skid_id"]
+            or data.get("skid_updated_at") != skid["updated_at"]):
+        raise ValueError("結果のKEY2・スキッド更新日時が現在のDBと一致しません")
     if data.get("supplier_name") != case["supplier_name"] or data.get("pallet_id") != case["pallet_id"]:
         raise ValueError("結果の仕入先・パレットIDがケースと一致しません")
     pallet = pallets["pallets"][case["pallet_id"]]
@@ -233,6 +238,11 @@ def validate_catalog_run(root: Path, results_dir: Path, report_dir: Path) -> int
                 data = json.loads((results_dir / filename).read_text(encoding="utf-8"))
                 if not isinstance(data, dict) or data.get("test_name") != name:
                     raise ValueError("結果のケース名が実行一覧と一致しません")
+                for key, field in (("input", "input_boxes_count"),
+                                   ("placed", "placed_boxes_count"),
+                                   ("unplaced", "unplaced_boxes_count")):
+                    if _integer(data.get(field), field) != row[key]:
+                        raise ValueError("結果の{}が実行一覧と一致しません".format(field))
                 report = validator.validate_data(data)
                 independent_status = "PASS" if report["is_pass"] else "FAIL"
             except (OSError, ValueError, TypeError, KeyError) as error:

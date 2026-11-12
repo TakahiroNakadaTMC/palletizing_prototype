@@ -49,7 +49,10 @@ python .\tester\run_tests.py --output-dir .\tester\catalog_results\review_phase4
 箱・蓋は [品番DB](../box_research/catalog/box_type_db.json) から自動決定します。
 品番ケースと旧方式の `box_id` 行を混ぜることや、ケース側で蓋を上書きすることはできません。
 旧方式の `box_id` / `lid_id` 入力と `--box-db` は廃止されました。
-パレット本体寸法はパレットDB、荷山上限はケースを正とし、仕入先との対応も検証します。
+ケースはKEY2を `skid_id` に保存します。使用パレット・荷山上限は現在の
+[スキッドDB](../box_research/catalog/skid_db.json)、本体寸法はパレットDBから解決します。
+単独ケースJSONにもKEY2が必要です。設定未登録・候補外の品番・仕入先不一致は計算前に拒否します。
+結果には計算時点の `skid_id`・`skid_updated_at`・パレット条件を記録します。
 不明な品番、非互換の蓋、不正な数量等は計算前にエラーにします。
 
 [catalog.py](catalog.py) は、品番数量の管理と形状の計算を分離します。

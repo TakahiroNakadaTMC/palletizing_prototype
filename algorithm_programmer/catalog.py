@@ -8,6 +8,7 @@ from algorithm_programmer.palletizer import Palletizer
 from box_research.database_validation import (
     validate_catalog_databases, validate_part_case_references,
 )
+from box_research.skid_catalog import resolve_skid_case
 
 
 def run_catalog_case(
@@ -21,6 +22,14 @@ def run_catalog_case(
 
     同じ形状でも品番の数量は統合しない。返却率の平準化はまだ行わない。
     """
+    case = resolve_skid_case(case, catalog)
+    expected_pallet = catalog["pallets"]["pallets"][case["pallet_id"]]
+    for field in ("length", "width", "height"):
+        if getattr(pallet, field) != expected_pallet[field]:
+            raise ValueError("計算用パレット本体が現在のDBと一致しません: " + field)
+    for field, value in case["pallet"].items():
+        if getattr(pallet, field) != value:
+            raise ValueError("計算用荷山上限が現在のスキッドと一致しません: " + field)
     parts, models, lids = catalog["parts"], catalog["models"], catalog["lids"]
     validate_catalog_databases(parts, models, lids)
     validate_part_case_references(case, parts)
@@ -118,6 +127,7 @@ def run_catalog_case(
     result.update(
         schema_version=2, input_mode="part_number", catalog_revision=revision,
         supplier_name=case["supplier_name"], pallet_id=case.get("pallet_id"),
+        skid_id=case["skid_id"], skid_updated_at=catalog["skids"][case["skid_id"]]["updated_at"],
         algorithm_mode="single" if len(grouped_counts) == 1 else "mixed",
         allocation_method="input_order", input_parts=input_parts, part_counts=part_counts,
         input_box_variants=[

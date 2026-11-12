@@ -10,6 +10,7 @@ button, input, select, textarea { font: inherit; border: 1px solid #8b97ab; bord
 button { cursor: pointer; }
 button:hover { background: #e3ecff; }
 button:disabled { opacity: .5; cursor: not-allowed; }
+input[readonly] { background: #e8eef8; color: #394963; }
 button[aria-selected="true"], #save { background: #2548a8; color: white; }
 :focus-visible { outline: 3px solid #b66b00; outline-offset: 2px; }
 .table-wrap { overflow: auto; background: white; border: 1px solid #c6cfdf; }
@@ -31,6 +32,11 @@ fieldset { border: 1px solid #c6cfdf; }
 .case-line select { max-width: 100%; width: 32rem; }
 .case-line input[type="number"] { width: 5rem; }
 .case-line p { margin: .4rem 0; }
+.case-line > label { display: inline-block; margin: 0 .4rem; }
+#line-summary { font-weight: 600; }
+#skid-history { margin-top: 1rem; border-top: 1px solid #c6cfdf; }
+#skid-history-list { max-height: 14rem; overflow: auto; padding-left: 1.5rem; }
+#skid-history-list li { margin: .5rem 0; overflow-wrap: anywhere; }
 .muted { color: #586278; font-size: .9rem; }
 [hidden] { display: none !important; }
 @media (max-width: 600px) { header, main { padding: .75rem; } dialog { width: calc(100% - 2rem); } }

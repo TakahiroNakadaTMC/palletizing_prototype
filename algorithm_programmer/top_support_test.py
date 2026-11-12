@@ -9,6 +9,8 @@ from unittest.mock import patch
 from algorithm_programmer.models import BoxSpec, PalletSpec, PlacedBox
 from algorithm_programmer.palletizer import Palletizer
 from box_research.catalog_store import load_catalog
+from box_research.skid_catalog import resolve_skid_case, skid_incomplete
+from algorithm_programmer.cli import resolve_pallet_spec
 from constraints.top_support import TopSurface, evaluate_top_support, required_support_points
 from supervisor.validate import PalletizeValidator
 
@@ -371,7 +373,7 @@ class RevisedRealLayoutTests(unittest.TestCase):
         cls.db = {key: BoxSpec.from_dict(value) for key, value in cls.raw.items()}
 
     def run_case(self, name):
-        case = self.catalog["cases"]["test_cases"][name]
+        case = resolve_skid_case(self.catalog["cases"]["test_cases"][name], self.catalog)
         grouped_counts = {}
         box_specs = {}
         for row in case["box_list"]:
@@ -389,7 +391,7 @@ class RevisedRealLayoutTests(unittest.TestCase):
                 box_specs[key] = spec
         box_list = [{"box_id": model_id, "lid_id": lid_id, "count": count}
                     for (model_id, lid_id), count in grouped_counts.items()]
-        engine = Palletizer(box_specs, PalletSpec.from_dict(case["pallet"]))
+        engine = Palletizer(box_specs, resolve_pallet_spec(case, self.catalog["pallets"]))
         result = engine.run(name, box_list)
         validator = PalletizeValidator(self.raw, self.lids)
         validation = validator.validate_geometry_data(result.to_dict())
@@ -471,6 +473,11 @@ class RevisedRealLayoutTests(unittest.TestCase):
     def test_revised_weak_top_cases_meet_opposed_edges_or_four_corners(self):
         for name in ("aisin_4", "othics_2", "roki"):
             with self.subTest(name=name):
+                skid_id = self.catalog["cases"]["test_cases"][name]["skid_id"]
+                if skid_incomplete(self.catalog["skids"][skid_id]):
+                    with self.assertRaisesRegex(ValueError, "未登録"):
+                        self.run_case(name)
+                    continue
                 result, _ = self.run_case(name)
                 support = result.summary["top_support"]
                 edges = support["opposing_edge_lengths_mm"]

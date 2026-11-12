@@ -11,7 +11,9 @@ description: "パレタイズのテストケース作成・編集、箱・蓋の
 ## 担当範囲と確認事項
 - 実荷姿ケースの品番・数量・固定蓋・仕入先・パレット条件は推測で変更しない。
 - ケース・採用状態は `box_research/catalog/test_cases.json` の `test_cases` / `approval_state` に保存する。
-- ケースは `name`、`description`、`supplier_name`、`pallet_id`、荷山上限の `pallet`、`box_list` を持つ。
+- ケース（版2）は `name`、`description`、`supplier_name`、`skid_id`（KEY2）、`box_list` を持つ。
+- 仕入先→KEY2→品番別数量の順で入力する。パレット・荷山上限はスキッドDBを参照し、ケースでは編集・重複保存しない。未登録設定があれば新規ケース作成・計算を止める。
+- 空欄・0の品番は保存しない。使用中の候補品番の削除は先に関連ケースを修正する。
 - 各箱行は `{part_number, count}`。数量は整数1～500。ケースで箱IDや蓋IDを指定しない。
 - 品番から共通モデルと固定蓋を照合し、パレットの仕入先適合性も確認する。
 - `python .\test_programmer\serve_testcase_viewer.py` でケース編集画面を開く。

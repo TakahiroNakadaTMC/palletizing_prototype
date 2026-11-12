@@ -17,6 +17,7 @@ from algorithm_programmer.cli import resolve_pallet_spec
 from algorithm_programmer.models import BoxSpec, PlacedBox
 from algorithm_programmer.palletizer import Palletizer
 from box_research.catalog_store import catalog_pallets, load_catalog
+from box_research.skid_catalog import resolve_skid_case, skid_incomplete
 from box_research.database_validation import STANDARD_PALLET_ID
 from supervisor.validate import PalletizeValidator
 from tester.run_tests import run_catalog_tests
@@ -32,7 +33,9 @@ class CatalogCalculationTests(unittest.TestCase):
         cls.pallets = catalog_pallets(ROOT)
 
     def calculate(self, case, catalog=None):
-        return run_catalog_case(case["name"], case, catalog or self.catalog,
+        catalog = catalog or self.catalog
+        case = resolve_skid_case(case, catalog)
+        return run_catalog_case(case["name"], case, catalog,
                                 resolve_pallet_spec(case, self.pallets), self.revision)
 
     def assert_quantities(self, result, case, catalog=None):
@@ -71,8 +74,7 @@ class CatalogCalculationTests(unittest.TestCase):
         if result["test_name"] not in catalog.get("cases", {}).get("test_cases", {}):
             catalog = copy.deepcopy(catalog)
             catalog.setdefault("cases", {}).setdefault("test_cases", {})[result["test_name"]] = dict(
-                name=result["test_name"], supplier_name=result["supplier_name"], pallet_id=result["pallet_id"],
-                pallet={key: result["pallet"][key] for key in ("max_x_span", "max_y_span", "max_height")},
+                name=result["test_name"], supplier_name=result["supplier_name"], skid_id=result["skid_id"],
                 box_list=[dict(part_number=row["part_number"], count=row["count"])
                           for row in result["input_parts"]])
         validator = PalletizeValidator(catalog["models"], catalog["lids"], catalog, self.revision, self.pallets)
@@ -89,9 +91,13 @@ class CatalogCalculationTests(unittest.TestCase):
             "B": dict(id="B", supplier_name="仕入先", box_name="現場B", box_model_id="共通", lid_id="無蓋"),
         })
         case = dict(name="fixture", description="検証", supplier_name="仕入先",
-                    pallet_id=STANDARD_PALLET_ID,
-                    pallet=dict(max_x_span=1200, max_y_span=1000, max_height=600),
+                    skid_id="SYNTHETIC",
                     box_list=[dict(part_number="A", count=9), dict(part_number="B", count=9)])
+        data["pallets"] = self.pallets
+        data["skids"] = {"SYNTHETIC": dict(
+            id="SYNTHETIC", supplier_name="仕入先", pallet_id=STANDARD_PALLET_ID,
+            pallet=dict(max_x_span=1200, max_y_span=1000, max_height=600),
+            part_numbers=["A", "B"], updated_at="", history=[])}
         return data, case
 
     def test_shared_non_tp_model_and_quantities(self):
@@ -114,12 +120,17 @@ class CatalogCalculationTests(unittest.TestCase):
         case["name"] = "tp_alias_fixture"
         case["box_list"] = (self.catalog["cases"]["test_cases"]["aisin_9"]["box_list"]
                             + case["box_list"])
-        result = self.calculate(case)
+        catalog = copy.deepcopy(self.catalog)
+        catalog["skids"]["TP-ALIAS"] = dict(
+            catalog["skids"][case["skid_id"]], id="TP-ALIAS",
+            part_numbers=[row["part_number"] for row in case["box_list"]])
+        case["skid_id"] = "TP-ALIAS"
+        result = self.calculate(case, catalog)
         self.assertEqual(result["algorithm_mode"], "single")
         self.assertEqual({box["box_model_id"] for box in result["boxes"]}, {"TP364"})
         self.assertEqual({box["box_id"] for box in result["boxes"]}, {"SPZ36404", "SPZ36406"})
         self.assert_quantities(result, case)
-        self.assertTrue(self.independently_validate(result)["is_pass"])
+        self.assertTrue(self.independently_validate(result, catalog)["is_pass"])
 
     def test_partial_placement_allocates_in_input_order(self):
         data, case = self.synthetic()
@@ -170,7 +181,7 @@ class CatalogCalculationTests(unittest.TestCase):
 
     def test_no_placement_retains_all_part_quantities_and_reasons(self):
         data, case = self.synthetic()
-        case["pallet"]["max_height"] = 100
+        data["skids"]["SYNTHETIC"]["pallet"]["max_height"] = 100
         result = self.calculate(case, data)
         self.assertEqual(result["boxes"], [])
         self.assertFalse(result["summary"]["is_valid"])
@@ -279,8 +290,7 @@ class CatalogCalculationTests(unittest.TestCase):
             legacy_case.write_text(json.dumps({
                 "name": "legacy",
                 "supplier_name": case["supplier_name"],
-                "pallet_id": case["pallet_id"],
-                "pallet": case["pallet"],
+                "skid_id": case["skid_id"],
                 "box_list": [{"box_id": "TP-331", "count": 1}],
             }, ensure_ascii=False), encoding="utf-8")
             legacy = subprocess.run(command + [str(legacy_case), "-o", str(target)],
@@ -349,6 +359,10 @@ class CatalogCalculationTests(unittest.TestCase):
     def test_all_saved_cases_conserve_parts_and_match_independent_safety(self):
         for name, case in self.catalog["cases"]["test_cases"].items():
             with self.subTest(case=name):
+                if skid_incomplete(self.catalog["skids"][case["skid_id"]]):
+                    with self.assertRaisesRegex(ValueError, "未登録"):
+                        self.calculate(case)
+                    continue
                 result = self.calculate(case)
                 self.assert_quantities(result, case)
                 independent = self.independently_validate(result)

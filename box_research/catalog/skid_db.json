@@ -1,0 +1,5246 @@
+{
+  "26413D": {
+    "id": "26413D",
+    "supplier_name": "オティックス",
+    "pallet_id": "D4-1012-4_1200x1000x130",
+    "pallet": {
+      "max_x_span": 1220.0,
+      "max_y_span": 980.0,
+      "max_height": 1026.0
+    },
+    "part_numbers": [
+      "111032402200",
+      "111032401100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "オティックス",
+          "pallet_id": "D4-1012-4_1200x1000x130",
+          "pallet": {
+            "max_x_span": 1220.0,
+            "max_y_span": 980.0,
+            "max_height": 1026.0
+          },
+          "part_numbers": [
+            "111032402200",
+            "111032401100"
+          ]
+        },
+        "affected_cases": [
+          "othics_6",
+          "othics_6_m10",
+          "othics_6_m20",
+          "othics_6_p10",
+          "othics_6_p20",
+          "othics_7",
+          "othics_7_m10",
+          "othics_7_m20",
+          "othics_7_p10",
+          "othics_7_p20",
+          "othics_8",
+          "othics_8_m10",
+          "othics_8_m20",
+          "othics_8_p10",
+          "othics_8_p20"
+        ]
+      }
+    ]
+  },
+  "26413807E": {
+    "id": "26413807E",
+    "supplier_name": "オティックス",
+    "pallet_id": "D4-1012-4_1200x1000x130",
+    "pallet": {
+      "max_x_span": 1107.0,
+      "max_y_span": 950.0,
+      "max_height": 1014.0
+    },
+    "part_numbers": [
+      "111031502100",
+      "111031501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "オティックス",
+          "pallet_id": "D4-1012-4_1200x1000x130",
+          "pallet": {
+            "max_x_span": 1107.0,
+            "max_y_span": 950.0,
+            "max_height": 1014.0
+          },
+          "part_numbers": [
+            "111031502100",
+            "111031501000"
+          ]
+        },
+        "affected_cases": [
+          "othics_3",
+          "othics_3_m10",
+          "othics_3_m20",
+          "othics_3_p10",
+          "othics_3_p20",
+          "othics_5",
+          "othics_5_m10",
+          "othics_5_m20",
+          "othics_5_p10",
+          "othics_5_p20",
+          "othics_9",
+          "othics_9_m10",
+          "othics_9_m20",
+          "othics_9_p10",
+          "othics_9_p20"
+        ]
+      }
+    ]
+  },
+  "70301101A": {
+    "id": "70301101A",
+    "supplier_name": "アイシン高丘",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "134512408100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン高丘",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "134512408100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "70301102Z": {
+    "id": "70301102Z",
+    "supplier_name": "アイシン高丘",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "134511511100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン高丘",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "134511511100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "10196017B": {
+    "id": "10196017B",
+    "supplier_name": "アイシン",
+    "pallet_id": "D4-1012-7_1200x1000x130",
+    "pallet": {
+      "max_x_span": 1005,
+      "max_y_span": 1005,
+      "max_height": 826
+    },
+    "part_numbers": [
+      "31270K001300"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": "D4-1012-7_1200x1000x130",
+          "pallet": {
+            "max_x_span": 1005,
+            "max_y_span": 1005,
+            "max_height": 826
+          },
+          "part_numbers": [
+            "31270K001300"
+          ]
+        },
+        "affected_cases": [
+          "aisin_2",
+          "aisin_2_m10",
+          "aisin_2_m20",
+          "aisin_2_p10",
+          "aisin_2_p20",
+          "aisin_5",
+          "aisin_5_m10",
+          "aisin_5_m20",
+          "aisin_5_p10",
+          "aisin_5_p20"
+        ]
+      }
+    ]
+  },
+  "31163001A": {
+    "id": "31163001A",
+    "supplier_name": "シェフラーJP",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "312706301000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "シェフラーJP",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "312706301000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "16454002G": {
+    "id": "16454002G",
+    "supplier_name": "中央可鍛工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "122812503000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "中央可鍛工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "122812503000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "16454002D": {
+    "id": "16454002D",
+    "supplier_name": "中央可鍛工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "122822501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "中央可鍛工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "122822501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1100B00CC": {
+    "id": "1100B00CC",
+    "supplier_name": "アート金属",
+    "pallet_id": "D4-1010-3_1000x1000x130",
+    "pallet": {
+      "max_x_span": 954.0,
+      "max_y_span": 954.0,
+      "max_height": 800.0
+    },
+    "part_numbers": [
+      "132111507002",
+      "132111507001",
+      "132111507003"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アート金属",
+          "pallet_id": "D4-1010-3_1000x1000x130",
+          "pallet": {
+            "max_x_span": 954.0,
+            "max_y_span": 954.0,
+            "max_height": 800.0
+          },
+          "part_numbers": [
+            "132111507002",
+            "132111507001",
+            "132111507003"
+          ]
+        },
+        "affected_cases": [
+          "art",
+          "art_m10",
+          "art_m20",
+          "art_p10",
+          "art_p20"
+        ]
+      }
+    ]
+  },
+  "4731DA61F": {
+    "id": "4731DA61F",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "130902501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "130902501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "88244E": {
+    "id": "88244E",
+    "supplier_name": "住友理工",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "162601501000",
+      "162811501000",
+      "162821502000",
+      "162961502000",
+      "162821501000",
+      "162961501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "住友理工",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "162601501000",
+            "162811501000",
+            "162821502000",
+            "162961502000",
+            "162821501000",
+            "162961501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "41250A": {
+    "id": "41250A",
+    "supplier_name": "水野鉄工",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "111912501000",
+      "137413601000",
+      "902531400300",
+      "909130302800",
+      "902500600300",
+      "902501011300",
+      "902800400100",
+      "903412001200",
+      "902500812000",
+      "902531301700",
+      "902531200200",
+      "902500603500"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "水野鉄工",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "111912501000",
+            "137413601000",
+            "902531400300",
+            "909130302800",
+            "902500600300",
+            "902501011300",
+            "902800400100",
+            "903412001200",
+            "902500812000",
+            "902531301700",
+            "902531200200",
+            "902500603500"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4010D00DC": {
+    "id": "4010D00DC",
+    "supplier_name": "マルヤス工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "238142401100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "マルヤス工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "238142401100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "69951B": {
+    "id": "69951B",
+    "supplier_name": "大豊工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "132812403002",
+      "132812403001",
+      "132812403003",
+      "118111501000",
+      "118211501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "大豊工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "132812403002",
+            "132812403001",
+            "132812403003",
+            "118111501000",
+            "118211501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4731412CC": {
+    "id": "4731412CC",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "232092401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "232092401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4010D00CH": {
+    "id": "4010D00CH",
+    "supplier_name": "マルヤス工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "256802403000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "マルヤス工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "256802403000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "47950T": {
+    "id": "47950T",
+    "supplier_name": "ニフコ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "163041501000",
+      "163051502000",
+      "163051501000",
+      "156784602000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "ニフコ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "163041501000",
+            "163051502000",
+            "163051501000",
+            "156784602000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "48150001B": {
+    "id": "48150001B",
+    "supplier_name": "NOK",
+    "pallet_id": "JL-R4-1210C_1200x1000x130",
+    "pallet": {
+      "max_x_span": 1212.0,
+      "max_y_span": 966.0,
+      "max_height": 777.0
+    },
+    "part_numbers": [
+      "134701515000",
+      "134701514000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "NOK",
+          "pallet_id": "JL-R4-1210C_1200x1000x130",
+          "pallet": {
+            "max_x_span": 1212.0,
+            "max_y_span": 966.0,
+            "max_height": 777.0
+          },
+          "part_numbers": [
+            "134701515000",
+            "134701514000"
+          ]
+        },
+        "affected_cases": [
+          "nok_2",
+          "nok_2_m10",
+          "nok_2_m20",
+          "nok_2_p10",
+          "nok_2_p20"
+        ]
+      }
+    ]
+  },
+  "70301C": {
+    "id": "70301C",
+    "supplier_name": "アイシン高丘",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "115112401000",
+      "115122401100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン高丘",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "115112401000",
+            "115122401100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "16450B": {
+    "id": "16450B",
+    "supplier_name": "中央可鍛工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "123152401100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "中央可鍛工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "123152401100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4731A61BE": {
+    "id": "4731A61BE",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "909190227700",
+      "909190227600"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "909190227700",
+            "909190227600"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1100BF": {
+    "id": "1100BF",
+    "supplier_name": "アート金属",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "132112406001",
+      "132112406003",
+      "132112406002"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アート金属",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "132112406001",
+            "132112406003",
+            "132112406002"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "90870001A": {
+    "id": "90870001A",
+    "supplier_name": "フコク",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "134702402000",
+      "134702401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "フコク",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "134702402000",
+            "134702401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "37540E": {
+    "id": "37540E",
+    "supplier_name": "佐藤鋳工",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "123151510000",
+      "123151509000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "佐藤鋳工",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "123151510000",
+            "123151509000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4731448AJ": {
+    "id": "4731448AJ",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "231012504000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "231012504000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "93203C": {
+    "id": "93203C",
+    "supplier_name": "輸入部品",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "13211F204002",
+      "13211F204001",
+      "13211F204003"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "輸入部品",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "13211F204002",
+            "13211F204001",
+            "13211F204003"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "10850M": {
+    "id": "10850M",
+    "supplier_name": "青山製作所",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "909100219700"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "青山製作所",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "909100219700"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1019ZB": {
+    "id": "1019ZB",
+    "supplier_name": "アイシン",
+    "pallet_id": "D4-1012-3_1200x1000x150",
+    "pallet": {
+      "max_x_span": 1340.0,
+      "max_y_span": 1005.0,
+      "max_height": 1185.0
+    },
+    "part_numbers": [
+      "113102401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": "D4-1012-3_1200x1000x150",
+          "pallet": {
+            "max_x_span": 1340.0,
+            "max_y_span": 1005.0,
+            "max_height": 1185.0
+          },
+          "part_numbers": [
+            "113102401000"
+          ]
+        },
+        "affected_cases": [
+          "aisin_6",
+          "aisin_6_m10",
+          "aisin_6_m20",
+          "aisin_6_p10",
+          "aisin_6_p20"
+        ]
+      }
+    ]
+  },
+  "1019ZF": {
+    "id": "1019ZF",
+    "supplier_name": "アイシン",
+    "pallet_id": "D4-1012-3_1200x1000x150",
+    "pallet": {
+      "max_x_span": 1340.0,
+      "max_y_span": 1005.0,
+      "max_height": 1185.0
+    },
+    "part_numbers": [
+      "113202401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": "D4-1012-3_1200x1000x150",
+          "pallet": {
+            "max_x_span": 1340.0,
+            "max_y_span": 1005.0,
+            "max_height": 1185.0
+          },
+          "part_numbers": [
+            "113202401000"
+          ]
+        },
+        "affected_cases": [
+          "aisin_7",
+          "aisin_7_m10",
+          "aisin_7_m20",
+          "aisin_7_p10",
+          "aisin_7_p20"
+        ]
+      }
+    ]
+  },
+  "4731R49BA": {
+    "id": "4731R49BA",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "153702502000",
+      "153703601000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "153702502000",
+            "153703601000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1019ZOGAE": {
+    "id": "1019ZOGAE",
+    "supplier_name": "アイシン",
+    "pallet_id": "D4-1012-3_1200x1000x150",
+    "pallet": {
+      "max_x_span": 1340.0,
+      "max_y_span": 1005.0,
+      "max_height": 1185.0
+    },
+    "part_numbers": [
+      "113201502100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": "D4-1012-3_1200x1000x150",
+          "pallet": {
+            "max_x_span": 1340.0,
+            "max_y_span": 1005.0,
+            "max_height": 1185.0
+          },
+          "part_numbers": [
+            "113201502100"
+          ]
+        },
+        "affected_cases": [
+          "aisin_10",
+          "aisin_10_m10",
+          "aisin_10_m20",
+          "aisin_10_p10",
+          "aisin_10_p20",
+          "aisin_11",
+          "aisin_11_m10",
+          "aisin_11_m20",
+          "aisin_11_p10",
+          "aisin_11_p20"
+        ]
+      }
+    ]
+  },
+  "70301001M": {
+    "id": "70301001M",
+    "supplier_name": "アイシン高丘",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "115111502000",
+      "115121502000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン高丘",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "115111502000",
+            "115121502000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "26411F": {
+    "id": "26411F",
+    "supplier_name": "オティックス",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": 1106,
+      "max_y_span": 1036,
+      "max_height": 845
+    },
+    "part_numbers": [
+      "138012501000",
+      "137507002100",
+      "234702501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "オティックス",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": 1106,
+            "max_y_span": 1036,
+            "max_height": 845
+          },
+          "part_numbers": [
+            "138012501000",
+            "137507002100",
+            "234702501000"
+          ]
+        },
+        "affected_cases": [
+          "othics_2",
+          "othics_2_m10",
+          "othics_2_m20",
+          "othics_2_p10",
+          "othics_2_p20"
+        ]
+      }
+    ]
+  },
+  "11001R": {
+    "id": "11001R",
+    "supplier_name": "アート金属",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "132512403002",
+      "132512403003",
+      "132512403001"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アート金属",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "132512403002",
+            "132512403003",
+            "132512403001"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4731TB54B": {
+    "id": "4731TB54B",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "909151000900"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "909151000900"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "35810F": {
+    "id": "35810F",
+    "supplier_name": "ROKI",
+    "pallet_id": "D4-1111-14_1100x1100x122",
+    "pallet": {
+      "max_x_span": 1172.5,
+      "max_y_span": 1005,
+      "max_height": 894
+    },
+    "part_numbers": [
+      "256012403000",
+      "256011505000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "ROKI",
+          "pallet_id": "D4-1111-14_1100x1100x122",
+          "pallet": {
+            "max_x_span": 1172.5,
+            "max_y_span": 1005,
+            "max_height": 894
+          },
+          "part_numbers": [
+            "256012403000",
+            "256011505000"
+          ]
+        },
+        "affected_cases": [
+          "roki",
+          "roki_2",
+          "roki_2_m10",
+          "roki_2_m20",
+          "roki_2_p10",
+          "roki_2_p20",
+          "roki_m10",
+          "roki_m20",
+          "roki_p10",
+          "roki_p20"
+        ]
+      }
+    ]
+  },
+  "18520002A": {
+    "id": "18520002A",
+    "supplier_name": "大同メタル工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "117112402105",
+      "117112402103",
+      "117111504005",
+      "117111504003",
+      "117212401005",
+      "117212401003",
+      "117112402101",
+      "117112402106",
+      "117911503000",
+      "117111504002",
+      "117111504004",
+      "117212401001",
+      "117212401006",
+      "117112402102",
+      "117212401004",
+      "117111504001",
+      "117111504006",
+      "117112402104",
+      "117212401002"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "大同メタル工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "117112402105",
+            "117112402103",
+            "117111504005",
+            "117111504003",
+            "117212401005",
+            "117212401003",
+            "117112402101",
+            "117112402106",
+            "117911503000",
+            "117111504002",
+            "117111504004",
+            "117212401001",
+            "117212401006",
+            "117112402102",
+            "117212401004",
+            "117111504001",
+            "117111504006",
+            "117112402104",
+            "117212401002"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "32991000C": {
+    "id": "32991000C",
+    "supplier_name": "京浜精密",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "163512402000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "京浜精密",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "163512402000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "83850084A": {
+    "id": "83850084A",
+    "supplier_name": "臼井国際産業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "238012407000",
+      "238021501000",
+      "238011507000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "臼井国際産業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "238012407000",
+            "238021501000",
+            "238011507000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "41620001J": {
+    "id": "41620001J",
+    "supplier_name": "ムロ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "193152401000",
+      "964116200000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "ムロ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "193152401000",
+            "964116200000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4731EH": {
+    "id": "4731EH",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "909190128900",
+      "909190129700"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "909190128900",
+            "909190129700"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1019ZOGAC": {
+    "id": "1019ZOGAC",
+    "supplier_name": "アイシン",
+    "pallet_id": "D4-1012-7_1200x1000x130",
+    "pallet": {
+      "max_x_span": 1340.0,
+      "max_y_span": 1005.0,
+      "max_height": 1185.0
+    },
+    "part_numbers": [
+      "113101501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": "D4-1012-7_1200x1000x130",
+          "pallet": {
+            "max_x_span": 1340.0,
+            "max_y_span": 1005.0,
+            "max_height": 1185.0
+          },
+          "part_numbers": [
+            "113101501000"
+          ]
+        },
+        "affected_cases": [
+          "aisin_9",
+          "aisin_9_m10",
+          "aisin_9_m20",
+          "aisin_9_p10",
+          "aisin_9_p20"
+        ]
+      }
+    ]
+  },
+  "4731G62AI": {
+    "id": "4731G62AI",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "130702503000",
+      "130502501000",
+      "130501502000",
+      "130501501000",
+      "135A03102000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "130702503000",
+            "130502501000",
+            "130501502000",
+            "130501501000",
+            "135A03102000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4010D00MS": {
+    "id": "4010D00MS",
+    "supplier_name": "マルヤス工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "256801501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "マルヤス工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "256801501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "47240005I": {
+    "id": "47240005I",
+    "supplier_name": "日本サーモ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "160312404000",
+      "894223304000",
+      "904681404400"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "日本サーモ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "160312404000",
+            "894223304000",
+            "904681404400"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "10850A": {
+    "id": "10850A",
+    "supplier_name": "青山製作所",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "909100220200",
+      "909100220500",
+      "901051058200",
+      "91552F109000",
+      "91552F104000",
+      "901051058300",
+      "91551G082000",
+      "901190693800",
+      "91551G084000",
+      "901090831700",
+      "916718082500",
+      "915510084500",
+      "9011906A2300"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "青山製作所",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "909100220200",
+            "909100220500",
+            "901051058200",
+            "91552F109000",
+            "91552F104000",
+            "901051058300",
+            "91551G082000",
+            "901190693800",
+            "91551G084000",
+            "901090831700",
+            "916718082500",
+            "915510084500",
+            "9011906A2300"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "83420K": {
+    "id": "83420K",
+    "supplier_name": "内山工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "163042401000",
+      "163052401000",
+      "232242501100",
+      "111593104000",
+      "904301203100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "内山工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "163042401000",
+            "163052401000",
+            "232242501100",
+            "111593104000",
+            "904301203100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4731446AG": {
+    "id": "4731446AG",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "232092403000",
+      "232091507000",
+      "232092402000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "232092403000",
+            "232091507000",
+            "232092402000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "32950X": {
+    "id": "32950X",
+    "supplier_name": "グゼー",
+    "pallet_id": "D4-1111-6_1100x1100x150",
+    "pallet": {
+      "max_x_span": 1173.0,
+      "max_y_span": 1006.0,
+      "max_height": 1050.0
+    },
+    "part_numbers": [
+      "160311502000",
+      "160311501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "グゼー",
+          "pallet_id": "D4-1111-6_1100x1100x150",
+          "pallet": {
+            "max_x_span": 1173.0,
+            "max_y_span": 1006.0,
+            "max_height": 1050.0
+          },
+          "part_numbers": [
+            "160311502000",
+            "160311501000"
+          ]
+        },
+        "affected_cases": [
+          "guze",
+          "guze_m10",
+          "guze_m20",
+          "guze_p10",
+          "guze_p20"
+        ]
+      }
+    ]
+  },
+  "26440W": {
+    "id": "26440W",
+    "supplier_name": "豊生ブレーキ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "238352401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "豊生ブレーキ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "238352401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "26440Y01Q": {
+    "id": "26440Y01Q",
+    "supplier_name": "豊生ブレーキ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "238351501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "豊生ブレーキ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "238351501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "6436DHKUB": {
+    "id": "6436DHKUB",
+    "supplier_name": "住友電工",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "234772501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "住友電工",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "234772501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "69958001C": {
+    "id": "69958001C",
+    "supplier_name": "大豊工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "293002401100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "大豊工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "293002401100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "72713Z": {
+    "id": "72713Z",
+    "supplier_name": "ファインシンタ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "111352402000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "ファインシンタ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "111352402000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1127003AM": {
+    "id": "1127003AM",
+    "supplier_name": "旭鉄工",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "111213104100",
+      "111213109000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "旭鉄工",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "111213104100",
+            "111213109000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "7364CTC4A": {
+    "id": "7364CTC4A",
+    "supplier_name": "トヨタ紡織",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "122111506100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "トヨタ紡織",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "122111506100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "3369HI": {
+    "id": "3369HI",
+    "supplier_name": "小島プレス",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "122112402000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "小島プレス",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "122112402000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "10452071B": {
+    "id": "10452071B",
+    "supplier_name": "愛三工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "220301501000",
+      "220302401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "愛三工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "220301501000",
+            "220302401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "62200004B": {
+    "id": "62200004B",
+    "supplier_name": "サンコール",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "905013103500",
+      "905013004300",
+      "905013207600"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "サンコール",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "905013103500",
+            "905013004300",
+            "905013207600"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "64230C": {
+    "id": "64230C",
+    "supplier_name": "杉浦製作所",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "901260805200",
+      "901260804700",
+      "903411202600",
+      "941518080000",
+      "901260805000",
+      "901790632600",
+      "901260602600",
+      "901260602800"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "杉浦製作所",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "901260805200",
+            "901260804700",
+            "903411202600",
+            "941518080000",
+            "901260805000",
+            "901790632600",
+            "901260602600",
+            "901260602800"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4731990GA": {
+    "id": "4731990GA",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "894483301000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "894483301000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "10198K": {
+    "id": "10198K",
+    "supplier_name": "アイシン",
+    "pallet_id": "D4-1012-7_1200x1000x130",
+    "pallet": {
+      "max_x_span": 1172.5,
+      "max_y_span": 1005.0,
+      "max_height": 1050.0
+    },
+    "part_numbers": [
+      "160321519000",
+      "160322402000",
+      "152502501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": "D4-1012-7_1200x1000x130",
+          "pallet": {
+            "max_x_span": 1172.5,
+            "max_y_span": 1005.0,
+            "max_height": 1050.0
+          },
+          "part_numbers": [
+            "160321519000",
+            "160322402000",
+            "152502501000"
+          ]
+        },
+        "affected_cases": [
+          "aisin_4",
+          "aisin_4_m10",
+          "aisin_4_m20",
+          "aisin_4_p10",
+          "aisin_4_p20"
+        ]
+      }
+    ]
+  },
+  "4731952XZ": {
+    "id": "4731952XZ",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "909190509600",
+      "909190509500"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "909190509600",
+            "909190509500"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "10451021A": {
+    "id": "10451021A",
+    "supplier_name": "愛三工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "256201535000",
+      "256202405000",
+      "122042501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "愛三工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "256201535000",
+            "256202405000",
+            "122042501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1100B00CD": {
+    "id": "1100B00CD",
+    "supplier_name": "アート金属",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "132112407002",
+      "132112407001",
+      "132112407003"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アート金属",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "132112407002",
+            "132112407001",
+            "132112407003"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1045C061C": {
+    "id": "1045C061C",
+    "supplier_name": "愛三工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "137112404000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "愛三工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "137112404000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "10171A": {
+    "id": "10171A",
+    "supplier_name": "ダイキョー",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "151042401000",
+      "151041511000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "ダイキョー",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "151042401000",
+            "151041511000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4589YD": {
+    "id": "4589YD",
+    "supplier_name": "豊田合成",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "162602411000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "豊田合成",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "162602411000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "16450C": {
+    "id": "16450C",
+    "supplier_name": "中央可鍛工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "231912505000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "中央可鍛工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "231912505000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "10850C": {
+    "id": "10850C",
+    "supplier_name": "青山製作所",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "91551G086500",
+      "91551F082500",
+      "91552F104000",
+      "91551F083000",
+      "91551F084500",
+      "901090638400",
+      "91551G082000",
+      "91552F103000",
+      "901050635200",
+      "9011906A1200",
+      "916718083500",
+      "901050851000",
+      "901050635300",
+      "901050635900",
+      "9011906A2900",
+      "916718082000",
+      "901100700200",
+      "901050850500",
+      "9011906A6500",
+      "901100604000",
+      "915518083500",
+      "901050635000",
+      "901050636500",
+      "941512084100",
+      "901050636600",
+      "901090832200",
+      "901050637600",
+      "941518060000",
+      "915518082000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "青山製作所",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "91551G086500",
+            "91551F082500",
+            "91552F104000",
+            "91551F083000",
+            "91551F084500",
+            "901090638400",
+            "91551G082000",
+            "91552F103000",
+            "901050635200",
+            "9011906A1200",
+            "916718083500",
+            "901050851000",
+            "901050635300",
+            "901050635900",
+            "9011906A2900",
+            "916718082000",
+            "901100700200",
+            "901050850500",
+            "9011906A6500",
+            "901100604000",
+            "915518083500",
+            "901050635000",
+            "901050636500",
+            "941512084100",
+            "901050636600",
+            "901090832200",
+            "901050637600",
+            "941518060000",
+            "915518082000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "26412701F": {
+    "id": "26412701F",
+    "supplier_name": "オティックス",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "136201501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "オティックス",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "136201501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "10197H": {
+    "id": "10197H",
+    "supplier_name": "アイシン",
+    "pallet_id": "D4-1012-7_1200x1000x130",
+    "pallet": {
+      "max_x_span": 1172.5,
+      "max_y_span": 1005.0,
+      "max_height": 1050.0
+    },
+    "part_numbers": [
+      "151002402000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": "D4-1012-7_1200x1000x130",
+          "pallet": {
+            "max_x_span": 1172.5,
+            "max_y_span": 1005.0,
+            "max_height": 1050.0
+          },
+          "part_numbers": [
+            "151002402000"
+          ]
+        },
+        "affected_cases": [
+          "aisin_3",
+          "aisin_3_m10",
+          "aisin_3_m20",
+          "aisin_3_p10",
+          "aisin_3_p20"
+        ]
+      }
+    ]
+  },
+  "74020E": {
+    "id": "74020E",
+    "supplier_name": "椿本チェイン",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "135062402000",
+      "135611501000",
+      "135402502000",
+      "135072402000",
+      "135401501000",
+      "135591501000",
+      "135592401000",
+      "135492502000",
+      "135652501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "椿本チェイン",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "135062402000",
+            "135611501000",
+            "135402502000",
+            "135072402000",
+            "135401501000",
+            "135591501000",
+            "135592401000",
+            "135492502000",
+            "135652501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "40480R": {
+    "id": "40480R",
+    "supplier_name": "メイドー",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "901191602000",
+      "901051239900",
+      "909040400600",
+      "91552G102500"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "メイドー",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "901191602000",
+            "901051239900",
+            "909040400600",
+            "91552G102500"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "56550T": {
+    "id": "56550T",
+    "supplier_name": "大橋鉄工",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "114522402000",
+      "153012402000",
+      "153011507000",
+      "153011506000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "大橋鉄工",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "114522402000",
+            "153012402000",
+            "153011507000",
+            "153011506000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "11472002A": {
+    "id": "11472002A",
+    "supplier_name": "アーレスティ",
+    "pallet_id": "D4-1012-9_1200x1000x150",
+    "pallet": {
+      "max_x_span": 1340.0,
+      "max_y_span": 1005.0,
+      "max_height": 768.0
+    },
+    "part_numbers": [
+      "114201502000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アーレスティ",
+          "pallet_id": "D4-1012-9_1200x1000x150",
+          "pallet": {
+            "max_x_span": 1340.0,
+            "max_y_span": 1005.0,
+            "max_height": 768.0
+          },
+          "part_numbers": [
+            "114201502000"
+          ]
+        },
+        "affected_cases": [
+          "arresuthi",
+          "arresuthi_2",
+          "arresuthi_2_m10",
+          "arresuthi_2_m20",
+          "arresuthi_2_p10",
+          "arresuthi_2_p20",
+          "arresuthi_m10",
+          "arresuthi_m20",
+          "arresuthi_p10",
+          "arresuthi_p20"
+        ]
+      }
+    ]
+  },
+  "64230Z": {
+    "id": "64230Z",
+    "supplier_name": "杉浦製作所",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "903411401500",
+      "903411802300"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "杉浦製作所",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "903411401500",
+            "903411802300"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "62201566C": {
+    "id": "62201566C",
+    "supplier_name": "サンコール",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "321011212000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "サンコール",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "321011212000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1019I600C": {
+    "id": "1019I600C",
+    "supplier_name": "アイシン",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "321015210000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "321015210000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "83850002B": {
+    "id": "83850002B",
+    "supplier_name": "臼井国際産業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "238142402000",
+      "238141509000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "臼井国際産業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "238142402000",
+            "238141509000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4731982FA": {
+    "id": "4731982FA",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "894915008200",
+      "894913305200"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "894915008200",
+            "894913305200"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4731LATML": {
+    "id": "4731LATML",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "135A02502000",
+      "135A07002000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "135A02502000",
+            "135A07002000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "32700A": {
+    "id": "32700A",
+    "supplier_name": "川崎工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "256241501000",
+      "163312403000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "川崎工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "256241501000",
+            "163312403000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "72713S": {
+    "id": "72713S",
+    "supplier_name": "ファインシンタ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "135212402000",
+      "135192401000",
+      "135211503000",
+      "134781501000",
+      "151632501000",
+      "135191501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "ファインシンタ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "135212402000",
+            "135192401000",
+            "135211503000",
+            "134781501000",
+            "151632501000",
+            "135191501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4010B00KG": {
+    "id": "4010B00KG",
+    "supplier_name": "マルヤス工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "162702402000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "マルヤス工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "162702402000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "7364H5K7Z": {
+    "id": "7364H5K7Z",
+    "supplier_name": "トヨタ紡織",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "112011504000",
+      "112011503000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "トヨタ紡織",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "112011504000",
+            "112011503000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "10451031B": {
+    "id": "10451031B",
+    "supplier_name": "愛三工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "171201513000",
+      "171201512000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "愛三工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "171201513000",
+            "171201512000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "16490D": {
+    "id": "16490D",
+    "supplier_name": "中庸スプリング",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "137346202000",
+      "902011207900",
+      "321173301000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "中庸スプリング",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "137346202000",
+            "902011207900",
+            "321173301000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "49190UNTO": {
+    "id": "49190UNTO",
+    "supplier_name": "ニッタン",
+    "pallet_id": "__STANDARD_1200_1000_130__",
+    "pallet": {
+      "max_x_span": 1107.0,
+      "max_y_span": 1107.0,
+      "max_height": 960.0
+    },
+    "part_numbers": [
+      "137152404000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "ニッタン",
+          "pallet_id": "__STANDARD_1200_1000_130__",
+          "pallet": {
+            "max_x_span": 1107.0,
+            "max_y_span": 1107.0,
+            "max_height": 960.0
+          },
+          "part_numbers": [
+            "137152404000"
+          ]
+        },
+        "affected_cases": [
+          "nittan",
+          "nittan_2",
+          "nittan_2_m10",
+          "nittan_2_m20",
+          "nittan_2_p10",
+          "nittan_2_p20",
+          "nittan_m10",
+          "nittan_m20",
+          "nittan_p10",
+          "nittan_p20"
+        ]
+      }
+    ]
+  },
+  "29170001A": {
+    "id": "29170001A",
+    "supplier_name": "伊藤金属工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "157092501000",
+      "157082501000",
+      "157081501000",
+      "904301800800",
+      "162682401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "伊藤金属工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "157092501000",
+            "157082501000",
+            "157081501000",
+            "904301800800",
+            "162682401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "3369EN": {
+    "id": "3369EN",
+    "supplier_name": "小島プレス",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "121803801000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "小島プレス",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "121803801000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "71630A": {
+    "id": "71630A",
+    "supplier_name": "東郷製作所",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "961384150100",
+      "961384210100",
+      "961384250100",
+      "961384270100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "東郷製作所",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "961384150100",
+            "961384210100",
+            "961384250100",
+            "961384270100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "36892010G": {
+    "id": "36892010G",
+    "supplier_name": "マーレ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "112012404000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "マーレ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "112012404000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "57022111A": {
+    "id": "57022111A",
+    "supplier_name": "日本ガスケット",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "111152404000",
+      "111151510000",
+      "256851501000",
+      "256852501100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "日本ガスケット",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "111152404000",
+            "111151510000",
+            "256851501000",
+            "256852501100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "70271U": {
+    "id": "70271U",
+    "supplier_name": "高木製作所",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "171692401000",
+      "8271533L4000",
+      "8271512X5000",
+      "8271533L0000",
+      "8271533N1000",
+      "8271512T4000",
+      "257592401000",
+      "82715K020000",
+      "171382401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "高木製作所",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "171692401000",
+            "8271533L4000",
+            "8271512X5000",
+            "8271533L0000",
+            "8271533N1000",
+            "8271512T4000",
+            "257592401000",
+            "82715K020000",
+            "171382401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4731990GM": {
+    "id": "4731990GM",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "894583304200"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "894583304200"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "48150A": {
+    "id": "48150A",
+    "supplier_name": "NOK",
+    "pallet_id": "JL-R4-1210C_1200x1000x130",
+    "pallet": {
+      "max_x_span": 1200.0,
+      "max_y_span": 1005.0,
+      "max_height": 927.0
+    },
+    "part_numbers": [
+      "903119001000",
+      "903019200500",
+      "232912802000",
+      "122731501000",
+      "122732401000",
+      "909130210100",
+      "163251503000",
+      "163252501000",
+      "151472501000",
+      "151931501000",
+      "151971504000",
+      "903015000300",
+      "157852501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "NOK",
+          "pallet_id": "JL-R4-1210C_1200x1000x130",
+          "pallet": {
+            "max_x_span": 1200.0,
+            "max_y_span": 1005.0,
+            "max_height": 927.0
+          },
+          "part_numbers": [
+            "903119001000",
+            "903019200500",
+            "232912802000",
+            "122731501000",
+            "122732401000",
+            "909130210100",
+            "163251503000",
+            "163252501000",
+            "151472501000",
+            "151931501000",
+            "151971504000",
+            "903015000300",
+            "157852501000"
+          ]
+        },
+        "affected_cases": [
+          "nok",
+          "nok_m10",
+          "nok_m20",
+          "nok_p10",
+          "nok_p20"
+        ]
+      }
+    ]
+  },
+  "11472001B": {
+    "id": "11472001B",
+    "supplier_name": "アーレスティ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "114201501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アーレスティ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "114201501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "40107A": {
+    "id": "40107A",
+    "supplier_name": "マルヤス工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "256802401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "マルヤス工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "256802401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1019ZA": {
+    "id": "1019ZA",
+    "supplier_name": "アイシン",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "114202401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "114202401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "69942A": {
+    "id": "69942A",
+    "supplier_name": "太平洋工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "121021501000",
+      "121022401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "太平洋工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "121021501000",
+            "121022401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "71240L": {
+    "id": "71240L",
+    "supplier_name": "帝国ピストン",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "130111515000",
+      "130112404000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "帝国ピストン",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "130111515000",
+            "130112404000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "83420G": {
+    "id": "83420G",
+    "supplier_name": "内山工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "114452401000",
+      "114451501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "内山工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "114452401000",
+            "114451501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "45894A": {
+    "id": "45894A",
+    "supplier_name": "豊田合成",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "162812403000",
+      "162962402000",
+      "162672404000",
+      "162822402000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "豊田合成",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "162812403000",
+            "162962402000",
+            "162672404000",
+            "162822402000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "71630D": {
+    "id": "71630D",
+    "supplier_name": "東郷製作所",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "905201901900",
+      "905013303500",
+      "904681500700"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "東郷製作所",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "905201901900",
+            "905013303500",
+            "904681500700"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "26180100T": {
+    "id": "26180100T",
+    "supplier_name": "光精工",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "157032501100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "光精工",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "157032501100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4589YB": {
+    "id": "4589YB",
+    "supplier_name": "豊田合成",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "162962404000",
+      "162822403000",
+      "162672502000",
+      "162642406000",
+      "162612408000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "豊田合成",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "162962404000",
+            "162822403000",
+            "162672502000",
+            "162642406000",
+            "162612408000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "6436DHKUA": {
+    "id": "6436DHKUA",
+    "supplier_name": "住友電工",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "238512401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "住友電工",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "238512401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4010BB": {
+    "id": "4010BB",
+    "supplier_name": "マルヤス工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "238141507100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "マルヤス工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "238141507100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1019ZM01A": {
+    "id": "1019ZM01A",
+    "supplier_name": "アイシン",
+    "pallet_id": "D4-1012-2_1203x1002x150",
+    "pallet": {
+      "max_x_span": 1340.0,
+      "max_y_span": 1005.0,
+      "max_height": 1185.0
+    },
+    "part_numbers": [
+      "171202401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": "D4-1012-2_1203x1002x150",
+          "pallet": {
+            "max_x_span": 1340.0,
+            "max_y_span": 1005.0,
+            "max_height": 1185.0
+          },
+          "part_numbers": [
+            "171202401000"
+          ]
+        },
+        "affected_cases": [
+          "aisin_8",
+          "aisin_8_m10",
+          "aisin_8_m20",
+          "aisin_8_p10",
+          "aisin_8_p20"
+        ]
+      }
+    ]
+  },
+  "26410602N": {
+    "id": "26410602N",
+    "supplier_name": "オティックス",
+    "pallet_id": "D4-1012-4_1200x1000x130",
+    "pallet": {
+      "max_x_span": 1200.0,
+      "max_y_span": 1005.0,
+      "max_height": 309.0
+    },
+    "part_numbers": [
+      "137162501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "オティックス",
+          "pallet_id": "D4-1012-4_1200x1000x130",
+          "pallet": {
+            "max_x_span": 1200.0,
+            "max_y_span": 1005.0,
+            "max_height": 309.0
+          },
+          "part_numbers": [
+            "137162501000"
+          ]
+        },
+        "affected_cases": [
+          "othics",
+          "othics_m10",
+          "othics_m20",
+          "othics_p10",
+          "othics_p20"
+        ]
+      }
+    ]
+  },
+  "4731972CX": {
+    "id": "4731972CX",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "894583303000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "894583303000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "33693N": {
+    "id": "33693N",
+    "supplier_name": "小島プレス",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "964111250000",
+      "964116350000",
+      "964111200000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "小島プレス",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "964111250000",
+            "964116350000",
+            "964111200000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "70272U": {
+    "id": "70272U",
+    "supplier_name": "高木製作所",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "171631501000",
+      "171382402000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "高木製作所",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "171631501000",
+            "171382402000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "87200UNTH": {
+    "id": "87200UNTH",
+    "supplier_name": "ユニッタ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "166202404000",
+      "166202401000",
+      "166202402100",
+      "166202403000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "ユニッタ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "166202404000",
+            "166202401000",
+            "166202402100",
+            "166202403000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "40480A": {
+    "id": "40480A",
+    "supplier_name": "メイドー",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "909100219900"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "メイドー",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "909100219900"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "50070H": {
+    "id": "50070H",
+    "supplier_name": "フセラシ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "238512503000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "フセラシ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "238512503000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "47130NAST": {
+    "id": "47130NAST",
+    "supplier_name": "ニチアス",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "256271501000",
+      "256272401000",
+      "256341501000",
+      "163452402000",
+      "163412401000",
+      "162582401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "ニチアス",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "256271501000",
+            "256272401000",
+            "256341501000",
+            "163452402000",
+            "163412401000",
+            "162582401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "48440H": {
+    "id": "48440H",
+    "supplier_name": "日本精工",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "903600900100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "日本精工",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "903600900100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "26412D": {
+    "id": "26412D",
+    "supplier_name": "オティックス",
+    "pallet_id": "D4-1012-4_1200x1000x130",
+    "pallet": {
+      "max_x_span": 1200.0,
+      "max_y_span": 1005.0,
+      "max_height": 492.0
+    },
+    "part_numbers": [
+      "136311501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "オティックス",
+          "pallet_id": "D4-1012-4_1200x1000x130",
+          "pallet": {
+            "max_x_span": 1200.0,
+            "max_y_span": 1005.0,
+            "max_height": 492.0
+          },
+          "part_numbers": [
+            "136311501000"
+          ]
+        },
+        "affected_cases": [
+          "othics_4",
+          "othics_4_m10",
+          "othics_4_m20",
+          "othics_4_p10",
+          "othics_4_p20"
+        ]
+      }
+    ]
+  },
+  "10960V": {
+    "id": "10960V",
+    "supplier_name": "荒井製作所",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "909130211200",
+      "903114004400"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "荒井製作所",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "909130211200",
+            "903114004400"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4589YC": {
+    "id": "4589YC",
+    "supplier_name": "豊田合成",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "162602403000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "豊田合成",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "162602403000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "87154001B": {
+    "id": "87154001B",
+    "supplier_name": "矢崎総業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "821261201000",
+      "821251266000",
+      "822197602000",
+      "821255219000",
+      "82219K006000",
+      "82219K005000",
+      "82126K004000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "矢崎総業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "821261201000",
+            "821251266000",
+            "822197602000",
+            "821255219000",
+            "82219K006000",
+            "82219K005000",
+            "82126K004000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "48630Q": {
+    "id": "48630Q",
+    "supplier_name": "日本特殊陶業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "896157801000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "日本特殊陶業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "896157801000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "26171D": {
+    "id": "26171D",
+    "supplier_name": "レゾナック",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "238912401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "レゾナック",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "238912401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "1019ZOGAD": {
+    "id": "1019ZOGAD",
+    "supplier_name": "アイシン",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "113201501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "113201501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "16445FSMB": {
+    "id": "16445FSMB",
+    "supplier_name": "中央発条",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "905013303400"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "中央発条",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "905013303400"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "8824NG": {
+    "id": "8824NG",
+    "supplier_name": "住友理工",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "239011504000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "住友理工",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "239011504000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "70276A": {
+    "id": "70276A",
+    "supplier_name": "高木製作所",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "827157609000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "高木製作所",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "827157609000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "88242001J": {
+    "id": "88242001J",
+    "supplier_name": "住友理工",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "238451501100"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "住友理工",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "238451501100"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "48750001D": {
+    "id": "48750001D",
+    "supplier_name": "日本バルカー",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "967411901000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "日本バルカー",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "967411901000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "69940B": {
+    "id": "69940B",
+    "supplier_name": "太平洋工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "121211505000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "太平洋工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "121211505000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4010DS00D": {
+    "id": "4010DS00D",
+    "supplier_name": "マルヤス工業",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "162702401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "マルヤス工業",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "162702401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "23220100H": {
+    "id": "23220100H",
+    "supplier_name": "富士金属",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "904061703600"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "富士金属",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "904061703600"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "36892003G": {
+    "id": "36892003G",
+    "supplier_name": "マーレ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "112012403200"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "マーレ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "112012403200"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "4731952XY": {
+    "id": "4731952XY",
+    "supplier_name": "DENSO",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "909190509400"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "DENSO",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "909190509400"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "900407DSA": {
+    "id": "900407DSA",
+    "supplier_name": "マツオ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "155202501000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "マツオ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "155202501000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "36892002H": {
+    "id": "36892002H",
+    "supplier_name": "マーレ",
+    "pallet_id": null,
+    "pallet": {
+      "max_x_span": null,
+      "max_y_span": null,
+      "max_height": null
+    },
+    "part_numbers": [
+      "157102401000"
+    ],
+    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "マーレ",
+          "pallet_id": null,
+          "pallet": {
+            "max_x_span": null,
+            "max_y_span": null,
+            "max_height": null
+          },
+          "part_numbers": [
+            "157102401000"
+          ]
+        },
+        "affected_cases": []
+      }
+    ]
+  },
+  "10194030J": {
+    "id": "10194030J",
+    "supplier_name": "アイシン",
+    "pallet_id": "D4-1012-2_1203x1002x150",
+    "pallet": {
+      "max_x_span": 1340.0,
+      "max_y_span": 1005.0,
+      "max_height": 1185.0
+    },
+    "part_numbers": [
+      "171202402000"
+    ],
+    "updated_at": "2026-11-12T12:01:15.873760+09:00",
+    "history": [
+      {
+        "updated_at": "2026-11-12T08:23:06.523419+09:00",
+        "before": null,
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": "D4-1012-2_1203x1002x150",
+          "pallet": {
+            "max_x_span": 1340.0,
+            "max_y_span": 1005.0,
+            "max_height": 1185.0
+          },
+          "part_numbers": [
+            "171202402000"
+          ]
+        },
+        "affected_cases": [
+          "aisin",
+          "aisin_m10",
+          "aisin_m20",
+          "aisin_p10",
+          "aisin_p20"
+        ]
+      },
+      {
+        "updated_at": "2026-11-12T12:01:15.873760+09:00",
+        "before": {
+          "supplier_name": "アイシン",
+          "pallet_id": "D4-1012-2_1203x1002x150",
+          "pallet": {
+            "max_x_span": 1340.0,
+            "max_y_span": 1005.0,
+            "max_height": 1185.0
+          },
+          "part_numbers": [
+            "171202402000"
+          ]
+        },
+        "after": {
+          "supplier_name": "アイシン",
+          "pallet_id": "D4-1012-2_1203x1002x150",
+          "pallet": {
+            "max_x_span": 1340.0,
+            "max_y_span": 1005.0,
+            "max_height": 1185.0
+          },
+          "part_numbers": [
+            "171202402000"
+          ]
+        },
+        "affected_cases": [
+          "aisin",
+          "aisin_m10",
+          "aisin_m20",
+          "aisin_p10",
+          "aisin_p20"
+        ],
+        "previous_id": "1019430J",
+        "skid_id": "10194030J"
+      }
+    ]
+  }
+}

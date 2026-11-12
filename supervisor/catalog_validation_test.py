@@ -14,6 +14,7 @@ from unittest.mock import patch
 from algorithm_programmer.catalog import run_catalog_case
 from algorithm_programmer.cli import resolve_pallet_spec
 from box_research.catalog_store import catalog_pallets, load_catalog
+from box_research.skid_catalog import resolve_skid_case
 from supervisor.catalog_validation import validate_catalog_run
 from supervisor.validate import PalletizeValidator
 
@@ -26,7 +27,7 @@ class CatalogValidationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.catalog, cls.revision = load_catalog(ROOT)
         cls.pallets = catalog_pallets(ROOT)
-        case = cls.catalog["cases"]["test_cases"]["othics_6"]
+        case = resolve_skid_case(cls.catalog["cases"]["test_cases"]["othics_6"], cls.catalog)
         cls.result = run_catalog_case("othics_6", case, cls.catalog,
                                      resolve_pallet_spec(case, cls.pallets), cls.revision)
 
@@ -64,12 +65,18 @@ class CatalogValidationTests(unittest.TestCase):
         data = copy.deepcopy(self.result)
         data["test_name"] = "missing"
         self.assertFalse(self.validate(data)["is_pass"])
-        for field in ("supplier_name", "pallet_id"):
+        for field in ("supplier_name", "pallet_id", "skid_id", "skid_updated_at"):
             data = copy.deepcopy(self.result)
             data[field] = "different"
             self.assertFalse(self.validate(data)["is_pass"])
         changed = copy.deepcopy(self.catalog)
         changed["cases"]["test_cases"]["othics_6"]["box_list"][0]["count"] += 1
+        self.assertFalse(self.validate(self.result, catalog=changed)["is_pass"])
+        changed = copy.deepcopy(self.catalog)
+        skid = changed["skids"][self.result["skid_id"]]
+        skid["pallet"]["max_height"] += 1
+        self.assertFalse(self.validate(self.result, catalog=changed)["is_pass"])
+        skid["pallet_id"] = None
         self.assertFalse(self.validate(self.result, catalog=changed)["is_pass"])
 
     def test_counts_and_derived_lists_are_recomputed(self):
@@ -227,6 +234,29 @@ class CatalogValidationTests(unittest.TestCase):
                 self.assertEqual(summary["runner_counts"]["passed"], 1)
                 self.assertEqual(summary["runner_counts"]["failed"], 0)
                 self.assertEqual(summary["independent_counts"]["failed"], 1)
+
+    def test_manifest_result_quantity_mismatch_is_reported_as_error(self):
+        for field in ("input", "placed", "unplaced", "balanced"):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as directory:
+                catalog, results, manifest = self.fixture_run(directory)
+                fields = ("input", "unplaced") if field == "balanced" else (field,)
+                for key in fields:
+                    manifest["cases"][0][key] += 1
+                    manifest["counts"][key] += 1
+                (results / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+                with patch("supervisor.catalog_validation.load_catalog",
+                           return_value=(catalog, self.revision)), redirect_stdout(StringIO()):
+                    target = Path(directory) / "reports"
+                    self.assertEqual(validate_catalog_run(ROOT, results, target), 1)
+                report = json.loads((target / "report_othics_6.json").read_text(encoding="utf-8"))
+                self.assertIn("実行一覧と一致しません", report["violations"][0])
+                summary = json.loads((target / "validation_summary.json").read_text(encoding="utf-8"))
+                self.assertEqual(summary["runner_counts"]["passed"], 1)
+                self.assertEqual(summary["independent_counts"]["passed"], 0)
+                self.assertEqual(summary["independent_counts"]["errors"], 1)
+                self.assertEqual(summary["independent_counts"]["input"], 0)
+                self.assertIn("| othics_6 | ERROR |",
+                              (target / "validation_report.md").read_text(encoding="utf-8"))
 
     def test_runner_error_row_failed0_errors1_persists_report(self):
         with tempfile.TemporaryDirectory() as directory:

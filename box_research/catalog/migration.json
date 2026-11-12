@@ -7638,5 +7638,1245 @@
       "before": "　",
       "after": "無蓋"
     }
-  ]
+  ],
+  "skid_import": {
+    "imported_at": "2026-11-12T08:23:06.523419+09:00",
+    "source": "box_research/box_list.csv",
+    "original_case_settings": {
+      "aisin": {
+        "pallet_id": "D4-1012-2_1203x1002x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_10": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_10_m10": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_10_m20": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_10_p10": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_10_p20": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_11": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_11_m10": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_11_m20": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_11_p10": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_11_p20": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_2": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1005.0,
+          "max_y_span": 1005.0,
+          "max_height": 826.0
+        }
+      },
+      "aisin_2_m10": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1005.0,
+          "max_y_span": 1005.0,
+          "max_height": 826.0
+        }
+      },
+      "aisin_2_m20": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1005.0,
+          "max_y_span": 1005.0,
+          "max_height": 826.0
+        }
+      },
+      "aisin_2_p10": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1005.0,
+          "max_y_span": 1005.0,
+          "max_height": 826.0
+        }
+      },
+      "aisin_2_p20": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1005.0,
+          "max_y_span": 1005.0,
+          "max_height": 826.0
+        }
+      },
+      "aisin_3": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 1050.0
+        }
+      },
+      "aisin_3_m10": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 1050.0
+        }
+      },
+      "aisin_3_m20": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 1050.0
+        }
+      },
+      "aisin_3_p10": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 1050.0
+        }
+      },
+      "aisin_3_p20": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 1050.0
+        }
+      },
+      "aisin_4": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 1050.0
+        }
+      },
+      "aisin_4_m10": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 1050.0
+        }
+      },
+      "aisin_4_m20": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 1050.0
+        }
+      },
+      "aisin_4_p10": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 1050.0
+        }
+      },
+      "aisin_4_p20": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 1050.0
+        }
+      },
+      "aisin_5": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1005.0,
+          "max_y_span": 1005.0,
+          "max_height": 472.0
+        }
+      },
+      "aisin_5_m10": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1005.0,
+          "max_y_span": 1005.0,
+          "max_height": 472.0
+        }
+      },
+      "aisin_5_m20": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1005.0,
+          "max_y_span": 1005.0,
+          "max_height": 472.0
+        }
+      },
+      "aisin_5_p10": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1005.0,
+          "max_y_span": 1005.0,
+          "max_height": 472.0
+        }
+      },
+      "aisin_5_p20": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1005.0,
+          "max_y_span": 1005.0,
+          "max_height": 472.0
+        }
+      },
+      "aisin_6": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_6_m10": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_6_m20": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_6_p10": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_6_p20": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_7": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_7_m10": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_7_m20": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_7_p10": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_7_p20": {
+        "pallet_id": "D4-1012-3_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_8": {
+        "pallet_id": "D4-1012-2_1203x1002x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_8_m10": {
+        "pallet_id": "D4-1012-2_1203x1002x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_8_m20": {
+        "pallet_id": "D4-1012-2_1203x1002x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_8_p10": {
+        "pallet_id": "D4-1012-2_1203x1002x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_8_p20": {
+        "pallet_id": "D4-1012-2_1203x1002x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_9": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_9_m10": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_9_m20": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_9_p10": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_9_p20": {
+        "pallet_id": "D4-1012-7_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_m10": {
+        "pallet_id": "D4-1012-2_1203x1002x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_m20": {
+        "pallet_id": "D4-1012-2_1203x1002x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_p10": {
+        "pallet_id": "D4-1012-2_1203x1002x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "aisin_p20": {
+        "pallet_id": "D4-1012-2_1203x1002x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 1185.0
+        }
+      },
+      "arresuthi": {
+        "pallet_id": "D4-1012-9_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 768.0
+        }
+      },
+      "arresuthi_2": {
+        "pallet_id": "D4-1012-9_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 768.0
+        }
+      },
+      "arresuthi_2_m10": {
+        "pallet_id": "D4-1012-9_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 768.0
+        }
+      },
+      "arresuthi_2_m20": {
+        "pallet_id": "D4-1012-9_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 768.0
+        }
+      },
+      "arresuthi_2_p10": {
+        "pallet_id": "D4-1012-9_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 768.0
+        }
+      },
+      "arresuthi_2_p20": {
+        "pallet_id": "D4-1012-9_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 768.0
+        }
+      },
+      "arresuthi_m10": {
+        "pallet_id": "D4-1012-9_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 768.0
+        }
+      },
+      "arresuthi_m20": {
+        "pallet_id": "D4-1012-9_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 768.0
+        }
+      },
+      "arresuthi_p10": {
+        "pallet_id": "D4-1012-9_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 768.0
+        }
+      },
+      "arresuthi_p20": {
+        "pallet_id": "D4-1012-9_1200x1000x150",
+        "pallet": {
+          "max_x_span": 1340.0,
+          "max_y_span": 1005.0,
+          "max_height": 768.0
+        }
+      },
+      "art": {
+        "pallet_id": "D4-1010-3_1000x1000x130",
+        "pallet": {
+          "max_x_span": 954.0,
+          "max_y_span": 954.0,
+          "max_height": 800.0
+        }
+      },
+      "art_m10": {
+        "pallet_id": "D4-1010-3_1000x1000x130",
+        "pallet": {
+          "max_x_span": 954.0,
+          "max_y_span": 954.0,
+          "max_height": 800.0
+        }
+      },
+      "art_m20": {
+        "pallet_id": "D4-1010-3_1000x1000x130",
+        "pallet": {
+          "max_x_span": 954.0,
+          "max_y_span": 954.0,
+          "max_height": 800.0
+        }
+      },
+      "art_p10": {
+        "pallet_id": "D4-1010-3_1000x1000x130",
+        "pallet": {
+          "max_x_span": 954.0,
+          "max_y_span": 954.0,
+          "max_height": 800.0
+        }
+      },
+      "art_p20": {
+        "pallet_id": "D4-1010-3_1000x1000x130",
+        "pallet": {
+          "max_x_span": 954.0,
+          "max_y_span": 954.0,
+          "max_height": 800.0
+        }
+      },
+      "guze": {
+        "pallet_id": "D4-1111-6_1100x1100x150",
+        "pallet": {
+          "max_x_span": 1173.0,
+          "max_y_span": 1006.0,
+          "max_height": 1050.0
+        }
+      },
+      "guze_m10": {
+        "pallet_id": "D4-1111-6_1100x1100x150",
+        "pallet": {
+          "max_x_span": 1173.0,
+          "max_y_span": 1006.0,
+          "max_height": 1050.0
+        }
+      },
+      "guze_m20": {
+        "pallet_id": "D4-1111-6_1100x1100x150",
+        "pallet": {
+          "max_x_span": 1173.0,
+          "max_y_span": 1006.0,
+          "max_height": 1050.0
+        }
+      },
+      "guze_p10": {
+        "pallet_id": "D4-1111-6_1100x1100x150",
+        "pallet": {
+          "max_x_span": 1173.0,
+          "max_y_span": 1006.0,
+          "max_height": 1050.0
+        }
+      },
+      "guze_p20": {
+        "pallet_id": "D4-1111-6_1100x1100x150",
+        "pallet": {
+          "max_x_span": 1173.0,
+          "max_y_span": 1006.0,
+          "max_height": 1050.0
+        }
+      },
+      "nittan": {
+        "pallet_id": "__STANDARD_1200_1000_130__",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 1107.0,
+          "max_height": 960.0
+        }
+      },
+      "nittan_2": {
+        "pallet_id": "__STANDARD_1200_1000_130__",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 1107.0,
+          "max_height": 960.0
+        }
+      },
+      "nittan_2_m10": {
+        "pallet_id": "__STANDARD_1200_1000_130__",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 1107.0,
+          "max_height": 960.0
+        }
+      },
+      "nittan_2_m20": {
+        "pallet_id": "__STANDARD_1200_1000_130__",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 1107.0,
+          "max_height": 960.0
+        }
+      },
+      "nittan_2_p10": {
+        "pallet_id": "__STANDARD_1200_1000_130__",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 1107.0,
+          "max_height": 960.0
+        }
+      },
+      "nittan_2_p20": {
+        "pallet_id": "__STANDARD_1200_1000_130__",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 1107.0,
+          "max_height": 960.0
+        }
+      },
+      "nittan_m10": {
+        "pallet_id": "__STANDARD_1200_1000_130__",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 1107.0,
+          "max_height": 960.0
+        }
+      },
+      "nittan_m20": {
+        "pallet_id": "__STANDARD_1200_1000_130__",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 1107.0,
+          "max_height": 960.0
+        }
+      },
+      "nittan_p10": {
+        "pallet_id": "__STANDARD_1200_1000_130__",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 1107.0,
+          "max_height": 960.0
+        }
+      },
+      "nittan_p20": {
+        "pallet_id": "__STANDARD_1200_1000_130__",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 1107.0,
+          "max_height": 960.0
+        }
+      },
+      "nok": {
+        "pallet_id": "JL-R4-1210C_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 927.0
+        }
+      },
+      "nok_2": {
+        "pallet_id": "JL-R4-1210C_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1212.0,
+          "max_y_span": 966.0,
+          "max_height": 777.0
+        }
+      },
+      "nok_2_m10": {
+        "pallet_id": "JL-R4-1210C_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1212.0,
+          "max_y_span": 966.0,
+          "max_height": 777.0
+        }
+      },
+      "nok_2_m20": {
+        "pallet_id": "JL-R4-1210C_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1212.0,
+          "max_y_span": 966.0,
+          "max_height": 777.0
+        }
+      },
+      "nok_2_p10": {
+        "pallet_id": "JL-R4-1210C_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1212.0,
+          "max_y_span": 966.0,
+          "max_height": 777.0
+        }
+      },
+      "nok_2_p20": {
+        "pallet_id": "JL-R4-1210C_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1212.0,
+          "max_y_span": 966.0,
+          "max_height": 777.0
+        }
+      },
+      "nok_m10": {
+        "pallet_id": "JL-R4-1210C_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 927.0
+        }
+      },
+      "nok_m20": {
+        "pallet_id": "JL-R4-1210C_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 927.0
+        }
+      },
+      "nok_p10": {
+        "pallet_id": "JL-R4-1210C_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 927.0
+        }
+      },
+      "nok_p20": {
+        "pallet_id": "JL-R4-1210C_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 927.0
+        }
+      },
+      "othics": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 309.0
+        }
+      },
+      "othics_2": {
+        "pallet_id": "R4-1012-4_1200x1000x100",
+        "pallet": {
+          "max_x_span": 1106.0,
+          "max_y_span": 1036.0,
+          "max_height": 845.0
+        }
+      },
+      "othics_2_m10": {
+        "pallet_id": "R4-1012-4_1200x1000x100",
+        "pallet": {
+          "max_x_span": 1106.0,
+          "max_y_span": 1036.0,
+          "max_height": 845.0
+        }
+      },
+      "othics_2_m20": {
+        "pallet_id": "R4-1012-4_1200x1000x100",
+        "pallet": {
+          "max_x_span": 1106.0,
+          "max_y_span": 1036.0,
+          "max_height": 845.0
+        }
+      },
+      "othics_2_p10": {
+        "pallet_id": "R4-1012-4_1200x1000x100",
+        "pallet": {
+          "max_x_span": 1106.0,
+          "max_y_span": 1036.0,
+          "max_height": 845.0
+        }
+      },
+      "othics_2_p20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1106.0,
+          "max_y_span": 1036.0,
+          "max_height": 845.0
+        }
+      },
+      "othics_3": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_3_m10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_3_m20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_3_p10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_3_p20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_4": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 492.0
+        }
+      },
+      "othics_4_m10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 492.0
+        }
+      },
+      "othics_4_m20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 492.0
+        }
+      },
+      "othics_4_p10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 492.0
+        }
+      },
+      "othics_4_p20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 492.0
+        }
+      },
+      "othics_5": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_5_m10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_5_m20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_5_p10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_5_p20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_6": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_6_m10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_6_m20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_6_p10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_6_p20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_7": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_7_m10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_7_m20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_7_p10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_7_p20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_8": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_8_m10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_8_m20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_8_p10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_8_p20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1220.0,
+          "max_y_span": 980.0,
+          "max_height": 1026.0
+        }
+      },
+      "othics_9": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_9_m10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_9_m20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_9_p10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_9_p20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1107.0,
+          "max_y_span": 950.0,
+          "max_height": 1014.0
+        }
+      },
+      "othics_m10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 309.0
+        }
+      },
+      "othics_m20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 309.0
+        }
+      },
+      "othics_p10": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 309.0
+        }
+      },
+      "othics_p20": {
+        "pallet_id": "D4-1012-4_1200x1000x130",
+        "pallet": {
+          "max_x_span": 1200.0,
+          "max_y_span": 1005.0,
+          "max_height": 309.0
+        }
+      },
+      "roki": {
+        "pallet_id": "D4-1111-14_1100x1100x122",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 894.0
+        }
+      },
+      "roki_2": {
+        "pallet_id": "D4-1111-14_1100x1100x122",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 894.0
+        }
+      },
+      "roki_2_m10": {
+        "pallet_id": "__STANDARD_1200_1000_130__",
+        "pallet": {
+          "max_x_span": 1005.0,
+          "max_y_span": 1005.0,
+          "max_height": 1200.0
+        }
+      },
+      "roki_2_m20": {
+        "pallet_id": "D4-1111-14_1100x1100x122",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 894.0
+        }
+      },
+      "roki_2_p10": {
+        "pallet_id": "D4-1111-14_1100x1100x122",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 894.0
+        }
+      },
+      "roki_2_p20": {
+        "pallet_id": "D4-1111-14_1100x1100x122",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 894.0
+        }
+      },
+      "roki_m10": {
+        "pallet_id": "D4-1111-14_1100x1100x122",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 894.0
+        }
+      },
+      "roki_m20": {
+        "pallet_id": "D4-1111-14_1100x1100x122",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 894.0
+        }
+      },
+      "roki_p10": {
+        "pallet_id": "D4-1111-14_1100x1100x122",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 894.0
+        }
+      },
+      "roki_p20": {
+        "pallet_id": "D4-1111-14_1100x1100x122",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005.0,
+          "max_height": 894.0
+        }
+      }
+    },
+    "approved_settings": {
+      "10196017B": {
+        "max_height": 826
+      },
+      "26411F": {
+        "pallet_id": null
+      },
+      "35810F": {
+        "pallet_id": "D4-1111-14_1100x1100x122",
+        "pallet": {
+          "max_x_span": 1172.5,
+          "max_y_span": 1005,
+          "max_height": 894
+        }
+      }
+    }
+  },
+  "supplier_id_setup": {
+    "supplier_count": 63,
+    "mapping_source": "existing_skids",
+    "skid_id_changes": [
+      {
+        "previous_id": "1019430J",
+        "skid_id": "10194030J",
+        "affected_cases": [
+          "aisin",
+          "aisin_m10",
+          "aisin_m20",
+          "aisin_p10",
+          "aisin_p20"
+        ],
+        "updated_at": "2026-11-12T12:01:15.873760+09:00"
+      }
+    ]
+  }
 }

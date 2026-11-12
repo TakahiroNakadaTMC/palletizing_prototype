@@ -26,6 +26,9 @@
   <div id="viewport-container">
     <canvas id="main-canvas"></canvas>
   </div>
+  <div id="case-error" hidden role="status" class="absolute top-32 left-40 right-4 md:right-80 z-30 bg-amber-950 text-amber-100 border border-amber-500 rounded-xl p-4">
+    計算ERROR（荷姿データなし）: <span id="case-error-message"></span>
+  </div>
   <div id="load-error" class="hidden absolute top-24 left-4 right-4 z-30 bg-rose-950 text-rose-100 border border-rose-500 rounded-xl p-4">
     読み込みエラー: <span id="load-error-message"></span>
   </div>
@@ -48,6 +51,7 @@
             <option value="">読込中...</option>
           </select>
         </div>
+        <p id="run-summary" class="text-[11px] text-slate-300" aria-live="polite"></p>
       </div>
     </div>
 
@@ -223,6 +227,8 @@
 
     let canvas, ctx;
     let currentData = null;
+    let resultEntries = [];
+    let resultRequest = 0;
     let boxColorMap = {};
     let viewMode = 'iso'; // 'iso', 'top', 'front', 'side'
     let currentStep = 0;
@@ -253,6 +259,7 @@
 
       setupInteractions();
       setupUIEvents();
+      clearResultView();
       loadResultsList();
 
       requestAnimationFrame(renderLoop);
@@ -273,19 +280,26 @@
         if (res.ok) {
           document.getElementById('load-error').classList.add('hidden');
           const list = await res.json();
-          select.innerHTML = '';
+          resultEntries = list;
+          select.replaceChildren();
+          const count = status => list.filter(item => item.status === status).length;
+          document.getElementById('run-summary').textContent =
+            `計算結果 ${list.length}件 / PASS ${count('PASS')} / FAIL ${count('FAIL')} / ERROR ${count('ERROR')}（独立検証とは別）`;
           if (list.length === 0) {
-            select.innerHTML = '<option value="">結果ファイルがありません</option>';
+            showLoadError(new Error('実行一覧にケースがありません'));
             return;
           }
-          list.forEach(item => {
+          list.forEach((item, index) => {
             const opt = document.createElement('option');
-            opt.value = item.filename;
-            opt.textContent = `[品番] ${item.test_name} (${item.boxes_count}箱, ${item.vol_eff}%) ${item.is_valid ? '✅' : '❌'}`;
+            opt.value = String(index);
+            opt.textContent = item.status === 'ERROR'
+              ? `[ERROR] ${item.test_name}（計算できません）`
+              : `[${item.status}] ${item.test_name} (${item.boxes_count}箱, ${item.vol_eff}%)`;
             select.appendChild(opt);
           });
-          select.selectedIndex = 0;
-          loadResultFile(list[0].filename);
+          const first = list.findIndex(item => item.status !== 'ERROR');
+          select.selectedIndex = first < 0 ? 0 : first;
+          await selectResultEntry(select.selectedIndex);
         } else {
           const error = await res.json();
           throw new Error(`結果一覧の取得に失敗しました (${res.status}): ${error.error || ''}`);
@@ -296,24 +310,78 @@
       }
     }
 
-    async function loadResultFile(filename) {
+    function clearResultView() {
       if (isPlaying) togglePlay();
+      currentData = null;
+      currentStep = 0;
+      selectedBoxOrder = null;
+      boxColorMap = {};
+      isDragging = false;
+      for (const id of ['part-summary', 'unplaced-summary',
+        'legend-list', 'guide-legend', 'constraint-summary', 'inspector-content']) {
+        document.getElementById(id).replaceChildren();
+      }
+      document.getElementById('constraint-heading').textContent = '制約違反理由';
+      for (const id of ['metric-boxes', 'metric-unplaced', 'metric-layers', 'metric-dims',
+        'metric-heights', 'metric-overhang', 'metric-warning', 'metric-vol']) {
+        document.getElementById(id).textContent = '—';
+      }
+      document.getElementById('step-current').textContent = '0';
+      document.getElementById('step-total').textContent = '0';
+      const slider = document.getElementById('step-slider');
+      slider.max = '0'; slider.value = '0';
+      setResultControls(false);
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function setResultControls(enabled) {
+      document.querySelectorAll('.view-btn, .speed-btn, #step-slider, #btn-play-toggle, #btn-play-prev, #btn-play-next, #btn-play-reset, #btn-zoom-in, #btn-zoom-out, #btn-view-reset, #toggle-guides, #toggle-labels')
+        .forEach(control => { control.disabled = !enabled; });
+    }
+
+    async function selectResultEntry(index) {
+      const request = ++resultRequest;
+      clearResultView();
+      document.getElementById('load-error').classList.add('hidden');
+      document.getElementById('case-error').hidden = true;
+      document.getElementById('badge-valid').textContent = '読込中';
+      const entry = resultEntries[index];
+      if (!entry) {
+        showLoadError(new Error('選択したケースが一覧にありません'));
+        return;
+      }
+      if (entry.status === 'ERROR') {
+        document.getElementById('case-error-message').textContent = `${entry.test_name}: ${entry.error}`;
+        document.getElementById('case-error').hidden = false;
+        document.getElementById('badge-valid').textContent = 'ERROR 計算できません';
+        document.getElementById('badge-valid').className = 'text-xs text-amber-300';
+        return;
+      }
+      await loadResultFile(entry.filename, request);
+    }
+
+    async function loadResultFile(filename, request) {
       try {
         const res = await fetch(`/api/result/${encodeURIComponent(filename)}`);
         if (!res.ok) throw new Error(`結果の取得に失敗しました (${res.status})`);
         const data = normalizePositionReference(await res.json());
+        // A slower response must not overwrite a newer selection, including ERROR.
+        if (request !== resultRequest) return;
         resolveGuideConfig(data);
         currentData = data;
         processData(currentData);
+        setResultControls(true);
         document.getElementById('load-error').classList.add('hidden');
       } catch (e) {
+        if (request !== resultRequest) return;
         console.error("Failed to load result data", e);
         showLoadError(e);
       }
     }
 
     function showLoadError(error) {
-      currentData = null;
+      clearResultView();
+      document.getElementById('case-error').hidden = true;
       document.getElementById('load-error-message').textContent = error.message || String(error);
       document.getElementById('load-error').classList.remove('hidden');
       document.getElementById('badge-valid').textContent = '設定・読込エラー';
@@ -1009,7 +1077,7 @@
     function setupUIEvents() {
       // Test Case Select
       document.getElementById('select-test-case').addEventListener('change', (e) => {
-        if (e.target.value) loadResultFile(e.target.value);
+        selectResultEntry(Number(e.target.value));
       });
 
       // View Preset Buttons
@@ -1086,6 +1154,7 @@
     }
 
     function togglePlay() {
+      if (!currentData && !isPlaying) return;
       isPlaying = !isPlaying;
       const playIcon = document.getElementById('play-icon');
       const playLabel = document.getElementById('play-label');

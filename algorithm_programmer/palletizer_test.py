@@ -10,6 +10,8 @@ from algorithm_programmer.palletizer import (
     Palletizer, _generate_pinwheel_pattern, intersects_2d
 )
 from box_research.catalog_store import load_catalog
+from box_research.skid_catalog import resolve_skid_case
+from algorithm_programmer.cli import resolve_pallet_spec
 from supervisor.validate import PalletizeValidator
 
 
@@ -244,7 +246,7 @@ class SingleLayerPatternTests(unittest.TestCase):
                 ("nittan", 4, 2, 0),
                 ("nittan_2", 3, 3, 0)):
             with self.subTest(name=name):
-                case = catalog["cases"]["test_cases"][name]
+                case = resolve_skid_case(catalog["cases"]["test_cases"][name], catalog)
                 grouped_counts = {}
                 box_specs = {}
                 for row in case["box_list"]:
@@ -262,7 +264,7 @@ class SingleLayerPatternTests(unittest.TestCase):
                         box_specs[key] = spec
                 box_list = [{"box_id": model_id, "lid_id": lid_id, "count": count}
                             for (model_id, lid_id), count in grouped_counts.items()]
-                engine = Palletizer(box_specs, PalletSpec.from_dict(case["pallet"]))
+                engine = Palletizer(box_specs, resolve_pallet_spec(case, catalog["pallets"]))
                 result = engine.run(name, box_list)
                 self.assert_identical_layers(result.boxes, per_layer, layers)
                 bounds = result.summary["bounding_box"]

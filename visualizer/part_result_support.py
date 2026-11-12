@@ -156,7 +156,6 @@ def load_part_results_from_manifest(results_dir: Path) -> List[dict]:
 
     entries = []
     row_errors = []
-    runtime_errors = []
     seen_names = set()
     seen_files = set()
     passed = 0
@@ -201,7 +200,7 @@ def load_part_results_from_manifest(results_dir: Path) -> List[dict]:
             for forbidden in ("result_file", "input", "placed", "unplaced", "violations"):
                 if forbidden in row:
                     row_errors.append(f"ERROR ケースに {forbidden} を含めることはできません ({name})")
-            runtime_errors.append(f"{name}: {error_detail}")
+            entries.append({"filename": None, "case": row, "data": None})
             continue
 
         if status == "PASS":
@@ -307,14 +306,11 @@ def load_part_results_from_manifest(results_dir: Path) -> List[dict]:
         if actual != expected:
             summary_errors.append(f"counts.{key} が実測と一致しません ({actual} != {expected})")
 
-    if row_errors or summary_errors or runtime_errors:
+    if row_errors or summary_errors:
         details = row_errors + summary_errors
-        if runtime_errors:
-            details.append("ERROR ケースが含まれるため表示を停止しました:")
-            details.extend(runtime_errors)
         raise ValueError("結果フォルダに表示不可データがあります:\n- " + "\n- ".join(details))
     if not entries:
-        raise ValueError("表示可能な品番結果がありません（manifest に PASS/FAIL 結果が必要です）")
+        raise ValueError("実行一覧にケースがありません")
     return entries
 
 
