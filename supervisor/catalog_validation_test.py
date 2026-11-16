@@ -97,6 +97,17 @@ class CatalogValidationTests(unittest.TestCase):
             data["part_counts"][0][field] = True
             self.assertFalse(self.validate(data)["is_pass"])
 
+    def test_unbalanced_part_assignment_is_rejected(self):
+        data = copy.deepcopy(self.result)
+        first = data["boxes"][0]
+        replacement = next(row for row in data["input_parts"]
+                          if row["part_number"] != first["part_number"])
+        for field in ("part_number", "supplier_name", "box_name", "box_id", "box_model_id", "lid_id"):
+            first[field] = replacement[field]
+        report = self.validate(data)
+        self.assertFalse(report["is_pass"])
+        self.assertTrue(any("返却率優先の品番配分" in item for item in report["violations"]))
+
     def test_nonfinite_numbers_order_and_fitting_are_rejected(self):
         for section, field, value in (
             ("position", "x", float("nan")), ("position", "z", float("inf")),
@@ -148,7 +159,7 @@ class CatalogValidationTests(unittest.TestCase):
     def test_external_tp_column_keeps_same_lid_alignment_and_single_support(self):
         catalog = copy.deepcopy(self.catalog)
         data = copy.deepcopy(self.result)
-        first, second = [row["part_number"] for row in data["input_parts"]]
+        first = data["input_parts"][0]["part_number"]
         model_id = catalog["parts"][first]["box_model_id"]
         lid_id = catalog["parts"][first]["lid_id"]
         catalog["models"][model_id]["type"] = "TP"
@@ -157,27 +168,59 @@ class CatalogValidationTests(unittest.TestCase):
             box["lid_fit_type"] = "外嵌め"
         valid = self.validate(data, catalog)
         self.assertTrue(valid["is_pass"], valid["violations"])
-        for change in ("different_lid", "offset", "multiple_supports"):
+        for change in ("offset", "multiple_supports"):
             with self.subTest(change=change):
                 modified = copy.deepcopy(data)
-                masters = copy.deepcopy(catalog)
-                if change == "different_lid":
-                    masters["lids"]["別の外蓋"] = dict(masters["lids"][lid_id], id="別の外蓋")
-                    masters["models"][model_id]["compatible_lids"].append("別の外蓋")
-                    masters["parts"][second]["lid_id"] = "別の外蓋"
-                    for field in ("boxes", "unplaced_boxes", "input_parts", "part_counts", "input_box_variants"):
-                        for row in modified[field]:
-                            if row["part_number"] == second:
-                                row["lid_id"] = "別の外蓋"
-                    modified["algorithm_mode"] = "mixed"
-                elif change == "offset":
+                if change == "offset":
                     modified["boxes"][-1]["position"]["x"] += 0.02
                 else:
                     modified["boxes"][1]["position"] = dict(modified["boxes"][0]["position"])
-                report = self.validate(modified, masters)
+                report = self.validate(modified, catalog)
                 self.assertFalse(report["is_pass"])
                 self.assertTrue(any("コラム積み条件違反" in item for item in report["violations"]),
                                 report["violations"])
+
+    def test_external_tp_different_lids_require_separate_columns(self):
+        catalog = copy.deepcopy(self.catalog)
+        data = copy.deepcopy(self.result)
+        first, second = [row["part_number"] for row in data["input_parts"]]
+        model_id = catalog["parts"][first]["box_model_id"]
+        lid_id = catalog["parts"][first]["lid_id"]
+        catalog["models"][model_id]["type"] = "TP"
+        catalog["lids"][lid_id]["fit_type"] = "外嵌め"
+        catalog["lids"]["別の外蓋"] = dict(catalog["lids"][lid_id], id="別の外蓋")
+        catalog["models"][model_id]["compatible_lids"].append("別の外蓋")
+        catalog["parts"][second]["lid_id"] = "別の外蓋"
+        for field in ("boxes", "unplaced_boxes", "input_parts", "part_counts", "input_box_variants"):
+            for row in data[field]:
+                if row["part_number"] == second:
+                    row["lid_id"] = "別の外蓋"
+        for box in data["boxes"]:
+            box["lid_fit_type"] = "外嵌め"
+        data["algorithm_mode"] = "mixed"
+
+        with self.subTest(arrangement="separate_columns"):
+            report = self.validate(data, catalog)
+            self.assertTrue(report["is_pass"], report["violations"])
+            self.assertEqual(report["part_counts"], data["part_counts"])
+
+        with self.subTest(arrangement="mixed_lid_column"):
+            modified = copy.deepcopy(data)
+            upper_first = next(box for box in modified["boxes"]
+                               if box["supported_by"] and box["part_number"] == first)
+            upper_second = next(box for box in modified["boxes"]
+                                if box["supported_by"] and box["part_number"] == second)
+            fields = ("part_number", "supplier_name", "box_name", "box_id", "box_model_id", "lid_id")
+            first_identity = {field: upper_first[field] for field in fields}
+            second_identity = {field: upper_second[field] for field in fields}
+            upper_first.update(second_identity)
+            upper_second.update(first_identity)
+            report = self.validate(modified, catalog)
+            self.assertFalse(report["is_pass"])
+            self.assertTrue(any("コラム積み条件違反" in item for item in report["violations"]),
+                            report["violations"])
+            self.assertFalse(any("品番結果の検証エラー" in item for item in report["violations"]),
+                             report["violations"])
 
     def test_saved_result_file_api_and_invalid_json(self):
         validator = PalletizeValidator(self.catalog["models"], self.catalog["lids"],

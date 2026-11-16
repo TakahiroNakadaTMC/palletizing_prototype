@@ -13,7 +13,7 @@ import math
 import copy
 from collections import Counter
 from itertools import combinations
-from typing import List, Dict, Tuple, Optional, Any, Union
+from typing import Callable, List, Dict, Tuple, Optional, Any, Union
 from algorithm_programmer.models import BoxSpec, PlacedBox, PalletSpec, PalletizeResult
 from constraints.top_support import TopSurface, evaluate_top_support
 
@@ -82,6 +82,7 @@ class Palletizer:
         self,
         box_specs: Dict[Union[str, Tuple[str, str]], BoxSpec],
         pallet: Optional[PalletSpec] = None,
+        placement_balance_score: Optional[Callable[[List[PlacedBox]], Tuple[Any, ...]]] = None,
     ):
         self.box_specs: Dict[Tuple[str, str], BoxSpec] = {}
         for key, spec in box_specs.items():
@@ -95,6 +96,7 @@ class Palletizer:
                 raise ValueError(f"箱仕様のキーとIDが一致しません: {box_id}")
             self.box_specs[(box_id, lid_id)] = spec
         self.pallet = pallet or PalletSpec()
+        self.placement_balance_score = placement_balance_score
 
     def _get_box_spec(self, box_id: str, lid_id: str = "") -> Optional[BoxSpec]:
         spec = self.box_specs.get((box_id, lid_id))
@@ -579,7 +581,8 @@ class Palletizer:
             self._align_pallet_bounds(placed)
             placed = self._center_short_groups(placed)
             summary = self.calculate_summary(placed)
-            score = (int(summary["is_valid"]),) + (
+            balance_score = self.placement_balance_score(placed) if self.placement_balance_score else ()
+            score = (int(summary["is_valid"]),) + balance_score + (
                 self._layout_score(placed) if placed else (0, 0, 0.0, 0, 0.0, 0, 0))
             if best_score is None or score > best_score:
                 best_layout = placed, unplaced
@@ -734,7 +737,7 @@ class Palletizer:
 
     def _mixed_layer_candidate_score(self, placed_boxes: List[PlacedBox],
                                     candidate_boxes: List[PlacedBox]
-                                    ) -> Tuple[int, int, int, float, int, float]:
+                                    ) -> Tuple[Any, ...]:
         """上載せ支持を優先し、配置数と次段の高さ余裕を評価する。"""
         boxes = placed_boxes + candidate_boxes
         support = self._top_support(boxes, centered=True)
@@ -743,8 +746,16 @@ class Palletizer:
         spread = max(heights) - min(heights) if heights else float("inf")
         candidate_top = max(box.top_z for box in candidate_boxes)
 
-        return (
-            int(support["is_valid"]),
+        leading = (int(support["is_valid"]),)
+        if self.placement_balance_score:
+            return leading + self.placement_balance_score(boxes) + (
+                int(coverage == 4),
+                len(candidate_boxes),
+                -candidate_top,
+                coverage,
+                -spread,
+            )
+        return leading + (
             int(coverage == 4),
             len(candidate_boxes),
             -candidate_top,
@@ -900,7 +911,8 @@ class Palletizer:
     def _fill_row_intervals(self, intervals: List[Tuple[float, float]], row_y: float,
                            row_depth: float, pool_counter: Counter, id_to_spec: Dict[Tuple[str, str], BoxSpec],
                            base_z: float, layer_idx: int, lower_boxes: List[PlacedBox],
-                           tol: float = 1e-3, row_match_tol: float = 1.0) -> List[PlacedBox]:
+                           tol: float = 1e-3, row_match_tol: float = 1.0,
+                           balance_context: Optional[List[PlacedBox]] = None) -> List[PlacedBox]:
         """行の空きX区間を、在庫箱でFFD(First-Fit-Decreasing)的に詰める"""
         placed: List[PlacedBox] = []
 
@@ -910,6 +922,7 @@ class Palletizer:
             while progress and x_cursor < e - tol:
                 progress = False
                 eligible = self._eligible_row_items(pool_counter, id_to_spec, row_depth, row_match_tol)
+                best_choice = None
                 for spec, rot, w, l in eligible:
                     if pool_counter[spec.pool_key] <= 0:
                         continue
@@ -948,11 +961,18 @@ class Palletizer:
                             continue
                     if not self._support_corners_allowed(pb, lower_boxes):
                         continue
+                    if not self.placement_balance_score or balance_context is None:
+                        best_choice = (None, pb, spec, w)
+                        break
+                    score = self.placement_balance_score(balance_context + placed + [pb])
+                    if best_choice is None or score > best_choice[0]:
+                        best_choice = (score, pb, spec, w)
+                if best_choice:
+                    _, pb, spec, w = best_choice
                     placed.append(pb)
                     pool_counter[spec.pool_key] -= 1
                     x_cursor += w
                     progress = True
-                    break
 
         return placed
 
@@ -1051,7 +1071,8 @@ class Palletizer:
 
     def _ep_fill_layer(self, layer_boxes: List[PlacedBox], pool_counter: Counter,
                        id_to_spec: Dict[Tuple[str, str], BoxSpec], max_row_width: float, max_total_depth: float,
-                       base_z: float, layer_idx: int, lower_boxes: List[PlacedBox]) -> None:
+                       base_z: float, layer_idx: int, lower_boxes: List[PlacedBox],
+                       balance_context: Optional[List[PlacedBox]] = None) -> None:
         """Extreme Points法によるフォールバック充填: 既配置箱の右端・下端＋原点を
         動的な候補位置とし、行詰めで埋まらなかった残渣を可能な限り充填する。
         """
@@ -1072,7 +1093,8 @@ class Palletizer:
                 reverse=True
             )
 
-            placed_this_round = False
+            best_choice = None
+            first_fit = not self.placement_balance_score or balance_context is None
             for pool_key in remaining_ids:
                 spec = id_to_spec[pool_key]
                 for (cx, cy) in sorted_candidates:
@@ -1081,18 +1103,24 @@ class Palletizer:
                                                 base_z, layer_idx, lower_boxes)
                         
                         if pb is not None:
-                            layer_boxes.append(pb)
-                            if not self._centered_pallet_support_is_valid(lower_boxes + layer_boxes):
-                                layer_boxes.pop()
+                            if not self._centered_pallet_support_is_valid(
+                                    lower_boxes + layer_boxes + [pb]):
                                 continue
-                            pool_counter[pool_key] -= 1
-                            placed_this_round = True
-                            changed = True
-                            break
-                    if placed_this_round:
+                            if not self.placement_balance_score or balance_context is None:
+                                best_choice = (None, pb, pool_key)
+                                break
+                            score = self.placement_balance_score(balance_context + layer_boxes + [pb])
+                            if best_choice is None or score > best_choice[0]:
+                                best_choice = (score, pb, pool_key)
+                    if best_choice and first_fit:
                         break
-                if placed_this_round:
+                if best_choice and first_fit:
                     break
+            if best_choice:
+                _, pb, pool_key = best_choice
+                layer_boxes.append(pb)
+                pool_counter[pool_key] -= 1
+                changed = True
 
     def _pack_mixed_layer(self, pool: List[BoxSpec], base_z: float, layer_idx: int,
                           placed_so_far: List[PlacedBox], envelope: Dict[str, float]
@@ -1134,7 +1162,8 @@ class Palletizer:
                     intervals = self._row_free_intervals(layer_boxes, row_y, depth, max_row_width)
                     row_boxes = self._fill_row_intervals(
                         intervals, row_y, depth, trial_counter, id_to_spec,
-                        base_z, layer_idx, lower_boxes, row_match_tol=GEOMETRY_EPS_MM
+                        base_z, layer_idx, lower_boxes, row_match_tol=GEOMETRY_EPS_MM,
+                        balance_context=placed_so_far + layer_boxes
                     )
                     if not row_boxes:
                         continue
@@ -1169,7 +1198,7 @@ class Palletizer:
             layer_boxes = [copy.copy(box) for box in layer_boxes]
             trial_counter = Counter(remaining)
             self._ep_fill_layer(layer_boxes, trial_counter, id_to_spec, max_row_width,
-                                max_total_depth, base_z, layer_idx, lower_boxes)
+                                max_total_depth, base_z, layer_idx, lower_boxes, placed_so_far)
             signature = tuple((box.box_id, box.lid_id, box.x, box.y, box.rotation)
                               for box in layer_boxes)
             if signature in signatures:
@@ -1182,6 +1211,42 @@ class Palletizer:
                     remaining_pool.append(box)
                     counts_left[box.pool_key] -= 1
             candidates.append((layer_boxes, remaining_pool))
+        candidates.sort(key=lambda candidate: self._mixed_layer_candidate_score(
+            placed_so_far, candidate[0]
+        ), reverse=True)
+        if self.placement_balance_score:
+            partial_candidates = []
+            seen = {
+                tuple((box.box_id, box.lid_id, box.x, box.y, box.rotation) for box in boxes)
+                for boxes, _ in candidates[:MIXED_LAYER_SEARCH_WIDTH]
+            }
+            for layer_boxes, remaining in candidates[:MIXED_LAYER_SEARCH_WIDTH]:
+                best_partial = None
+                for index, removed in enumerate(layer_boxes):
+                    partial = layer_boxes[:index] + layer_boxes[index + 1:]
+                    if not partial or not self._centered_pallet_support_is_valid(
+                            placed_so_far + partial):
+                        continue
+                    signature = tuple(
+                        (box.box_id, box.lid_id, box.x, box.y, box.rotation) for box in partial
+                    )
+                    if signature in seen:
+                        continue
+                    seen.add(signature)
+                    score = self._mixed_layer_candidate_score(placed_so_far, partial)
+                    if best_partial is None or score > best_partial[0]:
+                        best_partial = (score, partial, remaining, removed)
+                if best_partial:
+                    _, partial, remaining, removed = best_partial
+                    counts_left = Counter(box.pool_key for box in remaining)
+                    counts_left[(removed.box_id, removed.lid_id)] += 1
+                    remaining_pool = []
+                    for box in pool:
+                        if counts_left[box.pool_key] > 0:
+                            remaining_pool.append(box)
+                            counts_left[box.pool_key] -= 1
+                    partial_candidates.append((partial, remaining_pool))
+            candidates = candidates[:MIXED_LAYER_SEARCH_WIDTH] + partial_candidates
         candidates.sort(key=lambda candidate: self._mixed_layer_candidate_score(
             placed_so_far, candidate[0]
         ), reverse=True)
@@ -1238,7 +1303,7 @@ class Palletizer:
                 rest = Counter(remaining)
                 if fill:
                     self._ep_fill_layer(selected, rest, specs, envelope["x_span"],
-                                        envelope["y_span"], base_z, layer_idx, lower)
+                                        envelope["y_span"], base_z, layer_idx, lower, placed_so_far)
                 if not self._centered_pallet_support_is_valid(placed_so_far + selected):
                     continue
                 leftover = []
@@ -1347,7 +1412,8 @@ class Palletizer:
                     continue
                 trial_counter = Counter(pool_counter)
                 row_boxes = self._fill_row_intervals(intervals, y_cursor, d, trial_counter, id_to_spec,
-                                                     base_z, layer_idx, lower_boxes)
+                                                     base_z, layer_idx, lower_boxes,
+                                                     balance_context=placed_so_far + layer_boxes)
                 if not row_boxes:
                     continue
                 if not self._centered_pallet_support_is_valid(placed_so_far + layer_boxes + row_boxes):
@@ -1368,7 +1434,7 @@ class Palletizer:
 
         # Phase C: Extreme Points法による残渣充填
         self._ep_fill_layer(layer_boxes, pool_counter, id_to_spec, max_row_width, max_total_depth,
-                           base_z, layer_idx, lower_boxes)
+                           base_z, layer_idx, lower_boxes, placed_so_far)
 
         if not layer_boxes:
             return [], pool

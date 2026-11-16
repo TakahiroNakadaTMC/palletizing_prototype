@@ -1,14 +1,38 @@
 """品番数量の管理と、共通箱モデルによる配置計算を分離する（第4段階）。"""
 
 from collections import Counter
+from fractions import Fraction
+from functools import lru_cache
+import heapq
 from typing import Any, Dict, List, Tuple
 
-from algorithm_programmer.models import BoxSpec, PalletSpec
+from algorithm_programmer.models import BoxSpec, PlacedBox, PalletSpec
 from algorithm_programmer.palletizer import Palletizer
 from box_research.database_validation import (
     validate_catalog_databases, validate_part_case_references,
 )
 from box_research.skid_catalog import resolve_skid_case
+
+
+def _allocate_balanced_part_counts(
+    group_parts: Dict[Tuple[str, str], List[str]],
+    quantities: Dict[str, int],
+    placed_group_counts: Dict[Tuple[str, str], int],
+) -> Dict[str, int]:
+    """物理モデルごとの配置数を、そのグループ内で返却率の低い品番から配分する。"""
+    allocated = {part_id: 0 for part_id in quantities}
+    for group, part_ids in group_parts.items():
+        available = min(placed_group_counts.get(group, 0), sum(quantities[p] for p in part_ids))
+        queue = [(Fraction(0, quantities[p]), index, p)
+                 for index, p in enumerate(part_ids)]
+        heapq.heapify(queue)
+        for _ in range(available):
+            _, index, part_id = heapq.heappop(queue)
+            allocated[part_id] += 1
+            if allocated[part_id] < quantities[part_id]:
+                heapq.heappush(queue, (Fraction(allocated[part_id], quantities[part_id]),
+                                       index, part_id))
+    return allocated
 
 
 def run_catalog_case(
@@ -18,9 +42,9 @@ def run_catalog_case(
     pallet: PalletSpec,
     revision: str,
 ) -> Dict[str, Any]:
-    """モデル・蓋で形状を計算し、確定した積み順へ入力順に品番を配分する。
+    """モデル・蓋で形状を計算し、返却率を均すように品番を配分する。
 
-    同じ形状でも品番の数量は統合しない。返却率の平準化はまだ行わない。
+    同じ形状でも品番ごとの投入数量を保ち、低い返却率の品番から配分する。
     """
     case = resolve_skid_case(case, catalog)
     expected_pallet = catalog["pallets"]["pallets"][case["pallet_id"]]
@@ -59,7 +83,22 @@ def run_catalog_case(
             spec.lid_fit_type = lid["fit_type"]
             specs[key] = spec
 
-    engine = Palletizer(specs, pallet)
+    part_order = {part_id: index for index, part_id in enumerate(quantities)}
+    group_keys = tuple(grouped_counts)
+
+    @lru_cache(maxsize=4096)
+    def score_for_group_counts(group_counts: Tuple[int, ...]) -> Tuple[Fraction, ...]:
+        placed_groups = dict(zip(group_keys, group_counts))
+        allocation = _allocate_balanced_part_counts(group_parts, quantities, placed_groups)
+        ordered_rates = tuple(Fraction(allocation[p], quantities[p]) for p in quantities)
+        total_placed = sum(group_counts)
+        return tuple(sorted(ordered_rates)) + ordered_rates + (Fraction(total_placed, 1),)
+
+    def placement_balance_score(boxes: List[PlacedBox]) -> Tuple[Fraction, ...]:
+        placed_groups = Counter((box.box_id, box.lid_id) for box in boxes)
+        return score_for_group_counts(tuple(placed_groups[group] for group in group_keys))
+
+    engine = Palletizer(specs, pallet, placement_balance_score=placement_balance_score)
     result = engine.run(test_name, [
         {"box_id": model_id, "lid_id": lid_id, "count": count}
         for (model_id, lid_id), count in grouped_counts.items()
@@ -67,19 +106,22 @@ def run_catalog_case(
 
     result["boxes"].sort(key=lambda box: box["order"])
     placed_counts: Dict[str, int] = Counter()
-    group_index = {key: 0 for key in group_parts}
     for box in result["boxes"]:
         key = (box["box_id"], box["lid_id"])
         if key not in group_parts:
             raise RuntimeError("計算結果に投入していない箱モデル・蓋が含まれています")
         candidates = group_parts[key]
-        index = group_index[key]
-        while index < len(candidates) and placed_counts[candidates[index]] >= quantities[candidates[index]]:
-            index += 1
-        if index == len(candidates):
+        eligible = [part_id for part_id in candidates
+                    if placed_counts[part_id] < quantities[part_id]]
+        if not eligible:
             raise RuntimeError("計算結果の箱数が投入数量を超えています")
-        group_index[key] = index
-        part_id = candidates[index]
+        part_id = min(
+            eligible,
+            key=lambda candidate: (
+                Fraction(placed_counts[candidate], quantities[candidate]),
+                part_order[candidate],
+            ),
+        )
         placed_counts[part_id] += 1
         part = parts[part_id]
         box.update(
@@ -129,7 +171,7 @@ def run_catalog_case(
         supplier_name=case["supplier_name"], pallet_id=case.get("pallet_id"),
         skid_id=case["skid_id"], skid_updated_at=catalog["skids"][case["skid_id"]]["updated_at"],
         algorithm_mode="single" if len(grouped_counts) == 1 else "mixed",
-        allocation_method="input_order", input_parts=input_parts, part_counts=part_counts,
+        allocation_method="balanced_return_rate", input_parts=input_parts, part_counts=part_counts,
         input_box_variants=[
             {key: item[key] for key in (
                 "part_number", "box_id", "box_name", "box_model_id", "lid_id")}

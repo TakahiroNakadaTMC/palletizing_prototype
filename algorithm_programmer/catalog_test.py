@@ -12,7 +12,7 @@ import unittest
 from collections import Counter
 from unittest.mock import patch
 
-from algorithm_programmer.catalog import run_catalog_case
+from algorithm_programmer.catalog import _allocate_balanced_part_counts, run_catalog_case
 from algorithm_programmer.cli import resolve_pallet_spec
 from algorithm_programmer.models import BoxSpec, PlacedBox
 from algorithm_programmer.palletizer import Palletizer
@@ -67,7 +67,7 @@ class CatalogCalculationTests(unittest.TestCase):
                 for key in ("part_number", "box_model_id", "box_id", "lid_id"):
                     self.assertEqual(row[key], source[key])
         self.assertEqual(result["schema_version"], 2)
-        self.assertEqual(result["allocation_method"], "input_order")
+        self.assertEqual(result["allocation_method"], "balanced_return_rate")
 
     def independently_validate(self, result, catalog=None):
         catalog = catalog or self.catalog
@@ -109,11 +109,6 @@ class CatalogCalculationTests(unittest.TestCase):
         self.assert_quantities(result, case)
         self.assertTrue(result["summary"]["is_valid"])
         self.assertTrue(self.independently_validate(result)["is_pass"])
-        self.assertTrue(any(
-            box["supported_by"] and any(
-                result["boxes"][order - 1]["part_number"] != box["part_number"]
-                for order in box["supported_by"])
-            for box in result["boxes"]))
 
     def test_shared_tp_model_and_quantities(self):
         case = copy.deepcopy(self.catalog["cases"]["test_cases"]["aisin_7"])
@@ -132,20 +127,32 @@ class CatalogCalculationTests(unittest.TestCase):
         self.assert_quantities(result, case)
         self.assertTrue(self.independently_validate(result, catalog)["is_pass"])
 
-    def test_partial_placement_allocates_in_input_order(self):
+    def test_partial_placement_balances_return_rates(self):
         data, case = self.synthetic()
         result = self.calculate(case, data)
         self.assert_quantities(result, case, data)
         self.assertGreater(result["unplaced_boxes_count"], 0)
-        self.assertEqual(result["part_counts"][0]["unplaced_count"], 0)
-        self.assertEqual([box["part_number"] for box in result["boxes"]],
-                         ["A"] * 9 + ["B"] * (result["placed_boxes_count"] - 9))
+        self.assertEqual(
+            [row["placed_count"] for row in result["part_counts"]],
+            [(result["placed_boxes_count"] + 1) // 2, result["placed_boxes_count"] // 2],
+        )
         case["box_list"].reverse()
         reversed_result = self.calculate(case, data)
-        self.assertEqual(reversed_result["boxes"][0]["part_number"], "B")
+        self.assertEqual(
+            [row["placed_count"] for row in reversed_result["part_counts"]],
+            [(result["placed_boxes_count"] + 1) // 2, result["placed_boxes_count"] // 2],
+        )
         self.assertEqual(result["placed_boxes_count"], reversed_result["placed_boxes_count"])
         self.assertEqual([box["position"] for box in result["boxes"]],
                          [box["position"] for box in reversed_result["boxes"]])
+
+    def test_balanced_allocation_uses_proportional_return_rates(self):
+        allocation = _allocate_balanced_part_counts(
+            {("MODEL", "LID"): ["A", "B"]},
+            {"A": 2, "B": 7},
+            {("MODEL", "LID"): 4},
+        )
+        self.assertEqual(allocation, {"A": 1, "B": 3})
 
     def test_repeated_part_rows_are_counted_once(self):
         data, case = self.synthetic()
@@ -164,6 +171,7 @@ class CatalogCalculationTests(unittest.TestCase):
         self.assertEqual(result["algorithm_mode"], "mixed")
         self.assert_quantities(result, case, data)
         self.assertTrue(self.independently_validate(result, data)["is_pass"])
+        self.assertTrue(all(row["placed_count"] > 0 for row in result["part_counts"]))
         for box in result["boxes"]:
             for order in box["supported_by"]:
                 self.assertEqual(box["box_model_id"], result["boxes"][order - 1]["box_model_id"])

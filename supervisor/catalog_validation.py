@@ -4,6 +4,7 @@ import copy
 import json
 import math
 from collections import Counter
+from fractions import Fraction
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -117,9 +118,14 @@ def resolve_catalog_result(
                 or len(supports) != len(set(supports))):
             raise ValueError(key + ": 下段支持番号が不正です")
         candidates = model_groups[(box["box_model_id"], box["lid_id"])]
-        expected_part = next((p for p in candidates if allocation_counts[p] < expected_counts[p]), None)
+        eligible = [p for p in candidates if allocation_counts[p] < expected_counts[p]]
+        expected_part = min(
+            eligible,
+            key=lambda p: (Fraction(allocation_counts[p], expected_counts[p]), candidates.index(p)),
+            default=None,
+        )
         if key != expected_part:
-            raise ValueError("入力順の品番配分または投入数量が一致しません")
+            raise ValueError("返却率優先の品番配分または投入数量が一致しません")
         allocation_counts[key] += 1
     if orders != list(range(1, len(boxes) + 1)):
         raise ValueError("積み順は1から連続した整数順である必要があります")
@@ -160,7 +166,7 @@ def resolve_catalog_result(
                  ("part_number", "box_id", "box_name", "box_model_id", "lid_id")} for row in expected_parts]
     if data.get("input_box_variants") != variants:
         raise ValueError("投入箱種類が品番ケースと一致しません")
-    if (data.get("allocation_method") != "input_order" or
+    if (data.get("allocation_method") != "balanced_return_rate" or
             data.get("algorithm_mode") != ("single" if len(model_groups) == 1 else "mixed")):
         raise ValueError("計算方式または品番配分方式が一致しません")
     resolved = copy.deepcopy(data)

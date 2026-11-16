@@ -50,6 +50,12 @@ python .\supervisor\validate.py --results-dir .\tester\catalog_results\my_run --
 `--report-dir` は未使用のフォルダを指定し、既存レポートを上書きしません。
 `supervisor/catalog_reports/` は再生成可能な生成物としてGit管理外です。
 
+返却率優先配分への更新前に作成した品番方式の結果（`allocation_method: "input_order"`）は、
+DBの照合値と結果形式の版2が同じでも、現在のSupervisorでは配分方式の不一致として拒否します。
+新しい配分規則（`balanced_return_rate`）で新規フォルダへ再計算してから独立検証してください。
+保存済み結果の配分方式や品番を手作業で書き換えて対応しないでください。
+変更前の結果は比較用の記録として保持でき、削除は不要です。
+
 [catalog_validation.py](catalog_validation.py) と [validate.py](validate.py) が次を確認します。
 
 1. 実行一覧 `run_manifest.json` の照合値が現在のDB・品番ケースと一致し、
@@ -60,7 +66,7 @@ python .\supervisor\validate.py --results-dir .\tester\catalog_results\my_run --
 2. 結果のケース名、品番、仕入先、現場の箱名称、共通モデル、固定蓋がDB・ケースと一致すること。
    KEY2・スキッド更新日時を照合し、パレット本体寸法はパレットDB、
    使用パレット・荷山上限は現在のスキッドDBと照合します。未登録設定は明示的なエラーです。
-3. 品番別の「投入＝配置＋未配置」、全体数量、入力順配分、投入種類、連続した積み順、
+3. 品番別の「投入＝配置＋未配置」、全体数量、返却率優先配分、投入種類、連続した積み順、
    数値の妥当性、モデルDBの嵌合深さを確認します。
 4. 照合済み品番からモデルを解決し、既存の形状・回転・干渉・嵌合・支持条件を再計算します。
    非TP箱は共通モデルでコラム積みを判定し、異モデルTP箱の既存ルールを維持します。

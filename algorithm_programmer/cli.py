@@ -172,7 +172,7 @@ def main():
     print(f"  体積充填率: {summary['volume_efficiency_percent']:.1f}%")
     print(f"  制約合否: {'✅ PASS' if summary['is_valid'] else '❌ FAIL'}")
     print(f"  パレット込み総高さ: {summary['total_height']:.1f}mm")
-    print(f"  計算方式: {result_dict['algorithm_mode']} / 品番配分: 入力順（平準化なし）")
+    print(f"  計算方式: {result_dict['algorithm_mode']} / 品番配分: 返却率優先")
     for item in result_dict["part_counts"]:
         print(f"  品番 {item['part_number']} ({item['box_name']}): "
               f"配置 {item['placed_count']}/{item['input_count']}箱 / 未配置 {item['unplaced_count']}箱")
