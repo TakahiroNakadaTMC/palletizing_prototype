@@ -8,7 +8,7 @@ from typing import Any
 from box_research.database_validation import normalize_id
 
 
-SUPPLIER_NAMES = {"クゼー": "グゼー", "NITTAN": "ニッタン"}
+SUPPLIER_NAMES = {"NITTAN": "ニッタン"}
 
 
 def file_sha256(path: Path) -> str:

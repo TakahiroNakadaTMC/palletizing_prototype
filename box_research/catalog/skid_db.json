@@ -1864,7 +1864,7 @@
   },
   "32950X": {
     "id": "32950X",
-    "supplier_name": "グゼー",
+    "supplier_name": "クゼー",
     "pallet_id": "D4-1111-6_1100x1100x150",
     "pallet": {
       "max_x_span": 1173.0,
@@ -1875,13 +1875,49 @@
       "160311502000",
       "160311501000"
     ],
-    "updated_at": "2026-11-12T08:23:06.523419+09:00",
+    "updated_at": "2026-11-16T19:51:57.164186+09:00",
     "history": [
       {
         "updated_at": "2026-11-12T08:23:06.523419+09:00",
         "before": null,
         "after": {
           "supplier_name": "グゼー",
+          "pallet_id": "D4-1111-6_1100x1100x150",
+          "pallet": {
+            "max_x_span": 1173.0,
+            "max_y_span": 1006.0,
+            "max_height": 1050.0
+          },
+          "part_numbers": [
+            "160311502000",
+            "160311501000"
+          ]
+        },
+        "affected_cases": [
+          "guze",
+          "guze_m10",
+          "guze_m20",
+          "guze_p10",
+          "guze_p20"
+        ]
+      },
+      {
+        "updated_at": "2026-11-16T19:51:57.164186+09:00",
+        "before": {
+          "supplier_name": "グゼー",
+          "pallet_id": "D4-1111-6_1100x1100x150",
+          "pallet": {
+            "max_x_span": 1173.0,
+            "max_y_span": 1006.0,
+            "max_height": 1050.0
+          },
+          "part_numbers": [
+            "160311502000",
+            "160311501000"
+          ]
+        },
+        "after": {
+          "supplier_name": "クゼー",
           "pallet_id": "D4-1111-6_1100x1100x150",
           "pallet": {
             "max_x_span": 1173.0,

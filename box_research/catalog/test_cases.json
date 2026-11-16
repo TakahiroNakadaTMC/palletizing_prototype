@@ -883,62 +883,62 @@
     },
     "guze": {
       "name": "guze",
-      "description": "グゼー",
+      "description": "クゼー",
       "box_list": [
         {
           "part_number": "160311502000",
           "count": 18
         }
       ],
-      "supplier_name": "グゼー",
+      "supplier_name": "クゼー",
       "skid_id": "32950X"
     },
     "guze_m10": {
       "name": "guze_m10",
-      "description": "グゼー（箱数-10%評価）",
+      "description": "クゼー（箱数-10%評価）",
       "box_list": [
         {
           "part_number": "160311502000",
           "count": 16
         }
       ],
-      "supplier_name": "グゼー",
+      "supplier_name": "クゼー",
       "skid_id": "32950X"
     },
     "guze_m20": {
       "name": "guze_m20",
-      "description": "グゼー（箱数-20%評価）",
+      "description": "クゼー（箱数-20%評価）",
       "box_list": [
         {
           "part_number": "160311502000",
           "count": 14
         }
       ],
-      "supplier_name": "グゼー",
+      "supplier_name": "クゼー",
       "skid_id": "32950X"
     },
     "guze_p10": {
       "name": "guze_p10",
-      "description": "グゼー（箱数+10%評価）",
+      "description": "クゼー（箱数+10%評価）",
       "box_list": [
         {
           "part_number": "160311502000",
           "count": 20
         }
       ],
-      "supplier_name": "グゼー",
+      "supplier_name": "クゼー",
       "skid_id": "32950X"
     },
     "guze_p20": {
       "name": "guze_p20",
-      "description": "グゼー（箱数+20%評価）",
+      "description": "クゼー（箱数+20%評価）",
       "box_list": [
         {
           "part_number": "160311502000",
           "count": 22
         }
       ],
-      "supplier_name": "グゼー",
+      "supplier_name": "クゼー",
       "skid_id": "32950X"
     },
     "nittan": {

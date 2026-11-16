@@ -5,10 +5,15 @@ from unittest.mock import patch
 
 from box_research.catalog_store import load_catalog, preview_skid_changes, save_catalog, validate_catalog
 from box_research.catalog_store_test import CatalogFixture
+from box_research.catalog_helpers import supplier_name
 from box_research.skid_catalog import resolve_skid_case, normalize_skid_id, validate_suppliers
 
 
 class SkidCatalogTest(CatalogFixture, unittest.TestCase):
+    def test_kuzey_supplier_name_is_canonical(self):
+        self.assertEqual(supplier_name("クゼー"), "クゼー")
+        self.assertEqual(supplier_name("グゼー"), "グゼー")
+
     def save_skids(self, draft):
         plan = preview_skid_changes(self.root, draft["skids"], self.revision)
         save_catalog(self.root, draft, self.revision, plan["confirmation"])
