@@ -125,7 +125,7 @@ ERRORはケース名と計算できなかった理由を表示します。
 ERRORを選ぶと直前の荷姿・数量・箱の詳細を消し、積み順の再生などを無効にします。
 全件ERRORでも一覧と理由を確認できます。件数表示は計算判定で、独立検証とは別です。
 実行一覧の破損、PASS/FAIL結果の欠落、数量などの不一致は引き続き表示を停止します。
-今回の150ケースも再計算せず開けます。計算できたケースの単独HTMLも生成できます。
+変更前に実行した150ケースの結果も過去記録として開けます。現在の152ケースの結果として使う場合は、更新後のケース一式で再計算してください。計算できたケースの単独HTMLも生成できます。
 
 ```powershell
 python .\visualizer\visualize.py .\tester\catalog_results\my_run\result_othics_6.json -o .\tester\catalog_results\my_run\othics_6.html

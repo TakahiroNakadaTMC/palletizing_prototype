@@ -27,11 +27,11 @@
     },
     "aisin_10_m10": {
       "name": "aisin_10_m10",
-      "description": "TCC No2 コンベ（箱数-10%評価）",
+      "description": "TCC No2 コンベ（箱数調整）",
       "box_list": [
         {
           "part_number": "113201502100",
-          "count": 4
+          "count": 5
         }
       ],
       "supplier_name": "アイシン",
@@ -51,11 +51,11 @@
     },
     "aisin_10_p10": {
       "name": "aisin_10_p10",
-      "description": "TCC No2 コンベ（箱数+10%評価）",
+      "description": "TCC No2 コンベ（箱数調整）",
       "box_list": [
         {
           "part_number": "113201502100",
-          "count": 4
+          "count": 11
         }
       ],
       "supplier_name": "アイシン",
@@ -63,11 +63,11 @@
     },
     "aisin_10_p20": {
       "name": "aisin_10_p20",
-      "description": "TCC No2 コンベ（箱数+20%評価）",
+      "description": "TCC No2 コンベ（箱数調整）",
       "box_list": [
         {
           "part_number": "113201502100",
-          "count": 5
+          "count": 16
         }
       ],
       "supplier_name": "アイシン",
@@ -147,11 +147,11 @@
     },
     "aisin_2_m10": {
       "name": "aisin_2_m10",
-      "description": "アイシン小川　HVダンパー（箱数-10%評価）",
+      "description": "アイシン小川　HVダンパー（箱数調整）",
       "box_list": [
         {
           "part_number": "31270K001300",
-          "count": 57
+          "count": 35
         }
       ],
       "supplier_name": "アイシン",
@@ -159,11 +159,11 @@
     },
     "aisin_2_m20": {
       "name": "aisin_2_m20",
-      "description": "アイシン小川　HVダンパー（箱数-20%評価）",
+      "description": "アイシン小川　HVダンパー（箱数調整）",
       "box_list": [
         {
           "part_number": "31270K001300",
-          "count": 50
+          "count": 49
         }
       ],
       "supplier_name": "アイシン",
@@ -183,11 +183,11 @@
     },
     "aisin_2_p20": {
       "name": "aisin_2_p20",
-      "description": "アイシン小川　HVダンパー（箱数+20%評価）",
+      "description": "アイシン小川　HVダンパー（箱数調整）",
       "box_list": [
         {
           "part_number": "31270K001300",
-          "count": 76
+          "count": 7
         }
       ],
       "supplier_name": "アイシン",
@@ -207,11 +207,11 @@
     },
     "aisin_3_m10": {
       "name": "aisin_3_m10",
-      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数-10%評価）",
+      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数調整）",
       "box_list": [
         {
           "part_number": "151002402000",
-          "count": 11
+          "count": 21
         }
       ],
       "supplier_name": "アイシン",
@@ -219,11 +219,11 @@
     },
     "aisin_3_m20": {
       "name": "aisin_3_m20",
-      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数-20%評価）",
+      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数調整）",
       "box_list": [
         {
           "part_number": "151002402000",
-          "count": 10
+          "count": 36
         }
       ],
       "supplier_name": "アイシン",
@@ -231,11 +231,11 @@
     },
     "aisin_3_p10": {
       "name": "aisin_3_p10",
-      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数+10%評価）",
+      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数調整）",
       "box_list": [
         {
           "part_number": "151002402000",
-          "count": 13
+          "count": 5
         }
       ],
       "supplier_name": "アイシン",
@@ -243,11 +243,11 @@
     },
     "aisin_3_p20": {
       "name": "aisin_3_p20",
-      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数+20%評価）",
+      "description": "アイシン西尾　ｵｲﾙﾎﾟﾝﾌﾟ（箱数調整）",
       "box_list": [
         {
           "part_number": "151002402000",
-          "count": 14
+          "count": 10
         }
       ],
       "supplier_name": "アイシン",
@@ -275,19 +275,19 @@
     },
     "aisin_4_m10": {
       "name": "aisin_4_m10",
-      "description": "アイシン半田　混載（箱数-10%評価）",
+      "description": "アイシン半田　混載（箱数調整）",
       "box_list": [
         {
           "part_number": "160321519000",
-          "count": 13
+          "count": 4
         },
         {
           "part_number": "160322402000",
-          "count": 13
+          "count": 3
         },
         {
           "part_number": "152502501000",
-          "count": 2
+          "count": 7
         }
       ],
       "supplier_name": "アイシン",
@@ -295,19 +295,19 @@
     },
     "aisin_4_m20": {
       "name": "aisin_4_m20",
-      "description": "アイシン半田　混載（箱数-20%評価）",
+      "description": "アイシン半田　混載（箱数調整）",
       "box_list": [
         {
           "part_number": "160321519000",
-          "count": 11
+          "count": 10
         },
         {
           "part_number": "160322402000",
-          "count": 11
+          "count": 4
         },
         {
           "part_number": "152502501000",
-          "count": 2
+          "count": 6
         }
       ],
       "supplier_name": "アイシン",
@@ -315,19 +315,19 @@
     },
     "aisin_4_p10": {
       "name": "aisin_4_p10",
-      "description": "アイシン半田　混載（箱数+10%評価）",
+      "description": "アイシン半田　混載（箱数調整）",
       "box_list": [
         {
           "part_number": "160321519000",
-          "count": 15
+          "count": 14
         },
         {
           "part_number": "160322402000",
-          "count": 15
+          "count": 14
         },
         {
           "part_number": "152502501000",
-          "count": 2
+          "count": 8
         }
       ],
       "supplier_name": "アイシン",
@@ -335,19 +335,19 @@
     },
     "aisin_4_p20": {
       "name": "aisin_4_p20",
-      "description": "アイシン半田　混載（箱数+20%評価）",
+      "description": "アイシン半田　混載（箱数調整）",
       "box_list": [
         {
           "part_number": "160321519000",
-          "count": 17
+          "count": 14
         },
         {
           "part_number": "160322402000",
-          "count": 17
+          "count": 18
         },
         {
           "part_number": "152502501000",
-          "count": 2
+          "count": 3
         }
       ],
       "supplier_name": "アイシン",
@@ -367,11 +367,11 @@
     },
     "aisin_5_m10": {
       "name": "aisin_5_m10",
-      "description": "AKK刈谷（箱数-10%評価）",
+      "description": "AKK刈谷（箱数調整）",
       "box_list": [
         {
           "part_number": "31270K001300",
-          "count": 9
+          "count": 7
         }
       ],
       "supplier_name": "アイシン",
@@ -379,11 +379,11 @@
     },
     "aisin_5_m20": {
       "name": "aisin_5_m20",
-      "description": "AKK刈谷（箱数-20%評価）",
+      "description": "AKK刈谷（箱数調整）",
       "box_list": [
         {
           "part_number": "31270K001300",
-          "count": 8
+          "count": 22
         }
       ],
       "supplier_name": "アイシン",
@@ -1427,11 +1427,11 @@
     },
     "othics_4_m10": {
       "name": "othics_4_m10",
-      "description": "ドライブギア（箱数-10%評価）",
+      "description": "ドライブギア（箱数調整）",
       "box_list": [
         {
           "part_number": "136311501000",
-          "count": 5
+          "count": 9
         }
       ],
       "supplier_name": "オティックス",
@@ -1451,11 +1451,11 @@
     },
     "othics_4_p10": {
       "name": "othics_4_p10",
-      "description": "ドライブギア（箱数+10%評価）",
+      "description": "ドライブギア（箱数調整）",
       "box_list": [
         {
           "part_number": "136311501000",
-          "count": 6
+          "count": 7
         }
       ],
       "supplier_name": "オティックス",
@@ -1859,11 +1859,11 @@
     },
     "othics_p10": {
       "name": "othics_p10",
-      "description": "オティックス　ｴﾝﾄﾞｷｬｯﾌﾟ（箱数+10%評価）",
+      "description": "オティックス　ｴﾝﾄﾞｷｬｯﾌﾟ（箱数調整）",
       "box_list": [
         {
           "part_number": "137162501000",
-          "count": 4
+          "count": 12
         }
       ],
       "supplier_name": "オティックス",
@@ -1967,11 +1967,15 @@
     },
     "roki_m20": {
       "name": "roki_m20",
-      "description": "ROKI（箱数-20%評価）",
+      "description": "ROKI（箱数調整）",
       "box_list": [
         {
           "part_number": "256012403000",
-          "count": 22
+          "count": 5
+        },
+        {
+          "part_number": "256011505000",
+          "count": 5
         }
       ],
       "supplier_name": "ROKI",
@@ -2000,6 +2004,46 @@
       ],
       "supplier_name": "ROKI",
       "skid_id": "35810F"
+    },
+    "10451021A": {
+      "description": "EGRバルブ混載",
+      "supplier_name": "愛三工業",
+      "skid_id": "10451021A",
+      "name": "10451021A",
+      "box_list": [
+        {
+          "part_number": "256201535000",
+          "count": 7
+        },
+        {
+          "part_number": "256202405000",
+          "count": 5
+        },
+        {
+          "part_number": "122042501000",
+          "count": 2
+        }
+      ]
+    },
+    "10451021A_2": {
+      "description": "EGRバルブ混載",
+      "supplier_name": "愛三工業",
+      "skid_id": "10451021A",
+      "name": "10451021A_2",
+      "box_list": [
+        {
+          "part_number": "256201535000",
+          "count": 7
+        },
+        {
+          "part_number": "256202405000",
+          "count": 7
+        },
+        {
+          "part_number": "122042501000",
+          "count": 4
+        }
+      ]
     }
   },
   "approval_state": {
@@ -2152,6 +2196,8 @@
     "roki_m10": true,
     "roki_m20": true,
     "roki_p10": true,
-    "roki_p20": true
+    "roki_p20": true,
+    "10451021A": true,
+    "10451021A_2": true
   }
 }
