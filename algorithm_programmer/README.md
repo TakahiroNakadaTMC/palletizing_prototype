@@ -121,11 +121,10 @@ python -m unittest algorithm_programmer.catalog_test algorithm_programmer.cli_te
 - 原則荷山外周4隅を覆う支持面がパレット下面と接触すれば、中央の空間は許容する。
   箱DBの `top_support_points`（4/5、未指定時TP331/TP-331は5）で必要位置を設定でき、
   5点指定の接触支持箱があればパレット中心も必須。
-- 四隅が埋まっていても、1箱で複数隅を覆う場合は接触支持領域全体の外接短辺670 mm以上が必要。
-  別々の4箱で各隅を覆う場合にはこの条件を要求しない。四隅が欠ける場合は、接触支持領域の外接矩形の
-  前/奥と左/右の4辺すべてでそれぞれ連続670 mm以上を要求する。短辺側も必要。
-  途中の長い支持線や外接短辺の長さだけでは不可。
-  複数箱の連続辺も含み、空間やパレット外の辺は加算しない。重心は支持面凸包の内部が必須（辺上はNG）。
+- 四隅支持が成立していても、1箱で複数隅を覆う場合は、パレット内の実接触支持領域全体の外接短辺670 mm以上が必要（境界を含む）。
+  別々の箱で各隅を覆う場合には、この短辺条件を要求しない。四隅が欠ける場合は、実接触領域をパレット内にクリップして作る凸包の面積重心を中心に、
+  半径335 mmの円全体が凸包に含まれる場合に例外を認める（境界を含む）。外周4辺の連続670 mm条件は使わない。
+  5点指定の中央接触、支持凸包の内部にパレット中心がある条件は引き続き必要。
 - 支持凸包面積は設定上限 `max_x_span × max_y_span` の65%以上（境界を含む）を必須とする。
   凸包の面積重心とパレット中心のずれは各方向で設定幅の1/4未満（境界NG）。
   設定上限矩形はパレット中心に配置する。実際の荷山外形・パレット寸法を面積の分母にせず、
@@ -135,8 +134,9 @@ python -m unittest algorithm_programmer.catalog_test algorithm_programmer.cli_te
   不安定なら高い箱を除外した候補を高さ降順で確認し、最初の安定案を返す。
   安定案がなければ元配置を保持し、最終サマリーで明示的にNGを報告する。
 - `summary.top_support` に支持高さ・箱番号/型番・接触領域・必要点数・四隅/中央充足・
-  支持多角形・連続X/Y辺長・`opposing_edge_lengths_mm`（front/back/left/right）・
-  `opposing_support_axis`（例外の辺条件を満たす場合XY、それ以外は空文字）・例外適用・違反を記録する。
+  支持多角形・連続X/Y辺長・`opposing_edge_lengths_mm`（front/back/left/right、診断値）・
+  `opposing_support_axis`（互換診断値）・`centroid_circle_radius_mm`・`centroid_circle_margin_mm`・
+  `centroid_circle_exception`・複数隅短辺判定・違反を記録する。
   既存の箱底面支持率等は維持する。
   `support_polygon_area_mm2`・`support_area_ratio`・`support_centroid`・`centroid_offset_mm`、
   `reference_max_x_span_mm` / `reference_max_y_span_mm`・`multi_corner_boxes`・`contact_short_side_mm`

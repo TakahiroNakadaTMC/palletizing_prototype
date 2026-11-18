@@ -132,7 +132,7 @@ python -m unittest supervisor.catalog_validation_test algorithm_programmer.catal
 2. **長辺荷姿スパン制約** ($0 <$ X $\le$ `pallet.max_x_span`、inclusive、下限なし）
 3. **短辺荷姿スパン制約** ($0 <$ Y $\le$ `pallet.max_y_span`、inclusive、下限なし）
 4. **上載せ平パレット支持安定性**（同高3 mm以内、原則外周4点、TP331/TP-331は中央含む5点。
-   四隅が欠ける場合だけ、接触支持領域の外周の前/奥と左/右の4辺すべてに各670 mm以上の連続支持を要求。
+   四隅が欠ける場合は、パレット内にクリップした実接触支持領域の凸包の面積重心を中心とする半径335 mmの円全体が凸包内に必要（境界を含む）。
    四隅支持でも1箱が複数隅を覆う場合は、接触支持領域全体の外接短辺670 mm以上が必要。
    凸包面積は設定 `max_x_span × max_y_span` の65%以上、面積重心ずれはパレット中心から各設定幅の1/4未満。
    内部空間を含む凸包で評価し、実荷山外形や実接触面積を分母にしない。パレット中心が支持面凸包の内部に必要）
@@ -152,7 +152,7 @@ python -m unittest supervisor.catalog_validation_test algorithm_programmer.catal
 
 - `report["top_support"]`: 支持高さ・接触支持箱・露出接触領域・四隅/中央充足・必要点数・
   支持多角形・連続X/Y辺長・`opposing_edge_lengths_mm`（front/back/left/right）・
-  `opposing_support_axis`（XY/空文字）・670 mm例外適用・違反。箱DBの `top_support_points` で4/5を指定できる。
+  `opposing_support_axis`（互換診断値）・`centroid_circle_radius_mm`・`centroid_circle_margin_mm`・`centroid_circle_exception`・複数隅短辺判定・違反。箱DBの `top_support_points` で4/5を指定できる。
   同寸法・同XY位置の上載せと均等荷重を仮定する。実耐荷重・たわみの保証ではない。
   面積・偏りは `support_polygon_area_mm2`、`support_area_ratio`、`support_centroid`、
   `centroid_offset_mm`、`reference_max_x_span_mm` / `reference_max_y_span_mm` に記録する。

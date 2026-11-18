@@ -8,7 +8,8 @@ Rect = Tuple[float, float, float, float]
 Point = Tuple[float, float]
 EPS = 1e-9
 HEIGHT_TOLERANCE_MM = 3.0
-LONG_SUPPORT_MM = 670.0
+MULTI_CORNER_MIN_SHORT_SIDE_MM = 670.0
+MISSING_CORNER_CIRCLE_RADIUS_MM = 335.0
 MIN_HULL_AREA_RATIO = 0.65
 MAX_CENTROID_OFFSET_RATIO = 0.25
 
@@ -111,6 +112,11 @@ def _continuous_lengths(rectangles: List[Rect]) -> Tuple[float, float]:
     return lengths[0], lengths[1]
 
 
+def _centroid_boundary_margin(points: List[Point], centroid: Point) -> float:
+    return min(_cross(a, b, centroid) / math.hypot(b[0] - a[0], b[1] - a[1])
+               for a, b in zip(points, points[1:] + points[:1]))
+
+
 def evaluate_top_support(surfaces: List[TopSurface], pallet_length: float,
                          pallet_width: float, max_x_span: float,
                          max_y_span: float) -> Dict[str, Any]:
@@ -131,7 +137,9 @@ def evaluate_top_support(surfaces: List[TopSurface], pallet_length: float,
                 "support_centroid": None, "centroid_offset_mm": None,
                 "reference_max_x_span_mm": max_x_span, "reference_max_y_span_mm": max_y_span,
                 "multi_corner_boxes": [], "contact_short_side_mm": 0.0,
-                "long_edge_exception": False}
+                "centroid_circle_radius_mm": MISSING_CORNER_CIRCLE_RADIUS_MM,
+                "centroid_circle_margin_mm": None,
+                "centroid_circle_exception": False}
     height = max(s.top for s in intersecting)
     regions: List[Rect] = []
     corner_regions: List[Rect] = []
@@ -161,6 +169,7 @@ def evaluate_top_support(surfaces: List[TopSurface], pallet_length: float,
     center_supported = any(_contains(r, center) for r in regions)
     hull = _hull(regions)
     area, centroid = _polygon_area_centroid(hull)
+    centroid_circle_margin = _centroid_boundary_margin(hull, centroid)
     area_ratio = area / (max_x_span * max_y_span)
     offset = (abs(centroid[0] - center[0]), abs(centroid[1] - center[1]))
     multi_corner_boxes = [
@@ -186,8 +195,10 @@ def evaluate_top_support(surfaces: List[TopSurface], pallet_length: float,
     }
     short_side = min(contact_bounds[2] - contact_bounds[0],
                      contact_bounds[3] - contact_bounds[1])
-    axis = "XY" if min(edges.values()) >= LONG_SUPPORT_MM - EPS else ""
-    exception = not all(covered) and bool(axis)
+    axis = "XY" if min(edges.values()) >= MULTI_CORNER_MIN_SHORT_SIDE_MM - EPS else ""
+    centroid_circle_exception = (
+        not all(covered) and
+        centroid_circle_margin >= MISSING_CORNER_CIRCLE_RADIUS_MM - EPS)
     violations = []
     if area_ratio < MIN_HULL_AREA_RATIO - EPS:
         violations.append(
@@ -198,14 +209,17 @@ def evaluate_top_support(surfaces: List[TopSurface], pallet_length: float,
             f"Support hull area centroid offset X={offset[0]:.6f}, Y={offset[1]:.6f}mm "
             f"must be less than configured quarter spans X={max_x_span / 4:.6f}, "
             f"Y={max_y_span / 4:.6f}mm")
-    if all(covered) and multi_corner_boxes and short_side < LONG_SUPPORT_MM - EPS:
+    if (all(covered) and multi_corner_boxes and
+            short_side < MULTI_CORNER_MIN_SHORT_SIDE_MM - EPS):
         violations.append(
             f"One box supports multiple outer corners; contact footprint short side "
             f"{short_side:.6f}mm must be at least 670mm")
     if not balanced:
         violations.append("Upper pallet center is outside or on the boundary of the support polygon")
-    if not all(covered) and not exception:
-        violations.append("Top outer corners lack same-height support; all four contact edges, including the short sides, each need continuous 670mm support")
+    if not all(covered) and not centroid_circle_exception:
+        violations.append(
+            "Top outer corners lack same-height support; the support hull must contain a "
+            "335mm-radius circle centered at its area centroid")
     if required == 5 and not center_supported:
         violations.append("Five-point support requires contact at the upper pallet center")
     return {
@@ -223,5 +237,7 @@ def evaluate_top_support(surfaces: List[TopSurface], pallet_length: float,
         "support_centroid": centroid, "centroid_offset_mm": offset,
         "reference_max_x_span_mm": max_x_span, "reference_max_y_span_mm": max_y_span,
         "multi_corner_boxes": multi_corner_boxes, "contact_short_side_mm": short_side,
-        "long_edge_exception": exception
+        "centroid_circle_radius_mm": MISSING_CORNER_CIRCLE_RADIUS_MM,
+        "centroid_circle_margin_mm": centroid_circle_margin,
+        "centroid_circle_exception": centroid_circle_exception
     }

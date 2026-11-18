@@ -102,24 +102,19 @@ class SingleLayerPatternTests(unittest.TestCase):
                 validation = validator.validate_geometry_data(result.to_dict())
                 self.assertEqual(validation["violations"], [])
 
-    def test_stable_remainder_creates_only_final_partial_layer(self) -> None:
+    def test_remainder_boxes_are_reused_across_partial_layers(self) -> None:
         engine = Palletizer({self.box.id: self.box})
-        for count, per_layer in ((5, 5), (7, 3), (10, 5), (12, 4)):
+        for count, per_layer in ((5, 5), (10, 5), (12, 4)):
             with self.subTest(count=count):
                 result = engine.run("single_remainder", [{"box_id": self.box.id, "count": count}])
-                if count == 7:
-                    base = [b for b in result.boxes if b.layer_index == 0]
-                    top = [b for b in result.boxes if b.layer_index == 1]
-                    self.assertEqual((len(base), len(top)), (5, 0))
-                    self.assertTrue({(b.x, b.y, b.rotation) for b in top}.issubset(
-                        {(b.x, b.y, b.rotation) for b in base}))
-                else:
-                    self.assert_identical_layers(result.boxes, per_layer, count // per_layer)
-                if count == 7:
-                    self.assertEqual(sum(b["count"] for b in result.unplaced_boxes), 2)
-                else:
-                    self.assertEqual(result.unplaced_boxes, [])
+                self.assert_identical_layers(result.boxes, per_layer, count // per_layer)
+                self.assertEqual(result.unplaced_boxes, [])
                 self.assertTrue(result.summary["is_valid"])
+
+        result = engine.run("single_remainder", [{"box_id": self.box.id, "count": 7}])
+        self.assertEqual([sum(b.layer_index == i for b in result.boxes) for i in range(2)], [4, 3])
+        self.assertEqual(result.unplaced_boxes, [])
+        self.assertTrue(result.summary["is_valid"])
 
     def test_tp341_total_count_then_height_and_constraints(self) -> None:
         catalog, _ = load_catalog(Path(__file__).resolve().parents[1])
@@ -127,12 +122,12 @@ class SingleLayerPatternTests(unittest.TestCase):
         box = BoxSpec.from_dict(raw)
         lids = {"": {"type": "NONE", "fit_type": "なし"}}
         cases = (
-            (15, 1200.0, 7, 2, 195.0),
+            (15, 1200.0, 5, 3, 287.5),
             (14, 1200.0, 7, 2, 195.0),
             (30, 1200.0, 6, 5, 472.5),
             (16, 1200.0, 6, 3, 287.5),
             (15, 287.4, 7, 2, 195.0),
-            (15, 287.5, 7, 2, 195.0),
+            (15, 287.5, 5, 3, 287.5),
         )
         for count, limit, per_layer, layers, height in cases:
             with self.subTest(count=count, limit=limit):
@@ -164,7 +159,7 @@ class SingleLayerPatternTests(unittest.TestCase):
             box = replace(box, lid_id="TEST-LID", lid_width=335.0, lid_length=502.5,
                           lid_thickness=thickness, lid_fit_type=fit_type)
             full_height = 287.5 + 3 * thickness
-            for limit, per_layer, layers in ((full_height, 7, 2), (full_height - 0.1, 7, 2)):
+            for limit, per_layer, layers in ((full_height, 5, 3), (full_height - 0.1, 7, 2)):
                 with self.subTest(box_type=box_type, fit_type=fit_type, limit=limit):
                     engine = Palletizer({(box.id, "TEST-LID"): box},
                                         PalletSpec(max_height=limit))
@@ -188,7 +183,7 @@ class SingleLayerPatternTests(unittest.TestCase):
                              for b in pattern["boxes"])) for pattern in patterns]
         self.assertEqual(len(keys), len(set(keys)))
 
-    def test_missing_corner_pattern_without_opposing_support_is_rejected(self) -> None:
+    def test_missing_corner_pattern_is_allowed_when_centroid_circle_fits(self) -> None:
         engine = Palletizer({self.box.id: self.box})
         full = next(pattern for pattern in engine._generate_single_2d_patterns(400.0, 600.0)
                     if len(pattern["boxes"]) == 5)
@@ -198,13 +193,14 @@ class SingleLayerPatternTests(unittest.TestCase):
                               "algorithm_programmer.palletizer._generate_pinwheel_pattern",
                               return_value=None):
             placed, unplaced = engine.palletize_single([self.box] * 12)
-        self.assertEqual(len(placed), 10)
-        self.assertEqual([sum(b.layer_index == i for b in placed) for i in range(2)], [5, 5])
-        self.assertEqual(sum(b["count"] for b in unplaced), 2)
+        self.assertEqual(len(placed), 12)
+        self.assertEqual([sum(b.layer_index == i for b in placed) for i in range(3)], [4, 4, 4])
+        self.assertEqual(unplaced, [])
         support = engine.calculate_summary(placed)["top_support"]
         self.assertTrue(support["is_valid"])
-        self.assertFalse(support["long_edge_exception"])
-        self.assertEqual(support["corners_supported"], [True] * 4)
+        self.assertTrue(support["centroid_circle_exception"])
+        self.assertGreaterEqual(support["centroid_circle_margin_mm"], 335.0)
+        self.assertEqual(support["corners_supported"], [True, True, True, False])
 
     def test_no_placement_when_height_or_footprint_cannot_fit(self) -> None:
         for box, pallet in ((self.box, PalletSpec(max_height=199.0)),

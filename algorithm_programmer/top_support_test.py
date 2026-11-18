@@ -35,7 +35,7 @@ class TopSupportTest(unittest.TestCase):
         self.assertTrue(result["is_valid"])
         self.assertFalse(result["center_supported"])
         self.assertEqual(result["corners_supported"], [True] * 4)
-        self.assertFalse(result["long_edge_exception"])
+        self.assertFalse(result["centroid_circle_exception"])
         self.assertLess(max(result["opposing_edge_lengths_mm"].values()), 670)
 
     def test_tp331_needs_center_including_mixed_and_alias(self):
@@ -59,25 +59,46 @@ class TopSupportTest(unittest.TestCase):
         boxes = four_corners() + [surface((500, 400, 700, 600), top=104.0)]
         self.assertFalse(self.check(boxes)["is_valid"])
 
-    def test_continuous_670_exception(self):
-        # The two low corners define the load envelope but cannot support the top pallet.
+    def test_missing_corner_exception_accepts_exact_335mm_centroid_circle(self):
         lower = [surface((100, 100, 200, 200), top=50),
                  surface((1000, 800, 1100, 900), top=50)]
-        boxes = lower + [surface((265, 165, 600, 835)),
-                         surface((600, 165, 935, 835))]
-        result = self.check(boxes)
+        result = self.check(lower + [surface((265, 165, 935, 835))])
         self.assertTrue(result["is_valid"])
-        self.assertTrue(result["long_edge_exception"])
-        self.assertEqual(result["continuous_support_x_mm"], 670.0)
-        self.assertEqual(result["opposing_edge_lengths_mm"]["front"], 670.0)
-        self.assertEqual(result["opposing_edge_lengths_mm"]["back"], 670.0)
-        self.assertEqual(result["opposing_support_axis"], "XY")
-        self.assertEqual(result["opposing_edge_lengths_mm"]["left"], 670.0)
-        self.assertEqual(result["opposing_edge_lengths_mm"]["right"], 670.0)
-        boxes[-1] = surface((600, 165, 934.99, 835))
-        self.assertFalse(self.check(boxes)["is_valid"])
-        boxes[-1] = surface((600.01, 165, 935.01, 835))
-        self.assertFalse(self.check(boxes)["is_valid"])
+        self.assertFalse(all(result["corners_supported"]))
+        self.assertEqual(result["support_centroid"], (600, 500))
+        self.assertAlmostEqual(result["centroid_circle_margin_mm"], 335)
+        self.assertEqual(result["centroid_circle_radius_mm"], 335)
+        self.assertTrue(result["centroid_circle_exception"])
+
+    def test_missing_corner_exception_rejects_circle_just_under_335mm(self):
+        lower = [surface((100, 100, 200, 200), top=50),
+                 surface((1000, 800, 1100, 900), top=50)]
+        result = self.check(lower + [surface((265.01, 100, 934.99, 900))])
+        self.assertTrue(result["balanced"])
+        self.assertAlmostEqual(result["centroid_circle_margin_mm"], 334.99)
+        self.assertFalse(result["centroid_circle_exception"])
+        self.assertFalse(result["is_valid"])
+
+    def test_missing_corner_circle_is_centered_on_area_centroid(self):
+        lower = [surface((100, 100, 200, 200), top=50),
+                 surface((1000, 800, 1100, 900), top=50)]
+        result = self.check(lower + [surface((350, 150, 1050, 850))])
+        self.assertTrue(result["is_valid"])
+        self.assertEqual(result["support_centroid"], (700, 500))
+        self.assertEqual(result["centroid_offset_mm"], (100, 0))
+        self.assertAlmostEqual(result["centroid_circle_margin_mm"], 350)
+        self.assertTrue(result["centroid_circle_exception"])
+
+    def test_missing_corner_hull_uses_pallet_clipped_contact_regions(self):
+        lower = [surface((100, 100, 200, 200), top=50),
+                 surface((1000, 800, 1100, 900), top=50)]
+        result = self.check(lower + [surface((-100, 150, 850, 850))])
+        self.assertEqual(result["support_regions"], [(0, 150, 850, 850)])
+        self.assertEqual(min(point[0] for point in result["support_polygon"]), 0)
+        self.assertEqual(result["support_centroid"], (425, 500))
+        self.assertAlmostEqual(result["centroid_circle_margin_mm"], 350)
+        self.assertTrue(result["centroid_circle_exception"])
+        self.assertTrue(result["is_valid"])
 
     def test_long_support_does_not_allow_tipping_or_boundary_center(self):
         for rect in ((0, 100, 670, 300), (0, 100, 670, 500)):
@@ -93,71 +114,7 @@ class TopSupportTest(unittest.TestCase):
             self.assertEqual([b["order"] for b in result["support_boxes"]], [2])
             self.assertEqual(result["required_points"], 4)
 
-    def test_vertical_continuous_exception(self):
-        boxes = [surface((100, 100, 200, 200), top=50),
-                 surface((1000, 800, 1100, 900), top=50),
-                 surface((265, 165, 935, 500)), surface((265, 500, 935, 835))]
-        result = self.check(boxes)
-        self.assertTrue(result["is_valid"])
-        self.assertTrue(result["long_edge_exception"])
-        self.assertEqual(result["continuous_support_y_mm"], 670)
-        self.assertEqual(result["opposing_support_axis"], "XY")
-
-    def test_short_sides_need_continuous_670_in_both_orientations(self):
-        lower = [surface((100, 100, 200, 200), top=50),
-                 surface((1000, 800, 1100, 900), top=50)]
-        for width, length in ((1000, 669.99), (669.99, 800), (1000, 200)):
-            with self.subTest(width=width, length=length):
-                rect = (600 - width / 2, 500 - length / 2,
-                        600 + width / 2, 500 + length / 2)
-                result = self.check(lower + [surface(rect)])
-                self.assertTrue(result["balanced"])
-                self.assertFalse(result["is_valid"])
-                self.assertFalse(result["long_edge_exception"])
-                self.assertTrue(any("short sides" in v for v in result["violations"]))
-
-    def test_contact_span_does_not_replace_short_side_continuity(self):
-        lower = [surface((100, 100, 200, 200), top=50),
-                 surface((1000, 800, 1100, 900), top=50)]
-        result = self.check(lower + [surface((265, 165, 935, 400)),
-                                    surface((265, 600, 935, 835))])
-        self.assertEqual(result["opposing_edge_lengths_mm"]["front"], 670)
-        self.assertEqual(result["opposing_edge_lengths_mm"]["back"], 670)
-        self.assertEqual(result["opposing_edge_lengths_mm"]["left"], 235)
-        self.assertTrue(result["balanced"])
-        self.assertFalse(result["is_valid"])
-
-    def test_opposing_edges_need_670_on_both_sides(self):
-        lower = [surface((100, 100, 200, 200), top=50),
-                 surface((1000, 800, 1100, 900), top=50)]
-        boxes = lower + [surface((265, 165, 935, 500)), surface((265, 500, 934.99, 835))]
-        result = self.check(boxes)
-        self.assertTrue(result["balanced"])
-        self.assertFalse(result["is_valid"])
-        self.assertFalse(result["long_edge_exception"])
-        self.assertEqual(result["opposing_edge_lengths_mm"]["front"], 670)
-        self.assertAlmostEqual(result["opposing_edge_lengths_mm"]["back"], 669.99)
-
-    def test_opposing_edges_do_not_sum_across_gaps(self):
-        lower = [surface((100, 100, 200, 200), top=50),
-                 surface((1000, 800, 1100, 900), top=50)]
-        boxes = lower + [surface((265, 200, 935, 300)),
-                         surface((265, 700, 600, 800)), surface((600.01, 700, 935.01, 800))]
-        result = self.check(boxes)
-        self.assertFalse(result["is_valid"])
-        self.assertAlmostEqual(result["opposing_edge_lengths_mm"]["back"], 335)
-
-    def test_interior_long_line_does_not_replace_short_outer_edges(self):
-        boxes = [surface((200, 100, 400, 900)),
-                 surface((400, 400, 1000, 600))]
-        result = self.check(boxes)
-        self.assertTrue(result["balanced"])
-        self.assertEqual(result["continuous_support_x_mm"], 800)
-        self.assertEqual(result["opposing_edge_lengths_mm"]["front"], 200)
-        self.assertEqual(result["opposing_edge_lengths_mm"]["right"], 200)
-        self.assertFalse(result["is_valid"])
-
-    def test_previously_accepted_asymmetric_tops_are_rejected(self):
+    def test_asymmetric_missing_corner_tops_pass_centroid_circle_rule(self):
         shapes = (
             ((97.5, -2.5, 432.5, 500), (432.5, -2.5, 767.5, 500),
              (767.5, -2.5, 1102.5, 500), (97.5, 500, 432.5, 1002.5)),
@@ -173,7 +130,10 @@ class TopSupportTest(unittest.TestCase):
             with self.subTest(shape=shape):
                 result = self.check([surface(rect) for rect in shape])
                 self.assertTrue(result["balanced"])
-                self.assertFalse(result["is_valid"])
+                self.assertFalse(all(result["corners_supported"]))
+                self.assertGreaterEqual(result["centroid_circle_margin_mm"], 335.0)
+                self.assertTrue(result["centroid_circle_exception"])
+                self.assertTrue(result["is_valid"])
 
     def test_opposing_lengths_are_clipped_to_pallet(self):
         lower = [surface((0, 0, 100, 100), top=50),
@@ -183,7 +143,7 @@ class TopSupportTest(unittest.TestCase):
         self.assertEqual(result["opposing_edge_lengths_mm"]["front"], 650)
         self.assertFalse(result["is_valid"])
 
-    def test_aisin_four_four_three_top_fails_new_support_rule(self):
+    def test_aisin_four_four_three_top_passes_centroid_circle_rule(self):
         rectangles = ((-70, -2.5, 600, 500), (600, -2.5, 1270, 500),
                       (-70, 500, 600, 1002.5), (600, 500, 1270, 1002.5))
         boxes = [surface(r, top=780) for r in rectangles]
@@ -192,7 +152,9 @@ class TopSupportTest(unittest.TestCase):
         self.assertTrue(result["balanced"])
         self.assertEqual(result["opposing_edge_lengths_mm"],
                          {"front": 1200, "back": 600, "left": 1000, "right": 500})
-        self.assertFalse(result["is_valid"])
+        self.assertGreaterEqual(result["centroid_circle_margin_mm"], 335.0)
+        self.assertTrue(result["centroid_circle_exception"])
+        self.assertTrue(result["is_valid"])
 
     def test_exception_does_not_waive_fifth_point(self):
         boxes = [surface((100, 100, 200, 200), top=50),
@@ -203,7 +165,7 @@ class TopSupportTest(unittest.TestCase):
                  surface((465, 635, 735, 835))]
         result = self.check(boxes)
         self.assertTrue(result["balanced"])
-        self.assertTrue(result["long_edge_exception"])
+        self.assertTrue(result["centroid_circle_exception"])
         self.assertFalse(result["is_valid"])
         self.assertFalse(result["center_supported"])
 
@@ -236,7 +198,7 @@ class TopSupportTest(unittest.TestCase):
         boxes = [PlacedBox(1, spec.id, 100, 100, 0, 200, 200, 50, 0, 0, 0),
                  PlacedBox(2, spec.id, 900, 700, 0, 200, 200, 50, 0, 0, 0),
                  PlacedBox(3, spec.id, 265, 165, 0, 670, 670, 100, 0, 0, 0)]
-        self.assertTrue(engine._top_support(boxes)["long_edge_exception"])
+        self.assertTrue(engine._top_support(boxes)["centroid_circle_exception"])
         self.assertTrue(engine._top_support(boxes)["is_valid"])
         kept, unplaced = engine.level_top_four_corners(boxes, [])
         self.assertIs(kept, boxes)
@@ -418,10 +380,15 @@ class RevisedRealLayoutTests(unittest.TestCase):
                 self.assertTrue({(b.x, b.y, b.rotation) for b in layers[-1]}.issubset(pattern))
                 self.assertLessEqual(len(layers[-1]), len(layers[0]))
 
-    def test_aisin_three_of_four_top_is_not_silently_allowed(self):
+    def test_aisin_three_of_four_top_passes_centroid_circle_rule(self):
         result, _ = self.run_case("aisin")
-        self.assertEqual(len(result.boxes), 9)
-        self.assertEqual(sum(b["count"] for b in result.unplaced_boxes), 2)
+        support = result.summary["top_support"]
+        self.assertEqual(len(result.boxes), 11)
+        self.assertEqual(result.unplaced_boxes, [])
+        self.assertFalse(all(support["corners_supported"]))
+        self.assertGreaterEqual(support["centroid_circle_margin_mm"], 335.0)
+        self.assertTrue(support["centroid_circle_exception"])
+        self.assertTrue(support["is_valid"])
 
     def test_short_y_split_candidates_are_centered(self):
         for name, per_layer in (("aisin_10", 4), ("aisin_9", 4), ("arresuthi_2", 3)):
@@ -443,18 +410,25 @@ class RevisedRealLayoutTests(unittest.TestCase):
                 if name in ("aisin_10", "aisin_9"):
                     self.assertEqual(result.summary["top_support"]["corners_supported"], [True] * 4)
 
-    def test_short_x_rows_are_centered_where_split_layout_is_selected(self):
-        for name in ("nok_2", "othics_6", "othics_7"):
+    def test_othics_six_and_seven_pack_five_boxes_per_full_layer(self):
+        expected_layers = {
+            "othics_6": [5, 5, 5, 5, 5, 5],
+            "othics_7": [5, 5, 5, 5, 5, 4],
+        }
+        for name, expected in expected_layers.items():
             with self.subTest(name=name):
                 result, engine = self.run_case(name)
-                for index in {b.layer_index for b in result.boxes}:
-                    layer = [b for b in result.boxes if b.layer_index == index]
-                    for rotation in (0, 90):
-                        row = [b for b in layer if b.rotation == rotation]
-                        if row:
-                            self.assertAlmostEqual(
-                                (min(b.footprint_min_x for b in row) + max(b.max_x for b in row)) / 2,
-                                engine.pallet.length / 2)
+                layers = [sum(b.layer_index == i for b in result.boxes)
+                          for i in range(result.summary["total_layers"])]
+                self.assertEqual(layers, expected)
+                self.assertEqual(result.unplaced_boxes, [])
+                self.assertTrue(result.summary["top_support"]["centroid_circle_exception"])
+                min_x = min(b.footprint_min_x for b in result.boxes)
+                max_x = max(b.max_x for b in result.boxes)
+                min_y = min(b.footprint_min_y for b in result.boxes)
+                max_y = max(b.max_y for b in result.boxes)
+                self.assertAlmostEqual((min_x + max_x) / 2, engine.pallet.length / 2)
+                self.assertAlmostEqual((min_y + max_y) / 2, engine.pallet.width / 2)
 
     def test_nittan_long_side_is_x(self):
         result, _ = self.run_case("nittan_2")
@@ -468,9 +442,9 @@ class RevisedRealLayoutTests(unittest.TestCase):
         self.assertEqual(result.summary["total_layers"], 1)
         self.assertEqual(support["corners_supported"], [True] * 4)
         self.assertTrue(support["center_supported"])
-        self.assertFalse(support["long_edge_exception"])
+        self.assertFalse(support["centroid_circle_exception"])
 
-    def test_revised_weak_top_cases_meet_opposed_edges_or_four_corners(self):
+    def test_revised_weak_top_cases_meet_corner_or_centroid_circle_rule(self):
         for name in ("aisin_4", "othics_2", "roki"):
             with self.subTest(name=name):
                 skid_id = self.catalog["cases"]["test_cases"][name]["skid_id"]
@@ -480,9 +454,9 @@ class RevisedRealLayoutTests(unittest.TestCase):
                     continue
                 result, _ = self.run_case(name)
                 support = result.summary["top_support"]
-                edges = support["opposing_edge_lengths_mm"]
                 self.assertTrue(all(support["corners_supported"]) or
-                                min(edges.values()) >= 670)
+                                support["centroid_circle_exception"])
+                self.assertTrue(support["is_valid"])
 
     def test_aisin3_prefers_equal_layers_before_envelope_occupancy(self):
         result, _ = self.run_case("aisin_3")
@@ -504,15 +478,16 @@ class RevisedRealLayoutTests(unittest.TestCase):
         self.assertEqual([b.supported_by for b in top], [[19], [21], [22], [24]])
         self.assertEqual(result.summary["top_support"]["corners_supported"], [True] * 4)
 
-    def test_arresuthi2_stops_at_nine_under_configured_area_rule(self):
+    def test_arresuthi2_uses_four_four_three_with_centroid_circle_support(self):
         result, _ = self.run_case("arresuthi_2")
         self.assertEqual([sum(b.layer_index == i for b in result.boxes) for i in range(3)],
-                         [3, 3, 3])
-        self.assertEqual(sum(b["count"] for b in result.unplaced_boxes), 2)
+                         [4, 4, 3])
+        self.assertEqual(result.unplaced_boxes, [])
+        self.assertTrue(result.summary["top_support"]["centroid_circle_exception"])
         self.assertGreaterEqual(result.summary["top_support"]["support_area_ratio"], 0.65)
 
-    def test_narrow_multicorner_real_layouts_are_replaced(self):
-        for name, missing in (("nok_2", 3), ("othics_3", 3)):
+    def test_narrow_multicorner_real_layouts_use_centroid_circle_support(self):
+        for name, missing in (("nok_2", 1), ("othics_3", 0)):
             with self.subTest(name=name):
                 result, _ = self.run_case(name)
                 self.assertGreaterEqual(result.summary["total_layers"], 1)
@@ -521,6 +496,7 @@ class RevisedRealLayoutTests(unittest.TestCase):
                     for i in range(result.summary["total_layers"])
                 ))
                 self.assertEqual(sum(b["count"] for b in result.unplaced_boxes), missing)
+                self.assertTrue(result.summary["top_support"]["centroid_circle_exception"])
                 self.assertGreaterEqual(result.summary["top_support"]["support_area_ratio"], 0.65)
 
     def test_corner_candidates_preserve_existing_candidates_and_inventory(self):
