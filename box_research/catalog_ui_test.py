@@ -17,7 +17,7 @@ import unittest
 from unittest.mock import patch
 from urllib.request import urlopen
 
-from box_research.catalog_store import load_catalog
+from box_research.catalog_store import load_catalog, save_catalog
 from box_research.catalog_store_test import CatalogFixture
 from box_research import serve_viewer
 
@@ -172,6 +172,9 @@ async function save() {
   await ready();
   assert(d.querySelectorAll('[data-tab]').length === 6, 'six DB tabs including skids and suppliers');
   assert(el('table-body').textContent.includes('00001'), 'part table');
+  tab('models');
+  assert([...d.querySelectorAll('tbody tr')].map(row => row.dataset.recordId).join(',') === 'MODEL-2,MODEL-10,MODEL-A', 'model table uses natural model-name order');
+  assert(Object.keys((await catalog()).models).join(',') === 'MODEL-A,MODEL-10,MODEL-2', 'display sorting does not change stored model order');
   tab('suppliers');
   assert(row('0001') && row('0001').textContent.includes('Supplier A'), 'fixture mapping listed');
   click('add'); field('id','０００２'); field('supplier_name','Supplier B'); submit();
@@ -476,6 +479,11 @@ class CatalogBrowserTest(CatalogFixture, unittest.TestCase):
         project = Path(__file__).resolve().parents[1]
         with patch.object(tempfile, "tempdir", str(project)):
             super().setUp()
+        data, revision = load_catalog(self.root)
+        model = data["models"]["MODEL-A"]
+        for model_id in ("MODEL-10", "MODEL-2"):
+            data["models"][model_id] = dict(model, id=model_id)
+        save_catalog(self.root, data, revision)
 
     def test_real_browser_editing_workflow(self):
         patcher = patch.object(serve_viewer, "BASE_DIR", str(self.root / "box_research"))

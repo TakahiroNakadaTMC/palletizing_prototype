@@ -119,7 +119,13 @@
     $('table-body').replaceChildren();
     const query = $('search').value.toLowerCase();
     let visible = 0;
-    for (const [id, record] of Object.entries(records())) {
+    const entries = Object.entries(records());
+    if (state.tab === 'models') {
+      entries.sort(([left], [right]) => left.localeCompare(right, undefined, {
+        numeric: true, sensitivity: 'base'
+      }));
+    }
+    for (const [id, record] of entries) {
       const values = columns(id, record);
       if (!values.join(' ').toLowerCase().includes(query)) continue;
       visible++;
