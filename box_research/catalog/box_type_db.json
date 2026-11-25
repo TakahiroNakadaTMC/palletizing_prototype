@@ -10,14 +10,14 @@
     "id": "111031502100",
     "supplier_name": "オティックス",
     "box_name": "NP20B",
-    "box_model_id": "NP20B",
+    "box_model_id": "サンボックス#20B",
     "lid_id": "サンボックス#20"
   },
   "134512408100": {
     "id": "134512408100",
     "supplier_name": "アイシン高丘",
     "box_name": "SPK10F18",
-    "box_model_id": "SPK10F18",
+    "box_model_id": "サンボックス#10-5",
     "lid_id": "#10-5"
   },
   "134511511100": {
@@ -59,7 +59,7 @@
     "id": "132111507002",
     "supplier_name": "アート金属",
     "box_name": "NPAP5",
-    "box_model_id": "NPAP5",
+    "box_model_id": "サンボックス#26-2B",
     "lid_id": "無蓋"
   },
   "130902501000": {
@@ -122,7 +122,7 @@
     "id": "134701515000",
     "supplier_name": "NOK",
     "box_name": "NP000008",
-    "box_model_id": "NP000008",
+    "box_model_id": "サンボックス#22G",
     "lid_id": "サンボックス#22Bフタ"
   },
   "115112401000": {
@@ -150,14 +150,14 @@
     "id": "132112406001",
     "supplier_name": "アート金属",
     "box_name": "NPAP5",
-    "box_model_id": "NPAP5",
+    "box_model_id": "サンボックス#26-2B",
     "lid_id": "無蓋"
   },
   "134702402000": {
     "id": "134702402000",
     "supplier_name": "フコク",
     "box_name": "NP000008",
-    "box_model_id": "NP000008",
+    "box_model_id": "サンボックス#22G",
     "lid_id": "サンボックス#22Bフタ"
   },
   "123151510000": {
@@ -514,14 +514,14 @@
     "id": "132112407002",
     "supplier_name": "アート金属",
     "box_name": "NPAP5",
-    "box_model_id": "NPAP5",
+    "box_model_id": "サンボックス#26-2B",
     "lid_id": "無蓋"
   },
   "137112404000": {
     "id": "137112404000",
     "supplier_name": "愛三工業",
     "box_name": "SPPS2",
-    "box_model_id": "SPPS2",
+    "box_model_id": "ばんじゅうP-S2",
     "lid_id": "無蓋"
   },
   "151042401000": {
@@ -577,14 +577,14 @@
     "id": "136201501000",
     "supplier_name": "オティックス",
     "box_name": "NP20B",
-    "box_model_id": "NP20B",
+    "box_model_id": "サンボックス#20B",
     "lid_id": "サンボックス#20"
   },
   "111031501000": {
     "id": "111031501000",
     "supplier_name": "オティックス",
     "box_name": "NP20B",
-    "box_model_id": "NP20B",
+    "box_model_id": "サンボックス#20B",
     "lid_id": "サンボックス#20"
   },
   "130502501000": {
@@ -689,7 +689,7 @@
     "id": "137507002100",
     "supplier_name": "オティックス",
     "box_name": "NP262D",
-    "box_model_id": "NP262D",
+    "box_model_id": "サンボックス#26-2",
     "lid_id": "サンボックス#26"
   },
   "902531400300": {
@@ -850,7 +850,7 @@
     "id": "137152404000",
     "supplier_name": "ニッタン",
     "box_name": "NPH010",
-    "box_model_id": "NPH010",
+    "box_model_id": "パンコン特大型深",
     "lid_id": "無蓋"
   },
   "256011505000": {
@@ -871,7 +871,7 @@
     "id": "157092501000",
     "supplier_name": "伊藤金属工業",
     "box_name": "TZFB",
-    "box_model_id": "TZFB",
+    "box_model_id": "F-Box112",
     "lid_id": "無蓋"
   },
   "121803801000": {
@@ -892,7 +892,7 @@
     "id": "157082501000",
     "supplier_name": "伊藤金属工業",
     "box_name": "TZFB",
-    "box_model_id": "TZFB",
+    "box_model_id": "F-Box112",
     "lid_id": "無蓋"
   },
   "238141509000": {
@@ -913,7 +913,7 @@
     "id": "111152404000",
     "supplier_name": "日本ガスケット",
     "box_name": "NPP23006",
-    "box_model_id": "NPP23006",
+    "box_model_id": "RB-23",
     "lid_id": "RB36・23"
   },
   "171692401000": {
@@ -927,7 +927,7 @@
     "id": "157081501000",
     "supplier_name": "伊藤金属工業",
     "box_name": "TZFB",
-    "box_model_id": "TZFB",
+    "box_model_id": "F-Box112",
     "lid_id": "無蓋"
   },
   "117212401003": {
@@ -1053,7 +1053,7 @@
     "id": "111151510000",
     "supplier_name": "日本ガスケット",
     "box_name": "NPP23006",
-    "box_model_id": "NPP23006",
+    "box_model_id": "RB-23",
     "lid_id": "RB36・23"
   },
   "114452401000": {
@@ -1235,14 +1235,14 @@
     "id": "132112407001",
     "supplier_name": "アート金属",
     "box_name": "NPAP5",
-    "box_model_id": "NPAP5",
+    "box_model_id": "サンボックス#26-2B",
     "lid_id": "無蓋"
   },
   "132112407003": {
     "id": "132112407003",
     "supplier_name": "アート金属",
     "box_name": "NPAP5",
-    "box_model_id": "NPAP5",
+    "box_model_id": "サンボックス#26-2B",
     "lid_id": "無蓋"
   },
   "901090638400": {
@@ -1522,7 +1522,7 @@
     "id": "134701514000",
     "supplier_name": "NOK",
     "box_name": "NP000008",
-    "box_model_id": "NP000008",
+    "box_model_id": "サンボックス#22G",
     "lid_id": "サンボックス#22Bフタ"
   },
   "136311501000": {
@@ -1613,7 +1613,7 @@
     "id": "134702401000",
     "supplier_name": "フコク",
     "box_name": "NP000008",
-    "box_model_id": "NP000008",
+    "box_model_id": "サンボックス#22G",
     "lid_id": "サンボックス#22Bフタ"
   },
   "162602403000": {
@@ -1641,7 +1641,7 @@
     "id": "896157801000",
     "supplier_name": "日本特殊陶業",
     "box_name": "NP000001",
-    "box_model_id": "NP000001",
+    "box_model_id": "サンボックスNS20B-2",
     "lid_id": "無蓋"
   },
   "941518080000": {
@@ -1732,7 +1732,7 @@
     "id": "256851501000",
     "supplier_name": "日本ガスケット",
     "box_name": "NPP03005",
-    "box_model_id": "NPP03005",
+    "box_model_id": "サンボックス#20C",
     "lid_id": "サンボックス#14C"
   },
   "163251503000": {
@@ -1816,7 +1816,7 @@
     "id": "256852501100",
     "supplier_name": "日本ガスケット",
     "box_name": "NPP03005",
-    "box_model_id": "NPP03005",
+    "box_model_id": "サンボックス#20C",
     "lid_id": "サンボックス#14C"
   },
   "902500812000": {
@@ -2173,7 +2173,7 @@
     "id": "132112406003",
     "supplier_name": "アート金属",
     "box_name": "NPAP5",
-    "box_model_id": "NPAP5",
+    "box_model_id": "サンボックス#26-2B",
     "lid_id": "無蓋"
   },
   "901100604000": {
@@ -2306,14 +2306,14 @@
     "id": "132111507001",
     "supplier_name": "アート金属",
     "box_name": "NPAP5",
-    "box_model_id": "NPAP5",
+    "box_model_id": "サンボックス#26-2B",
     "lid_id": "無蓋"
   },
   "132111507003": {
     "id": "132111507003",
     "supplier_name": "アート金属",
     "box_name": "NPAP5",
-    "box_model_id": "NPAP5",
+    "box_model_id": "サンボックス#26-2B",
     "lid_id": "無蓋"
   },
   "901050635000": {
@@ -2467,7 +2467,7 @@
     "id": "132112406002",
     "supplier_name": "アート金属",
     "box_name": "NPAP5",
-    "box_model_id": "NPAP5",
+    "box_model_id": "サンボックス#26-2B",
     "lid_id": "無蓋"
   },
   "904681404400": {

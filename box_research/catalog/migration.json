@@ -239,7 +239,19 @@
     "TP464": "TP464",
     "TZFB": "TZFB"
   },
-  "model_name_history": {},
+  "model_name_history": {
+    "NPH010": "パンコン特大型深",
+    "NP000008": "サンボックス#22G",
+    "NPAP5": "サンボックス#26-2B",
+    "SPK10F18": "サンボックス#10-5",
+    "NP20B": "サンボックス#20B",
+    "NP262D": "サンボックス#26-2",
+    "SPPS2": "ばんじゅうP-S2",
+    "NPP23006": "RB-23",
+    "TZFB": "F-Box112",
+    "NP000001": "サンボックスNS20B-2",
+    "NPP03005": "サンボックス#20C"
+  },
   "case_assignments": [
     {
       "case_file": "aisin.json",

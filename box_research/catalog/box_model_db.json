@@ -287,36 +287,6 @@
     ],
     "top_support_points": 4
   },
-  "NP000008": {
-    "id": "NP000008",
-    "type": "NON_TP",
-    "length": 606,
-    "width": 369,
-    "height": 96,
-    "fitting_depth": 8,
-    "rib_thickness": 18,
-    "module_ratio": null,
-    "description": "",
-    "compatible_lids": [
-      "サンボックス#22Bフタ"
-    ],
-    "top_support_points": 4
-  },
-  "NP20B": {
-    "id": "NP20B",
-    "type": "NON_TP",
-    "length": 475,
-    "width": 369,
-    "height": 154,
-    "fitting_depth": 10,
-    "rib_thickness": 22,
-    "module_ratio": null,
-    "description": "",
-    "compatible_lids": [
-      "サンボックス#20"
-    ],
-    "top_support_points": 4
-  },
   "サンボックス#22H": {
     "id": "サンボックス#22H",
     "type": "NON_TP",
@@ -330,34 +300,6 @@
     "compatible_lids": [
       "サンボックス#22Bフタ"
     ],
-    "top_support_points": 4
-  },
-  "NP262D": {
-    "id": "NP262D",
-    "type": "NON_TP",
-    "length": 518,
-    "width": 436,
-    "height": 147,
-    "fitting_depth": 6,
-    "rib_thickness": 17,
-    "module_ratio": null,
-    "description": "",
-    "compatible_lids": [
-      "サンボックス#26"
-    ],
-    "top_support_points": 4
-  },
-  "NPAP5": {
-    "id": "NPAP5",
-    "type": "NON_TP",
-    "length": 518,
-    "width": 436,
-    "height": 80,
-    "fitting_depth": 7,
-    "rib_thickness": 17,
-    "module_ratio": null,
-    "description": "",
-    "compatible_lids": [],
     "top_support_points": 4
   },
   "NPF33": {
@@ -397,36 +339,6 @@
     "module_ratio": null,
     "description": "",
     "compatible_lids": [],
-    "top_support_points": 4
-  },
-  "NPP03005": {
-    "id": "NPP03005",
-    "type": "NON_TP",
-    "length": 478,
-    "width": 358,
-    "height": 168,
-    "fitting_depth": 10,
-    "rib_thickness": 17,
-    "module_ratio": null,
-    "description": "",
-    "compatible_lids": [
-      "サンボックス#14C"
-    ],
-    "top_support_points": 4
-  },
-  "NPP23006": {
-    "id": "NPP23006",
-    "type": "NON_TP",
-    "length": 516,
-    "width": 345,
-    "height": 166,
-    "fitting_depth": 10,
-    "rib_thickness": 18,
-    "module_ratio": null,
-    "description": "",
-    "compatible_lids": [
-      "RB36・23"
-    ],
     "top_support_points": 4
   },
   "NPSB3": {
@@ -703,19 +615,6 @@
     ],
     "top_support_points": 4
   },
-  "NP000001": {
-    "id": "NP000001",
-    "type": "NON_TP",
-    "length": 435,
-    "width": 327,
-    "height": 207,
-    "fitting_depth": 14,
-    "rib_thickness": 16,
-    "module_ratio": null,
-    "description": "",
-    "compatible_lids": [],
-    "top_support_points": 4
-  },
   "NP00012N": {
     "id": "NP00012N",
     "type": "NON_TP",
@@ -737,19 +636,6 @@
     "height": 103,
     "fitting_depth": 9,
     "rib_thickness": 17,
-    "module_ratio": null,
-    "description": "",
-    "compatible_lids": [],
-    "top_support_points": 4
-  },
-  "NPH010": {
-    "id": "NPH010",
-    "type": "NON_TP",
-    "length": 684,
-    "width": 423,
-    "height": 160,
-    "fitting_depth": 9,
-    "rib_thickness": 16,
     "module_ratio": null,
     "description": "",
     "compatible_lids": [],
@@ -854,34 +740,6 @@
     "compatible_lids": [
       "TP36蓋"
     ],
-    "top_support_points": 4
-  },
-  "SPK10F18": {
-    "id": "SPK10F18",
-    "type": "TP",
-    "length": 358,
-    "width": 358,
-    "height": 102.5,
-    "fitting_depth": 10,
-    "rib_thickness": 17,
-    "module_ratio": null,
-    "description": "",
-    "compatible_lids": [
-      "#10-5"
-    ],
-    "top_support_points": 4
-  },
-  "SPPS2": {
-    "id": "SPPS2",
-    "type": "NON_TP",
-    "length": 690,
-    "width": 423,
-    "height": 159,
-    "fitting_depth": 6,
-    "rib_thickness": 10,
-    "module_ratio": null,
-    "description": "",
-    "compatible_lids": [],
     "top_support_points": 4
   },
   "SPZ36403": {
@@ -1143,19 +1001,6 @@
     ],
     "top_support_points": 4
   },
-  "TZFB": {
-    "id": "TZFB",
-    "type": "TP",
-    "length": 335,
-    "width": 275,
-    "height": 165,
-    "fitting_depth": 10,
-    "rib_thickness": 3,
-    "module_ratio": null,
-    "description": "",
-    "compatible_lids": [],
-    "top_support_points": 4
-  },
   "NEUAD9": {
     "id": "NEUAD9",
     "type": "NON_TP",
@@ -1178,6 +1023,161 @@
     "rib_thickness": 15,
     "module_ratio": null,
     "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "パンコン特大型深": {
+    "id": "パンコン特大型深",
+    "type": "NON_TP",
+    "length": 683,
+    "width": 424,
+    "height": 160,
+    "fitting_depth": 9,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "サンボックス#22G": {
+    "id": "サンボックス#22G",
+    "type": "NON_TP",
+    "length": 606,
+    "width": 369,
+    "height": 96,
+    "fitting_depth": 8,
+    "rib_thickness": 18,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス#22Bフタ"
+    ],
+    "top_support_points": 4
+  },
+  "サンボックス#26-2B": {
+    "id": "サンボックス#26-2B",
+    "type": "NON_TP",
+    "length": 518,
+    "width": 436,
+    "height": 80,
+    "fitting_depth": 7,
+    "rib_thickness": 17,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "サンボックス#10-5": {
+    "id": "サンボックス#10-5",
+    "type": "TP",
+    "length": 358,
+    "width": 358,
+    "height": 102.5,
+    "fitting_depth": 10,
+    "rib_thickness": 17,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "#10-5"
+    ],
+    "top_support_points": 4
+  },
+  "サンボックス#20B": {
+    "id": "サンボックス#20B",
+    "type": "NON_TP",
+    "length": 469,
+    "width": 369,
+    "height": 154,
+    "fitting_depth": 10,
+    "rib_thickness": 22,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス#20"
+    ],
+    "top_support_points": 4
+  },
+  "サンボックス#26-2": {
+    "id": "サンボックス#26-2",
+    "type": "NON_TP",
+    "length": 518,
+    "width": 436,
+    "height": 147,
+    "fitting_depth": 6,
+    "rib_thickness": 17,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス#26"
+    ],
+    "top_support_points": 4
+  },
+  "ばんじゅうP-S2": {
+    "id": "ばんじゅうP-S2",
+    "type": "NON_TP",
+    "length": 690,
+    "width": 423,
+    "height": 159,
+    "fitting_depth": 6,
+    "rib_thickness": 10,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "RB-23": {
+    "id": "RB-23",
+    "type": "NON_TP",
+    "length": 510,
+    "width": 345,
+    "height": 166,
+    "fitting_depth": 10,
+    "rib_thickness": 18,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "RB36・23"
+    ],
+    "top_support_points": 4
+  },
+  "F-Box112": {
+    "id": "F-Box112",
+    "type": "TP",
+    "length": 335,
+    "width": 275,
+    "height": 165,
+    "fitting_depth": 10,
+    "rib_thickness": 3,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "サンボックスNS20B-2": {
+    "id": "サンボックスNS20B-2",
+    "type": "NON_TP",
+    "length": 435,
+    "width": 327,
+    "height": 207,
+    "fitting_depth": 14,
+    "rib_thickness": 16,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [],
+    "top_support_points": 4
+  },
+  "サンボックス#20C": {
+    "id": "サンボックス#20C",
+    "type": "NON_TP",
+    "length": 478,
+    "width": 358,
+    "height": 168,
+    "fitting_depth": 10,
+    "rib_thickness": 17,
+    "module_ratio": null,
+    "description": "",
+    "compatible_lids": [
+      "サンボックス#14C"
+    ],
     "top_support_points": 4
   }
 }
