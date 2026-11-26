@@ -101,7 +101,7 @@
     "id": "232092401000",
     "supplier_name": "DENSO",
     "box_name": "TP3315",
-    "box_model_id": "TP3315",
+    "box_model_id": "TP331.5",
     "lid_id": "無蓋"
   },
   "256802403000": {
@@ -143,7 +143,7 @@
     "id": "909190227700",
     "supplier_name": "DENSO",
     "box_name": "TP3425",
-    "box_model_id": "TP3425",
+    "box_model_id": "TP342.5",
     "lid_id": "TP340フタ"
   },
   "132112406001": {
@@ -171,7 +171,7 @@
     "id": "231012504000",
     "supplier_name": "DENSO",
     "box_name": "TP3315",
-    "box_model_id": "TP3315",
+    "box_model_id": "TP331.5",
     "lid_id": "TP33蓋(IC)"
   },
   "13211F204002": {
@@ -192,7 +192,7 @@
     "id": "113102401000",
     "supplier_name": "アイシン",
     "box_name": "SPZ36408",
-    "box_model_id": "SPZ36408",
+    "box_model_id": "TP364",
     "lid_id": "TP360フタ"
   },
   "113202401000": {
@@ -213,7 +213,7 @@
     "id": "113201502100",
     "supplier_name": "アイシン",
     "box_name": "SPZ36403",
-    "box_model_id": "SPZ36403",
+    "box_model_id": "TP364",
     "lid_id": "TP360フタ"
   },
   "115111502000": {
@@ -227,7 +227,7 @@
     "id": "138012501000",
     "supplier_name": "オティックス",
     "box_name": "TP3415",
-    "box_model_id": "TP3415",
+    "box_model_id": "TP341.5",
     "lid_id": "TP34蓋ロック付き"
   },
   "132512403002": {
@@ -248,7 +248,7 @@
     "id": "256012403000",
     "supplier_name": "ROKI",
     "box_name": "TP3415",
-    "box_model_id": "TP3415",
+    "box_model_id": "TP341.5",
     "lid_id": "無蓋"
   },
   "117112402105": {
@@ -346,14 +346,14 @@
     "id": "232092403000",
     "supplier_name": "DENSO",
     "box_name": "TP3315",
-    "box_model_id": "TP3315",
+    "box_model_id": "TP331.5",
     "lid_id": "無蓋"
   },
   "160311502000": {
     "id": "160311502000",
     "supplier_name": "クゼー",
     "box_name": "STP342B",
-    "box_model_id": "STP342B",
+    "box_model_id": "TP342",
     "lid_id": "TP340フタ"
   },
   "238352401000": {
@@ -381,7 +381,7 @@
     "id": "293002401100",
     "supplier_name": "大豊工業",
     "box_name": "SP3415",
-    "box_model_id": "SP3415",
+    "box_model_id": "TP341.5",
     "lid_id": "サンボックス340フタ"
   },
   "111352402000": {
@@ -409,7 +409,7 @@
     "id": "122111506100",
     "supplier_name": "トヨタ紡織",
     "box_name": "SP362C01",
-    "box_model_id": "SP362C01",
+    "box_model_id": "TP362",
     "lid_id": "TP360フタ"
   },
   "122112402000": {
@@ -472,14 +472,14 @@
     "id": "160321519000",
     "supplier_name": "アイシン",
     "box_name": "SPG34229",
-    "box_model_id": "SPG34229",
+    "box_model_id": "TP342",
     "lid_id": "TP34蓋(IC)"
   },
   "160322402000": {
     "id": "160322402000",
     "supplier_name": "アイシン",
     "box_name": "SPG34230",
-    "box_model_id": "SPG34230",
+    "box_model_id": "TP342",
     "lid_id": "TP34蓋(IC)"
   },
   "909190509600": {
@@ -542,7 +542,7 @@
     "id": "232091507000",
     "supplier_name": "DENSO",
     "box_name": "TP3315",
-    "box_model_id": "TP3315",
+    "box_model_id": "TP331.5",
     "lid_id": "無蓋"
   },
   "231912505000": {
@@ -654,7 +654,7 @@
     "id": "171202402000",
     "supplier_name": "アイシン",
     "box_name": "SPZ46405",
-    "box_model_id": "SPZ46405",
+    "box_model_id": "TP464",
     "lid_id": "TP460フタ"
   },
   "130501502000": {
@@ -745,7 +745,7 @@
     "id": "238142402000",
     "supplier_name": "臼井国際産業",
     "box_name": "SP4615",
-    "box_model_id": "SP4615",
+    "box_model_id": "TP461.5",
     "lid_id": "TP460フタ"
   },
   "894915008200": {
@@ -829,7 +829,7 @@
     "id": "112011504000",
     "supplier_name": "トヨタ紡織",
     "box_name": "SP004A5K",
-    "box_model_id": "SP004A5K",
+    "box_model_id": "TP464",
     "lid_id": "サンボックス460フタ"
   },
   "171201513000": {
@@ -857,7 +857,7 @@
     "id": "256011505000",
     "supplier_name": "ROKI",
     "box_name": "TP3415",
-    "box_model_id": "TP3415",
+    "box_model_id": "TP341.5",
     "lid_id": "無蓋"
   },
   "115121502000": {
@@ -899,7 +899,7 @@
     "id": "238141509000",
     "supplier_name": "臼井国際産業",
     "box_name": "SP4615",
-    "box_model_id": "SP4615",
+    "box_model_id": "TP461.5",
     "lid_id": "TP460フタ"
   },
   "112012404000": {
@@ -1270,7 +1270,7 @@
     "id": "171202401000",
     "supplier_name": "アイシン",
     "box_name": "SPZ46404",
-    "box_model_id": "SPZ46404",
+    "box_model_id": "TP464",
     "lid_id": "TP460フタ"
   },
   "163312403000": {
@@ -1445,14 +1445,14 @@
     "id": "256271501000",
     "supplier_name": "ニチアス",
     "box_name": "TP3315",
-    "box_model_id": "TP3315",
+    "box_model_id": "TP331.5",
     "lid_id": "無蓋"
   },
   "256272401000": {
     "id": "256272401000",
     "supplier_name": "ニチアス",
     "box_name": "TP3315",
-    "box_model_id": "TP3315",
+    "box_model_id": "TP331.5",
     "lid_id": "無蓋"
   },
   "256341501000": {
@@ -1529,7 +1529,7 @@
     "id": "136311501000",
     "supplier_name": "オティックス",
     "box_name": "SP3315B",
-    "box_model_id": "SP3315B",
+    "box_model_id": "TP331.5",
     "lid_id": "TP330フタ"
   },
   "117212401002": {
@@ -1718,7 +1718,7 @@
     "id": "113201501000",
     "supplier_name": "アイシン",
     "box_name": "SPZ36403",
-    "box_model_id": "SPZ36403",
+    "box_model_id": "TP364",
     "lid_id": "TP360フタ"
   },
   "821251266000": {
@@ -1788,7 +1788,7 @@
     "id": "232092402000",
     "supplier_name": "DENSO",
     "box_name": "TP3315",
-    "box_model_id": "TP3315",
+    "box_model_id": "TP331.5",
     "lid_id": "無蓋"
   },
   "905013303400": {
@@ -1837,7 +1837,7 @@
     "id": "160311501000",
     "supplier_name": "クゼー",
     "box_name": "STP342B",
-    "box_model_id": "STP342B",
+    "box_model_id": "TP342",
     "lid_id": "TP340フタ"
   },
   "901050635300": {
@@ -1865,7 +1865,7 @@
     "id": "152502501000",
     "supplier_name": "アイシン",
     "box_name": "SP342",
-    "box_model_id": "SP342",
+    "box_model_id": "TP342",
     "lid_id": "無蓋"
   },
   "163252501000": {
@@ -1907,7 +1907,7 @@
     "id": "909190227600",
     "supplier_name": "DENSO",
     "box_name": "TP3425",
-    "box_model_id": "TP3425",
+    "box_model_id": "TP342.5",
     "lid_id": "TP340フタ"
   },
   "901100700200": {
@@ -2187,7 +2187,7 @@
     "id": "112011503000",
     "supplier_name": "トヨタ紡織",
     "box_name": "SP004A5K",
-    "box_model_id": "SP004A5K",
+    "box_model_id": "TP464",
     "lid_id": "サンボックス460フタ"
   },
   "171201512000": {
@@ -2460,7 +2460,7 @@
     "id": "135A03102000",
     "supplier_name": "DENSO",
     "box_name": "TP3315",
-    "box_model_id": "TP3315",
+    "box_model_id": "TP331.5",
     "lid_id": "TP330フタ"
   },
   "132112406002": {

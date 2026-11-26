@@ -159,6 +159,40 @@ class CatalogStoreTest(CatalogFixture, unittest.TestCase):
         save_catalog(self.root, saved, revision)
         self.assertNotIn("00002", load_catalog(self.root)[0]["parts"])
 
+    def test_model_aliases_are_normalized_and_legacy_records_remain_valid(self):
+        draft = copy.deepcopy(self.data)
+        legacy = copy.deepcopy(draft["models"][self.model_id])
+        legacy["id"] = "LEGACY-MODEL"
+        draft["models"]["LEGACY-MODEL"] = legacy
+        draft["models"][self.model_id]["aliases"] = ["ｻﾝﾎﾞｯｸｽ342B", "TP-342B"]
+        save_catalog(self.root, draft, self.revision)
+        saved, _ = load_catalog(self.root)
+        self.assertEqual(saved["models"][self.model_id]["aliases"], ["サンボックス342B", "TP-342B"])
+        self.assertNotIn("aliases", saved["models"]["LEGACY-MODEL"])
+
+    def test_model_aliases_must_be_unique_and_not_shadow_model_ids(self):
+        invalid_updates = (
+            ["SAME", "SAME"],
+            ["MODEL-B"],
+            ["SHARED"],
+        )
+        for aliases in invalid_updates:
+            with self.subTest(aliases=aliases):
+                draft = copy.deepcopy(self.data)
+                draft["models"][self.model_id]["aliases"] = aliases
+                if aliases == ["SHARED"]:
+                    other = copy.deepcopy(draft["models"][self.model_id])
+                    other["id"] = "MODEL-B"
+                    other["aliases"] = ["SHARED"]
+                    draft["models"]["MODEL-B"] = other
+                elif aliases == ["MODEL-B"]:
+                    other = copy.deepcopy(draft["models"][self.model_id])
+                    other["id"] = "MODEL-B"
+                    other.pop("aliases", None)
+                    draft["models"]["MODEL-B"] = other
+                with self.assertRaises(ValueError):
+                    validate_catalog(draft)
+
     def test_invalid_dimensions_and_unknown_references_are_rejected(self):
         for field in ("length", "width", "height", "fitting_depth", "rib_thickness"):
             for value in (True, "1", None, -1, float("nan"), float("inf")):

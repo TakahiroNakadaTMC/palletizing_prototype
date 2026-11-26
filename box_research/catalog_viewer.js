@@ -8,7 +8,7 @@
   const titles = { parts: '品番・箱種DB', models: '箱モデルDB', lids: '蓋DB', pallets: 'パレットDB', skids: 'スキッドDB', suppliers: '仕入先対応表', cases: '品番方式のケース' };
   const hints = {
     parts: '品番ごとに仕入先・箱名称・共通箱モデル・固定蓋を管理します。品番は文字列です。',
-    models: '共通モデル名が表示名とIDを兼ねます。名前変更は「名前変更」から、関連品番・ケースを確認して行います。',
+    models: '共通モデル名が表示名とIDを兼ねます。別称は1行に1件登録でき、品番のモデル選択肢にも表示されますが計算仕様は変わりません。名前変更は「名前変更」から関連品番・ケースを確認して行います。',
     lids: '蓋の仕様と嵌め方を管理します。使用中の蓋は削除できません。蓋IDの変更はこの段階では行いません。',
     pallets: 'パレット型番・本体寸法・利用可能な仕入先を管理します。使用中のパレットは削除できません。標準パレットは固定です。',
     skids: 'スキッド・仕入先・使用可能なパレット・荷山上限・候補品番を管理します。変更は影響確認後に保存されます。',
@@ -84,7 +84,7 @@
   function columns(id, record) {
     switch (state.tab) {
       case 'parts': return [id, record.supplier_name, record.box_name, record.box_model_id, record.lid_id];
-      case 'models': return [id, record.type, dimension(record), record.fitting_depth, record.rib_thickness, record.top_support_points, record.compatible_lids.join('、')];
+      case 'models': return [id, (record.aliases || []).join('、'), record.type, dimension(record), record.fitting_depth, record.rib_thickness, record.top_support_points, record.compatible_lids.join('、')];
       case 'lids': return [id, record.type, `${record.length} × ${record.width}`, record.thickness, record.fit_type, record.description || ''];
       case 'pallets': return [id, record.model, dimension(record), record.suppliers.join('、') || '全仕入先共通'];
       case 'skids': return [id, record.supplier_name, skidPallet(record)?.model || record.pallet_id || '未設定', skidLimits(record), (record.part_numbers || []).join('、'), record.updated_at || '未保存', `${(record.history || []).length}件`];
@@ -98,7 +98,7 @@
   }
   const headers = {
     parts: ['品番', '仕入先', '箱名称', '共通箱モデル', '固定蓋'],
-    models: ['共通モデル名', '規格', 'L × W × H (mm)', '嵌合深さ', 'リブ厚', '支持点数', '互換蓋'],
+    models: ['共通モデル名', '別称', '規格', 'L × W × H (mm)', '嵌合深さ', 'リブ厚', '支持点数', '互換蓋'],
     lids: ['蓋ID', '規格', 'L × W (mm)', '高さ増加 (mm)', '嵌め方', '説明'],
     pallets: ['パレット型番', 'モデル', '本体 L × W × H (mm)', '利用可能な仕入先'],
     skids: ['スキッドID', '仕入先名', 'パレット', '荷山最大L × W × H (mm)', '候補品番', '更新日時', '履歴'],
@@ -219,6 +219,12 @@
   function selectOptions(collection) {
     return Object.keys(collection).map(id => [id, id]);
   }
+  function modelOptions(models) {
+    return Object.entries(models).map(([id, model]) => {
+      const aliases = model.aliases || [];
+      return [id, aliases.length ? `${id}（別称: ${aliases.join('、')}）` : id];
+    });
+  }
   function openEditor(id = null) {
     state.editing = { id, record: id ? clone(records()[id]) : {} };
     const record = state.editing.record;
@@ -230,7 +236,7 @@
     if (state.tab === 'parts') {
       field('supplier_name', '仕入先名', 'text', record.supplier_name).required = true;
       field('box_name', '箱名称（現場での呼び名）', 'text', record.box_name).required = true;
-      field('box_model_id', '共通箱モデル', 'select', record.box_model_id, selectOptions(state.data.models))
+      field('box_model_id', '共通箱モデル', 'select', record.box_model_id, modelOptions(state.data.models))
         .addEventListener('change', updatePartLids);
       field('lid_id', '固定蓋', 'select', record.lid_id, []);
       if (!id) $('field-box_model_id').selectedIndex = 0;
@@ -250,6 +256,7 @@
         }), document.createTextNode(lid.id)); list.append(label);
       }
       compatible.append(list); $('fields').append(compatible);
+      field('aliases', '別称（1行に1件）', 'textarea', (record.aliases || []).join('\n'));
       field('description', '説明', 'textarea', record.description);
     } else if (state.tab === 'lids') {
       field('type', '規格', 'select', record.type || 'TP', [['TP', 'TP'], ['OTHER', '非TP'], ['NONE', '無蓋']]);
@@ -460,7 +467,7 @@
       }
       const record = clone(state.editing.record);
       for (const input of $('fields').querySelectorAll('input[name], select[name], textarea[name]')) {
-        if (['compatible_lids', 'part_numbers', 'supplier_number', 'work_area', 'shipping_area', 'course'].includes(input.name)) continue;
+        if (['aliases', 'compatible_lids', 'part_numbers', 'supplier_number', 'work_area', 'shipping_area', 'course'].includes(input.name)) continue;
         if (input.type === 'number') {
           if (input.value.trim() === '' && state.tab === 'skids') { record[input.name] = null; continue; }
           if (input.value.trim() === '' || !Number.isFinite(Number(input.value))) throw new Error('数値を入力してください');
@@ -472,6 +479,7 @@
       record.id = id;
       if (state.tab === 'suppliers' && !/^[0-9]{4}$/.test(id)) throw new Error('仕入先は半角数字4桁で入力してください。');
       if (state.tab === 'models') {
+        record.aliases = $('field-aliases').value.split(/\r?\n/).map(value => normalized(value)).filter(Boolean);
         record.compatible_lids = [...$('fields').querySelectorAll('[name="compatible_lids"]:checked')].map(input => input.value);
         record.top_support_points = Number(record.top_support_points);
         record.module_ratio = record.module_ratio || null;

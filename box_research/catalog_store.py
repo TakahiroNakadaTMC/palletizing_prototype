@@ -80,6 +80,10 @@ def normalize_catalog(data: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(compatible, list):
             raise ValueError("互換蓋は配列が必要です")
         model["compatible_lids"] = [normalize_id(value) for value in compatible]
+        if "aliases" in model:
+            if not isinstance(model["aliases"], list):
+                raise ValueError("別称は配列が必要です")
+            model["aliases"] = [normalize_id(value) for value in model["aliases"]]
     if "cases" in result:
         for case in result["cases"]["test_cases"].values():
             case["supplier_name"] = supplier_name(case.get("supplier_name"))

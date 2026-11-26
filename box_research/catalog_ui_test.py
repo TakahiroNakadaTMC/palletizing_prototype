@@ -203,8 +203,11 @@ async function save() {
   await until(() => el('feedback').className === 'error' && !el('reload').disabled, 'invalid dimensions must show error');
   assert(el('dirty').textContent.includes('未保存'), 'failed save retains drafts');
   rowButton('サンボックス#99', '編集');
-  field('length', 500); field('description', 'line one\nline two'); submit();
+  field('length', 500); field('description', 'line one\nline two');
+  field('aliases', 'ｻﾝﾎﾞｯｸｽ342B\nTP-342B'); submit();
   await save();
+  assert(row('サンボックス#99').textContent.includes('サンボックス342B')
+    && row('サンボックス#99').textContent.includes('TP-342B'), 'model aliases saved and listed');
   tab('lids'); click('add');
   field('id','テスト蓋'); field('length',500); field('width',400); field('thickness',10);
   submit(); await save();
@@ -213,6 +216,9 @@ async function save() {
   compatible.checked = true; submit(); await save();
   tab('parts'); click('add');
   field('id','０００１０'); field('supplier_name','Supplier A'); field('box_name','表示箱');
+  assert([...el('field-box_model_id').options].some(option => option.value === 'サンボックス#99'
+    && option.textContent.includes('サンボックス342B') && option.textContent.includes('TP-342B')),
+    'model aliases are visible in part model selector');
   field('box_model_id','サンボックス#99');
   el('field-box_model_id').dispatchEvent(new w.Event('change',{bubbles:true}));
   field('lid_id','テスト蓋'); submit(); await save();
@@ -559,6 +565,7 @@ class CatalogBrowserTest(CatalogFixture, unittest.TestCase):
             print(output)
             data, _ = load_catalog(self.root)
             self.assertEqual(data["parts"]["00010"]["box_model_id"], "変更後モデル")
+            self.assertEqual(data["models"]["変更後モデル"]["aliases"], ["サンボックス342B", "TP-342B"])
             self.assertNotIn("ui_case", data["cases"]["test_cases"])
             self.assertIn("テスト蓋", data["lids"])
         finally:

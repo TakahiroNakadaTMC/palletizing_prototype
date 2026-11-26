@@ -60,9 +60,23 @@ def validate_catalog_databases(parts: Dict[str, Any], models: Dict[str, Any],
             raise ValueError(lid_id + ": LはW以上にしてください")
     if sum(lid["type"] == "NONE" for lid in lids.values()) != 1:
         raise ValueError("無蓋は1件必要です")
+    model_aliases = {}
+    model_ids = set(models)
     for model_id, model in models.items():
         if model.get("type") not in ("TP", "NON_TP"):
             raise ValueError(model_id + ": 箱の規格が不正です")
+        aliases = model.get("aliases", [])
+        if not isinstance(aliases, list):
+            raise ValueError(model_id + ": 別称は配列で指定してください")
+        normalized_aliases = set()
+        for alias in aliases:
+            _canonical_text(alias, model_id + ".aliases")
+            if alias in model_ids or alias in normalized_aliases:
+                raise ValueError(model_id + ": 別称が共通モデル名または他の別称と重複しています")
+            if alias in model_aliases:
+                raise ValueError(alias + ": 別称が複数の共通モデルに登録されています")
+            normalized_aliases.add(alias)
+            model_aliases[alias] = model_id
         for key in ("length", "width", "height", "fitting_depth", "rib_thickness"):
             _finite_dimension(model, key, model_id,
                               allow_zero=key in ("fitting_depth", "rib_thickness"))
