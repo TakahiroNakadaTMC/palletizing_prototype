@@ -112,6 +112,7 @@ def make_part_result():
                 "box_model_id": "M-A",
                 "lid_id": "L-A",
                 "count": 1,
+                "dimensions": {"width": 400, "length": 300, "height": 200},
                 "reason": "space shortage",
             }
         ],
@@ -119,7 +120,7 @@ def make_part_result():
             "is_valid": True,
             "volume_efficiency_percent": 66.6,
             "total_layers": 1,
-            "warnings": [],
+            "warnings": ["要確認: パレットからのはみ出し 1mm", "別の確認事項"],
             "violations": [],
             "cargo_height": 210,
             "total_height": 340,
@@ -663,8 +664,16 @@ class ViewerCatalogTests(unittest.TestCase):
         text = out.read_text(encoding="utf-8")
         self.assertIn("\\u003c", text)
         self.assertIn('id="top-header"', text)
+        self.assertIn("品番別内訳", text)
+        self.assertIn("未配置数", text)
+        self.assertIn('id="metric-max-outline"', text)
+        self.assertIn("formatMaxOutlineLimit(data.pallet)", text)
+        self.assertIn("formatLwhDimensions(item.dimensions)", text)
+        self.assertNotIn('id="metric-overhang"', text)
         self.assertIn("ResultIdentity.boxLabel(b)", text)
-        self.assertIn("function syncInspectorTop()", text)
+        self.assertIn("function syncFloatingPanelPositions()", text)
+        self.assertIn('id="view-controls"', text)
+        self.assertIn("xl:w-96", text)
         bad = copy.deepcopy(self.part_result)
         bad["input_mode"] = "legacy"
         with self.assertRaises(ValueError):
@@ -683,6 +692,24 @@ const report = async (result, detail='') => { try { await fetch('/probe?result='
   await until(()=>frame.contentDocument?.getElementById('part-summary')?.textContent.includes('共通モデル'),'part load');
   const w = frame.contentWindow, d = frame.contentDocument;
   const box = w.eval('currentData.boxes[0]');
+  const summaryRows = [...d.querySelectorAll('#part-summary tbody tr')].map(row => [...row.cells].map(cell => cell.textContent));
+  if (JSON.stringify(summaryRows) !== JSON.stringify([
+    ['PN-001', 'M-A', 'L-A', '2', '1', '1'],
+    ['PN-002', 'M-B', 'L-B', '1', '1', '0']
+  ])) throw new Error('part summary rows');
+  if (d.getElementById('metric-overhang')) throw new Error('overhang metric should be absent');
+  if (d.getElementById('metric-max-outline').textContent !==
+      '荷山最大外形（上限） L×W×H: 1360 × 1100 × 1200 mm（Hはパレット上面から）') throw new Error('maximum outline metric');
+  const unplacedSummary = d.getElementById('unplaced-summary').textContent;
+  if (!unplacedSummary.includes('箱外寸 L×W×H: 300 × 400 × 200 mm')) throw new Error('unplaced dimensions');
+  if (w.eval('formatLwhDimensions(undefined)') !== '箱外寸 L×W×H: 寸法未記録') throw new Error('missing dimensions fallback');
+  if (w.eval('formatMaxOutlineLimit({})') !== '荷山最大外形（上限）: 未記録') throw new Error('missing maximum outline fallback');
+  w.eval("updateUIMetrics({...currentData, pallet:(()=>{const p={...currentData.pallet}; delete p.max_x_span; return p})(), unplaced_boxes:currentData.unplaced_boxes.map(({dimensions,...item})=>item)})");
+  if (!d.getElementById('unplaced-summary').textContent.includes('箱外寸 L×W×H: 寸法未記録')) throw new Error('legacy unplaced result fallback');
+  if (d.getElementById('metric-max-outline').textContent !== '荷山最大外形（上限）: 未記録') throw new Error('missing maximum outline metric fallback');
+  w.eval('updateUIMetrics(currentData)');
+  const warningMetric = d.getElementById('metric-warning');
+  if (warningMetric.hidden || warningMetric.textContent !== '別の確認事項') throw new Error('overhang warning filtering');
   if (w.eval('ResultIdentity.boxLabel(currentData.boxes[0])') !== 'M-A / L-A') throw new Error('box label');
   const drawnLabels = [], ctx = w.eval('ctx'), originalFillText = ctx.fillText.bind(ctx);
   ctx.fillText = (text, ...args) => { drawnLabels.push(String(text)); return originalFillText(text, ...args); };
@@ -690,9 +717,30 @@ const report = async (result, detail='') => { try { await fetch('/probe?result='
   ctx.fillText = originalFillText;
   if (!drawnLabels.includes('1: M-A / L-A')) throw new Error('rendered box label');
   w.inspectBox(box);
-  if (!d.getElementById('part-inspector').textContent.includes('PN-001')) throw new Error('inspector');
+  const partInspector = d.getElementById('part-inspector').textContent;
+  if (partInspector !== '仕入先: SUP-A / 共通モデル: M-A') throw new Error('inspector identity');
+  const inspectorText = d.getElementById('inspector-content').textContent;
+  if ((inspectorText.match(/PN-001/g) || []).length !== 1 ||
+      (inspectorText.match(/L-A/g) || []).length !== 1) throw new Error('duplicate inspector identity');
+  if (d.getElementById('inspector-panel').getBoundingClientRect().width <= 288) throw new Error('inspector width');
+  const header = d.getElementById('top-header');
+  const select = d.getElementById('select-test-case');
+  const controls = d.getElementById('view-controls');
+  const summaryDetails = header.querySelector('details');
+  const selectTop = select.getBoundingClientRect().top;
+  const assertDesktopControlsBelowLeftCard = () => {
+    const leftCardBottom = header.firstElementChild.getBoundingClientRect().bottom;
+    if (controls.getBoundingClientRect().top < leftCardBottom + 11) throw new Error('desktop view controls overlap');
+    if (Math.abs(select.getBoundingClientRect().top - selectTop) > 1) throw new Error('result selector moved');
+  };
+  summaryDetails.open = false;
+  await sleep();
+  assertDesktopControlsBelowLeftCard();
+  summaryDetails.open = true;
+  await sleep();
+  assertDesktopControlsBelowLeftCard();
   const assertInspectorBelowHeader = () => {
-    const headerBottom = d.getElementById('top-header').getBoundingClientRect().bottom;
+    const headerBottom = header.getBoundingClientRect().bottom;
     const inspectorTop = d.getElementById('inspector-panel').getBoundingClientRect().top;
     if (inspectorTop < headerBottom + 11) throw new Error(`inspector overlap: ${inspectorTop} < ${headerBottom}`);
   };
@@ -700,6 +748,23 @@ const report = async (result, detail='') => { try { await fetch('/probe?result='
   frame.height = '700';
   await sleep();
   assertInspectorBelowHeader();
+  frame.width = '600';
+  await sleep();
+  w.dispatchEvent(new w.Event('resize'));
+  await sleep();
+  const mobileSelectTop = select.getBoundingClientRect().top;
+  summaryDetails.open = false;
+  await sleep();
+  const assertMobileLayout = () => {
+    const headerBottom = header.getBoundingClientRect().bottom;
+    const controlsTop = controls.getBoundingClientRect().top;
+    if (controlsTop < headerBottom + 11) throw new Error('mobile view controls overlap the header');
+    if (Math.abs(select.getBoundingClientRect().top - mobileSelectTop) > 1) throw new Error('mobile result selector moved');
+  };
+  assertMobileLayout();
+  summaryDetails.open = true;
+  await sleep();
+  assertMobileLayout();
   d.getElementById('step-slider').value = '1';
   d.getElementById('step-slider').dispatchEvent(new w.Event('input'));
   if (d.getElementById('step-current').textContent !== '1') throw new Error('timeline');
@@ -712,7 +777,17 @@ const report = async (result, detail='') => { try { await fetch('/probe?result='
             r'<script src="https://[^"]+"></script>',
             "",
             (Path(__file__).resolve().parent / "index.html").read_text(encoding="utf-8"),
-        ).replace("</head>", "<script>const lucide={createIcons(){}};</script></head>")
+        ).replace(
+            "</head>",
+            "<style>"
+            "#top-header{position:absolute;top:16px;left:16px;right:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}"
+            "#top-header>div:first-child{box-sizing:border-box;padding:12px;}"
+            "#top-header>div:nth-child(2){box-sizing:border-box;width:min(55vw,760px);}"
+            "#view-controls{position:absolute;left:16px;}"
+            "#inspector-panel{position:absolute;right:16px;bottom:112px;width:384px;box-sizing:border-box;}"
+            "@media(max-width:767px){#top-header{flex-direction:column;}#top-header>div:nth-child(2){width:100%;}}"
+            "</style><script>const lucide={createIcons(){}};</script></head>",
+        )
         run = subprocess.run(
             [
                 str(EDGE),

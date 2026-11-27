@@ -159,8 +159,12 @@ def run_catalog_case(
             model_reasons = reasons.get(part["box_model_id"])
             if not model_reasons:
                 raise RuntimeError("未配置箱に対応する計算上の理由がありません")
-            unplaced.append(dict(identity, count=missing,
-                                 reason=" / ".join(dict.fromkeys(model_reasons))))
+            model = models[part["box_model_id"]]
+            unplaced.append(dict(
+                identity, count=missing,
+                dimensions={key: model[key] for key in ("width", "length", "height")},
+                reason=" / ".join(dict.fromkeys(model_reasons)),
+            ))
     if sum(placed_counts.values()) != result["placed_boxes_count"]:
         raise RuntimeError("配置数と品番配分数が一致しません")
     if sum(item["count"] for item in unplaced) != result["unplaced_boxes_count"]:

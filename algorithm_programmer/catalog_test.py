@@ -60,6 +60,11 @@ class CatalogCalculationTests(unittest.TestCase):
             for key in ("supplier_name", "box_name", "box_model_id", "lid_id"):
                 self.assertEqual(row[key], part[key])
             self.assertEqual(row["box_id"], part["box_name"])
+        for row in result["unplaced_boxes"]:
+            model = catalog["models"][row["box_model_id"]]
+            self.assertEqual(row["dimensions"], {
+                key: model[key] for key in ("width", "length", "height")
+            })
         by_order = {box["order"]: box for box in result["boxes"]}
         for field in ("support_boxes", "multi_corner_boxes"):
             for row in result["summary"]["top_support"].get(field, []):

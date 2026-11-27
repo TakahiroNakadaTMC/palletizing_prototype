@@ -34,7 +34,7 @@
   </div>
 
   <!-- Top Navigation / Controls Bar -->
-  <header id="top-header" class="absolute top-4 left-4 right-4 z-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pointer-events-none">
+  <header id="top-header" class="absolute top-4 left-4 right-4 z-20 flex flex-col md:flex-row items-start justify-between gap-3 pointer-events-none">
     <div class="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-4 py-3 rounded-2xl shadow-2xl pointer-events-auto flex items-center gap-3">
       <div class="p-2 bg-indigo-600 text-white rounded-xl shadow">
         <i data-lucide="layers" class="w-5 h-5"></i>
@@ -57,36 +57,42 @@
       </div>
     </div>
 
-    <!-- Summary Metrics Badges -->
-    <div class="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-4 py-2.5 rounded-2xl shadow-2xl pointer-events-auto flex items-center gap-4 text-xs">
-      <div>
-        <span class="text-[10px] text-slate-400 block font-medium">配置 / 投入</span>
-        <span class="font-bold font-mono text-white text-sm" id="metric-boxes">0 / 0 箱</span>
-        <span class="block text-[10px] text-amber-300" id="metric-unplaced">未配置 0 箱</span>
+    <!-- Summary Metrics and Part Counts -->
+    <div class="w-full md:w-[min(55vw,760px)] bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-4 py-2.5 rounded-2xl shadow-2xl pointer-events-auto flex flex-col gap-2">
+      <div class="flex flex-wrap items-center gap-4 text-xs">
+        <div>
+          <span class="text-[10px] text-slate-400 block font-medium">配置 / 投入</span>
+          <span class="font-bold font-mono text-white text-sm" id="metric-boxes">0 / 0 箱</span>
+          <span class="block text-[10px] text-amber-300" id="metric-unplaced">未配置 0 箱</span>
+        </div>
+        <div class="w-px h-6 bg-slate-700"></div>
+        <div>
+          <span class="text-[10px] text-slate-400 block font-medium">段数</span>
+          <span class="font-bold font-mono text-white text-sm" id="metric-layers">0 段</span>
+        </div>
+        <div class="w-px h-6 bg-slate-700"></div>
+        <div>
+          <span class="text-[10px] text-slate-400 block font-medium">荷姿外寸 L×W / パレットH + 荷物H = 総H</span>
+          <span class="font-bold font-mono text-indigo-300 text-xs" id="metric-dims">0 × 0 × 0 mm</span>
+          <span class="block text-[10px] text-slate-300" id="metric-heights">0 + 0 = 0 mm</span>
+          <span class="block text-[10px] text-slate-300 font-mono" id="metric-max-outline">荷山最大外形（上限）: 未記録</span>
+          <span class="block text-[10px] text-amber-300" id="metric-warning" hidden></span>
+        </div>
+        <div class="w-px h-6 bg-slate-700"></div>
+        <div>
+          <span class="text-[10px] text-slate-400 block font-medium">体積充填率</span>
+          <span class="font-bold font-mono text-emerald-400 text-sm" id="metric-vol">0 %</span>
+        </div>
       </div>
-      <div class="w-px h-6 bg-slate-700"></div>
-      <div>
-        <span class="text-[10px] text-slate-400 block font-medium">段数</span>
-        <span class="font-bold font-mono text-white text-sm" id="metric-layers">0 段</span>
-      </div>
-      <div class="w-px h-6 bg-slate-700"></div>
-      <div>
-        <span class="text-[10px] text-slate-400 block font-medium">荷姿外寸 L×W / パレットH + 荷物H = 総H</span>
-        <span class="font-bold font-mono text-indigo-300 text-xs" id="metric-dims">0 × 0 × 0 mm</span>
-        <span class="block text-[10px] text-slate-300" id="metric-heights">0 + 0 = 0 mm</span>
-        <span class="block text-[10px] text-amber-300" id="metric-overhang"></span>
-        <span class="block text-[10px] text-amber-300" id="metric-warning"></span>
-      </div>
-      <div class="w-px h-6 bg-slate-700"></div>
-      <div>
-        <span class="text-[10px] text-slate-400 block font-medium">体積充填率</span>
-        <span class="font-bold font-mono text-emerald-400 text-sm" id="metric-vol">0 %</span>
-      </div>
+      <details open class="border-t border-slate-700 pt-2">
+        <summary class="cursor-pointer text-[11px] font-bold text-indigo-300">品番別内訳</summary>
+        <div id="part-summary" class="mt-2 max-h-32 overflow-auto custom-scrollbar text-[10px] text-slate-300"></div>
+      </details>
     </div>
   </header>
 
   <!-- Left Camera & View Mode Controls -->
-  <aside class="absolute left-4 top-32 z-20 flex flex-col gap-2 pointer-events-auto">
+  <aside id="view-controls" class="absolute left-4 top-32 z-20 flex flex-col gap-2 pointer-events-auto">
     <!-- View Mode Selector -->
     <div class="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 p-1.5 rounded-xl shadow-2xl flex flex-col gap-1 text-xs">
       <div class="text-[10px] font-bold text-slate-400 px-2 py-1 uppercase tracking-wider">視点切替</div>
@@ -131,7 +137,7 @@
   </aside>
 
   <!-- Right Detail Inspector Panel -->
-  <aside id="inspector-panel" class="absolute right-4 top-24 bottom-28 w-72 min-h-0 overflow-y-auto custom-scrollbar bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-2xl shadow-2xl p-4 z-20 pointer-events-auto flex flex-col gap-3 hidden md:flex">
+  <aside id="inspector-panel" class="absolute right-4 top-24 bottom-28 w-80 xl:w-96 max-w-[calc(100vw-2rem)] min-h-0 overflow-y-auto custom-scrollbar bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-2xl shadow-2xl p-4 z-20 pointer-events-auto flex flex-col gap-3 hidden md:flex">
     <div class="flex items-center justify-between border-b border-slate-800 pb-2">
       <h2 class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
         <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-400"></i> 箱詳細インスペクタ
@@ -148,10 +154,6 @@
       <p class="text-center py-10 text-slate-500">荷姿の箱をクリックすると、詳細パラメータが表示されます。</p>
     </div>
 
-    <details open class="border-t border-slate-800 pt-2">
-      <summary class="cursor-pointer text-[11px] font-bold text-indigo-300">品番別数量・結果の方式</summary>
-      <div id="part-summary" class="mt-2 max-h-32 overflow-y-auto space-y-2 text-[10px] text-slate-300"></div>
-    </details>
     <details id="unplaced-details" open class="border-t border-slate-800 pt-2">
       <summary class="cursor-pointer text-[11px] font-bold text-amber-300">未配置の箱と理由</summary>
       <div id="unplaced-summary" class="mt-2 max-h-28 overflow-y-auto space-y-2 text-[10px] text-slate-300"></div>
@@ -253,22 +255,44 @@
     let showLabels = true;
     let inspectorLayoutObserver = null;
 
-    function syncInspectorTop() {
+    function getBottomWithinOffsetParent(element, offsetParent) {
+      let top = 0;
+      let current = element;
+      while (current && current !== offsetParent) {
+        top += current.offsetTop;
+        current = current.offsetParent;
+      }
+      if (current === offsetParent) return top + element.offsetHeight;
+      return element.getBoundingClientRect().bottom + window.scrollY;
+    }
+
+    function syncFloatingPanelPositions() {
       const header = document.getElementById('top-header');
       const inspector = document.getElementById('inspector-panel');
-      if (!header || !inspector) return;
-      inspector.style.top = `${Math.ceil(header.getBoundingClientRect().bottom + 12)}px`;
+      const controls = document.getElementById('view-controls');
+      if (!header) return;
+      if (inspector) inspector.style.top = `${Math.ceil(getBottomWithinOffsetParent(header, inspector.offsetParent) + 12)}px`;
+      if (controls) {
+        const desktopLayout = window.matchMedia('(min-width: 768px)').matches;
+        const controlsAnchor = desktopLayout ? header.firstElementChild : header;
+        if (controlsAnchor) controls.style.top = `${Math.ceil(getBottomWithinOffsetParent(controlsAnchor, controls.offsetParent) + 12)}px`;
+      }
     }
 
     function setupInspectorLayout() {
       const header = document.getElementById('top-header');
       if (!header) return;
-      syncInspectorTop();
-      window.addEventListener('resize', syncInspectorTop);
+      syncFloatingPanelPositions();
+      window.addEventListener('resize', syncFloatingPanelPositions);
+      const desktopLayoutQuery = window.matchMedia('(min-width: 768px)');
+      if (desktopLayoutQuery.addEventListener) desktopLayoutQuery.addEventListener('change', syncFloatingPanelPositions);
+      else desktopLayoutQuery.addListener(syncFloatingPanelPositions);
       if (typeof ResizeObserver !== 'undefined') {
-        inspectorLayoutObserver = new ResizeObserver(syncInspectorTop);
+        inspectorLayoutObserver = new ResizeObserver(syncFloatingPanelPositions);
         inspectorLayoutObserver.observe(header);
+        if (header.firstElementChild) inspectorLayoutObserver.observe(header.firstElementChild);
       }
+      header.querySelectorAll('details').forEach(details => details.addEventListener('toggle', syncFloatingPanelPositions));
     }
 
     function initRenderer() {
@@ -346,9 +370,10 @@
       }
       document.getElementById('constraint-heading').textContent = '制約違反理由';
       for (const id of ['metric-boxes', 'metric-unplaced', 'metric-layers', 'metric-dims',
-        'metric-heights', 'metric-overhang', 'metric-warning', 'metric-vol']) {
+        'metric-heights', 'metric-max-outline', 'metric-warning', 'metric-vol']) {
         document.getElementById(id).textContent = '—';
       }
+      document.getElementById('metric-warning').hidden = true;
       document.getElementById('step-current').textContent = '0';
       document.getElementById('step-total').textContent = '0';
       const slider = document.getElementById('step-slider');
@@ -566,6 +591,28 @@
       };
     }
 
+    function formatLwhDimensions(dimensions) {
+      if (!dimensions || typeof dimensions !== 'object') return '箱外寸 L×W×H: 寸法未記録';
+      const length = Number(dimensions.length);
+      const width = Number(dimensions.width);
+      const height = Number(dimensions.height);
+      if (![length, width, height].every(value => Number.isFinite(value) && value > 0)) {
+        return '箱外寸 L×W×H: 寸法未記録';
+      }
+      return `箱外寸 L×W×H: ${length} × ${width} × ${height} mm`;
+    }
+
+    function formatMaxOutlineLimit(pallet) {
+      if (!pallet || typeof pallet !== 'object') return '荷山最大外形（上限）: 未記録';
+      const length = Number(pallet.max_x_span);
+      const width = Number(pallet.max_y_span);
+      const height = Number(pallet.max_height);
+      if (![length, width, height].every(value => Number.isFinite(value) && value > 0)) {
+        return '荷山最大外形（上限）: 未記録';
+      }
+      return `荷山最大外形（上限） L×W×H: ${length} × ${width} × ${height} mm（Hはパレット上面から）`;
+    }
+
     function updateUIMetrics(data) {
       const summary = data.summary || {};
       const boxes = data.boxes || [];
@@ -613,14 +660,12 @@
       const shortSide = Math.min(overallBounds.x_span, overallBounds.y_span);
       document.getElementById('metric-dims').textContent = `L${longSide} × W${shortSide} mm (X${overallBounds.x_span} / Y${overallBounds.y_span})`;
       document.getElementById('metric-heights').textContent = `${cfg.pH} + ${overallBounds.max_z} = ${Math.round((cfg.pH + overallBounds.max_z) * 100) / 100} mm`;
-      const overhang = [
-        Math.max(0, -overallBounds.min_x), Math.max(0, overallBounds.max_x - cfg.pW),
-        Math.max(0, -overallBounds.min_y), Math.max(0, overallBounds.max_y - cfg.pL)
-      ].map(value => Math.round(value * 100) / 100);
-      document.getElementById('metric-overhang').textContent = `はみ出し 左/右/手前/奥: ${overhang.join(' / ')} mm`;
+      document.getElementById('metric-max-outline').textContent = formatMaxOutlineLimit(data.pallet);
       const warnings = Array.isArray(summary.warnings) ? summary.warnings : [];
-      document.getElementById('metric-warning').textContent = warnings.length
-        ? warnings.join(' / ') : (overhang.some(value => value > 0) ? '要確認: パレットからはみ出しています' : 'はみ出しなし');
+      const displayWarnings = warnings.filter(warning => !/はみ出し|overhang/i.test(String(warning)));
+      const warningMetric = document.getElementById('metric-warning');
+      warningMetric.textContent = displayWarnings.join(' / ');
+      warningMetric.hidden = displayWarnings.length === 0;
       document.getElementById('metric-vol').textContent = `${summary.volume_efficiency_percent || 0} %`;
 
       const unplacedSummary = document.getElementById('unplaced-summary');
@@ -637,10 +682,13 @@
           const heading = document.createElement('div');
           heading.className = 'font-mono text-white';
           heading.textContent = `${ResultIdentity.label(item)} × ${item.count}`;
+          const dimensions = document.createElement('p');
+          dimensions.className = 'mt-0.5 text-slate-300';
+          dimensions.textContent = formatLwhDimensions(item.dimensions);
           const reason = document.createElement('p');
           reason.className = 'mt-0.5 text-slate-400';
           reason.textContent = item.reason || '理由情報なし';
-          entry.append(heading, reason);
+          entry.append(heading, dimensions, reason);
           unplacedSummary.appendChild(entry);
         });
       }

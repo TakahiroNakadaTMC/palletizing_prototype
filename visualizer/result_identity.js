@@ -59,19 +59,45 @@ const ResultIdentity = {
     const target = document.getElementById('part-summary');
     target.replaceChildren();
     const notice = document.createElement('p');
+    notice.className = 'mb-1 text-slate-400';
     notice.textContent = '品番方式・計算時点の記録です。合否バッジは計算判定です。独立検証レポートも確認してください。';
     target.appendChild(notice);
-    for (const row of data.part_counts) {
-      const entry = document.createElement('p');
-      entry.textContent = `${this.label(row)} / 仕入先: ${row.supplier_name} / 共通モデル: ${row.box_model_id} / 蓋: ${row.lid_id} / 投入${row.input_count}・配置${row.placed_count}・未配置${row.unplaced_count}`;
-      target.appendChild(entry);
+
+    const table = document.createElement('table');
+    table.className = 'min-w-[600px] w-full border-collapse text-left';
+    const head = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    for (const label of ['品番', '共通モデル', '蓋', '投入数', '配置数', '未配置数']) {
+      const cell = document.createElement('th');
+      cell.className = 'border-b border-slate-700 px-2 py-1 font-semibold text-slate-400';
+      cell.scope = 'col';
+      cell.textContent = label;
+      headerRow.appendChild(cell);
     }
+    head.appendChild(headerRow);
+    table.appendChild(head);
+
+    const body = document.createElement('tbody');
+    for (const row of data.part_counts) {
+      const line = document.createElement('tr');
+      const values = [row.part_number, row.box_model_id, row.lid_id,
+        row.input_count, row.placed_count, row.unplaced_count];
+      values.forEach((value, index) => {
+        const cell = document.createElement('td');
+        cell.className = `border-b border-slate-800 px-2 py-1 ${index >= 3 ? 'text-right font-mono' : ''}`;
+        cell.textContent = String(value);
+        line.appendChild(cell);
+      });
+      body.appendChild(line);
+    }
+    table.appendChild(body);
+    target.appendChild(table);
   },
   inspect(content, box) {
     if (!box.part_number) return;
     const detail = document.createElement('p');
     detail.id = 'part-inspector';
-    detail.textContent = `品番: ${box.part_number} / 仕入先: ${box.supplier_name} / 箱名称: ${box.box_name} / 共通モデル: ${box.box_model_id} / 固定蓋: ${box.lid_id}`;
+    detail.textContent = `仕入先: ${box.supplier_name} / 共通モデル: ${box.box_model_id}`;
     content.prepend(detail);
   }
 };
