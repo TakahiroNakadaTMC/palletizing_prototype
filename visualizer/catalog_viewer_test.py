@@ -417,6 +417,100 @@ class ViewerCatalogTests(unittest.TestCase):
         EDGE.exists() and os.environ.get("PALLETIZER_RUN_BROWSER_TESTS") == "1",
         "Set PALLETIZER_RUN_BROWSER_TESTS=1 with Playwright available",
     )
+    def test_browser_coordinate_markers_and_origin_axes(self):
+        from playwright.sync_api import sync_playwright
+
+        html = (Path(__file__).resolve().parent / "index.html").read_text(encoding="utf-8")
+        self.fixtures["/index.html"] = re.sub(
+            r'<script src="https://[^\"]+"></script>', "", html,
+        ).replace("</head>", "<script>const lucide={createIcons(){}};</script></head>")
+        with sync_playwright() as playwright:
+            with tempfile.TemporaryDirectory(dir=str(Path(__file__).resolve().parents[1])) as profile:
+                context = playwright.chromium.launch_persistent_context(
+                    profile, executable_path=str(EDGE), headless=True,
+                    args=["--no-first-run", "--disable-extensions", "--disable-background-networking",
+                          "--no-proxy-server", "--disable-features=msEdgeSidebarV2"],
+                    viewport={"width": 1400, "height": 1000},
+                )
+                try:
+                    page = context.pages[0]
+                    errors = []
+                    page.on("pageerror", lambda error: errors.append(str(error)))
+                    page.goto(self.url + "/index.html")
+                    page.wait_for_function("currentData?.test_name === 'fixture_part'")
+                    marker_probe = page.evaluate("""() => {
+                      const box = currentData.boxes[0];
+                      const expected = project3D(box.coordinate_position.x,
+                        box.coordinate_position.y, box.coordinate_position.z);
+                      const originalArc = ctx.arc;
+                      const arcs = [];
+                      ctx.arc = (...args) => arcs.push(args);
+                      try { drawCoordinateMarkers([box]); }
+                      finally { ctx.arc = originalArc; }
+                      return { expected, arcs, originalZ: box.coordinate_position.z,
+                        renderedZ: box.position.z };
+                    }""")
+                    self.assertEqual(marker_probe["originalZ"], 200)
+                    self.assertEqual(marker_probe["renderedZ"], 0)
+                    self.assertEqual(len(marker_probe["arcs"]), 2)
+                    for coordinate in marker_probe["arcs"]:
+                        self.assertAlmostEqual(coordinate[0], marker_probe["expected"]["x"])
+                        self.assertAlmostEqual(coordinate[1], marker_probe["expected"]["y"])
+                    self.assertEqual([arc[2] for arc in marker_probe["arcs"]], [9, 4])
+
+                    painter_order = page.evaluate("""() => {
+                      const previous = { currentData, currentStep, viewMode, showLabels,
+                        selectedBoxOrder, drawSolidBox, drawCoordinateMarkers };
+                      try {
+                        const base = currentData.boxes[0];
+                        currentData = { boxes: [
+                          { ...base, order: 1, position: { x: 0, y: 0, z: 0 },
+                            coordinate_position: { x: 0, y: 0, z: 100 },
+                            dimensions: { width: 100, length: 100, height: 100 }, lid_thickness: 0 },
+                          { ...base, order: 2, position: { x: 0, y: 0, z: 100 },
+                            coordinate_position: { x: 0, y: 0, z: 200 },
+                            dimensions: { width: 100, length: 100, height: 100 }, lid_thickness: 0 }
+                        ] };
+                        currentStep = 2;
+                        viewMode = 'top';
+                        showLabels = false;
+                        selectedBoxOrder = -1;
+                        const calls = [];
+                        drawSolidBox = (x, y, z) => calls.push(`box:${z}`);
+                        drawCoordinateMarkers = boxes => calls.push(`marker:${boxes[0].order}`);
+                        drawBoxes();
+                        return calls;
+                      } finally {
+                        ({ currentData, currentStep, viewMode, showLabels,
+                          selectedBoxOrder, drawSolidBox, drawCoordinateMarkers } = previous);
+                      }
+                    }""")
+                    self.assertEqual(painter_order, ["box:0", "marker:1", "box:100", "marker:2"])
+
+                    for view, expected_axes in {
+                        "iso": {"X", "Y", "Z"},
+                        "top": {"X", "Y"},
+                        "front": {"X", "Z"},
+                        "side": {"Y", "Z"},
+                    }.items():
+                        labels = page.evaluate("""view => {
+                          viewMode = view;
+                          const originalFillText = ctx.fillText;
+                          const labels = [];
+                          ctx.fillText = text => labels.push(text);
+                          try { drawOriginAxes(); }
+                          finally { ctx.fillText = originalFillText; }
+                          return labels;
+                        }""", view)
+                        self.assertEqual(set(labels), expected_axes)
+                    self.assertEqual(errors, [])
+                finally:
+                    context.close()
+
+    @unittest.skipUnless(
+        EDGE.exists() and os.environ.get("PALLETIZER_RUN_BROWSER_TESTS") == "1",
+        "Set PALLETIZER_RUN_BROWSER_TESTS=1 with Playwright available",
+    )
     def test_browser_mixed_and_all_error_runs(self):
         from playwright.sync_api import sync_playwright
 
@@ -453,6 +547,22 @@ class ViewerCatalogTests(unittest.TestCase):
                     page.goto(self.url + "/index.html")
                     page.wait_for_function("currentData?.test_name === 'fixture_part'")
                     self.assertIn("PASS 1 / FAIL 1 / ERROR 1", page.locator("#run-summary").inner_text())
+                    self.assertEqual(page.locator("#select-test-case").input_value(), "1")
+                    self.assertFalse(page.locator("#btn-result-prev").is_disabled())
+                    self.assertFalse(page.locator("#btn-result-next").is_disabled())
+                    page.locator("#btn-result-prev").dispatch_event("click")
+                    self.assertEqual(page.locator("#select-test-case").input_value(), "0")
+                    self.assertTrue(page.locator("#case-error").is_visible())
+                    self.assertTrue(page.locator("#btn-result-prev").is_disabled())
+                    page.locator("#btn-result-next").dispatch_event("click")
+                    page.wait_for_function("currentData?.test_name === 'fixture_part'")
+                    self.assertEqual(page.locator("#select-test-case").input_value(), "1")
+                    page.locator("#btn-result-next").dispatch_event("click")
+                    page.wait_for_function("currentData?.test_name === 'fixture_fail'")
+                    self.assertEqual(page.locator("#select-test-case").input_value(), "2")
+                    self.assertTrue(page.locator("#btn-result-next").is_disabled())
+                    page.locator("#btn-result-prev").dispatch_event("click")
+                    page.wait_for_function("currentData?.test_name === 'fixture_part'")
                     self.assertEqual(page.locator("#select-test-case").input_value(), "1")
                     page.evaluate("inspectBox(currentData.boxes[0]); togglePlay()")
                     page.select_option("#select-test-case", "0")
@@ -503,6 +613,8 @@ class ViewerCatalogTests(unittest.TestCase):
                     page.reload()
                     page.wait_for_selector("#case-error", state="visible")
                     self.assertIn("PASS 0 / FAIL 0 / ERROR 1", page.locator("#run-summary").inner_text())
+                    self.assertTrue(page.locator("#btn-result-prev").is_disabled())
+                    self.assertTrue(page.locator("#btn-result-next").is_disabled())
                     self.assertTrue(page.evaluate("currentData === null"))
                     self.assertEqual(errors, [])
 

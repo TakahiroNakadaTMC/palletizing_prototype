@@ -45,11 +45,13 @@
           <span id="badge-valid" class="text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider"></span>
           <span id="badge-renderer" class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-slate-800 text-slate-300 border border-slate-700">Canvas 2D</span>
         </div>
-        <div class="flex items-center gap-2 mt-1">
-          <label class="text-[11px] text-slate-400 font-medium">テスト結果選択:</label>
+        <div class="flex items-center gap-1 mt-1">
+          <label for="select-test-case" class="text-[11px] text-slate-400 font-medium">テスト結果:</label>
+          <button id="btn-result-prev" type="button" aria-label="前のテスト結果" title="前のテスト結果" disabled class="bg-slate-800 border border-slate-600 text-white text-xs rounded-lg px-2 py-1 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">← 前へ</button>
           <select id="select-test-case" class="bg-slate-800 border border-slate-600 text-white text-xs rounded-lg px-2.5 py-1 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer">
             <option value="">読込中...</option>
           </select>
+          <button id="btn-result-next" type="button" aria-label="次のテスト結果" title="次のテスト結果" disabled class="bg-slate-800 border border-slate-600 text-white text-xs rounded-lg px-2 py-1 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">次へ →</button>
         </div>
         <p id="run-summary" class="text-[11px] text-slate-300" aria-live="polite"></p>
       </div>
@@ -299,6 +301,7 @@
           });
           const first = list.findIndex(item => item.status !== 'ERROR');
           select.selectedIndex = first < 0 ? 0 : first;
+          updateResultNavigation();
           await selectResultEntry(select.selectedIndex);
         } else {
           const error = await res.json();
@@ -701,6 +704,7 @@
         drawGridAndPallet();
         if (showGuides) drawGuides();
         drawBoxes();
+        drawOriginAxes();
       }
 
       requestAnimationFrame(renderLoop);
@@ -846,7 +850,101 @@
             drawBadge(labelPoint.x, labelPoint.y, `${b.order}: ${ResultIdentity.label(b)}`);
           }
         }
+
+        drawCoordinateMarkers([b]);
       });
+    }
+
+    function drawCoordinateMarkers(boxes) {
+      boxes.forEach(box => {
+        const position = box.coordinate_position || box.position;
+        const point = project3D(position.x, position.y, position.z);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 9, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#facc15';
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function drawOriginAxes() {
+      const origin = project3D(0, 0, 0);
+      const axes = [
+        { label: 'X', color: '#fb7185', point: project3D(100, 0, 0) },
+        { label: 'Y', color: '#4ade80', point: project3D(0, 100, 0) },
+        { label: 'Z', color: '#60a5fa', point: project3D(0, 0, 100) }
+      ];
+      const arrowLength = 68;
+
+      axes.forEach(axis => {
+        const dx = axis.point.x - origin.x;
+        const dy = axis.point.y - origin.y;
+        const projectedLength = Math.hypot(dx, dy);
+        if (projectedLength < 0.001) return;
+
+        const ux = dx / projectedLength;
+        const uy = dy / projectedLength;
+        const tip = { x: origin.x + ux * arrowLength, y: origin.y + uy * arrowLength };
+        const base = { x: tip.x - ux * 13, y: tip.y - uy * 13 };
+        const perpendicular = { x: -uy * 6, y: ux * 6 };
+
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(origin.x, origin.y);
+        ctx.lineTo(base.x, base.y);
+        ctx.strokeStyle = 'rgba(15, 23, 42, 0.95)';
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(origin.x, origin.y);
+        ctx.lineTo(base.x, base.y);
+        ctx.strokeStyle = axis.color;
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(tip.x, tip.y);
+        ctx.lineTo(base.x + perpendicular.x, base.y + perpendicular.y);
+        ctx.lineTo(base.x - perpendicular.x, base.y - perpendicular.y);
+        ctx.closePath();
+        ctx.fillStyle = axis.color;
+        ctx.fill();
+
+        const labelX = tip.x + ux * 16;
+        const labelY = tip.y + uy * 16;
+        ctx.beginPath();
+        ctx.arc(labelX, labelY, 10, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
+        ctx.strokeStyle = axis.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(axis.label, labelX, labelY);
+        ctx.restore();
+      });
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(origin.x, origin.y, 6, 0, Math.PI * 2);
+      ctx.fillStyle = '#0f172a';
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
     }
 
     function getLidGeometry(b) {
@@ -1074,11 +1172,30 @@
     // -----------------------------------------------------------------------
     // UI Event Handlers
     // -----------------------------------------------------------------------
+    function updateResultNavigation() {
+      const select = document.getElementById('select-test-case');
+      const index = select.selectedIndex;
+      document.getElementById('btn-result-prev').disabled = index <= 0;
+      document.getElementById('btn-result-next').disabled = index < 0 || index >= resultEntries.length - 1;
+    }
+
+    function moveResultSelection(offset) {
+      const select = document.getElementById('select-test-case');
+      const index = select.selectedIndex + offset;
+      if (index < 0 || index >= resultEntries.length) return;
+      select.selectedIndex = index;
+      updateResultNavigation();
+      selectResultEntry(index);
+    }
+
     function setupUIEvents() {
       // Test Case Select
       document.getElementById('select-test-case').addEventListener('change', (e) => {
+        updateResultNavigation();
         selectResultEntry(Number(e.target.value));
       });
+      document.getElementById('btn-result-prev').addEventListener('click', () => moveResultSelection(-1));
+      document.getElementById('btn-result-next').addEventListener('click', () => moveResultSelection(1));
 
       // View Preset Buttons
       document.querySelectorAll('.view-btn').forEach(btn => {
