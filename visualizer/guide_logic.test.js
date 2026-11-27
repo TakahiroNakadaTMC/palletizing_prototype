@@ -12,15 +12,57 @@ function extractFunctionBlock(source, startToken, endToken) {
   return source.slice(s, e);
 }
 
+const identityContext = {};
+vm.createContext(identityContext);
+vm.runInContext(`${fs.readFileSync(path.join(__dirname, 'result_identity.js'), 'utf8')}\nthis.ResultIdentity = ResultIdentity;`, identityContext);
+
+test('3D box labels show common model and lid IDs while identity labels remain unchanged', () => {
+  const box = {part_number: 'PN-001', box_name: 'B-A', box_model_id: 'M-A', lid_id: 'L-A'};
+  assert.equal(identityContext.ResultIdentity.boxLabel(box), 'M-A / L-A');
+  assert.equal(identityContext.ResultIdentity.label(box), 'PN-001 / B-A');
+  assert.equal(identityContext.ResultIdentity.boxLabel({box_id: 'legacy-box'}), 'legacy-box');
+});
+
 for (const filename of ['visualize.py', 'index.html']) {
 const source = fs.readFileSync(path.join(__dirname, filename), 'utf8');
 const decode = text => filename.endsWith('.py')
   ? text.replace(/\{\{/g, '{').replace(/\}\}/g, '}') : text;
 const block = decode(extractFunctionBlock(source, 'function hasOwn(obj, key)', 'function updateGuideLegend(data)'));
+const drawBoxes = decode(extractFunctionBlock(source, 'function drawBoxes()', 'function getLidGeometry(b)'));
+const layout = decode(extractFunctionBlock(source, 'function syncInspectorTop()', 'function initRenderer()'));
 const context = {};
 vm.createContext(context);
 vm.runInContext(`${block}\nthis.resolveGuideConfig = resolveGuideConfig;`, context);
 const resolveGuideConfig = context.resolveGuideConfig;
+
+test(`${filename}: 3D labels use the model and lid label`, () => {
+  assert.match(drawBoxes, /ResultIdentity\.boxLabel\(b\)/);
+});
+
+test(`${filename}: inspector stays below a changing header`, () => {
+  let headerBottom = 120;
+  let resizeHandler;
+  let observer;
+  const inspector = {style: {}};
+  const header = {getBoundingClientRect: () => ({bottom: headerBottom})};
+  const layoutContext = {
+    document: {getElementById: id => id === 'top-header' ? header : inspector},
+    window: {addEventListener: (event, handler) => { resizeHandler = handler; }},
+    ResizeObserver: class {
+      constructor(callback) { this.callback = callback; observer = this; }
+      observe(target) { this.target = target; }
+    },
+  };
+  vm.createContext(layoutContext);
+  vm.runInContext(`${layout}\nsetupInspectorLayout();`, layoutContext);
+  assert.equal(inspector.style.top, '132px');
+  headerBottom = 180;
+  resizeHandler();
+  assert.equal(inspector.style.top, '192px');
+  headerBottom = 240;
+  observer.callback();
+  assert.equal(inspector.style.top, '252px');
+});
 
 test(`${filename}: defaults: pallet height is 130 and max spans are 1360/1100`, () => {
   const cfg = resolveGuideConfig({ pallet: {} });

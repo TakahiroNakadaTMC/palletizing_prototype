@@ -8,6 +8,9 @@ const ResultIdentity = {
   label(box) {
     return box.part_number ? `${box.part_number} / ${box.box_name}` : box.box_id;
   },
+  boxLabel(box) {
+    return box.part_number ? `${box.box_model_id} / ${box.lid_id}` : box.box_id;
+  },
   escape(value) {
     return String(value ?? '').replace(/[&<>"']/g, char => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'

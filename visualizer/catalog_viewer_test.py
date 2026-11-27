@@ -662,6 +662,9 @@ class ViewerCatalogTests(unittest.TestCase):
         generate_html(special, str(out))
         text = out.read_text(encoding="utf-8")
         self.assertIn("\\u003c", text)
+        self.assertIn('id="top-header"', text)
+        self.assertIn("ResultIdentity.boxLabel(b)", text)
+        self.assertIn("function syncInspectorTop()", text)
         bad = copy.deepcopy(self.part_result)
         bad["input_mode"] = "legacy"
         with self.assertRaises(ValueError):
@@ -679,8 +682,24 @@ const report = async (result, detail='') => { try { await fetch('/probe?result='
 (async()=>{
   await until(()=>frame.contentDocument?.getElementById('part-summary')?.textContent.includes('共通モデル'),'part load');
   const w = frame.contentWindow, d = frame.contentDocument;
-  w.inspectBox(w.eval('currentData.boxes[0]'));
+  const box = w.eval('currentData.boxes[0]');
+  if (w.eval('ResultIdentity.boxLabel(currentData.boxes[0])') !== 'M-A / L-A') throw new Error('box label');
+  const drawnLabels = [], ctx = w.eval('ctx'), originalFillText = ctx.fillText.bind(ctx);
+  ctx.fillText = (text, ...args) => { drawnLabels.push(String(text)); return originalFillText(text, ...args); };
+  w.eval('currentStep = currentData.boxes.length; drawBoxes()');
+  ctx.fillText = originalFillText;
+  if (!drawnLabels.includes('1: M-A / L-A')) throw new Error('rendered box label');
+  w.inspectBox(box);
   if (!d.getElementById('part-inspector').textContent.includes('PN-001')) throw new Error('inspector');
+  const assertInspectorBelowHeader = () => {
+    const headerBottom = d.getElementById('top-header').getBoundingClientRect().bottom;
+    const inspectorTop = d.getElementById('inspector-panel').getBoundingClientRect().top;
+    if (inspectorTop < headerBottom + 11) throw new Error(`inspector overlap: ${inspectorTop} < ${headerBottom}`);
+  };
+  assertInspectorBelowHeader();
+  frame.height = '700';
+  await sleep();
+  assertInspectorBelowHeader();
   d.getElementById('step-slider').value = '1';
   d.getElementById('step-slider').dispatchEvent(new w.Event('input'));
   if (d.getElementById('step-current').textContent !== '1') throw new Error('timeline');

@@ -58,7 +58,7 @@ def generate_html(result_data: dict, output_html_path: str):
   </div>
 
   <!-- Top Navigation / Info Bar -->
-  <header class="absolute top-4 left-4 right-4 z-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pointer-events-none">
+  <header id="top-header" class="absolute top-4 left-4 right-4 z-20 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pointer-events-none">
     <div class="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-4 py-3 rounded-2xl shadow-2xl pointer-events-auto flex items-center gap-3">
       <div class="p-2 bg-indigo-600 text-white rounded-xl shadow">
         <i data-lucide="layers" class="w-5 h-5"></i>
@@ -130,7 +130,7 @@ def generate_html(result_data: dict, output_html_path: str):
       </label>
       <label class="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white">
         <input type="checkbox" id="toggle-labels" checked class="rounded border-slate-700 bg-slate-800 text-indigo-600 focus:ring-0 cursor-pointer">
-        <span>積み順・型番</span>
+        <span>積み順・共通モデル／蓋</span>
       </label>
     </div>
 
@@ -149,7 +149,7 @@ def generate_html(result_data: dict, output_html_path: str):
   </aside>
 
   <!-- Right Detail Inspector Panel -->
-  <aside id="inspector-panel" class="absolute right-4 top-24 bottom-28 w-72 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-2xl shadow-2xl p-4 z-20 pointer-events-auto flex flex-col gap-3 hidden md:flex">
+  <aside id="inspector-panel" class="absolute right-4 top-24 bottom-28 w-72 min-h-0 overflow-y-auto custom-scrollbar bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-2xl shadow-2xl p-4 z-20 pointer-events-auto flex flex-col gap-3 hidden md:flex">
     <div class="flex items-center justify-between border-b border-slate-800 pb-2">
       <h2 class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
         <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-400"></i> 箱詳細インスペクタ
@@ -157,7 +157,7 @@ def generate_html(result_data: dict, output_html_path: str):
       <span class="text-[10px] text-slate-500">箱をクリック</span>
     </div>
     
-    <div id="inspector-content" class="flex-1 overflow-y-auto space-y-3 text-xs text-slate-400 custom-scrollbar">
+    <div id="inspector-content" class="flex-1 min-h-0 overflow-y-auto space-y-3 text-xs text-slate-400 custom-scrollbar">
       <p class="text-center py-10 text-slate-500">荷姿の箱をクリックすると、詳細パラメータが表示されます。</p>
     </div>
 
@@ -259,6 +259,7 @@ def generate_html(result_data: dict, output_html_path: str):
 
     let showGuides = true;
     let showLabels = true;
+    let inspectorLayoutObserver = null;
 
     function normalizePositionReference(data) {{
       if (data.coordinate_reference !== 'combined_footprint_min_xy_top_z') {{
@@ -297,6 +298,24 @@ def generate_html(result_data: dict, output_html_path: str):
       currentData = null;
     }}
 
+    function syncInspectorTop() {{
+      const header = document.getElementById('top-header');
+      const inspector = document.getElementById('inspector-panel');
+      if (!header || !inspector) return;
+      inspector.style.top = `${{Math.ceil(header.getBoundingClientRect().bottom + 12)}}px`;
+    }}
+
+    function setupInspectorLayout() {{
+      const header = document.getElementById('top-header');
+      if (!header) return;
+      syncInspectorTop();
+      window.addEventListener('resize', syncInspectorTop);
+      if (typeof ResizeObserver !== 'undefined') {{
+        inspectorLayoutObserver = new ResizeObserver(syncInspectorTop);
+        inspectorLayoutObserver.observe(header);
+      }}
+    }}
+
     function initRenderer() {{
       canvas = document.getElementById('main-canvas');
       ctx = canvas.getContext('2d');
@@ -304,6 +323,7 @@ def generate_html(result_data: dict, output_html_path: str):
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
 
+      setupInspectorLayout();
       setupInteractions();
       setupUIEvents();
       try {{
@@ -714,7 +734,7 @@ def generate_html(result_data: dict, output_html_path: str):
           b.dimensions.width, b.dimensions.length, b.dimensions.height - (lid?.thickness || 0),
           customColors,
           showLabels && !lid,
-          `${{b.order}}: ${{ResultIdentity.label(b)}}`
+          `${{b.order}}: ${{ResultIdentity.boxLabel(b)}}`
         );
 
         if (lid) {{
@@ -723,7 +743,7 @@ def generate_html(result_data: dict, output_html_path: str):
           }});
           if (showLabels) {{
             const labelPoint = project3D(lid.x + lid.width / 2, lid.y + lid.length / 2, lid.z + lid.thickness);
-            drawBadge(labelPoint.x, labelPoint.y, `${{b.order}}: ${{ResultIdentity.label(b)}}`);
+            drawBadge(labelPoint.x, labelPoint.y, `${{b.order}}: ${{ResultIdentity.boxLabel(b)}}`);
           }}
         }}
       }});
